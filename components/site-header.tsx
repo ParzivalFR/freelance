@@ -6,10 +6,9 @@ import { lilitaOne } from "@/fonts/LilitaOne";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlignJustify, XIcon } from "lucide-react";
-import { Lilita_One } from "next/font/google";
-import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ThemeToggle } from "./theme-toggle";
 
 const menuItem = [
   {
@@ -110,7 +109,7 @@ export function SiteHeader() {
             OASIS.
           </Link>
 
-          <div className="ml-auto flex h-full items-center">
+          <div className="hidden ml-auto md:flex h-full items-center">
             <Link className="mr-6 text-sm" href="/signin">
               Connexion
             </Link>
@@ -123,14 +122,15 @@ export function SiteHeader() {
             >
               S'inscrire
             </Link>
+            <ThemeToggle />
           </div>
-          <button
-            className="ml-6 md:hidden"
-            onClick={() => setHamburgerMenuIsOpen((open) => !open)}
-          >
-            <span className="sr-only">Toggle menu</span>
-            {hamburgerMenuIsOpen ? <XIcon /> : <AlignJustify />}
-          </button>
+          <div className="ml-6 md:hidden flex items-center gap-4">
+            <ThemeToggle />
+            <button onClick={() => setHamburgerMenuIsOpen((open) => !open)}>
+              <span className="sr-only">Toggle menu</span>
+              {hamburgerMenuIsOpen ? <XIcon /> : <AlignJustify />}
+            </button>
+          </div>
         </div>
       </header>
       <AnimatePresence>
@@ -146,7 +146,7 @@ export function SiteHeader() {
             }
           )}
         >
-          <div className="container flex h-[3.5rem] items-center justify-between">
+          <div className="container flex h-[3.5rem] py-10 items-center justify-between">
             <Link
               className={`text-4xl flex items-center ${lilitaOne.className}`}
               href="/"
@@ -159,11 +159,18 @@ export function SiteHeader() {
               onClick={() => setHamburgerMenuIsOpen((open) => !open)}
             >
               <span className="sr-only">Toggle menu</span>
-              {hamburgerMenuIsOpen ? <XIcon /> : <AlignJustify />}
+              {hamburgerMenuIsOpen ? (
+                <XIcon
+                  size={36}
+                  className="transition hover:rotate-180 duration-500"
+                />
+              ) : (
+                <AlignJustify />
+              )}
             </button>
           </div>
           <motion.ul
-            className={`flex flex-col md:flex-row md:items-center uppercase md:normal-case ease-in`}
+            className={`pt-12 pl-4 flex flex-col md:flex-row md:items-center uppercase md:normal-case ease-in`}
             variants={containerVariants}
             initial="initial"
             animate={hamburgerMenuIsOpen ? "open" : "exit"}
@@ -172,13 +179,14 @@ export function SiteHeader() {
               <motion.li
                 variants={mobileLinkVar}
                 key={item.id}
-                className="border-grey-dark pl-6 py-0.5 border-b md:border-none"
+                className=" pl-6 py-2  md:border-none"
               >
                 <Link
-                  className={`hover:text-grey flex h-[var(--navigation-height)] w-full items-center text-xl transition-[color,transform] duration-300 md:translate-y-0 md:text-sm md:transition-colors ${
+                  className={`hover:text-grey flex h-[var(--navigation-height)] w-full items-center text-xl transition-[color,transform] duration-500 md:translate-y-0 md:text-sm md:transition-colors ${
                     hamburgerMenuIsOpen ? "[&_a]:translate-y-0" : ""
                   }`}
                   href={item.href}
+                  onClick={() => setHamburgerMenuIsOpen(false)}
                 >
                   {item.label}
                 </Link>

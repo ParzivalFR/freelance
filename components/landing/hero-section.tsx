@@ -15,7 +15,7 @@ export default function HeroSection() {
       id="hero"
       className="relative mx-auto mt-32 max-w-[80rem] px-6 text-center md:px-8"
     >
-      <div className="backdrop-filter-[12px] inline-flex h-7 items-center justify-between rounded-full border border-white/5 bg-white/10 px-3 text-xs text-white dark:text-black transition-all ease-in hover:cursor-pointer hover:bg-white/20 group gap-1 translate-y-[-1rem] animate-fade-in opacity-0">
+      <div className="backdrop-filter-[12px] inline-flex h-7 items-center justify-between rounded-full border border-white/5 bg-white/10 px-3 text-[10px] sm:text-xs text-white dark:text-black transition-all ease-in hover:cursor-pointer hover:bg-white/20 group gap-1 translate-y-[-1rem] animate-fade-in opacity-0">
         <TextShimmer className="inline-flex items-center justify-center">
           {/* Une phrase d'accroche s'il te plait  */}
           <span>✨ Votre satisfaction est notre principal objectif</span>{" "}
@@ -29,7 +29,7 @@ export default function HeroSection() {
       <p className="mb-12 text-lg tracking-tight text-gray-400 md:text-xl text-balance translate-y-[-1rem] animate-fade-in opacity-0 [--animation-delay:400ms]">
         Des solutions sur mesure pour vos projets web,
         <br className="hidden md:block" /> développées avec passion et expertise
-        avec une attention particulière pour l'expérience utilisateur. Motion.
+        avec une attention particulière pour l'expérience utilisateur.
       </p>
       <Button className="translate-y-[-1rem] animate-fade-in gap-1 rounded-lg text-white dark:text-black opacity-0 ease-in-out [--animation-delay:600ms]">
         <span>Commencer gratuitement </span>

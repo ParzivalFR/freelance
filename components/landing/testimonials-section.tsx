@@ -262,8 +262,8 @@ export function SocialProofTestimonials() {
     <section id="testimonials">
       <div className="py-14">
         <div className="container mx-auto px-4 md:px-8">
-          <h3 className="text-center text-sm font-semibold text-gray-500">
-            TESTIMONIALS
+          <h3 className="text-center uppercase text-xl font-semibold text-foreground/80">
+            Témoignages
           </h3>
           <div className="relative mt-6 max-h-[650px] overflow-hidden">
             <div className="gap-4 md:columns-2 xl:columns-3 2xl:columns-4">

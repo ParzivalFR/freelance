@@ -29,19 +29,19 @@ export default function SignUpPage() {
         <div className="flex flex-col gap-2 text-center">
           {/* <Icons.logo className="mx-auto h-6 w-6" /> */}
           <h1 className="text-2xl font-semibold tracking-tight">
-            Welcome to Magic UI
+            Inscrivez-vous
           </h1>
           <p className="text-sm text-muted-foreground">
-            Sign up for an account
+            Créez un compte pour accéder à votre espace personnel.
           </p>
         </div>
         <UserAuthForm />
-        <p className="px-8 text-center text-sm text-muted-foreground">
+        <p className="px-2 text-center text-sm text-muted-foreground">
           <Link
             href="/signin"
             className="hover:text-brand underline underline-offset-4"
           >
-            Already have an account? Sign In
+            Vous avez déjà un compte ? Connectez-vous 🚀
           </Link>
         </p>
       </div>

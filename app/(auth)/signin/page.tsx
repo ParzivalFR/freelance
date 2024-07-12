@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function LoginPage() {
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
+    <section className="container flex h-screen w-screen flex-col items-center justify-center">
       <Link
         href="/"
         className={cn(
@@ -22,27 +22,29 @@ export default function LoginPage() {
       >
         <>
           <ChevronLeft className="mr-2 h-4 w-4" />
-          Back
+          Retour
         </>
       </Link>
       <div className="mx-auto flex w-full flex-col justify-center gap-6 sm:w-[350px]">
         <div className="flex flex-col gap-2 text-center">
           {/* <Icons.logo className="mx-auto h-6 w-6" /> */}
           <h1 className="text-2xl font-semibold tracking-tight">
-            Welcome back
+            Connexion à votre compte
           </h1>
-          <p className="text-sm text-muted-foreground">Login to your account</p>
+          <p className="text-sm text-muted-foreground">
+            Connectez-vous pour accéder à votre compte.
+          </p>
         </div>
         <UserAuthForm />
-        <p className="px-8 text-center text-sm text-muted-foreground">
+        <p className="px-2 text-center text-sm text-muted-foreground">
           <Link
             href="/signup"
             className="hover:text-brand underline underline-offset-4"
           >
-            Don&apos;t have an account? Sign Up
+            Vous n'avez pas de compte ? Inscrivez-vous 🚀
           </Link>
         </p>
       </div>
-    </div>
+    </section>
   );
 }

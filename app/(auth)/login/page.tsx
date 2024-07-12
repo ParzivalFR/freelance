@@ -29,17 +29,19 @@ export default function LoginPage() {
         <div className="flex flex-col gap-2 text-center">
           {/* <Icons.logo className="mx-auto h-6 w-6" /> */}
           <h1 className="text-2xl font-semibold tracking-tight">
-            Welcome back
+            Connexion à votre compte
           </h1>
-          <p className="text-sm text-muted-foreground">Login to your account</p>
+          <p className="text-sm text-muted-foreground">
+            Connectez-vous pour accéder à votre compte.
+          </p>
         </div>
         <UserAuthForm />
         <p className="px-8 text-center text-sm text-muted-foreground">
           <Link
-            href="/register"
+            href="/signup"
             className="hover:text-brand underline underline-offset-4"
           >
-            Don&apos;t have an account? Sign Up
+            Vous n'avez pas de compte ? Inscrivez-vous 🚀
           </Link>
         </p>
       </div>

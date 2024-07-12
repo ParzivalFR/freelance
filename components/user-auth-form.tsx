@@ -46,13 +46,14 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
     setIsLoading(false);
 
     if (!signInResult?.ok) {
-      return toast.error("Something went wrong.", {
-        description: "Your sign in request failed. Please try again.",
+      return toast.error("Une erreur est survenue.", {
+        description: "Votre demande de connexion a échoué. Veuillez réessayer.",
       });
     }
 
-    return toast.success("Check your email", {
-      description: "We sent you a login link. Be sure to check your spam too.",
+    return toast.success("Vérifiez votre email", {
+      description:
+        "Nous vous avons envoyé un lien de connexion. Vérifiez également votre boîte de spam.",
     });
   }
 
@@ -101,7 +102,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
               }}
             >
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              Sign In with Email
+              Connexion via Email
             </button>
           </div>
         </form>
@@ -112,7 +113,7 @@ export function UserAuthForm({ className, ...props }: UserAuthFormProps) {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
+            ou connectez-vous avec
           </span>
         </div>
       </div>
