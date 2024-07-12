@@ -5,6 +5,7 @@ import TextShimmer from "@/components/magicui/text-shimmer";
 import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { useInView } from "framer-motion";
+import Image from "next/image";
 import { useRef } from "react";
 
 export default function HeroSection() {
@@ -23,7 +24,7 @@ export default function HeroSection() {
         </TextShimmer>
       </div>
       <h1 className="bg-gradient-to-br dark:from-white from-black from-30% dark:to-white/40 to-black/40 bg-clip-text py-6 text-5xl font-medium leading-none tracking-tighter text-transparent text-balance sm:text-6xl md:text-7xl lg:text-8xl translate-y-[-1rem] animate-fade-in opacity-0 [--animation-delay:200ms]">
-        L'OASIS est la solution
+        L&rsquo;OASIS est la solution
         <br className="hidden md:block" /> pour vos projets web.
       </h1>
       <p className="mb-12 text-lg tracking-tight text-gray-400 md:text-xl text-balance translate-y-[-1rem] animate-fade-in opacity-0 [--animation-delay:400ms]">
@@ -52,15 +53,19 @@ export default function HeroSection() {
             colorTo="var(--color-two)"
           />
 
-          <img
+          <Image
             src="/hero-dark.png"
             alt="Hero Image"
             className="hidden relative w-full h-full rounded-[inherit] border object-contain dark:block"
+            width={1152}
+            height={648}
           />
-          <img
+          <Image
             src="/hero-light.png"
             alt="Hero Image"
             className="block relative w-full h-full  rounded-[inherit] border object-contain dark:hidden"
+            width={1152}
+            height={648}
           />
         </div>
       </div>

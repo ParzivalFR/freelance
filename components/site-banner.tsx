@@ -9,8 +9,7 @@ export function SiteBanner() {
           target="_blank"
           className="text-center text-sm leading-loose text-muted-background"
         >
-          ✨
-          <span className="font-bold"> We&apos;re live on ProductHunt! - </span>{" "}
+          ✨<span className="font-bold"> We're live on ProductHunt! - </span>{" "}
           Come check us out and leave a review! ✨
         </Link>
       </div>

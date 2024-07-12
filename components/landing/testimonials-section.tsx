@@ -1,6 +1,7 @@
-import { cn } from "@/lib/utils";
 import Marquee from "@/components/magicui/marquee";
+import { cn } from "@/lib/utils";
 import { StarFilledIcon } from "@radix-ui/react-icons";
+import Image from "next/image";
 
 export const Highlight = ({
   children,
@@ -61,9 +62,12 @@ export const TestimonialCard = ({
     </div>
 
     <div className="flex w-full select-none items-center justify-start gap-5">
-      <img
-        src={img}
+      <Image
+        src={img!}
         className="h-10 w-10 rounded-full  ring-1 ring-border ring-offset-4"
+        width={40}
+        height={40}
+        alt="Testimonial"
       />
 
       <div>
