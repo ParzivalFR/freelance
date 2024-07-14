@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
+import { SphereMask } from "../magicui/sphere-mask";
 
 const tiles = [
   {
@@ -197,7 +198,7 @@ export default function CallToActionSection() {
               </div>
               <div className="absolute inset-0 -z-10 rounded-full  bg-backtround opacity-40 blur-xl dark:bg-background" />
             </div>
-            <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-b from-transparent to-backtround to-70% dark:to-background" />
+            <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-b from-transparent to-backtround to-70% dark:to-background"></div>
           </div>
         </div>
       </div>

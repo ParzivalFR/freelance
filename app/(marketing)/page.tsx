@@ -1,12 +1,9 @@
-import ClientSection from "@/components/landing/client-section";
+import ContactForm from "@/components/landing/contact-form";
 import CallToActionSection from "@/components/landing/cta-section";
 import { FAQ } from "@/components/landing/faq-section";
 import HeroSection from "@/components/landing/hero-section";
 import PricingSection from "@/components/landing/pricing-section";
-import {
-  SocialProofTestimonials,
-  TestimonialCard,
-} from "@/components/landing/testimonials-section";
+import { SocialProofTestimonials } from "@/components/landing/testimonials-section";
 import Particles from "@/components/magicui/particles";
 import { SphereMask } from "@/components/magicui/sphere-mask";
 
@@ -16,10 +13,10 @@ export default async function Page() {
       <HeroSection />
       {/* <ClientSection /> */}
       <SocialProofTestimonials />
-      <SphereMask />
       <PricingSection />
       <CallToActionSection />
       <FAQ />
+      <ContactForm />
       <Particles
         className="absolute inset-0 -z-10"
         quantity={50}
