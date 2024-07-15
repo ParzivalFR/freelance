@@ -1,22 +1,22 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+// import { useState } from "react";
+import { useRef } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { BorderBeam } from "../magicui/border-beam";
 import { Button } from "../ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import FileUpload from "../upload-file";
 
 const formSchema = z.object({
   firstName: z
@@ -35,7 +35,7 @@ const formSchema = z.object({
 });
 
 export default function ContactForm() {
-  const [files, setFiles] = useState<File | null>(null);
+  const ref = useRef<HTMLFormElement>(null);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
@@ -44,37 +44,52 @@ export default function ContactForm() {
       lastName: "",
       email: "",
       message: "",
-      files: [],
     },
   });
 
-  function onSubmit(data: z.infer<typeof formSchema>) {
-    const fileNames = data.files ? data.files.map((file) => file.name) : [];
+  async function onSubmit(data: z.infer<typeof formSchema>) {
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
 
-    const displayData = {
-      ...data,
-      files: fileNames,
-    };
-
-    toast.success("Vous avez soumis les valeurs suivantes :", {
-      description: (
-        <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">
-            {JSON.stringify(displayData, null, 2)}
-          </code>
-        </pre>
-      ),
-    });
+      if (response.ok) {
+        form.reset();
+        toast.success("Votre message a bien été envoyé !");
+      } else {
+        toast.error("Une erreur s'est produite. Veuillez réessayer.");
+      }
+    } catch (error) {
+      toast.error("Une erreur s'est produite. Veuillez réessayer.");
+    }
   }
 
   return (
     <section id="contact">
-      <div className="py-14">
-        <div className="flex w-full flex-col items-center justify-center">
+      <div className="py-14 px-4">
+        <div className="mx-auto max-w-5xl text-center">
+          <h4 className="text-xl font-bold tracking-tight text-black dark:text-white">
+            Contact
+          </h4>
+          <h2 className="text-4xl font-bold tracking-tight text-black dark:text-white sm:text-6xl">
+            Contactez-nous
+          </h2>
+          <p className="mt-6 text-xl leading-8 text-black/80 dark:text-white">
+            Vous avez une question ou une demande particulière ? N'hésitez pas à
+            nous contacter en remplissant le formulaire ci-dessous.
+          </p>
+        </div>
+        <div className="relative flex w-full flex-col items-center justify-center mx-auto max-w-xl my-12 bg-secondary/20 p-8 rounded-md">
+          <BorderBeam className="z-[-100] " />
           <Form {...form}>
             <form
+              ref={ref}
               onSubmit={form.handleSubmit(onSubmit)}
-              className="w-2/3 space-y-6"
+              className="w-full space-y-6"
             >
               <div className="flex space-x-4">
                 <div className="w-1/2">
@@ -134,27 +149,7 @@ export default function ContactForm() {
                   </FormItem>
                 )}
               />
-              <FormField
-                control={form.control}
-                name="files"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Files</FormLabel>
-                    <FormControl>
-                      <FileUpload
-                        multiple={true}
-                        onChange={(newFiles) => {
-                          field.onChange(newFiles); // Ceci devrait mettre à jour la valeur dans le formulaire
-                        }}
-                      />
-                    </FormControl>
-                    <FormDescription>
-                      This is your public display name.
-                    </FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+
               <Button type="submit">Envoyer</Button>
             </form>
           </Form>
@@ -163,147 +158,3 @@ export default function ContactForm() {
     </section>
   );
 }
-
-// ########################################################################
-
-// "use client";
-
-// import { zodResolver } from "@hookform/resolvers/zod";
-// import { useForm } from "react-hook-form";
-// import { z } from "zod";
-
-// import { Button } from "@/components/ui/button";
-// import {
-//   Form,
-//   FormControl,
-//   FormDescription,
-//   FormField,
-//   FormItem,
-//   FormLabel,
-//   FormMessage,
-// } from "@/components/ui/form";
-// import { Input } from "@/components/ui/input";
-// import { toast } from "sonner";
-
-// const FormSchema = z.object({
-//   username: z.string().min(2, {
-//     message: "Username must be at least 2 characters.",
-//   }),
-//   email: z.string().email(),
-//   message: z.string().min(10, {
-//     message: "Message must be at least 10 characters.",
-//   }),
-//   files: z.array(z.instanceof(File)).optional(),
-// });
-
-// export default function ContactForm() {
-//   const form = useForm<z.infer<typeof FormSchema>>({
-//     resolver: zodResolver(FormSchema),
-//     defaultValues: {
-//       username: "",
-//       email: "",
-//       message: "",
-//       files: [],
-//     },
-//   });
-
-//   function onSubmit(data: z.infer<typeof FormSchema>) {
-//     const fileNames = data.files ? data.files.map((file) => file.name) : [];
-
-//     const displayData = {
-//       ...data,
-//       files: fileNames,
-//     };
-
-//     toast("You submitted the following values:", {
-//       description: (
-//         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-//           <code className="text-white">
-//             {JSON.stringify(displayData, null, 2)}
-//           </code>
-//         </pre>
-//       ),
-//     });
-//   }
-
-//   return (
-//     <Form {...form}>
-//       <form onSubmit={form.handleSubmit(onSubmit)} className="w-2/3 space-y-6">
-//         <FormField
-//           control={form.control}
-//           name="username"
-//           render={({ field }) => (
-//             <FormItem>
-//               <FormLabel>Username</FormLabel>
-//               <FormControl>
-//                 <Input placeholder="shadcn" {...field} />
-//               </FormControl>
-//               <FormDescription>
-//                 This is your public display name.
-//               </FormDescription>
-//               <FormMessage />
-//             </FormItem>
-//           )}
-//         />
-//         <FormField
-//           control={form.control}
-//           name="email"
-//           render={({ field }) => (
-//             <FormItem>
-//               <FormLabel>Email</FormLabel>
-//               <FormControl>
-//                 <Input placeholder="shadcn" {...field} />
-//               </FormControl>
-//               <FormDescription>
-//                 This is your public display name.
-//               </FormDescription>
-//               <FormMessage />
-//             </FormItem>
-//           )}
-//         />
-//         <FormField
-//           control={form.control}
-//           name="message"
-//           render={({ field }) => (
-//             <FormItem>
-//               <FormLabel>Message</FormLabel>
-//               <FormControl>
-//                 <Input placeholder="shadcn" {...field} />
-//               </FormControl>
-//               <FormDescription>
-//                 This is your public display name.
-//               </FormDescription>
-//               <FormMessage />
-//             </FormItem>
-//           )}
-//         />
-//         <FormField
-//           control={form.control}
-//           name="files"
-//           render={({ field }) => (
-//             <FormItem>
-//               <FormLabel>Files</FormLabel>
-//               <FormControl>
-//                 <Input
-//                   type="file"
-//                   multiple
-//                   onChange={(e) => {
-//                     const files = e.target.files;
-//                     if (files) {
-//                       field.onChange(Array.from(files));
-//                     }
-//                   }}
-//                 />
-//               </FormControl>
-//               <FormDescription>
-//                 This is your public display name.
-//               </FormDescription>
-//               <FormMessage />
-//             </FormItem>
-//           )}
-//         />
-//         <Button type="submit">Submit</Button>
-//       </form>
-//     </Form>
-//   );
-// }

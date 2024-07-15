@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 import { StarFilledIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
 import { SphereMask } from "../magicui/sphere-mask";
+import { CircleLight } from "../magicui/circle-light";
 
 export const Highlight = ({
   children,
@@ -298,7 +299,8 @@ export function SocialProofTestimonials() {
           </div>
         </div>
       </div>
-      <SphereMask reverse={true} />
+      {/* <SphereMask reverse={true} /> */}
+      <CircleLight />
     </section>
   );
 }
