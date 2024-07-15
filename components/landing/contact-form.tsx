@@ -17,6 +17,7 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
 
 const formSchema = z.object({
   firstName: z
@@ -143,7 +144,7 @@ export default function ContactForm() {
                   <FormItem>
                     <FormLabel>Message</FormLabel>
                     <FormControl>
-                      <Input placeholder="Message" {...field} />
+                      <Textarea placeholder="Votre message ..." {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
