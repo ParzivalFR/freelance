@@ -1,23 +1,16 @@
 "use client";
 
-import { Button, buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import { firaCode } from "@/fonts/FiraCode";
+import { lilitaOne } from "@/fonts/LilitaOne";
 import { cn } from "@/lib/utils";
-import { AlignJustify } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { AlignJustify, XIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Logo from "./logo";
 import { ThemeToggle } from "./theme-toggle";
-import {
-  Drawer,
-  DrawerClose,
-  DrawerContent,
-  DrawerDescription,
-  DrawerFooter,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
-} from "./ui/drawer";
+import Logo from "./logo";
+import BottomDrawer from "./drawer";
 
 const menuItem = [
   {
@@ -140,45 +133,8 @@ export function SiteHeader() {
           </div>
           <div className="ml-6 md:hidden flex items-center gap-4">
             <ThemeToggle />
-            <Drawer>
-              <DrawerTrigger asChild>
-                <Button variant="ghost">
-                  <AlignJustify />
-                </Button>
-              </DrawerTrigger>
-              <DrawerContent>
-                <div className="mx-auto w-full max-w-sm">
-                  <DrawerHeader>
-                    <DrawerTitle>Menu de navigation</DrawerTitle>
-                    <DrawerDescription>
-                      Choisissez où vous voulez aller.
-                    </DrawerDescription>
-                  </DrawerHeader>
-                  <div className="flex flex-col items-center justify-center gap-2 px-10">
-                    {menuItem.map((item) => (
-                      <Button
-                        key={item.id}
-                        className="w-full max-w-[150px]"
-                        variant="secondary"
-                        asChild
-                      >
-                        <Link
-                          className="hover:text-grey uppercase font-black"
-                          href={item.href}
-                        >
-                          {item.label}
-                        </Link>
-                      </Button>
-                    ))}
-                  </div>
-                  <DrawerFooter>
-                    <DrawerClose asChild>
-                      <Button>Fermer</Button>
-                    </DrawerClose>
-                  </DrawerFooter>
-                </div>
-              </DrawerContent>
-            </Drawer>
+            <BottomDrawer menuItems={menuItem} />
+
             {/* <button onClick={() => setHamburgerMenuIsOpen((open) => !open)}>
               <span className="sr-only">Toggle menu</span>
               {hamburgerMenuIsOpen ? <XIcon /> : <AlignJustify />}
@@ -186,8 +142,7 @@ export function SiteHeader() {
           </div>
         </div>
       </header>
-
-      {/* <AnimatePresence>
+      <AnimatePresence>
         <motion.nav
           initial="initial"
           exit="exit"
@@ -201,12 +156,7 @@ export function SiteHeader() {
           )}
         >
           <div className="container flex h-[3.5rem] py-10 items-center justify-between">
-            <Link
-              className={`text-4xl flex items-center ${lilitaOne.className}`}
-              href="/"
-            >
-              OASIS.
-            </Link>
+            <Logo size="2xl" />
 
             <button
               className="ml-6 md:hidden"
@@ -248,7 +198,7 @@ export function SiteHeader() {
             ))}
           </motion.ul>
         </motion.nav>
-      </AnimatePresence> */}
+      </AnimatePresence>
     </>
   );
 }
