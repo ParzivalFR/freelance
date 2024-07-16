@@ -1,9 +1,10 @@
 import { Button } from "@/components/ui/button";
-import { AlignJustify, X } from "lucide-react";
+import { AlignJustify } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { Badge } from "./ui/badge";
+import { Switch } from "./ui/switch";
 
 interface MenuItem {
   id: number;
@@ -18,6 +19,7 @@ interface BottomDrawerProps {
 const BottomDrawer: React.FC<BottomDrawerProps> = ({ menuItems }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [mounted, setMounted] = useState<boolean>(false);
+  const [isRight, setIsRight] = useState<boolean>(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -26,6 +28,10 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({ menuItems }) => {
   }, []);
 
   const toggleDrawer = () => setIsOpen(!isOpen);
+  const toggleRight = () => {
+    setIsRight(!isRight);
+    console.log(isRight);
+  };
 
   const handleLinkClick = (href: string) => {
     setIsOpen(false);
@@ -46,13 +52,13 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({ menuItems }) => {
   const drawerContent = (
     <>
       <div
-        className={`fixed inset-0 bg-black bg-opacity-50 z-40 transition-opacity duration-300 ${
+        className={`fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm z-[50] transition-opacity duration-300 ${
           isOpen ? "opacity-100" : "opacity-0 pointer-events-none"
         }`}
         onClick={toggleDrawer}
       />
       <div
-        className={`fixed  border border-foreground/70 left-0 right-0 -bottom-4 bg-background z-50 transition-transform duration-300 ease-in-out transform ${
+        className={`fixed  border border-b-0 border-foreground/70 left-0 right-0 -bottom-4 bg-background z-50 transition-transform duration-300 ease-in-out transform ${
           isOpen ? "-translate-y-4" : "translate-y-full"
         }`}
         style={{
@@ -62,30 +68,45 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({ menuItems }) => {
         }}
       >
         <div className="p-4">
-          <div className="relative flex justify-end items-center mb-4">
+          <div className="relative flex justify-between items-center mb-4">
             <Badge
               color="primary"
-              className="absolute -top-6 right-1/2 translate-x-1/2 px-6 text-base uppercase font-black"
+              className="hover:bg-primary absolute -top-6 right-1/2 translate-x-1/2 px-6 text-base uppercase font-black"
             >
               MENU
             </Badge>
-            <Button variant="ghost" onClick={toggleDrawer}>
+            <div className="flex flex-col-reverse text-[9px] items-center uppercase justify-center">
+              <span>{isRight ? "Droitier" : "Gaucher"}</span>
+              <Switch checked={isRight} onCheckedChange={toggleRight} />
+            </div>
+            {/* <Button variant="ghost" onClick={toggleDrawer}>
               <X />
-            </Button>
+            </Button> */}
           </div>
-          <div className="flex flex-col gap-2">
+          <div
+            className={`w-full flex flex-col gap-2 ${
+              isRight ? "items-end" : "items-start"
+            }`}
+          >
             {menuItems.map((item) => (
               <Button
                 key={item.id}
-                className="w-full justify-start"
-                variant="ghost"
+                className={`max-w-[150px] w-full flex items-center ${
+                  isRight ? "justify-end" : "justify-start"
+                }`}
+                variant="outline"
                 onClick={() => handleLinkClick(item.href)}
               >
-                <span className="hover:text-grey uppercase font-black">
+                <span className=" hover:text-grey font-black">
                   {item.label}
                 </span>
               </Button>
             ))}
+          </div>
+          <div className="flex items-center justify-center gap-2">
+            <Button variant="destructive" onClick={toggleDrawer}>
+              Fermer
+            </Button>
           </div>
         </div>
       </div>

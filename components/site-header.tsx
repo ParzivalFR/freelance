@@ -108,7 +108,7 @@ export function SiteHeader() {
   return (
     <>
       <header className="fixed left-0 top-0 z-50 w-full translate-y-[-1rem] animate-fade-in border-b opacity-0 backdrop-blur-[12px] [--animation-delay:600ms]">
-        <div className="container flex h-[3.5rem] items-center justify-between">
+        <div className="container flex h-[3.5rem] items-center justify-between p-2 sm:p-4 lg:p-6">
           <Link
             className={`text-2xl flex items-center ${firaCode.className}`}
             href="/"
@@ -142,6 +142,7 @@ export function SiteHeader() {
           </div>
         </div>
       </header>
+      {/* MENU ANIMATION de FRAMER MOTION */}
       <AnimatePresence>
         <motion.nav
           initial="initial"
