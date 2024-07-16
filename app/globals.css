@@ -80,9 +80,19 @@
 
 @layer base {
   * {
-    @apply border-border;
+    @apply border-border scroll-smooth;
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .footer-border {
+    position: relative;
+  }
+
+  .footer-border::before {
+    @apply absolute top-0 left-0 right-0 h-px content-[""] bg-gradient-to-r from-neutral-200/0 via-neutral-500/80 to-neutral-200/0;
   }
 }

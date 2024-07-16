@@ -1,35 +1,49 @@
 "use client";
 
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { firaCode } from "@/fonts/FiraCode";
-import { lilitaOne } from "@/fonts/LilitaOne";
 import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "framer-motion";
-import { AlignJustify, XIcon } from "lucide-react";
+import { AlignJustify } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import Logo from "./logo";
 import { ThemeToggle } from "./theme-toggle";
+import {
+  Drawer,
+  DrawerClose,
+  DrawerContent,
+  DrawerDescription,
+  DrawerFooter,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "./ui/drawer";
 
 const menuItem = [
   {
     id: 1,
-    label: "Features",
-    href: "/features",
+    label: "Accueil",
+    href: "/",
   },
   {
     id: 2,
-    label: "Pricing",
-    href: "#",
+    label: "Témoignages",
+    href: "#testimonials",
   },
   {
     id: 3,
-    label: "Careers",
-    href: "#",
+    label: "Tarifs",
+    href: "#pricing",
   },
   {
     id: 4,
-    label: "Contact Us",
-    href: "#",
+    label: "FAQs",
+    href: "#faq",
+  },
+  {
+    id: 5,
+    label: "Contact",
+    href: "#contact",
   },
 ];
 
@@ -103,10 +117,10 @@ export function SiteHeader() {
       <header className="fixed left-0 top-0 z-50 w-full translate-y-[-1rem] animate-fade-in border-b opacity-0 backdrop-blur-[12px] [--animation-delay:600ms]">
         <div className="container flex h-[3.5rem] items-center justify-between">
           <Link
-            className={`text-3xl flex items-center ${firaCode.className}`}
+            className={`text-2xl flex items-center ${firaCode.className}`}
             href="/"
           >
-            OASIS.
+            <Logo size="2xl" />
           </Link>
 
           <div className="hidden ml-auto md:flex h-full items-center">
@@ -126,14 +140,54 @@ export function SiteHeader() {
           </div>
           <div className="ml-6 md:hidden flex items-center gap-4">
             <ThemeToggle />
-            <button onClick={() => setHamburgerMenuIsOpen((open) => !open)}>
+            <Drawer>
+              <DrawerTrigger asChild>
+                <Button variant="ghost">
+                  <AlignJustify />
+                </Button>
+              </DrawerTrigger>
+              <DrawerContent>
+                <div className="mx-auto w-full max-w-sm">
+                  <DrawerHeader>
+                    <DrawerTitle>Menu de navigation</DrawerTitle>
+                    <DrawerDescription>
+                      Choisissez où vous voulez aller.
+                    </DrawerDescription>
+                  </DrawerHeader>
+                  <div className="flex flex-col items-center justify-center gap-2 px-10">
+                    {menuItem.map((item) => (
+                      <Button
+                        key={item.id}
+                        className="w-full max-w-[150px]"
+                        variant="secondary"
+                        asChild
+                      >
+                        <Link
+                          className="hover:text-grey uppercase font-black"
+                          href={item.href}
+                        >
+                          {item.label}
+                        </Link>
+                      </Button>
+                    ))}
+                  </div>
+                  <DrawerFooter>
+                    <DrawerClose asChild>
+                      <Button>Fermer</Button>
+                    </DrawerClose>
+                  </DrawerFooter>
+                </div>
+              </DrawerContent>
+            </Drawer>
+            {/* <button onClick={() => setHamburgerMenuIsOpen((open) => !open)}>
               <span className="sr-only">Toggle menu</span>
               {hamburgerMenuIsOpen ? <XIcon /> : <AlignJustify />}
-            </button>
+            </button> */}
           </div>
         </div>
       </header>
-      <AnimatePresence>
+
+      {/* <AnimatePresence>
         <motion.nav
           initial="initial"
           exit="exit"
@@ -194,7 +248,7 @@ export function SiteHeader() {
             ))}
           </motion.ul>
         </motion.nav>
-      </AnimatePresence>
+      </AnimatePresence> */}
     </>
   );
 }

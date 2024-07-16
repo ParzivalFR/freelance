@@ -150,8 +150,9 @@ export default function ContactForm() {
                   </FormItem>
                 )}
               />
-
-              <Button type="submit">Envoyer</Button>
+              <div className="flex items-center justify-end">
+                <Button type="submit">Envoyer</Button>
+              </div>
             </form>
           </Form>
         </div>

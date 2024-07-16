@@ -1,5 +1,6 @@
 import { DiscordLogoIcon, TwitterLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
+import Logo from "./logo";
 
 const footerNavs = [
   {
@@ -68,27 +69,30 @@ const footerSocials = [
 
 export function SiteFooter() {
   return (
-    <footer>
+    <footer className="footer-border">
       <div className="mx-auto w-full max-w-screen-xl xl:pb-2">
         <div className="md:flex md:justify-between px-8 p-4 py-16 sm:pb-16 gap-4">
           <div className="mb-12 flex-col flex gap-4">
             <Link
               href="/"
-              className="flex items-center gap-2 self-center text-4xl font-extrabold whitespace-nowrap dark:text-white"
+              className="flex items-center gap-2 self-center sm:self-start text-4xl font-extrabold whitespace-nowrap dark:text-white"
             >
-              <span className="self-center text-4xl font-extrabold whitespace-nowrap dark:text-white">
+              {/* <span className="self-center text-4xl font-extrabold whitespace-nowrap dark:text-white">
                 OASIS.
-              </span>
+              </span> */}
+              <Logo size="4xl" />
             </Link>
-            <p className="max-w-xs">UI Library for Design Engineers</p>
+            <p className="max-w-xs w-full self-center text-center">
+              Partenaire de votre satisfaction.
+            </p>
           </div>
-          <div className="grid grid-cols-1 gap-8 sm:gap-10 sm:grid-cols-3">
+          <div className="grid grid-cols-1 place-items-center sm:place-items-start gap-8 sm:gap-10 sm:grid-cols-3">
             {footerNavs.map((nav) => (
               <div key={nav.label}>
-                <h2 className="mb-6 text-sm tracking-tighter font-medium text-gray-900 uppercase dark:text-white">
+                <h2 className="mb-6 text-sm text-center sm:text-start tracking-tighter font-medium text-gray-900 uppercase dark:text-white">
                   {nav.label}
                 </h2>
-                <ul className="gap-2 grid">
+                <ul className="gap-6 grid grid-flow-col sm:grid-flow-dense">
                   {nav.items.map((item) => (
                     <li key={item.name}>
                       <Link
@@ -106,7 +110,7 @@ export function SiteFooter() {
         </div>
 
         <div className="flex flex-col sm:flex-row sm:flex sm:items-center sm:justify-between rounded-md border-neutral-700/20 py-4 px-8 gap-2">
-          <div className="flex space-x-5 sm:justify-center sm:mt-0">
+          <div className="flex space-x-5 justify-center sm:justify-start sm:mt-0">
             {footerSocials.map((social) => (
               <Link
                 key={social.name}
@@ -118,7 +122,7 @@ export function SiteFooter() {
               </Link>
             ))}
           </div>
-          <span className="text-sm text-gray-500 sm:text-center dark:text-gray-400">
+          <span className="text-xs sm:text-sm text-gray-500 text-center dark:text-gray-400">
             Copyright © {new Date().getFullYear()}{" "}
             <Link href="/" className="cursor-pointer font-extrabold">
               OASIS.
@@ -127,7 +131,6 @@ export function SiteFooter() {
           </span>
         </div>
       </div>
-      {/*   <SiteBanner /> */}
     </footer>
   );
 }

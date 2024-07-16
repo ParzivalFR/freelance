@@ -20,7 +20,7 @@ export default async function Page() {
       <ContactForm />
       <Particles
         className="absolute inset-0 -z-10"
-        quantity={50}
+        quantity={200}
         ease={70}
         size={0.05}
         staticity={40}

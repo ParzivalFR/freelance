@@ -6,11 +6,18 @@ import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { useInView } from "framer-motion";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import { useRef } from "react";
 
 export default function HeroSection() {
+  const router = useRouter();
   const ref = useRef(null);
   const inView = useInView(ref, { once: true, margin: "-100px" });
+
+  function handleRedirect() {
+    router.push("#contact");
+  }
+
   return (
     <section
       id="hero"
@@ -32,7 +39,10 @@ export default function HeroSection() {
         <br className="hidden md:block" /> développées avec passion et expertise
         avec une attention particulière pour l'expérience utilisateur.
       </p>
-      <Button className="translate-y-[-1rem] animate-fade-in gap-1 rounded-lg text-white dark:text-black opacity-0 ease-in-out [--animation-delay:600ms]">
+      <Button
+        className="translate-y-[-1rem] animate-fade-in gap-1 rounded-lg text-white dark:text-black opacity-0 ease-in-out [--animation-delay:600ms]"
+        onClick={handleRedirect}
+      >
         <span>Demander un devis</span>
         <ArrowRightIcon className="ml-1 size-4 transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
       </Button>
