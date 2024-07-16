@@ -85,16 +85,16 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({ menuItems }) => {
           </div>
           <div
             className={`w-full flex flex-col gap-2 ${
-              isRight ? "items-end" : "items-start"
+              isRight ? "items-start" : "items-end"
             }`}
           >
             {menuItems.map((item) => (
               <Button
                 key={item.id}
                 className={`max-w-[150px] w-full flex items-center ${
-                  isRight ? "justify-end" : "justify-start"
+                  isRight ? "justify-start" : "justify-end"
                 }`}
-                variant="outline"
+                variant="ghost"
                 onClick={() => handleLinkClick(item.href)}
               >
                 <span className=" hover:text-grey font-black">
@@ -103,10 +103,8 @@ const BottomDrawer: React.FC<BottomDrawerProps> = ({ menuItems }) => {
               </Button>
             ))}
           </div>
-          <div className="flex items-center justify-center gap-2">
-            <Button variant="destructive" onClick={toggleDrawer}>
-              Fermer
-            </Button>
+          <div className="flex items-center justify-center gap-2 mt-12">
+            <Button onClick={toggleDrawer}>Fermer</Button>
           </div>
         </div>
       </div>
