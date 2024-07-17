@@ -2,15 +2,15 @@
 
 import { buttonVariants } from "@/components/ui/button";
 import { firaCode } from "@/fonts/FiraCode";
-import { lilitaOne } from "@/fonts/LilitaOne";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlignJustify, XIcon } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ThemeToggle } from "./theme-toggle";
-import Logo from "./logo";
 import BottomDrawer from "./drawer";
+import Logo from "./logo";
+import DrawerDemo from "./test-drawer";
+import { ThemeToggle } from "./theme-toggle";
 
 const menuItem = [
   {
@@ -130,10 +130,13 @@ export function SiteHeader() {
               S'inscrire
             </Link>
             <ThemeToggle />
+            {/* <DrawerDemo /> */}
           </div>
           <div className="ml-6 md:hidden flex items-center gap-4">
             <ThemeToggle />
-            <BottomDrawer menuItems={menuItem} />
+            <DrawerDemo />
+
+            {/* <BottomDrawer menuItems={menuItem} /> */}
 
             {/* <button onClick={() => setHamburgerMenuIsOpen((open) => !open)}>
               <span className="sr-only">Toggle menu</span>
