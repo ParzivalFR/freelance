@@ -167,7 +167,7 @@ export function SiteHeader() {
           )}
         >
           <div className="container flex h-[3.5rem] py-10 items-center justify-between px-2">
-            <Logo size={16} />
+            <Logo size={12} />
             <Button
               variant="ghost"
               onClick={() => setHamburgerMenuIsOpen((open) => !open)}
@@ -188,7 +188,7 @@ export function SiteHeader() {
             {menuItem.map((item) => (
               <motion.li
                 variants={mobileLinkVar}
-                key={id}
+                key={id + item.label}
                 className="px-6 py-2 md:border-none"
               >
                 <Link

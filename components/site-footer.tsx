@@ -106,7 +106,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:flex sm:items-center sm:justify-between rounded-md border-neutral-700/20 py-4 px-8 gap-2">
+        <div className="flex flex-col sm:flex-row sm:flex sm:items-center sm:justify-between rounded-md border-neutral-700/20 py-4 px-4 sm:px-8 gap-2">
           <div className="flex space-x-5 justify-center sm:justify-start sm:mt-0">
             {footerSocials.map((social) => (
               <Link
@@ -119,13 +119,13 @@ export function SiteFooter() {
               </Link>
             ))}
           </div>
-          <span className="text-xs sm:text-sm text-gray-500 text-center dark:text-gray-400">
+          <div className="text-xs sm:text-sm text-gray-500 text-center dark:text-gray-400">
             Copyright © {new Date().getFullYear()}{" "}
             <Link href="/" className="cursor-pointer font-extrabold">
               OASIS.
             </Link>{" "}
             Tous droits réservés.
-          </span>
+          </div>
         </div>
       </div>
     </footer>

@@ -3,7 +3,7 @@ import Blob from "./Blob";
 
 export default function Logo({ size }: { size: number }) {
   return (
-    <Link href="/" className={`size-${size}`}>
+    <Link href="/" className={`w-${size} h-${size}`}>
       <Blob className="size-full" />
     </Link>
   );
