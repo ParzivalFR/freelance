@@ -300,7 +300,6 @@ export function SocialProofTestimonials() {
         </div>
       </div>
       {/* <SphereMask reverse={true} /> */}
-      <CircleLight />
     </section>
   );
 }

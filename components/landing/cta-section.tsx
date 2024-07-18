@@ -1,21 +1,19 @@
 "use client";
 
 import Marquee from "@/components/magicui/marquee";
-import { buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { motion, useAnimation, useInView } from "framer-motion";
 import {
+  ArrowRight,
   BarChart,
-  ChevronRight,
   File,
   Globe,
   HeartHandshake,
   Rss,
   Shield,
 } from "lucide-react";
-import Link from "next/link";
 import { useEffect, useId, useRef, useState } from "react";
-import { SphereMask } from "../magicui/sphere-mask";
 
 const tiles = [
   {
@@ -177,24 +175,16 @@ export default function CallToActionSection() {
               </div>
               <div className="z-10 mt-4 flex flex-col items-center text-center text-primary">
                 <h1 className="text-3xl font-bold lg:text-4xl">
-                  Stop wasting time on design.
+                  Confiez-nous votre projet
                 </h1>
                 <p className="mt-2">
-                  Start your 7-day free trial. No credit card required.
+                  Nous vous aidons à concrétiser vos idées avec des solutions
+                  sur mesure adaptées à vos besoins.
                 </p>
-                <Link
-                  href="#"
-                  className={cn(
-                    buttonVariants({
-                      size: "lg",
-                      variant: "outline",
-                    }),
-                    "group mt-4 rounded-[2rem] px-6"
-                  )}
-                >
-                  Get Started
-                  <ChevronRight className="ml-1 size-4 transition-all duration-300 ease-out group-hover:translate-x-1" />
-                </Link>
+                <Button className="ring-4 ring-primary/20 group mt-6 rounded-[2rem] px-6 flex items-center ">
+                  Allons-y
+                  <ArrowRight className="ml-1 size-4 transition-all duration-300 ease-out group-hover:translate-x-3" />
+                </Button>
               </div>
               <div className="absolute inset-0 -z-10 rounded-full  bg-backtround opacity-40 blur-xl dark:bg-background" />
             </div>

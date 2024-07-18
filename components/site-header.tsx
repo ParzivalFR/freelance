@@ -1,88 +1,101 @@
 "use client";
 
-import { buttonVariants } from "@/components/ui/button";
-import { firaCode } from "@/fonts/FiraCode";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { AlignJustify, XIcon } from "lucide-react";
+import {
+  AlignJustify,
+  CircleHelp,
+  Home,
+  Mailbox,
+  PiggyBank,
+  Star,
+  XIcon,
+} from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import BottomDrawer from "./drawer";
+import { useEffect, useId, useState } from "react";
 import Logo from "./logo";
-import DrawerDemo from "./test-drawer";
 import { ThemeToggle } from "./theme-toggle";
 
-const menuItem = [
+interface MenuItem {
+  label: string;
+  href: string;
+  icon: () => JSX.Element;
+}
+
+const menuItem: MenuItem[] = [
   {
-    id: 1,
     label: "Accueil",
     href: "/",
+    icon: () => <Home className="h-5 w-5" />,
   },
   {
-    id: 2,
     label: "Témoignages",
     href: "#testimonials",
+    icon: () => <Star className="h-5 w-5" />,
   },
   {
-    id: 3,
     label: "Tarifs",
     href: "#pricing",
+    icon: () => <PiggyBank className="h-5 w-5" />,
   },
   {
-    id: 4,
     label: "FAQs",
     href: "#faq",
+    icon: () => <CircleHelp className="h-5 w-5" />,
   },
   {
-    id: 5,
     label: "Contact",
     href: "#contact",
+    icon: () => <Mailbox className="h-5 w-5" />,
   },
 ];
 
 export function SiteHeader() {
+  const id = useId();
   const mobilenavbarVariant = {
     initial: {
       opacity: 0,
-      scale: 1,
+      scale: 0.8,
     },
     animate: {
-      scale: 1,
       opacity: 1,
+      scale: 1,
       transition: {
-        duration: 0.2,
+        duration: 0.4,
         ease: "easeOut",
       },
     },
     exit: {
       opacity: 0,
+      scale: 0.8,
       transition: {
-        duration: 0.2,
-        delay: 0.2,
-        ease: "easeOut",
+        duration: 0.3,
+        ease: "easeIn",
       },
     },
   };
 
   const mobileLinkVar = {
     initial: {
-      y: "-20px",
+      y: -20,
       opacity: 0,
     },
-    open: {
+    animate: {
       y: 0,
       opacity: 1,
       transition: {
-        duration: 0.3,
+        duration: 0.4,
         ease: "easeOut",
       },
     },
   };
 
   const containerVariants = {
-    open: {
+    animate: {
       transition: {
-        staggerChildren: 0.06,
+        staggerChildren: 0.1,
+        delayChildren: 0.2,
       },
     },
   };
@@ -108,14 +121,8 @@ export function SiteHeader() {
   return (
     <>
       <header className="fixed left-0 top-0 z-50 w-full translate-y-[-1rem] animate-fade-in border-b opacity-0 backdrop-blur-[12px] [--animation-delay:600ms]">
-        <div className="container flex h-[3.5rem] items-center justify-between p-2 sm:p-4 lg:p-6">
-          <Link
-            className={`text-2xl flex items-center ${firaCode.className}`}
-            href="/"
-          >
-            <Logo size="2xl" />
-          </Link>
-
+        <div className="container flex h-[3.5rem] items-center justify-between px-2">
+          <Logo size={12} />
           <div className="hidden ml-auto md:flex h-full items-center">
             <Link className="mr-6 text-sm" href="/signin">
               Connexion
@@ -130,22 +137,22 @@ export function SiteHeader() {
               S'inscrire
             </Link>
             <ThemeToggle />
-            {/* <DrawerDemo /> */}
           </div>
           <div className="ml-6 md:hidden flex items-center gap-4">
             <ThemeToggle />
-            <DrawerDemo />
-
-            {/* <BottomDrawer menuItems={menuItem} /> */}
-
-            {/* <button onClick={() => setHamburgerMenuIsOpen((open) => !open)}>
+            <Button
+              variant="ghost"
+              onClick={() => setHamburgerMenuIsOpen((open) => !open)}
+            >
               <span className="sr-only">Toggle menu</span>
-              {hamburgerMenuIsOpen ? <XIcon /> : <AlignJustify />}
-            </button> */}
+              <AlignJustify />
+            </Button>
           </div>
         </div>
       </header>
-      {/* MENU ANIMATION de FRAMER MOTION */}
+
+      {/* ANIMATION de FRAMER MOTION */}
+
       <AnimatePresence>
         <motion.nav
           initial="initial"
@@ -159,43 +166,41 @@ export function SiteHeader() {
             }
           )}
         >
-          <div className="container flex h-[3.5rem] py-10 items-center justify-between">
-            <Logo size="2xl" />
-
-            <button
-              className="ml-6 md:hidden"
+          <div className="container flex h-[3.5rem] py-10 items-center justify-between px-2">
+            <Logo size={16} />
+            <Button
+              variant="ghost"
               onClick={() => setHamburgerMenuIsOpen((open) => !open)}
             >
               <span className="sr-only">Toggle menu</span>
-              {hamburgerMenuIsOpen ? (
-                <XIcon
-                  size={36}
-                  className="transition hover:rotate-180 duration-500"
-                />
-              ) : (
-                <AlignJustify />
-              )}
-            </button>
+              <XIcon
+                size={36}
+                className="transition hover:rotate-180 duration-500"
+              />
+            </Button>
           </div>
           <motion.ul
             className={`pt-12 pl-4 flex flex-col md:flex-row md:items-center uppercase md:normal-case ease-in`}
             variants={containerVariants}
             initial="initial"
-            animate={hamburgerMenuIsOpen ? "open" : "exit"}
+            animate={hamburgerMenuIsOpen ? "animate" : "exit"}
           >
             {menuItem.map((item) => (
               <motion.li
                 variants={mobileLinkVar}
-                key={item.id}
-                className=" pl-6 py-2  md:border-none"
+                key={id}
+                className="px-6 py-2 md:border-none"
               >
                 <Link
-                  className={`hover:text-grey flex h-[var(--navigation-height)] w-full items-center text-xl transition-[color,transform] duration-500 md:translate-y-0 md:text-sm md:transition-colors ${
+                  className={`hover:text-grey flex gap-4 h-[var(--navigation-height)] w-full items-center text-xl transition-[color,transform] duration-500 md:translate-y-0 md:text-sm md:transition-colors hover:bg-secondary/40 rounded-md transtion-colors  ${
                     hamburgerMenuIsOpen ? "[&_a]:translate-y-0" : ""
                   }`}
                   href={item.href}
                   onClick={() => setHamburgerMenuIsOpen(false)}
                 >
+                  <span className="bg-secondary/60 p-2 rounded-md">
+                    {item.icon()}
+                  </span>
                   {item.label}
                 </Link>
               </motion.li>

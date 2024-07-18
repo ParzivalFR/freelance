@@ -1,4 +1,13 @@
 /** @type {import('next').NextConfig} */
+import nextPWA from "next-pwa";
+
+const withPWA = nextPWA({
+  dest: "public",
+  skipWaiting: true,
+  register: true,
+  disable: process.env.NODE_ENV === "development",
+});
+
 const nextConfig = {
   experimental: {
     serverComponentsExternalPackages: ["@react-pdf/renderer"],
@@ -14,4 +23,4 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+export default withPWA(nextConfig);

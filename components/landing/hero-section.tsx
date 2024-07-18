@@ -40,7 +40,7 @@ export default function HeroSection() {
         avec une attention particulière pour l'expérience utilisateur.
       </p>
       <Button
-        className="translate-y-[-1rem] animate-fade-in gap-1 rounded-lg text-white dark:text-black opacity-0 ease-in-out [--animation-delay:600ms]"
+        className="ring-4 ring-primary/20 hover:bg-foreground/70 duration-300 translate-y-[-1rem] animate-fade-in gap-1 rounded-lg text-white dark:text-black opacity-0 ease-in-out [--animation-delay:600ms]"
         onClick={handleRedirect}
       >
         <span>Demander un devis</span>

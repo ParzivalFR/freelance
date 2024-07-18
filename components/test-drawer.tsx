@@ -19,9 +19,10 @@ export default function DrawerDemo() {
 
   function handleNavigation(href: string) {
     setIsOpen(false);
-    setTimeout(() => {
+    const timeout = setTimeout(() => {
       router.push(href);
     }, 5000);
+    clearTimeout(timeout);
   }
 
   return (

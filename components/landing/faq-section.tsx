@@ -117,10 +117,10 @@ export function FAQ() {
               cherchez, n'hésitez pas à nous contacter.
             </p>
           </div>
-          <div className="container mx-auto my-12 max-w-[600px] space-y-12">
+          <div className="container mx-auto my-12 max-w-screen-md space-y-12 px-4">
             {faqs.map((faq, idx) => (
               <section key={idx} id={"faq-" + faq.section}>
-                <h2 className="mb-4 text-left text-base font-semibold tracking-tight text-foreground/60">
+                <h2 className="mb-4 text-left text-base font-semibold tracking-tight text-muted-foreground">
                   {faq.section}
                 </h2>
                 <Accordion
@@ -132,9 +132,11 @@ export function FAQ() {
                     <AccordionItem
                       key={idx}
                       value={faq.question}
-                      className="w-full max-w-[600px]"
+                      className="w-full"
                     >
-                      <AccordionTrigger>{faq.question}</AccordionTrigger>
+                      <AccordionTrigger className="font-bold">
+                        {faq.question}
+                      </AccordionTrigger>
                       <AccordionContent>{faq.answer}</AccordionContent>
                     </AccordionItem>
                   ))}

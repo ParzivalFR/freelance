@@ -1,13 +1,10 @@
-import { firaCode } from "@/fonts/FiraCode";
+import Link from "next/link";
+import Blob from "./Blob";
 
-export default function Logo({ size }: { size: string }) {
+export default function Logo({ size }: { size: number }) {
   return (
-    <div
-      className={`pl-2 py-1 bg-primary/20 text-foreground rounded-md text-${size} font-extrabold ${firaCode.className}`}
-    >
-      <p>
-        OASIS<span className="text-purple-700">.</span>
-      </p>
-    </div>
+    <Link href="/" className={`size-${size}`}>
+      <Blob className="size-full" />
+    </Link>
   );
 }

@@ -1,6 +1,6 @@
 import { DiscordLogoIcon, TwitterLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
-import Logo from "./logo";
+import Blob from "./Blob";
 
 const footerNavs = [
   {
@@ -75,29 +75,26 @@ export function SiteFooter() {
           <div className="mb-12 flex-col flex gap-4">
             <Link
               href="/"
-              className="flex items-center gap-2 self-center sm:self-start text-4xl font-extrabold whitespace-nowrap dark:text-white"
+              className="flex items-center gap-2 self-center sm:self-start text-4xl font-extrabold whitespace-nowrap dark:text-primary"
             >
-              {/* <span className="self-center text-4xl font-extrabold whitespace-nowrap dark:text-white">
-                OASIS.
-              </span> */}
-              <Logo size="4xl" />
+              <Blob className="size-24" />
             </Link>
-            <p className="max-w-xs w-full self-center text-center">
+            <p className="max-w-xs w-full self-center text-center text-primary/70">
               Partenaire de votre satisfaction.
             </p>
           </div>
-          <div className="grid grid-cols-1 place-items-center sm:place-items-start gap-8 sm:gap-10 sm:grid-cols-3">
+          <div className="grid grid-cols-2 place-items-center sm:place-items-start gap-10 sm:grid-cols-3">
             {footerNavs.map((nav) => (
               <div key={nav.label}>
-                <h2 className="mb-6 text-sm text-center sm:text-start tracking-tighter font-medium text-gray-900 uppercase dark:text-white">
+                <h2 className="mb-4 text-sm text-center sm:text-start tracking-tighter font-medium text-primary/80 uppercase dark:text-primary">
                   {nav.label}
                 </h2>
-                <ul className="gap-6 grid grid-flow-col sm:grid-flow-dense">
+                <ul className="flex flex-col gap-1 items-center">
                   {nav.items.map((item) => (
                     <li key={item.name}>
                       <Link
                         href={item.href}
-                        className="cursor-pointer text-gray-400 hover:text-gray-200 duration-200 font-[450] text-sm"
+                        className="cursor-pointer text-primary/50 hover:text-primary duration-200 font-[450] text-sm"
                       >
                         {item.name}
                       </Link>

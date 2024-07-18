@@ -151,7 +151,12 @@ export default function ContactForm() {
                 )}
               />
               <div className="flex items-center justify-end">
-                <Button type="submit">Envoyer</Button>
+                <Button
+                  type="submit"
+                  className="ring-4 ring-primary/20 transition hover:bg-foreground/70 duration-300"
+                >
+                  Envoyer
+                </Button>
               </div>
             </form>
           </Form>
