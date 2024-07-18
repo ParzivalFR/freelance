@@ -4,8 +4,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import Head from "next/head";
-import Link from "next/link";
 import "./globals.css";
 
 const inter = Inter({
@@ -25,9 +23,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <Head>
+      <head>
         <link rel="manifest" href="/manifest.json" />
-      </Head>
+      </head>
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",

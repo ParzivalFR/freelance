@@ -72,13 +72,13 @@ export function SiteFooter() {
     <footer className="footer-border">
       <div className="mx-auto w-full max-w-screen-xl xl:pb-2">
         <div className="md:flex md:justify-between px-8 p-4 py-16 sm:pb-16 gap-4">
-          <div className="mb-12 flex-col flex gap-4">
-            <Link
+          <div className="mb-12 flex-col items-center flex gap-4">
+            {/* <Link
               href="/"
               className="flex items-center gap-2 self-center sm:self-start text-4xl font-extrabold whitespace-nowrap dark:text-primary"
-            >
-              <Blob className="size-24" />
-            </Link>
+            > */}
+            <Blob className="size-24" />
+            {/* </Link> */}
             <p className="max-w-xs w-full self-center text-center text-primary/70">
               Partenaire de votre satisfaction.
             </p>
