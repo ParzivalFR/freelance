@@ -5,7 +5,7 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { motion } from "framer-motion";
-import { Loader } from "lucide-react";
+import { Loader, TriangleAlert } from "lucide-react";
 import { useState } from "react";
 
 type Interval = "day" | "project";
@@ -18,50 +18,48 @@ const freelanceServices = [
   {
     id: "service_1",
     name: "Starter",
-    description: "Idéal pour les sites vitrines et les projets simples",
+    description: "Idéal pour les petits projets et les sites vitrines simples",
     features: [
-      "Développement web front-end",
-      "Design responsive basique",
+      "Développement front-end basique",
+      "Design responsive simple",
       "1 cycle de révision",
-      "Support par email et/ou Discord",
+      "Support par email",
     ],
-    dailyRate: 250,
-    projectRate: 2000,
-    estimatedDays: 8,
+    dailyRate: 150,
+    projectRate: 1200,
+    estimatedDays: "À définir",
     isMostPopular: false,
   },
   {
     id: "service_2",
     name: "Standard",
-    description: "Parfait pour les projets de taille moyenne",
+    description: "Parfait pour les projets de petite à moyenne envergure",
     features: [
-      "Développement web full-stack",
-      "Design responsive avancé",
+      "Développement front-end avancé",
+      "Design responsive amélioré",
       "2 cycles de révision",
-      "Intégration API basique",
-      "Support par email, Discord et téléphone",
+      "Intégration API simple",
+      "Support par email et Discord",
     ],
-    dailyRate: 300,
-    projectRate: 4500,
-    estimatedDays: 15,
+    dailyRate: 200,
+    projectRate: 2500,
+    estimatedDays: "À définir",
     isMostPopular: true,
   },
   {
     id: "service_3",
     name: "Premium",
-    description:
-      "Pour les projets complexes nécessitant une attention particulière",
+    description: "Pour les projets nécessitant plus de fonctionnalités",
     features: [
-      "Développement web full-stack",
-      "Design personnalisé",
-      "Cycles de révision illimités",
+      "Développement front-end et back-end basique",
+      "Design responsive personnalisé",
+      "3 cycles de révision",
       "Intégration API avancée",
-      "Optimisation des performances",
-      "Support prioritaire 24/7",
+      "Support prioritaire par email, Discord et téléphone",
     ],
-    dailyRate: 350,
-    projectRate: 8750,
-    estimatedDays: 25,
+    dailyRate: 250,
+    projectRate: 5000,
+    estimatedDays: "À définir",
     isMostPopular: false,
   },
 ];
@@ -87,21 +85,33 @@ export default function FreelanceServicesSection() {
           </h4>
 
           <h2 className="text-4xl font-bold tracking-tight text-black dark:text-white sm:text-6xl">
-            Services de Développement Freelance
+            Services de Développement Freelance Junior
           </h2>
 
           <p className="mt-6 text-lgsm:text-xl leading-8 text-black/80 dark:text-white">
             Choisissez l'
             <u>
-              <strong>offre idéale</strong>
+              <strong>offre adaptée</strong>
             </u>{" "}
-            pour votre projet. Je propose des solutions flexibles pour répondre
-            à vos besoins de développement, que vous soyez une startup ou une
-            entreprise établie.
+            à votre projet. En tant que développeur junior, je propose des
+            solutions abordables pour répondre à vos besoins de développement
+            web.
           </p>
         </div>
 
-        <div className="flex w-full items-center justify-center space-x-2">
+        <div className="bg-purple-100 border-l-4 border-purple-500 text-purple-700 p-4 mb-6 rounded-md max-w-screen-md mx-auto">
+          <p className="font-bold flex items-center gap-2">
+            <TriangleAlert className="h-5 w-5" />
+            Note importante :
+          </p>
+          <p className="text-sm">
+            Actuellement, seuls les tarifs journaliers sont applicables. Les
+            forfaits projets sont donnés à titre indicatif et ne sont pas encore
+            disponibles.
+          </p>
+        </div>
+
+        <div className="flex w-full items-center justify-center space-x-2 mb-6">
           <Switch
             id="interval"
             onCheckedChange={(checked) => {
@@ -116,14 +126,14 @@ export default function FreelanceServicesSection() {
           </span>
         </div>
 
-        <div className="mx-auto grid w-full justify-center sm:grid-cols-2 lg:grid-cols-3 flex-col gap-4">
+        <div className="mx-auto grid w-full justify-center sm:grid-cols-2 lg:grid-cols-3 flex-col gap-6">
           {freelanceServices.map((service, idx) => (
             <div
               key={service.id}
               className={cn(
                 "relative flex max-w-[400px] flex-col gap-8 rounded-2xl border p-4 text-black dark:text-white overflow-hidden",
                 {
-                  "border-2 border-foreground dark:border-foreground":
+                  "border-2 border-foreground scale-[1.08] ":
                     service.isMostPopular,
                 }
               )}
@@ -169,11 +179,9 @@ export default function FreelanceServicesSection() {
                     / {interval === "day" ? "jour" : "projet"}
                   </span>
                 </span>
-                {interval === "project" && (
-                  <span className="text-sm text-black/70 dark:text-white/70">
-                    Durée estimée : {service.estimatedDays} jours
-                  </span>
-                )}
+                <span className="text-sm text-black/70 dark:text-white/70">
+                  Durée estimée : {service.estimatedDays}
+                </span>
               </motion.div>
 
               <Button

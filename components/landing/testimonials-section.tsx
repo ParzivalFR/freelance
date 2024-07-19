@@ -2,8 +2,6 @@ import Marquee from "@/components/magicui/marquee";
 import { cn } from "@/lib/utils";
 import { StarFilledIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
-import { SphereMask } from "../magicui/sphere-mask";
-import { CircleLight } from "../magicui/circle-light";
 
 export const Highlight = ({
   children,
@@ -263,7 +261,7 @@ const testimonials = [
   },
 ];
 
-export function SocialProofTestimonials() {
+export default function SocialProofTestimonials() {
   return (
     <section id="testimonials">
       <div className="py-14">
@@ -272,8 +270,13 @@ export function SocialProofTestimonials() {
             Témoignages
           </h3>
           <h2 className="text-center text-4xl font-bold text-neutral-900 dark:text-neutral-100 mt-2">
-            Ce que disent nos clients satisfaits de nous 🌟
+            Des projets réussis, des clients satisfaits
           </h2>
+          <p className="text-center text-lg text-neutral-500 dark:text-neutral-400 mt-4">
+            En tant que développeur freelance passionné, je m'efforce de fournir
+            un travail de qualité et une expérience client exceptionnelle. Voici
+            quelques retours de mes clients récents.
+          </p>
           <div className="relative mt-6 max-h-[650px] overflow-hidden">
             <div className="gap-4 md:columns-2 xl:columns-3 2xl:columns-4">
               {Array(Math.ceil(testimonials.length / 3))

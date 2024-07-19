@@ -5,6 +5,7 @@ import TextShimmer from "@/components/magicui/text-shimmer";
 import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { useInView } from "framer-motion";
+import { Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useRef } from "react";
@@ -23,15 +24,15 @@ export default function HeroSection() {
       id="hero"
       className="relative mx-auto mt-32 max-w-[80rem] px-6 text-center md:px-8"
     >
-      <div className="backdrop-filter-[12px] inline-flex h-7 items-center justify-between rounded-full border border-white/5 bg-white/10 px-3 text-[10px] sm:text-xs text-white dark:text-black transition-all ease-in hover:cursor-pointer hover:bg-white/20 group gap-1 translate-y-[-1rem] animate-fade-in opacity-0">
+      <div className="backdrop-filter-[12px] inline-flex h-7 items-center justify-between rounded-full border border-primary/10 bg-foreground/5 px-3 text-[10px] sm:text-xs text-primary dark:text-foreground transition-all ease-in hover:cursor-pointer hover:bg-primary/20 group gap-1 translate-y-[-1rem] animate-fade-in opacity-0">
         <TextShimmer className="inline-flex items-center justify-center">
-          <span>✨ Votre satisfaction est notre principal objectif</span>{" "}
+          <Sparkles className="mr-1 size-4 text-yellow-400 animate-pulse" />
+          <span>Votre satisfaction est notre principal objectif</span>
           <ArrowRightIcon className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
         </TextShimmer>
       </div>
       <h1 className="bg-gradient-to-br dark:from-white from-black from-30% dark:to-white/40 to-black/40 bg-clip-text py-6 text-5xl font-medium leading-none tracking-tighter text-transparent text-balance sm:text-6xl md:text-7xl lg:text-8xl translate-y-[-1rem] animate-fade-in opacity-0 [--animation-delay:200ms]">
-        OASIS est la solution
-        <br className="hidden md:block" /> pour vos projets web.
+        Propulsez votre présence web avec OASIS.
       </h1>
       <p className="mb-12 text-lg tracking-tight text-gray-400 md:text-xl text-balance translate-y-[-1rem] animate-fade-in opacity-0 [--animation-delay:400ms]">
         Des solutions sur mesure pour vos projets web,
@@ -42,7 +43,7 @@ export default function HeroSection() {
         className="ring-4 ring-primary/20 hover:bg-foreground/70 duration-300 translate-y-[-1rem] animate-fade-in gap-1 rounded-lg text-white dark:text-black opacity-0 ease-in-out [--animation-delay:600ms]"
         onClick={handleRedirect}
       >
-        <span>Demander un devis</span>
+        <span>Lancer votre projet</span>
         <ArrowRightIcon className="ml-1 size-4 transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
       </Button>
       <div
