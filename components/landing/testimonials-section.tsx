@@ -1,6 +1,5 @@
 "use client";
 
-import Marquee from "@/components/magicui/marquee";
 import { cn } from "@/lib/utils";
 import { useOpenModal } from "@/zustand/state-form-testimonials";
 import { StarFilledIcon } from "@radix-ui/react-icons";
@@ -9,8 +8,8 @@ import Image from "next/image";
 import useSWR from "swr";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
-import Modal from "./modal";
 import AddTestimonialsForm from "./form-add-testimonials";
+import Modal from "./modal";
 
 export interface TestimonialCardProps {
   name: string;
@@ -102,59 +101,15 @@ export default function SocialProofTestimonials() {
             quelques retours de mes clients récents.
           </p>
           <div className="relative mt-6 max-h-[650px] overflow-hidden">
-            <div className="gap-4 mx-auto sm:columns-2 md:columns-3 xl:columns-5">
-              {isLoading || testimonials.length === 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
+              {isLoading ? (
                 Array(5)
                   .fill(0)
-                  .map((_, i) => (
-                    <Marquee
-                      vertical
-                      key={i}
-                      className={cn({
-                        "[--duration:60s]": i === 1,
-                        "[--duration:30s]": i === 2,
-                        "[--duration:70s]": i === 3,
-                      })}
-                    >
-                      {Array(3)
-                        .fill(0)
-                        .map((_, j) => (
-                          <SkeletonTestimonialCard key={`skeleton-${i}-${j}`} />
-                        ))}
-                    </Marquee>
-                  ))
+                  .map((_, i) => <SkeletonTestimonialCard key={i} />)
               ) : testimonials && testimonials.length > 0 ? (
-                // Calculer le nombre de colonnes en fonction du nombre total de témoignages
-                Array(Math.min(6, Math.ceil(testimonials.length / 3)))
-                  .fill(0)
-                  .map((_, i) => (
-                    <Marquee
-                      vertical
-                      key={i}
-                      className={cn({
-                        "[--duration:60s]": i === 1,
-                        "[--duration:30s]": i === 2,
-                        "[--duration:70s]": i === 3,
-                      })}
-                    >
-                      {testimonials
-                        .filter(
-                          (_: TestimonialCardProps, index: number) =>
-                            index %
-                              Math.min(
-                                5,
-                                Math.ceil(testimonials.length / 3)
-                              ) ===
-                            i
-                        )
-                        .map((testimonial: TestimonialCardProps) => (
-                          <TestimonialCard
-                            key={testimonial.id}
-                            {...testimonial}
-                          />
-                        ))}
-                    </Marquee>
-                  ))
+                testimonials.map((testimonial: TestimonialCardProps) => (
+                  <TestimonialCard key={testimonial.id} {...testimonial} />
+                ))
               ) : (
                 // Afficher un message s'il n'y a pas de témoignages
                 <div className="text-center text-lg text-neutral-500 dark:text-neutral-400">
