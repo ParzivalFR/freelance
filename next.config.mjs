@@ -19,6 +19,12 @@ const nextConfig = {
         hostname: "randomuser.me",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "syuntuolmcrumibzzxrl.supabase.co",
+        port: "",
+        pathname: "/storage/v1/object/public/**",
+      },
     ],
   },
 };
