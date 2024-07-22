@@ -103,7 +103,7 @@ export default function SocialProofTestimonials() {
           </p>
           <div className="relative mt-6 max-h-[650px] overflow-hidden">
             <div className="gap-4 mx-auto sm:columns-2 md:columns-3 xl:columns-5">
-              {isLoading ? (
+              {isLoading || testimonials.length === 0 ? (
                 Array(5)
                   .fill(0)
                   .map((_, i) => (
