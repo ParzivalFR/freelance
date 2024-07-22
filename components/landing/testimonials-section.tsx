@@ -9,7 +9,7 @@ import Image from "next/image";
 import useSWR from "swr";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
-import ModalTest from "./modal";
+import Modal from "./modal";
 import AddTestimonialsForm from "./form-add-testimonials";
 
 export interface TestimonialCardProps {
@@ -167,9 +167,12 @@ export default function SocialProofTestimonials() {
           </div>
           <div className="flex justify-center items-center">
             <Button onClick={() => toggleModal()}>Donner un avis</Button>
-            <ModalTest>
+            <Modal
+              title="Ajouter un témoignage"
+              subtitle="Merci pour votre confiance et j'espère que vous avez apprécié le travail fourni."
+            >
               <AddTestimonialsForm />
-            </ModalTest>
+            </Modal>
           </div>
         </div>
       </div>

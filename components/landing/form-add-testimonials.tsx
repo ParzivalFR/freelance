@@ -6,6 +6,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { mutate } from "swr";
 import { z } from "zod";
+import InputFile from "../input-file";
+import Loader from "../loader";
 import { Button } from "../ui/button";
 import {
   Form,
@@ -27,13 +29,7 @@ const TestimonialSchema = z.object({
     .string()
     .min(2, "Le rôle doit contenir au moins 2 caractères")
     .max(50, "Le rôle ne doit pas dépasser 50 caractères"),
-  img: z
-    .instanceof(File)
-    .refine(
-      (file) => file.size < 5000000,
-      "La taille du fichier ne doit pas dépasser 10Mo"
-    )
-    .optional(),
+  img: z.any().optional(),
   review: z
     .string()
     .min(10, "Le témoignage doit contenir au moins 10 caractères"),
@@ -114,13 +110,13 @@ export default function AddTestimonialsForm() {
         setIsSubmitting(false);
       }
     },
-    []
+    [form, uploadImage]
   );
 
   return (
     <Form {...form}>
       <form
-        className="flex flex-col gap-4"
+        className="flex flex-col gap-2"
         onSubmit={(event) => {
           event.preventDefault();
           form.handleSubmit(onSubmit)();
@@ -131,7 +127,9 @@ export default function AddTestimonialsForm() {
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Nom</FormLabel>
+              <FormLabel>
+                <span className="text-red-500">*</span> Nom / Prénom
+              </FormLabel>
               <FormControl>
                 <Input placeholder="John Doe" {...field} />
               </FormControl>
@@ -144,7 +142,9 @@ export default function AddTestimonialsForm() {
           name="role"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Rôle</FormLabel>
+              <FormLabel>
+                <span className="text-red-500">*</span> Rôle
+              </FormLabel>
               <FormControl>
                 <Input placeholder="CEO" {...field} />
               </FormControl>
@@ -157,14 +157,9 @@ export default function AddTestimonialsForm() {
           name="img"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Image</FormLabel>
+              <FormLabel>Avatar</FormLabel>
               <FormControl>
-                <Input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => field.onChange(e.target.files?.[0])}
-                  required={false}
-                />
+                <InputFile onChange={(file) => field.onChange(file)} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -175,7 +170,9 @@ export default function AddTestimonialsForm() {
           name="review"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Témoignage</FormLabel>
+              <FormLabel>
+                <span className="text-red-500">*</span> Témoignage
+              </FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Cet entretien a été très intéressant et j'ai apprécié le travail de l'équipe."
@@ -186,9 +183,21 @@ export default function AddTestimonialsForm() {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? "Envoi en cours..." : "Envoyer"}
-        </Button>
+        <div className="flex justify-end mt-2">
+          <Button
+            type="submit"
+            className="flex items-center gap-2 ring-4 ring-primary/20 hover:bg-foreground/70 duration-300 ease-in-out"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <Loader /> Envoi en cours...
+              </>
+            ) : (
+              "Envoyer"
+            )}
+          </Button>
+        </div>
       </form>
     </Form>
   );
