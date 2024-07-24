@@ -27,12 +27,12 @@ export default function HeroSection() {
       <div className="backdrop-filter-[12px] inline-flex h-7 items-center justify-between rounded-full border border-primary/10 bg-foreground/5 px-3 text-[10px] sm:text-xs text-primary dark:text-foreground transition-all ease-in hover:cursor-pointer hover:bg-primary/20 group gap-1 translate-y-[-1rem] animate-fade-in opacity-0">
         <TextShimmer className="inline-flex items-center justify-center">
           <Sparkles className="mr-1 size-4 text-yellow-400 animate-pulse" />
-          <span>Votre satisfaction est notre principal objectif</span>
+          <span>Votre satisfaction est mon principal objectif</span>
           <ArrowRightIcon className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
         </TextShimmer>
       </div>
       <h1 className="bg-gradient-to-br dark:from-white from-black from-30% dark:to-white/40 to-black/40 bg-clip-text py-6 text-5xl font-medium leading-none tracking-tighter text-transparent text-balance sm:text-6xl md:text-7xl lg:text-8xl translate-y-[-1rem] animate-fade-in opacity-0 [--animation-delay:200ms]">
-        Propulsez votre présence web avec OASIS.
+        Propulsez votre présence sur le web.
       </h1>
       <p className="mb-12 text-lg tracking-tight text-gray-400 md:text-xl text-balance translate-y-[-1rem] animate-fade-in opacity-0 [--animation-delay:400ms]">
         Des solutions sur mesure pour vos projets web,

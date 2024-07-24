@@ -11,7 +11,7 @@ const inter = Inter({
   variable: "--font-sans",
 });
 export const metadata: Metadata = {
-  title: "OASIS Agency",
+  title: "Gael Richard - Développeur Freelance",
   description:
     "OASIS Agency is a digital agency that helps businesses grow online.",
 };
@@ -22,7 +22,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="fr" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
       </head>

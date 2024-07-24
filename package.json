@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
+    "@lordicon/react": "^1.6.0",
     "@prisma/client": "^5.17.0",
     "@radix-ui/react-accordion": "^1.2.0",
     "@radix-ui/react-avatar": "^1.1.0",
@@ -25,6 +26,7 @@
     "@radix-ui/react-toast": "^1.2.1",
     "@radix-ui/react-tooltip": "^1.1.2",
     "@react-pdf/renderer": "^3.4.4",
+    "@supabase/ssr": "^0.4.0",
     "@supabase/supabase-js": "^2.44.4",
     "@types/nodemailer": "^6.4.15",
     "@types/react-dropzone": "^5.1.0",
@@ -32,6 +34,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "framer-motion": "^11.2.13",
+    "lottie-web": "^5.12.2",
     "lucide-react": "^0.358.0",
     "next": "14.2.0",
     "next-pwa": "^5.6.0",

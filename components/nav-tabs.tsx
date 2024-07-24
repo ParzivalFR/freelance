@@ -1,10 +1,10 @@
+import { MenuItemTypes } from "@/types/MenuItemsTypes";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { useState } from "react";
-import { MenuItem } from "./site-header";
 
 interface TabProps {
-  item: MenuItem;
+  item: MenuItemTypes;
   selected: boolean;
   setSelected: (href: string) => void;
 }
@@ -35,7 +35,7 @@ const Tab = ({ item, selected, setSelected }: TabProps) => {
 };
 
 interface TabsProps {
-  menuItems: MenuItem[];
+  menuItems: MenuItemTypes[];
 }
 
 export const Tabs = ({ menuItems }: TabsProps) => {

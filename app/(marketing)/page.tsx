@@ -6,11 +6,13 @@ import PricingSection from "@/components/landing/pricing-section";
 import { Testimonials } from "@/components/landing/reviews";
 import { CircleLight } from "@/components/magicui/circle-light";
 import Particles from "@/components/magicui/particles";
+import SiteNav from "@/components/site-nav";
 
 export default async function Page() {
   return (
     <>
       <HeroSection />
+      <SiteNav />
       {/* <SocialProofTestimonials /> */}
       <Testimonials />
       <PricingSection />

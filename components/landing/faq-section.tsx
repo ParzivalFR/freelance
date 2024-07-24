@@ -13,13 +13,13 @@ const faqs = [
     section: "General",
     qa: [
       {
-        question: "Qu'est que OASIS ?",
+        question: "Qui suis-je ?",
         answer: (
           <span>
-            OASIS est une agence de développement web qui propose des solutions
-            sur mesure pour vos projets web, développées avec passion et
-            expertise avec une attention particulière pour l'expérience
-            utilisateur.
+            Après 10 années de Boulangerie, j'ai été déclaré inapte suite à une
+            allergie aux farines. Je me suis donc immédiatemment reconverti dans
+            le Développement Web. J'ai suivi une formation, et me voila prêt à
+            vous aider dans vos projets web !
           </span>
         ),
       },
@@ -38,11 +38,11 @@ const faqs = [
     section: "Support",
     qa: [
       {
-        question: "Comment puis-je obtenir de l'aide avec OASIS ?",
+        question: "Comment puis-je obtenir de l'aide ?",
         answer: (
           <span>
             Si vous avez besoin d'aide ou si vous avez des questions, n'hésitez
-            pas à nous contacter. Notre équipe est là pour vous aider.
+            pas à me contacter. Je suis là pour vous aider.
           </span>
         ),
       },
@@ -55,7 +55,7 @@ const faqs = [
         question: "Les devis sont-ils gratuits ?",
         answer: (
           <span>
-            Oui, les devis sont gratuits et sans engagement. Contactez-nous pour
+            Oui, les devis sont gratuits et sans engagement. Contactez-moi pour
             obtenir un devis personnalisé pour votre projet.
           </span>
         ),
@@ -64,7 +64,8 @@ const faqs = [
         question: "Quels modes de paiement acceptez-vous ?",
         answer: (
           <span>
-            Nous acceptons les paiements par carte de crédit et PayPal.
+            J'accepte les paiements par Carte Bancaire, Virement Bancaire et
+            PayPal. Si vous avez d'autre préférence, on peut en discuter.
           </span>
         ),
       },
@@ -72,8 +73,8 @@ const faqs = [
         question: "Les paiements en plusieurs fois sont-ils possibles ?",
         answer: (
           <span>
-            Oui, nous proposons des paiements en plusieurs fois pour les projets
-            importants. Contactez-nous pour en savoir plus.
+            Je n'ai pas mis en place le système de paiement en plusieurs fois
+            mais nous pouvons en discuter ensemble.
           </span>
         ),
       },
@@ -81,8 +82,8 @@ const faqs = [
         question: "Les paiements sont-ils sécurisés ?",
         answer: (
           <span>
-            Oui, tous les paiements effectués sur notre site sont sécurisés
-            grâce à notre partenaire Stripe.
+            Oui, les paiements sont sécurisés par Stripe et PayPal. Vos
+            informations bancaires sont cryptées et sécurisées.
           </span>
         ),
       },
@@ -111,10 +112,16 @@ export function FAQ() {
             <h2 className="text-4xl font-bold tracking-tight text-black dark:text-white sm:text-6xl">
               Questions fréquentes
             </h2>
-            <p className="mt-6 text-xl leading-8 text-black/80 dark:text-white">
+            {/* <p className="mt-6 text-xl leading-8 text-black/80 dark:text-white">
               Consultez notre FAQ pour trouver les réponses à vos questions les
               plus courantes sur OASIS. Si vous ne trouvez pas ce que vous
               cherchez, n'hésitez pas à nous contacter.
+            </p> */}
+            <p className="mt-6 text-xl leading-8 text-black/80 dark:text-white">
+              Consultez la FAQ pour trouver les réponses à vos questions les
+              plus courantes. Si vous ne trouvez pas ce que vous cherchez,
+              n'hésitez pas à me contacter, je vous répondrais dans les
+              meilleurs délais.
             </p>
           </div>
           <div className="container mx-auto my-12 max-w-screen-md space-y-12 px-4">
@@ -150,7 +157,7 @@ export function FAQ() {
               href="#contact"
               className="underline text-primary hover:text-primary-dark transition-colors"
             >
-              Contactez-nous !
+              Contactez-moi !
             </Link>
           </h4>
         </div>

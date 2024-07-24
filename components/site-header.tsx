@@ -16,14 +16,11 @@ import Link from "next/link";
 import { useEffect, useId, useState } from "react";
 import Blob from "./Blob";
 import { ThemeToggle } from "./theme-toggle";
+import Image from "next/image";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { MenuItemTypes } from "@/types/MenuItemsTypes";
 
-export interface MenuItem {
-  label: string;
-  href: string;
-  icon: () => JSX.Element;
-}
-
-const menuItem: MenuItem[] = [
+export const menuItem: MenuItemTypes[] = [
   {
     label: "Accueil",
     href: "/",
@@ -122,7 +119,12 @@ export function SiteHeader() {
     <>
       <header className="fixed left-0 top-0 z-50 w-full translate-y-[-1rem] animate-fade-in border-b opacity-0 backdrop-blur-[12px] [--animation-delay:600ms]">
         <div className="relative container flex h-[3.5rem] items-center justify-between px-2">
-          <Blob className="size-12" />
+          <Link href="/">
+            <Avatar>
+              <AvatarImage src="/logo-todo.png" />
+              <AvatarFallback>TO</AvatarFallback>
+            </Avatar>
+          </Link>
           <div className="hidden md:flex h-full items-center">
             <Link className="mr-6 text-sm" href="/signin">
               Connexion
@@ -167,7 +169,9 @@ export function SiteHeader() {
           )}
         >
           <div className="container flex h-[3.5rem] py-10 items-center justify-between px-2">
-            <Blob className="size-12" />
+            <Link href="/" className="px-4">
+              <Image src="/logo-todo.png" width={60} height={60} alt="logo" />
+            </Link>
             <Button
               variant="ghost"
               onClick={() => setHamburgerMenuIsOpen((open) => !open)}

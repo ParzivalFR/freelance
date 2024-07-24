@@ -2,8 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 // import { useState } from "react";
-import { useRef } from "react";
-import { useForm } from "react-hook-form";
+import { useRef, useState } from "react";
+import { set, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { BorderBeam } from "../magicui/border-beam";
@@ -18,6 +18,7 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
+import Loader from "../loader";
 
 const formSchema = z.object({
   firstName: z
@@ -37,6 +38,7 @@ const formSchema = z.object({
 
 export default function ContactForm() {
   const ref = useRef<HTMLFormElement>(null);
+  const [submitting, setSubmitting] = useState(false);
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
@@ -49,6 +51,7 @@ export default function ContactForm() {
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
+    setSubmitting(true);
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
@@ -59,8 +62,9 @@ export default function ContactForm() {
       });
 
       if (response.ok) {
-        form.reset();
+        ref.current?.reset();
         toast.success("Votre message a bien été envoyé !");
+        setSubmitting(false);
       } else {
         toast.error("Une erreur s'est produite. Veuillez réessayer.");
       }
@@ -77,11 +81,11 @@ export default function ContactForm() {
             Contact
           </h4>
           <h2 className="text-4xl font-bold tracking-tight text-black dark:text-white sm:text-6xl">
-            Contactez-nous
+            Contactez-moi
           </h2>
           <p className="mt-6 text-xl leading-8 text-black/80 dark:text-white">
             Vous avez une question ou une demande particulière ? N'hésitez pas à
-            nous contacter en remplissant le formulaire ci-dessous.
+            me contacter en remplissant le formulaire ci-dessous.
           </p>
         </div>
         <div className="relative flex w-full flex-col items-center justify-center mx-auto max-w-xl my-12 bg-secondary/20 p-8 rounded-md">
@@ -99,7 +103,9 @@ export default function ContactForm() {
                     name="firstName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Prénom</FormLabel>
+                        <FormLabel>
+                          <span className="text-red-500">*</span> Prénom
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="John" {...field} />
                         </FormControl>
@@ -114,7 +120,9 @@ export default function ContactForm() {
                     name="lastName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Nom</FormLabel>
+                        <FormLabel>
+                          <span className="text-red-500">*</span> Nom
+                        </FormLabel>
                         <FormControl>
                           <Input placeholder="Doe" {...field} />
                         </FormControl>
@@ -129,7 +137,9 @@ export default function ContactForm() {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>
+                      <span className="text-red-500">*</span> Email
+                    </FormLabel>
                     <FormControl>
                       <Input placeholder="Email" {...field} />
                     </FormControl>
@@ -142,7 +152,9 @@ export default function ContactForm() {
                 name="message"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Message</FormLabel>
+                    <FormLabel>
+                      <span className="text-red-500">*</span> Message
+                    </FormLabel>
                     <FormControl>
                       <Textarea placeholder="Votre message ..." {...field} />
                     </FormControl>
@@ -151,12 +163,28 @@ export default function ContactForm() {
                 )}
               />
               <div className="flex items-center justify-end">
-                <Button
-                  type="submit"
-                  className="ring-4 ring-primary/20 transition hover:bg-foreground/70 duration-300"
-                >
-                  Envoyer
-                </Button>
+                {submitting ? (
+                  <Button
+                    type="button"
+                    className="space-x-2 ring-4 ring-primary/20 transition hover:bg-foreground/70 duration-300"
+                  >
+                    <Loader />
+                    <span>Envoi en cours...</span>
+                  </Button>
+                ) : (
+                  <Button
+                    type="submit"
+                    className="ring-4 ring-primary/20 transition hover:bg-foreground/70 duration-300"
+                  >
+                    Envoyer
+                  </Button>
+                )}
+              </div>
+              <div className="text-muted-foreground text-xs text-center italic">
+                <span className="text-red-500">*</span> Champs obligatoires pour
+                le traitement de votre demande. Les informations collectées sont
+                à usage exclusif et ne seront en aucun cas transmises à des
+                tiers.
               </div>
             </form>
           </Form>

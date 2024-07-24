@@ -1,31 +1,36 @@
-import { DiscordLogoIcon, TwitterLogoIcon } from "@radix-ui/react-icons";
+import {
+  DiscordLogoIcon,
+  LinkedInLogoIcon,
+  TwitterLogoIcon,
+} from "@radix-ui/react-icons";
+import Image from "next/image";
 import Link from "next/link";
-import Blob from "./Blob";
+import { SiMalt } from "react-icons/si";
 
 const footerNavs = [
   {
-    label: "Product",
+    label: "Produits",
     items: [
       {
-        href: "/",
-        name: "Email Collection",
+        href: "#testimonials",
+        name: "Témoignages",
       },
       {
-        href: "/pricing",
-        name: "Pricing",
+        href: "#pricing",
+        name: "Tarifs",
       },
       {
-        href: "/faq",
+        href: "#faq",
         name: "FAQ",
       },
     ],
   },
 
   {
-    label: "Community",
+    label: "Contact",
     items: [
       {
-        href: "/",
+        href: "https://discord.com/users/1017721923259613234",
         name: "Discord",
       },
       {
@@ -33,22 +38,30 @@ const footerNavs = [
         name: "Twitter",
       },
       {
-        href: "mailto:hello@chatcollect.com",
-        name: "Email",
+        href: "#contact",
+        name: "Formulaire",
+      },
+      {
+        href: "https://www.linkedin.com/in/ga%C3%ABl-richard-680b8a263/",
+        name: "LinkedIn",
+      },
+      {
+        href: "",
+        name: "Malt",
       },
     ],
   },
   {
-    label: "Legal",
+    label: "Légal",
     items: [
       {
         href: "/terms",
-        name: "Terms",
+        name: "Conditions d'utilisation",
       },
 
       {
         href: "/privacy",
-        name: "Privacy",
+        name: "Politique de confidentialité",
       },
     ],
   },
@@ -56,7 +69,7 @@ const footerNavs = [
 
 const footerSocials = [
   {
-    href: "",
+    href: "https://discord.com/users/1017721923259613234",
     name: "Discord",
     icon: <DiscordLogoIcon className="h-4 w-4" />,
   },
@@ -64,6 +77,16 @@ const footerSocials = [
     href: "",
     name: "Twitter",
     icon: <TwitterLogoIcon className="h-4 w-4" />,
+  },
+  {
+    href: "https://www.linkedin.com/in/ga%C3%ABl-richard-680b8a263/",
+    name: "LinkedIn",
+    icon: <LinkedInLogoIcon className="h-4 w-4" />,
+  },
+  {
+    href: "",
+    name: "Malt",
+    icon: <SiMalt className="text-4xl" />,
   },
 ];
 
@@ -73,12 +96,9 @@ export function SiteFooter() {
       <div className="mx-auto w-full max-w-screen-xl xl:pb-2">
         <div className="md:flex md:justify-between px-8 p-4 py-16 sm:pb-16 gap-4">
           <div className="mb-12 flex-col items-center flex gap-4">
-            {/* <Link
-              href="/"
-              className="flex items-center gap-2 self-center sm:self-start text-4xl font-extrabold whitespace-nowrap dark:text-primary"
-            > */}
-            <Blob className="size-24" />
-            {/* </Link> */}
+            <Link href="/" className="flex items-center justify-center">
+              <Image src="/logo-todo.png" width={80} height={80} alt="logo" />
+            </Link>
             <p className="max-w-xs w-full self-center text-center text-primary/70">
               Partenaire de votre satisfaction.
             </p>
@@ -86,7 +106,7 @@ export function SiteFooter() {
           <div className="grid grid-cols-2 place-items-center sm:place-items-start gap-10 sm:grid-cols-3">
             {footerNavs.map((nav) => (
               <div key={nav.label}>
-                <h2 className="mb-4 text-sm text-center sm:text-start tracking-tighter font-medium text-primary/80 uppercase dark:text-primary">
+                <h2 className="mb-4 text-sm text-center tracking-tighter font-medium text-primary/80 uppercase dark:text-primary">
                   {nav.label}
                 </h2>
                 <ul className="flex flex-col gap-1 items-center">
@@ -107,7 +127,7 @@ export function SiteFooter() {
         </div>
 
         <div className="flex flex-col sm:flex-row sm:flex sm:items-center sm:justify-between rounded-md border-neutral-700/20 py-4 px-4 sm:px-8 gap-2">
-          <div className="flex space-x-5 justify-center sm:justify-start sm:mt-0">
+          <div className="flex space-x-5 items-center justify-center sm:justify-start sm:mt-0">
             {footerSocials.map((social) => (
               <Link
                 key={social.name}
@@ -122,7 +142,7 @@ export function SiteFooter() {
           <div className="text-xs sm:text-sm text-gray-500 text-center dark:text-gray-400">
             Copyright © {new Date().getFullYear()}{" "}
             <Link href="/" className="cursor-pointer font-extrabold">
-              OASIS.
+              Gael RICHARD.
             </Link>{" "}
             Tous droits réservés.
           </div>

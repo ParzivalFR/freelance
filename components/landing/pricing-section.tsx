@@ -1,11 +1,12 @@
 "use client";
 
+import Loader from "@/components/loader";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { motion } from "framer-motion";
-import { Loader, TriangleAlert } from "lucide-react";
+import { TriangleAlert } from "lucide-react";
 import { useState } from "react";
 
 type Interval = "day" | "project";
@@ -85,7 +86,7 @@ export default function FreelanceServicesSection() {
           </h4>
 
           <h2 className="text-4xl font-bold tracking-tight text-black dark:text-white sm:text-6xl">
-            Services de Développement Freelance Junior
+            Services de Développement Freelance
           </h2>
 
           <p className="mt-6 text-lgsm:text-xl leading-8 text-black/80 dark:text-white">
@@ -93,23 +94,12 @@ export default function FreelanceServicesSection() {
             <u>
               <strong>offre adaptée</strong>
             </u>{" "}
-            à votre projet. En tant que développeur junior, je propose des
-            solutions abordables pour répondre à vos besoins de développement
-            web.
+            à votre projet. En tant que développeur, je propose des solutions
+            abordables pour répondre à vos besoins de développement web.
           </p>
         </div>
 
-        <div className="bg-purple-100 border-l-4 border-purple-500 text-purple-700 p-4 mb-6 rounded-md max-w-screen-md mx-auto">
-          <p className="font-bold flex items-center gap-2">
-            <TriangleAlert className="h-5 w-5" />
-            Note importante :
-          </p>
-          <p className="text-sm">
-            Actuellement, seuls les tarifs journaliers sont applicables. Les
-            forfaits projets sont donnés à titre indicatif et ne sont pas encore
-            disponibles.
-          </p>
-        </div>
+        <AlerteNote />
 
         <div className="flex w-full items-center justify-center space-x-2 mb-6">
           <Switch
@@ -198,9 +188,7 @@ export default function FreelanceServicesSection() {
                 )}
 
                 {isLoading && id === service.id && <p>Traitement en cours</p>}
-                {isLoading && id === service.id && (
-                  <Loader className="mr-2 h-4 w-4 animate-spin" />
-                )}
+                {isLoading && id === service.id && <Loader />}
               </Button>
 
               <hr className="m-0 h-px w-full border-none bg-gradient-to-r from-neutral-200/0 via-neutral-500/30 to-neutral-200/0" />
@@ -224,3 +212,19 @@ export default function FreelanceServicesSection() {
     </section>
   );
 }
+
+const AlerteNote = () => {
+  return (
+    <div className="bg-purple-100 border-l-4 border-purple-500 text-purple-700 p-4 mb-6 rounded-md max-w-screen-md mx-auto">
+      <p className="font-bold flex items-center gap-2">
+        <TriangleAlert className="h-5 w-5" />
+        Note importante :
+      </p>
+      <p className="text-sm">
+        Actuellement, seuls les tarifs journaliers sont applicables. Les
+        forfaits projets sont donnés à titre indicatif et ne sont pas encore
+        disponibles.
+      </p>
+    </div>
+  );
+};
