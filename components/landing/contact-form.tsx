@@ -81,7 +81,7 @@ export default function ContactForm() {
             Contact
           </h4>
           <h2 className="text-4xl font-bold tracking-tight text-black dark:text-white sm:text-6xl">
-            Contactez-moi
+            Discutons ensemble
           </h2>
           <p className="mt-6 text-xl leading-8 text-black/80 dark:text-white">
             Vous avez une question ou une demande particulière ? N'hésitez pas à

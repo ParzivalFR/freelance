@@ -3,9 +3,9 @@ import {
   LinkedInLogoIcon,
   TwitterLogoIcon,
 } from "@radix-ui/react-icons";
-import Image from "next/image";
 import Link from "next/link";
 import { SiMalt } from "react-icons/si";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 const footerNavs = [
   {
@@ -97,24 +97,30 @@ export function SiteFooter() {
         <div className="md:flex md:justify-between px-8 p-4 py-16 sm:pb-16 gap-4">
           <div className="mb-12 flex-col items-center flex gap-4">
             <Link href="/" className="flex items-center justify-center">
-              <Image src="/logo-todo.png" width={80} height={80} alt="logo" />
+              <Avatar className="w-20 h-20">
+                <AvatarImage src="/photo-de-profil.jpg" />
+                <AvatarFallback>GR</AvatarFallback>
+              </Avatar>
             </Link>
             <p className="max-w-xs w-full self-center text-center text-primary/70">
               Partenaire de votre satisfaction.
             </p>
           </div>
-          <div className="grid grid-cols-2 place-items-center sm:place-items-start gap-10 sm:grid-cols-3">
+          <div className="grid grid-cols-2 place-items-start sm:place-items-start gap-10 sm:grid-cols-3">
             {footerNavs.map((nav) => (
-              <div key={nav.label}>
+              <div
+                key={nav.label}
+                className="flex flex-col gap-1 items-center w-full"
+              >
                 <h2 className="mb-4 text-sm text-center tracking-tighter font-medium text-primary/80 uppercase dark:text-primary">
                   {nav.label}
                 </h2>
-                <ul className="flex flex-col gap-1 items-center">
+                <ul className="flex flex-col gap-1 items-center text-center ">
                   {nav.items.map((item) => (
                     <li key={item.name}>
                       <Link
                         href={item.href}
-                        className="cursor-pointer text-primary/50 hover:text-primary duration-200 font-[450] text-sm"
+                        className="text-primary/50 hover:text-primary duration-200 font-[450] text-sm"
                       >
                         {item.name}
                       </Link>

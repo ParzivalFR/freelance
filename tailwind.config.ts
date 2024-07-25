@@ -126,6 +126,7 @@ const config = {
         "marquee-vertical": "marquee-vertical var(--duration) linear infinite",
       },
     },
+    boxShadow: { pxl: "rgba(100, 100, 100, 0.1) 0px 5px 15px 0px" },
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;
