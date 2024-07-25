@@ -112,11 +112,6 @@ export function FAQ() {
             <h2 className="text-4xl font-bold tracking-tight text-black dark:text-white sm:text-6xl">
               Questions fréquentes
             </h2>
-            {/* <p className="mt-6 text-xl leading-8 text-black/80 dark:text-white">
-              Consultez notre FAQ pour trouver les réponses à vos questions les
-              plus courantes sur OASIS. Si vous ne trouvez pas ce que vous
-              cherchez, n'hésitez pas à nous contacter.
-            </p> */}
             <p className="mt-6 text-xl leading-8 text-black/80 dark:text-white">
               Consultez la FAQ pour trouver les réponses à vos questions les
               plus courantes. Si vous ne trouvez pas ce que vous cherchez,
@@ -141,7 +136,7 @@ export function FAQ() {
                       value={faq.question}
                       className="w-full"
                     >
-                      <AccordionTrigger className="font-bold">
+                      <AccordionTrigger className="font-bold text-start">
                         {faq.question}
                       </AccordionTrigger>
                       <AccordionContent>{faq.answer}</AccordionContent>
