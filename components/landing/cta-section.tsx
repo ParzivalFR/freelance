@@ -86,7 +86,6 @@ const ReviewCard = ({
 export default function CallToActionSection() {
   const router = useRouter();
   const handleRedirect = () => {
-    // document.body.style.scrollBehavior = "smooth";
     router.push("#contact");
   };
 
