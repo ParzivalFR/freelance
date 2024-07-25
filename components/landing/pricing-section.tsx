@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { motion } from "framer-motion";
 import { TriangleAlert } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 type Interval = "day" | "project";
@@ -75,12 +76,14 @@ export default function FreelanceServicesSection() {
   const [interval, setInterval] = useState<Interval>("day");
   const [isLoading, setIsLoading] = useState(false);
   const [id, setId] = useState<string | null>(null);
+  const router = useRouter();
 
   const onHireClick = async (serviceId: string) => {
     setIsLoading(true);
     setId(serviceId);
     await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate a delay
     setIsLoading(false);
+    router.push("#contact");
   };
 
   return (
