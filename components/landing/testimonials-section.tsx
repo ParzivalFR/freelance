@@ -4,13 +4,13 @@ import Marquee from "@/components/magicui/marquee";
 import { cn } from "@/lib/utils";
 import { useOpenModal } from "@/zustand/state-form-testimonials";
 import { StarFilledIcon } from "@radix-ui/react-icons";
-import { UserIcon } from "lucide-react";
+import { Star, UserIcon } from "lucide-react";
 import Image from "next/image";
 import useSWR from "swr";
 import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
-import Modal from "./modal";
 import AddTestimonialsForm from "./form-add-testimonials";
+import Modal from "./modal";
 
 export interface TestimonialCardProps {
   name: string;
@@ -166,7 +166,10 @@ export default function SocialProofTestimonials() {
             <div className="pointer-events-none absolute inset-x-0 top-0 h-1/4 w-full bg-gradient-to-b from-background from-20%"></div>
           </div>
           <div className="flex justify-center items-center">
-            <Button onClick={() => toggleModal()}>Donner un avis</Button>
+            <Button onClick={() => toggleModal()}>
+              <Star className="mr-2 h-4 w-4" />
+              Donner un avis
+            </Button>
             <Modal
               title="Ajouter un témoignage"
               subtitle="Merci pour votre confiance et j'espère que vous avez apprécié le travail fourni."

@@ -3,9 +3,10 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 // import { useState } from "react";
 import { useRef, useState } from "react";
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import Loader from "../loader";
 import { BorderBeam } from "../magicui/border-beam";
 import { Button } from "../ui/button";
 import {
@@ -18,7 +19,6 @@ import {
 } from "../ui/form";
 import { Input } from "../ui/input";
 import { Textarea } from "../ui/textarea";
-import Loader from "../loader";
 
 const formSchema = z.object({
   firstName: z
@@ -180,7 +180,7 @@ export default function ContactForm() {
                   </Button>
                 )}
               </div>
-              <div className="text-muted-foreground text-xs text-center italic">
+              <div className="text-muted-foreground text-xs text-end italic">
                 <span className="text-red-500">*</span> Champs obligatoires pour
                 le traitement de votre demande. Les informations collectées sont
                 à usage exclusif et ne seront en aucun cas transmises à des

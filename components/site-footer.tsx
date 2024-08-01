@@ -1,3 +1,5 @@
+"use client";
+
 import {
   DiscordLogoIcon,
   LinkedInLogoIcon,
@@ -12,15 +14,15 @@ const footerNavs = [
     label: "Produits",
     items: [
       {
-        href: "#testimonials",
+        href: "/#testimonials",
         name: "Témoignages",
       },
       {
-        href: "#pricing",
+        href: "/#pricing",
         name: "Tarifs",
       },
       {
-        href: "#faq",
+        href: "/#faq",
         name: "FAQ",
       },
     ],
@@ -34,11 +36,11 @@ const footerNavs = [
         name: "Discord",
       },
       {
-        href: "/",
+        href: "https://twitter.com/gaelprodev",
         name: "Twitter",
       },
       {
-        href: "#contact",
+        href: "/#contact",
         name: "Formulaire",
       },
       {
@@ -46,7 +48,7 @@ const footerNavs = [
         name: "LinkedIn",
       },
       {
-        href: "",
+        href: "https://www.malt.fr/profile/gaelrichard44",
         name: "Malt",
       },
     ],
@@ -61,7 +63,7 @@ const footerNavs = [
 
       {
         href: "/privacy",
-        name: "Politique de confidentialité",
+        name: "Mentions légales",
       },
     ],
   },
@@ -74,7 +76,7 @@ const footerSocials = [
     icon: <DiscordLogoIcon className="h-4 w-4" />,
   },
   {
-    href: "",
+    href: "https://twitter.com/gaelprodev",
     name: "Twitter",
     icon: <TwitterLogoIcon className="h-4 w-4" />,
   },
@@ -84,7 +86,7 @@ const footerSocials = [
     icon: <LinkedInLogoIcon className="h-4 w-4" />,
   },
   {
-    href: "",
+    href: "https://www.malt.fr/profile/gaelrichard44",
     name: "Malt",
     icon: <SiMalt className="text-4xl" />,
   },
@@ -147,7 +149,7 @@ export function SiteFooter() {
           </div>
           <div className="text-xs sm:text-sm text-gray-500 text-center dark:text-gray-400">
             Copyright © {new Date().getFullYear()}{" "}
-            <Link href="/" className="cursor-pointer font-extrabold">
+            <Link href="#" className="font-extrabold">
               Gael RICHARD.
             </Link>{" "}
             Tous droits réservés.

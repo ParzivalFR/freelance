@@ -18,12 +18,6 @@ export default function NotFound() {
           Uh-oh!
         </p>
         <p className="mt-4 text-primary/30">We can't find that page.</p>
-        {/* <Link
-          href="#"
-          className="mt-6 inline-block rounded bg-indigo-600 px-5 py-3 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring"
-        >
-          Go Back Home
-        </Link> */}
         <Button className="mt-6" onClick={handleHome}>
           Go Back Home
         </Button>
