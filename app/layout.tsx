@@ -10,10 +10,48 @@ const inter = Inter({
   subsets: ["latin"],
   variable: "--font-sans",
 });
+
 export const metadata: Metadata = {
   title: "Gael Richard - Développeur Freelance",
   description:
-    "OASIS Agency is a digital agency that helps businesses grow online.",
+    "Propulsez votre présence sur le web. Des solutions sur mesure pour vos projets web, développées avec passion et expertise avec une attention particulière pour l'expérience utilisateur.",
+  openGraph: {
+    url: "https://freelance.gael-dev.fr",
+    type: "website",
+    title: "Gael Richard - Développeur Freelance",
+    description:
+      "Propulsez votre présence sur le web. Des solutions sur mesure pour vos projets web, développées avec passion et expertise avec une attention particulière pour l'expérience utilisateur.",
+    images: [
+      {
+        url: "https://opengraph.b-cdn.net/production/images/9e74f21c-cc19-4dd0-8fbd-ffbadd043fa0.png?token=qTXNMnubktox7svqm_mGBY5mnWAqCgDg4RCEIxCOi94&height=630&width=1200&expires=33258703199",
+        width: 1200,
+        height: 630,
+        alt: "Gael Richard - Développeur Freelance",
+      },
+    ],
+  },
+  twitter: {
+    creator: "@gaelprodev",
+    site: "@gaelprodev",
+    card: "summary_large_image",
+    title: "Gael Richard - Développeur Freelance",
+    description:
+      "Propulsez votre présence sur le web. Des solutions sur mesure pour vos projets web, développées avec passion et expertise avec une attention particulière pour l'expérience utilisateur.",
+    images: [
+      "https://opengraph.b-cdn.net/production/images/9e74f21c-cc19-4dd0-8fbd-ffbadd043fa0.png?token=qTXNMnubktox7svqm_mGBY5mnWAqCgDg4RCEIxCOi94&height=630&width=1200&expires=33258703199",
+    ],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default function RootLayout({
@@ -25,6 +63,7 @@ export default function RootLayout({
     <html lang="fr" suppressHydrationWarning>
       <head>
         <link rel="manifest" href="/manifest.json" />
+        <link rel="icon" href="/favicon.ico" />
       </head>
       <body
         className={cn(

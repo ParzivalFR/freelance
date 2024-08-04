@@ -4,9 +4,9 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "name": "OASIS",
-  "short_name": "OASIS",
-  "description": "OASIS, le partenaire web qui transforme vos id\u00e9es en r\u00e9alit\u00e9.",
+  "name": "Gael Richard - D\u00e9veloppeur Freelance",
+  "description": "Propulsez votre pr\u00e9sence sur le web. Des solutions sur mesure pour vos projets web, d\u00e9velopp\u00e9es avec passion et expertise avec une attention particuli\u00e8re pour l'exp\u00e9rience utilisateur.",
+  "short_name": "Gael Richard",
   "icons": [
     {
       "src": "/icon-192x192.png",
