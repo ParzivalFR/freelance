@@ -10,10 +10,10 @@ importers:
     dependencies:
       '@hookform/resolvers':
         specifier: ^3.9.0
-        version: 3.9.0(react-hook-form@7.52.1(react@18.3.1))
+        version: 3.9.0(react-hook-form@7.52.2(react@18.3.1))
       '@lordicon/react':
-        specifier: ^1.6.0
-        version: 1.6.0(lottie-web@5.12.2)(react@18.3.1)
+        specifier: ^1.7.0
+        version: 1.7.0(lottie-web@5.12.2)(react@18.3.1)
       '@prisma/client':
         specifier: ^5.17.0
         version: 5.17.0(prisma@5.17.0)
@@ -120,8 +120,8 @@ importers:
         specifier: ^14.2.3
         version: 14.2.3(react@18.3.1)
       react-hook-form:
-        specifier: ^7.52.1
-        version: 7.52.1(react@18.3.1)
+        specifier: ^7.52.2
+        version: 7.52.2(react@18.3.1)
       react-icons:
         specifier: ^5.2.1
         version: 5.2.1(react@18.3.1)
@@ -151,8 +151,8 @@ importers:
         version: 4.5.4(@types/react@18.3.3)(react@18.3.1)
     devDependencies:
       '@types/node':
-        specifier: ^20.14.13
-        version: 20.14.13
+        specifier: ^20.14.14
+        version: 20.14.14
       '@types/react':
         specifier: ^18.3.3
         version: 18.3.3
@@ -160,8 +160,8 @@ importers:
         specifier: ^18.3.0
         version: 18.3.0
       autoprefixer:
-        specifier: ^10.4.19
-        version: 10.4.19(postcss@8.4.40)
+        specifier: ^10.4.20
+        version: 10.4.20(postcss@8.4.40)
       eslint:
         specifier: ^8.57.0
         version: 8.57.0
@@ -852,11 +852,11 @@ packages:
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
 
-  '@lordicon/helpers@1.6.0':
-    resolution: {integrity: sha512-iEw6q1gycHf77e4o+PdTg1Ua4yXdREVnCsErTw/f4eaAUDYFF/qWQSq3mJJuiwvZ/JT1vwctQ2dKr1FxUY1W2w==}
+  '@lordicon/helpers@1.7.0':
+    resolution: {integrity: sha512-PfoEYeWSEA+b17SjHP+5C5VEkdwf0UATv5V5HUb+HfeE/X7TFY/IueJaudh78hVwMR/4wgmPEqvKSjNzEck6YQ==}
 
-  '@lordicon/react@1.6.0':
-    resolution: {integrity: sha512-SqDdc9/ReRpO3D8t1WG+yOKAFwQsewuw9hf6++faJhGk/ZgUOA4mqPke4R/pc0pMhXHOeET9DPgvNi1dmRpxxw==}
+  '@lordicon/react@1.7.0':
+    resolution: {integrity: sha512-ZD7FOJuBf3TwVyNctqVGzJhm2QGMxWWq7cJhwYImEuu/8Zu1R9vq6A99i8ztQ0bU9Pmf9HtEQHFcO+oijht+bg==}
     peerDependencies:
       lottie-react-native: '*'
       lottie-web: '*'
@@ -1476,8 +1476,8 @@ packages:
     peerDependencies:
       rollup: ^1.20.0||^2.0.0
 
-  '@rollup/rollup-linux-x64-gnu@4.19.2':
-    resolution: {integrity: sha512-OgaToJ8jSxTpgGkZSkwKE+JQGihdcaqnyHEFOSAU45utQ+yLruE1dkonB2SDI8t375wOKgNn8pQvaWY9kPzxDQ==}
+  '@rollup/rollup-linux-x64-gnu@4.20.0':
+    resolution: {integrity: sha512-y+eoL2I3iphUg9tN9GB6ku1FA8kOfmF4oUEWhztDJ4KXJy1agk/9+pejOuZkNFhRwHAOxMsBPLbXPd6mJiCwew==}
     cpu: [x64]
     os: [linux]
 
@@ -1561,8 +1561,8 @@ packages:
   '@types/minimatch@5.1.2':
     resolution: {integrity: sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==}
 
-  '@types/node@20.14.13':
-    resolution: {integrity: sha512-+bHoGiZb8UiQ0+WEtmph2IWQCjIqg8MDZMAV+ppRRhUZnquF5mQkP/9vpSwJClEiSM/C7fZZExPzfU0vJTyp8w==}
+  '@types/node@20.14.14':
+    resolution: {integrity: sha512-d64f00982fS9YoOgJkAMolK7MN8Iq3TDdVjchbYHdEmjth/DHowx82GnoA+tVUAN+7vxfYUgAzi+JXbKNd2SDQ==}
 
   '@types/nodemailer@6.4.15':
     resolution: {integrity: sha512-0EBJxawVNjPkng1zm2vopRctuWVCxk34JcIlRuXSf54habUWdz1FB7wHDqOqvDa8Mtpt0Q3LTXQkAs2LNyK5jQ==}
@@ -1811,8 +1811,8 @@ packages:
     resolution: {integrity: sha512-7prDjvt9HmqiZ0cl5CRjtS84sEyhsHP2coDkaZKRKVfCDo9s7iw7ChVmar78Gu9pC4SoR/28wFu/G5JJhTnqEg==}
     engines: {node: '>=4'}
 
-  autoprefixer@10.4.19:
-    resolution: {integrity: sha512-BaENR2+zBZ8xXhM4pUaKUxlVdxZ0EZhjvbopwnXmxRUfqDmwSpC2lAi/QXvx7NRdPCo1WKEcEF6mV64si1z4Ew==}
+  autoprefixer@10.4.20:
+    resolution: {integrity: sha512-XY25y5xSv/wEoqzDyXXME4AFfkZI0P23z6Fs3YgymDnKJkCGOnkL0iTxCa85UTqaSgfcqyf3UA6+c7wUvx/16g==}
     engines: {node: ^10 || ^12 || >=14}
     hasBin: true
     peerDependencies:
@@ -1915,8 +1915,8 @@ packages:
     resolution: {integrity: sha512-QOSvevhslijgYwRx6Rv7zKdMF8lbRmx+uQGx2+vDc+KI/eBnsy9kit5aj23AgGu3pa4t9AgwbnXWqS+iOY+2aA==}
     engines: {node: '>= 6'}
 
-  caniuse-lite@1.0.30001646:
-    resolution: {integrity: sha512-dRg00gudiBDDTmUhClSdv3hqRfpbOnU28IpI1T6PBTLWa+kOj0681C8uML3PifYfREuBrVjDGhL3adYpBT6spw==}
+  caniuse-lite@1.0.30001647:
+    resolution: {integrity: sha512-n83xdNiyeNcHpzWY+1aFbqCK7LuLfBricc4+alSQL2Xb6OR3XpnQAmlDG+pQcdTfiHRuLcQ96VOfrPSGiNJYSg==}
 
   chalk@2.4.2:
     resolution: {integrity: sha512-Mti+f9lpJNcwF4tWV8/OrTTtF1gZi+f8FqlyAdouralcFWFQWF2+NgCHShjkCb+IFBLq9buZwE1xckQU4peSuQ==}
@@ -3280,9 +3280,9 @@ packages:
     peerDependencies:
       react: '>= 16.8 || 18.0.0'
 
-  react-hook-form@7.52.1:
-    resolution: {integrity: sha512-uNKIhaoICJ5KQALYZ4TOaOLElyM+xipord+Ha3crEFhTntdLvWZqVY49Wqd/0GiVCA/f9NjemLeiNPjG7Hpurg==}
-    engines: {node: '>=12.22.0'}
+  react-hook-form@7.52.2:
+    resolution: {integrity: sha512-pqfPEbERnxxiNMPd0bzmt1tuaPcVccywFDpyk2uV5xCIBphHV5T8SVnX9/o3kplPE1zzKt77+YIoq+EMwJp56A==}
+    engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
 
@@ -4833,9 +4833,9 @@ snapshots:
 
   '@floating-ui/utils@0.2.5': {}
 
-  '@hookform/resolvers@3.9.0(react-hook-form@7.52.1(react@18.3.1))':
+  '@hookform/resolvers@3.9.0(react-hook-form@7.52.2(react@18.3.1))':
     dependencies:
-      react-hook-form: 7.52.1(react@18.3.1)
+      react-hook-form: 7.52.2(react@18.3.1)
 
   '@humanwhocodes/config-array@0.11.14':
     dependencies:
@@ -4880,11 +4880,11 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
 
-  '@lordicon/helpers@1.6.0': {}
+  '@lordicon/helpers@1.7.0': {}
 
-  '@lordicon/react@1.6.0(lottie-web@5.12.2)(react@18.3.1)':
+  '@lordicon/react@1.7.0(lottie-web@5.12.2)(react@18.3.1)':
     dependencies:
-      '@lordicon/helpers': 1.6.0
+      '@lordicon/helpers': 1.7.0
       react: 18.3.1
     optionalDependencies:
       lottie-web: 5.12.2
@@ -5535,7 +5535,7 @@ snapshots:
       picomatch: 2.3.1
       rollup: 2.79.1
 
-  '@rollup/rollup-linux-x64-gnu@4.19.2':
+  '@rollup/rollup-linux-x64-gnu@4.20.0':
     optional: true
 
   '@rushstack/eslint-patch@1.10.4': {}
@@ -5580,7 +5580,7 @@ snapshots:
       '@supabase/supabase-js': 2.45.0
       cookie: 0.6.0
     optionalDependencies:
-      '@rollup/rollup-linux-x64-gnu': 4.19.2
+      '@rollup/rollup-linux-x64-gnu': 4.20.0
 
   '@supabase/storage-js@2.6.0':
     dependencies:
@@ -5638,7 +5638,7 @@ snapshots:
   '@types/glob@7.2.0':
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 20.14.13
+      '@types/node': 20.14.14
 
   '@types/json-schema@7.0.15': {}
 
@@ -5646,13 +5646,13 @@ snapshots:
 
   '@types/minimatch@5.1.2': {}
 
-  '@types/node@20.14.13':
+  '@types/node@20.14.14':
     dependencies:
       undici-types: 5.26.5
 
   '@types/nodemailer@6.4.15':
     dependencies:
-      '@types/node': 20.14.13
+      '@types/node': 20.14.14
 
   '@types/phoenix@1.6.5': {}
 
@@ -5675,13 +5675,13 @@ snapshots:
 
   '@types/resolve@1.17.1':
     dependencies:
-      '@types/node': 20.14.13
+      '@types/node': 20.14.14
 
   '@types/trusted-types@2.0.7': {}
 
   '@types/ws@8.5.12':
     dependencies:
-      '@types/node': 20.14.13
+      '@types/node': 20.14.14
 
   '@typescript-eslint/parser@7.2.0(eslint@8.57.0)(typescript@5.5.4)':
     dependencies:
@@ -5961,10 +5961,10 @@ snapshots:
 
   attr-accept@2.2.2: {}
 
-  autoprefixer@10.4.19(postcss@8.4.40):
+  autoprefixer@10.4.20(postcss@8.4.40):
     dependencies:
       browserslist: 4.23.3
-      caniuse-lite: 1.0.30001646
+      caniuse-lite: 1.0.30001647
       fraction.js: 4.3.7
       normalize-range: 0.1.2
       picocolors: 1.0.1
@@ -6049,7 +6049,7 @@ snapshots:
 
   browserslist@4.23.3:
     dependencies:
-      caniuse-lite: 1.0.30001646
+      caniuse-lite: 1.0.30001647
       electron-to-chromium: 1.5.4
       node-releases: 2.0.18
       update-browserslist-db: 1.1.0(browserslist@4.23.3)
@@ -6076,7 +6076,7 @@ snapshots:
 
   camelcase-css@2.0.1: {}
 
-  caniuse-lite@1.0.30001646: {}
+  caniuse-lite@1.0.30001647: {}
 
   chalk@2.4.2:
     dependencies:
@@ -7042,13 +7042,13 @@ snapshots:
 
   jest-worker@26.6.2:
     dependencies:
-      '@types/node': 20.14.13
+      '@types/node': 20.14.14
       merge-stream: 2.0.0
       supports-color: 7.2.0
 
   jest-worker@27.5.1:
     dependencies:
-      '@types/node': 20.14.13
+      '@types/node': 20.14.14
       merge-stream: 2.0.0
       supports-color: 8.1.1
 
@@ -7249,7 +7249,7 @@ snapshots:
       '@next/env': 14.2.0
       '@swc/helpers': 0.5.5
       busboy: 1.6.0
-      caniuse-lite: 1.0.30001646
+      caniuse-lite: 1.0.30001647
       graceful-fs: 4.2.11
       postcss: 8.4.31
       react: 18.3.1
@@ -7506,7 +7506,7 @@ snapshots:
       prop-types: 15.8.1
       react: 18.3.1
 
-  react-hook-form@7.52.1(react@18.3.1):
+  react-hook-form@7.52.2(react@18.3.1):
     dependencies:
       react: 18.3.1
 
@@ -7841,7 +7841,7 @@ snapshots:
 
   stripe@16.6.0:
     dependencies:
-      '@types/node': 20.14.13
+      '@types/node': 20.14.14
       qs: 6.13.0
 
   styled-jsx@5.1.1(@babel/core@7.25.2)(react@18.3.1):
