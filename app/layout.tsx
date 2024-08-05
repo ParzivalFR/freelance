@@ -2,6 +2,8 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -13,6 +15,8 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Gael Richard - Développeur Freelance",
+  manifest: "/manifest.json",
+
   description:
     "Propulsez votre présence sur le web. Des solutions sur mesure pour vos projets web, développées avec passion et expertise avec une attention particulière pour l'expérience utilisateur.",
   openGraph: {
@@ -41,17 +45,6 @@ export const metadata: Metadata = {
       "https://opengraph.b-cdn.net/production/images/9e74f21c-cc19-4dd0-8fbd-ffbadd043fa0.png?token=qTXNMnubktox7svqm_mGBY5mnWAqCgDg4RCEIxCOi94&height=630&width=1200&expires=33258703199",
     ],
   },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
 };
 
 export default function RootLayout({
@@ -61,10 +54,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <head>
-        <link rel="manifest" href="/manifest.json" />
-        <link rel="icon" href="/favicon.ico" />
-      </head>
+      <Analytics />
+      <SpeedInsights />
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",

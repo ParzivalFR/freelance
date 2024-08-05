@@ -5,6 +5,7 @@ import HeroSection from "@/components/landing/hero-section";
 import PricingSection from "@/components/landing/pricing-section";
 import { Testimonials } from "@/components/landing/reviews";
 import { CircleLight } from "@/components/magicui/circle-light";
+import { FeatureSection } from "@/components/magicui/Features";
 import Particles from "@/components/magicui/particles";
 
 export default async function Page() {
@@ -13,6 +14,7 @@ export default async function Page() {
       <HeroSection />
       {/* <SocialProofTestimonials /> */}
       <Testimonials />
+      <FeatureSection />
       <PricingSection />
       <CircleLight />
       <CallToActionSection />

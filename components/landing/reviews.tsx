@@ -12,6 +12,7 @@ import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import AddTestimonialsForm from "./form-add-testimonials";
 import Modal from "./modal";
+import { StarFilledIcon } from "@radix-ui/react-icons";
 
 const ReviewCard = ({
   name,
@@ -166,7 +167,7 @@ export function Testimonials() {
               )}
               <Button onClick={() => toggleModal()}>
                 Laisser un avis
-                <Star className="text-yellow-500 ml-2 h-4 w-4" />
+                <StarFilledIcon className="text-yellow-500 ml-2 h-4 w-4" />
               </Button>
               <Modal
                 title="Ajouter un témoignage"
