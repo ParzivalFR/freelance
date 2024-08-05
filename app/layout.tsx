@@ -27,7 +27,7 @@ export const metadata: Metadata = {
       "Propulsez votre présence sur le web. Des solutions sur mesure pour vos projets web, développées avec passion et expertise avec une attention particulière pour l'expérience utilisateur.",
     images: [
       {
-        url: "https://opengraph.b-cdn.net/production/images/9e74f21c-cc19-4dd0-8fbd-ffbadd043fa0.png?token=qTXNMnubktox7svqm_mGBY5mnWAqCgDg4RCEIxCOi94&height=630&width=1200&expires=33258703199",
+        url: "https://opengraph.b-cdn.net/production/images/f4f9f0d8-4ece-4d68-95c7-f17fec9eaae5.png?token=F1GMcx3T_EzsMXyS-8jLk_WRfK834xsHdWVkRVKSr_g&height=630&width=1200&expires=33258863041",
         width: 1200,
         height: 630,
         alt: "Gael Richard - Développeur Freelance",
@@ -42,7 +42,7 @@ export const metadata: Metadata = {
     description:
       "Propulsez votre présence sur le web. Des solutions sur mesure pour vos projets web, développées avec passion et expertise avec une attention particulière pour l'expérience utilisateur.",
     images: [
-      "https://opengraph.b-cdn.net/production/images/9e74f21c-cc19-4dd0-8fbd-ffbadd043fa0.png?token=qTXNMnubktox7svqm_mGBY5mnWAqCgDg4RCEIxCOi94&height=630&width=1200&expires=33258703199",
+      "https://opengraph.b-cdn.net/production/images/f4f9f0d8-4ece-4d68-95c7-f17fec9eaae5.png?token=F1GMcx3T_EzsMXyS-8jLk_WRfK834xsHdWVkRVKSr_g&height=630&width=1200&expires=33258863041",
     ],
   },
 };
