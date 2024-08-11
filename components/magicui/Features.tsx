@@ -11,6 +11,8 @@ import React, {
 } from "react";
 
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { Skeleton } from "../ui/skeleton";
 
 type AccordionItemProps = {
   children: React.ReactNode;
@@ -80,6 +82,7 @@ type CardDataProps = {
   content: string;
   image?: string;
   video?: string;
+  link: string;
 };
 
 const cardData: CardDataProps[] = [
@@ -87,33 +90,35 @@ const cardData: CardDataProps[] = [
     id: 1,
     title: "Jazz En Barque",
     content:
-      "Jazz En Barque est un festival en sologne qui a lieu chaque année. Il propose des concerts de jazz sur des barques sur l'étang des Landes.",
+      "Jazz En Barque est un festival en sologne qui a lieu chaque année.",
     image:
       "https://syuntuolmcrumibzzxrl.supabase.co/storage/v1/object/public/bucket-oasis/Images/jazz-en-barque-compress.webp",
+    link: "https://jazzenbarque.vercel.app",
   },
   {
     id: 2,
     title: "Stagey",
-    content:
-      "Trouve ton stage idéal Facilement et Gratuitement. La plateforme qui simplifie la recherche de stages pour les jeunes de 13 à 25 ans !",
+    content: "Trouve ton stage idéal Facilement et Gratuitement.",
     image:
       "https://syuntuolmcrumibzzxrl.supabase.co/storage/v1/object/public/bucket-oasis/Images/stagey-compress.webp",
+    link: "https://stagey.fr",
   },
   {
     id: 3,
-    title: "Seamless Integration",
-    content:
-      "Our features seamlessly integrate with your existing systems for a smooth experience.",
+    title: "Kitilib",
+    content: "Essential Tools for Developers and Designers",
     image:
-      "https://syuntuolmcrumibzzxrl.supabase.co/storage/v1/object/public/bucket-oasis/Images/stagey-compress.webp",
+      "https://syuntuolmcrumibzzxrl.supabase.co/storage/v1/object/public/bucket-oasis/kitilib-compress.webp",
+    link: "https://kitilib.com",
   },
   {
     id: 4,
-    title: "Continuous Improvement",
+    title: "Portfolio Personnel",
     content:
-      "We are constantly updating and improving our features to provide the best experience.",
+      "Portfolio personnel pour présenter mes projets et mes compétences.",
     image:
-      "https://syuntuolmcrumibzzxrl.supabase.co/storage/v1/object/public/bucket-oasis/Images/stagey-compress.webp",
+      "https://syuntuolmcrumibzzxrl.supabase.co/storage/v1/object/public/bucket-oasis/Images/portfolio-compress.webp",
+    link: "https://www.gael-dev.fr",
   },
 ];
 
@@ -275,16 +280,17 @@ const Feature = ({
               }`}
             >
               {cardData[currentIndex]?.image ? (
-                <motion.img
-                  key={currentIndex}
-                  src={cardData[currentIndex].image}
-                  alt="feature"
-                  className="aspect-auto h-full w-full rounded-xl border border-neutral-300/50 object-cover p-1"
-                  initial={{ opacity: 0, scale: 0.98 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.98 }}
-                  transition={{ duration: 0.25, ease: "easeOut" }}
-                />
+                <Link key={currentIndex} href="/features">
+                  <motion.img
+                    src={cardData[currentIndex].image}
+                    alt="feature"
+                    className="aspect-auto h-full w-full rounded-xl border border-neutral-300/50 object-cover p-1"
+                    initial={{ opacity: 0, scale: 0.98 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.98 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                  />
+                </Link>
               ) : cardData[currentIndex]?.video ? (
                 <video
                   preload="auto"
@@ -295,7 +301,7 @@ const Feature = ({
                   muted
                 />
               ) : (
-                <div className="aspect-auto h-full w-full rounded-xl border border-neutral-300/50 bg-gray-200 p-1"></div>
+                <Skeleton className="aspect-auto h-[280px] w-[500px] rounded-xl p-1" />
               )}
             </div>
 
@@ -307,7 +313,7 @@ const Feature = ({
               }}
             >
               {cardData.map((item, index) => (
-                <a
+                <div
                   key={item.id}
                   className="card relative mr-8 grid h-full max-w-60 shrink-0 items-start justify-center py-4 last:mr-0"
                   onClick={() => setCurrentIndex(index)}
@@ -330,7 +336,7 @@ const Feature = ({
                   <p className="mx-0 max-w-sm text-balance text-sm">
                     {item.content}
                   </p>
-                </a>
+                </div>
               ))}
             </ul>
           </div>
