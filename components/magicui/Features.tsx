@@ -11,7 +11,9 @@ import React, {
 } from "react";
 
 import { cn } from "@/lib/utils";
+import { Link2 } from "lucide-react";
 import Link from "next/link";
+import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 
 type AccordionItemProps = {
@@ -93,7 +95,7 @@ const cardData: CardDataProps[] = [
       "Jazz En Barque est un festival en sologne qui a lieu chaque année.",
     image:
       "https://syuntuolmcrumibzzxrl.supabase.co/storage/v1/object/public/bucket-oasis/Images/jazz-en-barque-compress.webp",
-    link: "https://jazzenbarque.vercel.app",
+    link: "https://jazz-en-barque.vercel.app",
   },
   {
     id: 2,
@@ -280,7 +282,12 @@ const Feature = ({
               }`}
             >
               {cardData[currentIndex]?.image ? (
-                <Link key={currentIndex} href="/features">
+                <Link
+                  key={currentIndex}
+                  href={cardData[currentIndex].link}
+                  target="_blank"
+                  className="relative"
+                >
                   <motion.img
                     src={cardData[currentIndex].image}
                     alt="feature"
@@ -290,6 +297,9 @@ const Feature = ({
                     exit={{ opacity: 0, scale: 0.98 }}
                     transition={{ duration: 0.25, ease: "easeOut" }}
                   />
+                  <Button className="absolute -right-3 -top-3" size="icon">
+                    <Link2 size={24} />
+                  </Button>
                 </Link>
               ) : cardData[currentIndex]?.video ? (
                 <video
