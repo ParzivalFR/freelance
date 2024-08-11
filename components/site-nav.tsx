@@ -7,6 +7,8 @@ import { AvatarIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   CircleHelp,
+  ClipboardPen,
+  Fingerprint,
   Home,
   Mailbox,
   Menu,
@@ -103,7 +105,7 @@ const NavMobile = () => {
                   <XIcon />
                 </Button>
               </div>
-              <div className="flex flex-col items-start space-y-4 mt-10">
+              <div className="flex flex-col items-start mt-10 gap-4">
                 {menuItem.map((item, index) => (
                   <Link href={item.href} key={index} className="w-full">
                     <Button
@@ -115,6 +117,16 @@ const NavMobile = () => {
                     </Button>
                   </Link>
                 ))}
+                <div className="w-full flex items-center justify-between gap-4 mt-16">
+                  <Button className="w-full">
+                    <Fingerprint className="mr-2" />
+                    Connexion
+                  </Button>
+                  <Button className="w-full">
+                    <ClipboardPen className="mr-2" />
+                    S'inscrire
+                  </Button>
+                </div>
               </div>
             </motion.div>
           </motion.nav>

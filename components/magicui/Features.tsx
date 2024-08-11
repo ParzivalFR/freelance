@@ -1,7 +1,7 @@
 "use client";
 
 import * as Accordion from "@radix-ui/react-accordion";
-import { motion, useInView } from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import React, {
   forwardRef,
   ReactNode,
@@ -11,9 +11,6 @@ import React, {
 } from "react";
 
 import { cn } from "@/lib/utils";
-import { Link2 } from "lucide-react";
-import Link from "next/link";
-import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 
 type AccordionItemProps = {
@@ -110,7 +107,7 @@ const cardData: CardDataProps[] = [
     title: "Kitilib",
     content: "Essential Tools for Developers and Designers",
     image:
-      "https://syuntuolmcrumibzzxrl.supabase.co/storage/v1/object/public/bucket-oasis/kitilib-compress.webp",
+      "https://syuntuolmcrumibzzxrl.supabase.co/storage/v1/object/public/bucket-oasis/Images/kitilib-compress.webp",
     link: "https://kitilib.com",
   },
   {
@@ -136,6 +133,7 @@ const Feature = ({
   linePosition = "left",
 }: FeatureProps) => {
   const [currentIndex, setCurrentIndex] = useState<number>(-1);
+  const [isChanging, setIsChanging] = useState(false);
 
   const carouselRef = useRef<HTMLUListElement>(null);
   const ref = useRef(null);
@@ -156,6 +154,15 @@ const Feature = ({
     return () => clearTimeout(timer);
   }, [isInView]);
 
+  useEffect(() => {
+    cardData.forEach((item) => {
+      if (item.image) {
+        const img = new Image();
+        img.src = item.image;
+      }
+    });
+  }, []);
+
   const scrollToIndex = (index: number) => {
     if (carouselRef.current) {
       const card = carouselRef.current.querySelectorAll(".card")[index];
@@ -175,28 +182,33 @@ const Feature = ({
     }
   };
 
-  // interval for changing images
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentIndex((prevIndex) =>
-        prevIndex !== undefined ? (prevIndex + 1) % cardData.length : 0
-      );
+      if (!isChanging) {
+        setIsChanging(true);
+        setCurrentIndex((prevIndex) =>
+          prevIndex !== undefined ? (prevIndex + 1) % cardData.length : 0
+        );
+        setTimeout(() => setIsChanging(false), 500); // Correspond à la durée de la transition
+      }
     }, collapseDelay);
 
     return () => clearInterval(timer);
-  }, [currentIndex]);
+  }, [currentIndex, isChanging]);
 
   useEffect(() => {
     const handleAutoScroll = () => {
-      const nextIndex =
-        (currentIndex !== undefined ? currentIndex + 1 : 0) % cardData.length;
-      scrollToIndex(nextIndex);
+      if (!isChanging) {
+        const nextIndex =
+          (currentIndex !== undefined ? currentIndex + 1 : 0) % cardData.length;
+        scrollToIndex(nextIndex);
+      }
     };
 
     const autoScrollTimer = setInterval(handleAutoScroll, collapseDelay);
 
     return () => clearInterval(autoScrollTimer);
-  }, [currentIndex]);
+  }, [currentIndex, isChanging]);
 
   useEffect(() => {
     const carousel = carouselRef.current;
@@ -281,38 +293,38 @@ const Feature = ({
                 ltr && "md:order-1"
               }`}
             >
-              {cardData[currentIndex]?.image ? (
-                <Link
-                  key={currentIndex}
-                  href={cardData[currentIndex].link}
-                  target="_blank"
-                  className="relative"
-                >
+              <AnimatePresence mode="wait">
+                {cardData[currentIndex]?.image ? (
                   <motion.img
+                    key={cardData[currentIndex].id}
                     src={cardData[currentIndex].image}
                     alt="feature"
-                    className="aspect-auto h-full w-full rounded-xl border border-neutral-300/50 object-cover p-1"
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.98 }}
-                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    className="h-full w-full rounded-xl border border-neutral-300/50 object-cover p-1"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
                   />
-                  <Button className="absolute -right-3 -top-3" size="icon">
-                    <Link2 size={24} />
-                  </Button>
-                </Link>
-              ) : cardData[currentIndex]?.video ? (
-                <video
-                  preload="auto"
-                  src={cardData[currentIndex].video}
-                  className="aspect-auto h-full w-full rounded-lg object-cover"
-                  autoPlay
-                  loop
-                  muted
-                />
-              ) : (
-                <Skeleton className="aspect-auto h-[280px] w-[500px] rounded-xl p-1" />
-              )}
+                ) : cardData[currentIndex]?.video ? (
+                  <motion.video
+                    key={cardData[currentIndex].id}
+                    preload="auto"
+                    src={cardData[currentIndex].video}
+                    className="aspect-auto h-full w-full rounded-lg object-cover"
+                    autoPlay
+                    loop
+                    muted
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                  />
+                ) : (
+                  <div className="relative w-full pb-[56.25%]">
+                    <Skeleton className="absolute inset-0 h-full w-full rounded-xl" />
+                  </div>
+                )}
+              </AnimatePresence>
             </div>
 
             <ul
