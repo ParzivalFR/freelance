@@ -2,19 +2,19 @@ import Link from "next/link";
 
 export default function Terms() {
   return (
-    <section className="container mx-auto px-4 md:px-8 py-12 bg-background">
-      <div className="mx-auto max-w-3xl bg-background shadow-pxl p-8 rounded-lg shadow-md">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-center mb-8">
+    <section className="container mx-auto bg-background px-4 py-12 md:px-8">
+      <div className="shadow-md mx-auto max-w-3xl rounded-lg bg-background p-8 shadow-pxl">
+        <h1 className="mb-8 text-center text-4xl font-bold tracking-tight md:text-5xl">
           Conditions d'Utilisation
         </h1>
 
-        <p className="text-sm text-center mb-12 ">
+        <p className="mb-12 text-center text-sm ">
           En utilisant ce site, vous acceptez les présentes conditions
           d'utilisation. Veuillez les lire attentivement.
         </p>
 
         <div className="mb-10">
-          <h2 className="text-2xl font-semibold mb-4  border-b pb-2">
+          <h2 className="mb-4 border-b pb-2  text-2xl font-semibold">
             1. Acceptation des conditions
           </h2>
           <p className="">
@@ -26,7 +26,7 @@ export default function Terms() {
         </div>
 
         <div className="mb-10">
-          <h2 className="text-2xl font-semibold mb-4  border-b pb-2">
+          <h2 className="mb-4 border-b pb-2  text-2xl font-semibold">
             2. Utilisation de la licence
           </h2>
           <p className="">
@@ -39,7 +39,7 @@ export default function Terms() {
         </div>
 
         <div className="mb-10">
-          <h2 className="text-2xl font-semibold mb-4  border-b pb-2">
+          <h2 className="mb-4 border-b pb-2  text-2xl font-semibold">
             3. Clause de non-responsabilité
           </h2>
           <p className="">
@@ -54,7 +54,7 @@ export default function Terms() {
         </div>
 
         <div className="mb-10">
-          <h2 className="text-2xl font-semibold mb-4  border-b pb-2">
+          <h2 className="mb-4 border-b pb-2  text-2xl font-semibold">
             4. Limitations
           </h2>
           <p className="">
@@ -69,7 +69,7 @@ export default function Terms() {
         </div>
 
         <div className="mb-10">
-          <h2 className="text-2xl font-semibold mb-4  border-b pb-2">
+          <h2 className="mb-4 border-b pb-2  text-2xl font-semibold">
             5. Révisions et errata
           </h2>
           <p className="">
@@ -83,7 +83,7 @@ export default function Terms() {
         </div>
 
         <div className="mb-10">
-          <h2 className="text-2xl font-semibold mb-4  border-b pb-2">
+          <h2 className="mb-4 border-b pb-2  text-2xl font-semibold">
             6. Liens
           </h2>
           <p className="">
@@ -96,7 +96,7 @@ export default function Terms() {
         </div>
 
         <div className="mb-10">
-          <h2 className="text-2xl font-semibold mb-4  border-b pb-2">
+          <h2 className="mb-4 border-b pb-2  text-2xl font-semibold">
             7. Modifications des conditions d'utilisation du site
           </h2>
           <p className="">
@@ -108,7 +108,7 @@ export default function Terms() {
         </div>
 
         <div className="mb-10">
-          <h2 className="text-2xl font-semibold mb-4  border-b pb-2">
+          <h2 className="mb-4 border-b pb-2  text-2xl font-semibold">
             8. Loi applicable
           </h2>
           <p className="">
@@ -131,7 +131,7 @@ export default function Terms() {
 
         <time
           dateTime="2024-08-02"
-          className="block text-sm  mt-12 text-center"
+          className="mt-12 block  text-center text-sm"
         >
           Dernière mise à jour : 02/08/2024
         </time>

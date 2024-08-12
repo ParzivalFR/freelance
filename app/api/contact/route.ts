@@ -45,7 +45,7 @@ export async function POST(request: Request) {
           </tr>
         </table>
         <p style="margin-top: 20px;">Cordialement,</p>
-        <p style="margin: 0;">Votre partenaire OASIS.</p>
+        <p style="margin: 0;">Votre partenaire Gael Richard.</p>
       </div>
     </body>
   </html>
@@ -86,7 +86,7 @@ export async function POST(request: Request) {
           </tr>
         </table>
         <p style="margin-top: 20px;">Cordialement,</p>
-        <p style="margin: 0;">Votre partenaire OASIS.</p>
+        <p style="margin: 0;">Votre partenaire Gael Richard.</p>
       </div>
     </body>
   </html>

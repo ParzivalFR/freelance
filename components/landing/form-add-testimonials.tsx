@@ -54,19 +54,20 @@ export default function AddTestimonialsForm() {
     },
   });
 
-  const uploadImage = async (img: File) => {
-    const formData = new FormData();
-    formData.append("file", img);
-    const imageData = await fetcher("/api/avatar", {
-      method: "POST",
-      body: formData,
-    });
-    return imageData.url;
-  };
-
   const onSubmit = useCallback(
     async (values: z.infer<typeof TestimonialSchema>) => {
       setIsSubmitting(true);
+
+      const uploadImage = async (img: File) => {
+        const formData = new FormData();
+        formData.append("file", img);
+        const imageData = await fetcher("/api/avatar", {
+          method: "POST",
+          body: formData,
+        });
+        return imageData.url;
+      };
+
       try {
         let imageUrl = "";
         if (values.img instanceof File) {
@@ -110,7 +111,7 @@ export default function AddTestimonialsForm() {
         setIsSubmitting(false);
       }
     },
-    [form, uploadImage]
+    [form]
   );
 
   return (
@@ -183,10 +184,10 @@ export default function AddTestimonialsForm() {
             </FormItem>
           )}
         />
-        <div className="flex justify-end mt-2">
+        <div className="mt-2 flex justify-end">
           <Button
             type="submit"
-            className="flex items-center gap-2 ring-4 ring-primary/20 hover:bg-foreground/70 duration-300 ease-in-out"
+            className="flex items-center gap-2 ring-4 ring-primary/20 duration-300 ease-in-out hover:bg-foreground/70"
             disabled={isSubmitting}
           >
             {isSubmitting ? (

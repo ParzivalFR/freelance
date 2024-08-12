@@ -136,7 +136,7 @@ export function FAQ() {
                       value={faq.question}
                       className="w-full"
                     >
-                      <AccordionTrigger className="font-bold text-start">
+                      <AccordionTrigger className="text-start font-bold">
                         {faq.question}
                       </AccordionTrigger>
                       <AccordionContent>{faq.answer}</AccordionContent>
@@ -150,7 +150,7 @@ export function FAQ() {
             Vous avez d'autres questions ?{" "}
             <Link
               href="#contact"
-              className="underline text-primary hover:text-primary-dark transition-colors"
+              className="hover:text-primary-dark text-primary underline transition-colors"
             >
               Contactez-moi !
             </Link>

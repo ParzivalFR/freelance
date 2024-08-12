@@ -1,6 +1,7 @@
 import { File, X } from "lucide-react";
 import React, { useState } from "react";
 import { Button } from "./ui/button";
+import Image from "next/image";
 
 export default function InputFile({
   onChange,
@@ -30,13 +31,13 @@ export default function InputFile({
   };
 
   return (
-    <div className="flex flex-col items-center justify-center w-full">
+    <div className="flex w-full flex-col items-center justify-center">
       <label
         htmlFor="dropzone-file"
-        className="flex flex-col items-center justify-center w-full h-24 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-secondary/50 dark:hover:bg-gray-800 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500"
+        className="flex h-24 w-full cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed border-gray-300 bg-secondary/50 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-800"
       >
-        <div className="flex flex-col gap-1 items-center justify-center pt-4 pb-4">
-          <File className="w-8 h-8 text-gray-500 dark:text-gray-400" />
+        <div className="flex flex-col items-center justify-center gap-1 py-4">
+          <File className="size-8 text-gray-500 dark:text-gray-400" />
           <p className="text-sm text-gray-500 dark:text-gray-400">
             <span className="font-semibold">Choose a file</span>
           </p>
@@ -53,15 +54,17 @@ export default function InputFile({
       </label>
       {preview && (
         <div className="relative mt-4">
-          <img
+          <Image
             src={preview}
+            width={128}
+            height={128}
             alt="Image Preview"
-            className="w-auto h-32 object-cover rounded-lg"
+            className="h-32 w-auto rounded-lg object-cover"
           />
           <Button
             variant="destructive"
             onClick={removePreview}
-            className="absolute top-2 right-2 p-2"
+            className="absolute right-2 top-2 p-2"
           >
             <X />
           </Button>

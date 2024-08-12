@@ -7,4 +7,3 @@ Host: https://freelance.gael-dev.fr
 
 # Sitemaps
 Sitemap: https://freelance.gael-dev.fr/sitemap.xml
-Sitemap: https://freelance.gael-dev.fr/sitemap-0.xml

@@ -4,6 +4,7 @@ import Marquee from "@/components/magicui/marquee";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ArrowRight, HeartHandshake } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 const reviews = [
@@ -70,7 +71,13 @@ const ReviewCard = ({
       )}
     >
       <div className="flex flex-row items-center gap-2">
-        <img className="rounded-full" width="32" height="32" alt="" src={img} />
+        <Image
+          className="rounded-full"
+          width={32}
+          height={32}
+          alt="Image Avatar Vercel"
+          src={img}
+        />
         <div className="flex flex-col">
           <figcaption className="text-sm font-medium dark:text-white">
             {name}
@@ -141,7 +148,7 @@ export default function CallToActionSection() {
                 ))}
               </Marquee>
             </div>
-            <div className="z-10 mx-auto size-24 rounded-[2rem] border bg-white/10 p-3 shadow-2xl backdrop-blur-md dark:bg-black/10 lg:size-32">
+            <div className="shadow-2xl z-10 mx-auto size-24 rounded-[2rem] border bg-white/10 p-3 backdrop-blur-md dark:bg-black/10 lg:size-32">
               <HeartHandshake className="mx-auto size-16 text-black dark:text-white lg:size-24" />
             </div>
             <div className="z-10 mt-4 flex flex-col items-center text-center text-black dark:text-white">
@@ -153,7 +160,7 @@ export default function CallToActionSection() {
                 sur mesure adaptées à vos besoins.
               </p>
               <Button
-                className="ring-4 ring-primary/20 group mt-6 rounded-[2rem] px-6 flex items-center"
+                className="group mt-6 flex items-center rounded-[2rem] px-6 ring-4 ring-primary/20"
                 onClick={() => handleRedirect()}
               >
                 Allons-y

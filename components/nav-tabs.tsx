@@ -19,7 +19,7 @@ const Tab = ({ item, selected, setSelected }: TabProps) => {
         selected
           ? "text-background"
           : "text-foreground/50 hover:text-foreground dark:hover:text-primary/80"
-      } relative rounded-md px-2 py-1 text-sm font-medium transition-colors flex items-center gap-2`}
+      } relative flex items-center gap-2 rounded-md px-2 py-1 text-sm font-medium transition-colors`}
     >
       <span className="relative z-10">{item.icon()}</span>
       <span className="relative z-10">{item.label}</span>
@@ -41,7 +41,7 @@ interface TabsProps {
 export const Tabs = ({ menuItems }: TabsProps) => {
   const [selected, setSelected] = useState<string>(menuItems[0].href);
   return (
-    <div className="md:flex flex-wrap items-center gap-2 hidden">
+    <div className="hidden flex-wrap items-center gap-2 md:flex">
       {menuItems.map((item) => (
         <Tab
           item={item}

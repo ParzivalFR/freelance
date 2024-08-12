@@ -10,8 +10,6 @@ export default async function MarketingLayout({
 }: MarketingLayoutProps) {
   return (
     <>
-      {/* <SiteBanner /> */}
-      {/* <SiteHeader /> */}
       <SiteNav />
       <main className="mx-auto flex-1 overflow-hidden">{children}</main>
       <SiteFooter />

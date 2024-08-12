@@ -33,6 +33,8 @@ const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
   )
 );
 
+AccordionItem.displayName = "AccordionItem";
+
 type AccordionTriggerProps = {
   children: React.ReactNode;
   className?: string;
@@ -55,6 +57,8 @@ const AccordionTrigger = forwardRef<HTMLButtonElement, AccordionTriggerProps>(
   )
 );
 
+AccordionTrigger.displayName = "AccordionTrigger";
+
 type AccordionContentProps = {
   children: ReactNode;
   className?: string;
@@ -74,6 +78,8 @@ const AccordionContent = forwardRef<HTMLDivElement, AccordionContentProps>(
     </Accordion.Content>
   )
 );
+
+AccordionContent.displayName = "AccordionContent";
 
 type CardDataProps = {
   id: number;
@@ -194,7 +200,7 @@ const Feature = ({
     }, collapseDelay);
 
     return () => clearInterval(timer);
-  }, [currentIndex, isChanging]);
+  }, [collapseDelay, currentIndex, isChanging]);
 
   useEffect(() => {
     const handleAutoScroll = () => {
@@ -208,7 +214,7 @@ const Feature = ({
     const autoScrollTimer = setInterval(handleAutoScroll, collapseDelay);
 
     return () => clearInterval(autoScrollTimer);
-  }, [currentIndex, isChanging]);
+  }, [collapseDelay, currentIndex, isChanging]);
 
   useEffect(() => {
     const carousel = carouselRef.current;
@@ -262,7 +268,7 @@ const Feature = ({
                     value={`item-${index}`}
                   >
                     <div
-                      className={`absolute bottom-0 top-0 h-full w-0.5 overflow-hidden rounded-lg bg-neutral-300/50 dark:bg-neutral-300/30 ${
+                      className={`absolute inset-y-0 h-full w-0.5 overflow-hidden rounded-lg bg-neutral-300/50 dark:bg-neutral-300/30 ${
                         linePosition === "right"
                           ? "left-auto right-0"
                           : "left-0 right-auto"
@@ -289,7 +295,7 @@ const Feature = ({
               </Accordion.Root>
             </div>
             <div
-              className={`col-span-5 my-auto h-auto  min-h-[200px] w-auto md:col-span-3 ${
+              className={`col-span-5 my-auto size-auto  min-h-[200px] md:col-span-3 ${
                 ltr && "md:order-1"
               }`}
             >
@@ -299,7 +305,7 @@ const Feature = ({
                     key={cardData[currentIndex].id}
                     src={cardData[currentIndex].image}
                     alt="feature"
-                    className="h-full w-full rounded-xl border border-neutral-300/50 object-cover p-1"
+                    className="size-full rounded-xl border border-neutral-300/50 object-cover p-1"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -310,7 +316,7 @@ const Feature = ({
                     key={cardData[currentIndex].id}
                     preload="auto"
                     src={cardData[currentIndex].video}
-                    className="aspect-auto h-full w-full rounded-lg object-cover"
+                    className="aspect-auto size-full rounded-lg object-cover"
                     autoPlay
                     loop
                     muted
@@ -321,7 +327,7 @@ const Feature = ({
                   />
                 ) : (
                   <div className="relative w-full pb-[56.25%]">
-                    <Skeleton className="absolute inset-0 h-full w-full rounded-xl" />
+                    <Skeleton className="absolute inset-0 size-full rounded-xl" />
                   </div>
                 )}
               </AnimatePresence>
@@ -329,7 +335,7 @@ const Feature = ({
 
             <ul
               ref={carouselRef}
-              className="col-span-5 flex h-full snap-x flex-nowrap overflow-x-auto py-10 [-ms-overflow-style:none] [-webkit-mask-image:linear-gradient(90deg,transparent,black_20%,white_80%,transparent)] [mask-image:linear-gradient(90deg,transparent,black_20%,white_80%,transparent)] [scrollbar-width:none] md:hidden [&::-webkit-scrollbar]:hidden snap-mandatory"
+              className="col-span-5 flex h-full snap-x snap-mandatory flex-nowrap overflow-x-auto py-10 [-ms-overflow-style:none] [-webkit-mask-image:linear-gradient(90deg,transparent,black_20%,white_80%,transparent)] [mask-image:linear-gradient(90deg,transparent,black_20%,white_80%,transparent)] [scrollbar-width:none] md:hidden [&::-webkit-scrollbar]:hidden"
               style={{
                 padding: "50px calc(50%)",
               }}
@@ -343,7 +349,7 @@ const Feature = ({
                     scrollSnapAlign: "center",
                   }}
                 >
-                  <div className="absolute bottom-0 left-0 right-auto top-0 h-0.5 w-full overflow-hidden rounded-lg bg-neutral-300/50 dark:bg-neutral-300/30">
+                  <div className="absolute inset-y-0 left-0 right-auto h-0.5 w-full overflow-hidden rounded-lg bg-neutral-300/50 dark:bg-neutral-300/30">
                     <div
                       className={`absolute left-0 top-0 h-full ${
                         currentIndex === index ? "w-full" : "w-0"

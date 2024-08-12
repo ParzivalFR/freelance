@@ -2,13 +2,13 @@ import Link from "next/link";
 
 export default function Privacy() {
   return (
-    <section className="container mx-auto px-4 md:px-8 py-12 bg-background">
-      <div className="mx-auto max-w-3xl bg-background shadow-pxl p-8 rounded-lg shadow-md">
-        <h1 className="text-4xl md:text-5xl font-bold tracking-tight mb-8 text-center">
+    <section className="container mx-auto bg-background px-4 py-12 md:px-8">
+      <div className="shadow-md mx-auto max-w-3xl rounded-lg bg-background p-8 shadow-pxl">
+        <h1 className="mb-8 text-center text-4xl font-bold tracking-tight md:text-5xl">
           Mentions légales
         </h1>
 
-        <p className="text-sm text-center text-foreground/50 mb-12">
+        <p className="mb-12 text-center text-sm text-foreground/50">
           Nous avons pour obligation de vous informer sur les données que nous
           collectons et l'utilisation que nous en faisons. Nous nous engageons à
           respecter votre vie privée et à protéger les informations que vous
@@ -18,10 +18,10 @@ export default function Privacy() {
         </p>
 
         <div className="mb-10">
-          <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
+          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold">
             Informations sur l'éditeur du site
           </h2>
-          <ul className="list-disc pl-5 space-y-2">
+          <ul className="list-disc space-y-2 pl-5">
             <li>Nom : Gaël Richard</li>
             <li>Statut : Entrepreneur individuel / Auto-entrepreneur</li>
             <li>
@@ -51,10 +51,10 @@ export default function Privacy() {
         </div>
 
         <div className="mb-10">
-          <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
+          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold">
             Informations sur l'hébergeur du site
           </h2>
-          <ul className="list-disc pl-5 space-y-2">
+          <ul className="list-disc space-y-2 pl-5">
             <li>Nom : BE1HOST SAS</li>
             <li>
               Adresse : 14 rue Charles-V 75004 Paris - 75007 Paris - France
@@ -82,7 +82,7 @@ export default function Privacy() {
         </div>
 
         <div className="mb-10">
-          <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
+          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold">
             Propriété intellectuelle
           </h2>
           <p>
@@ -96,7 +96,7 @@ export default function Privacy() {
         </div>
 
         <div className="mb-10">
-          <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
+          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold">
             Protection des données personnelles
           </h2>
           <p>
@@ -116,7 +116,7 @@ export default function Privacy() {
         </div>
 
         <div className="mb-10">
-          <h2 className="text-2xl font-semibold mb-4 border-b pb-2">Cookies</h2>
+          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold">Cookies</h2>
           <p>
             Les cookies sont des fichiers stockés sur votre ordinateur par les
             sites web que vous visitez. Ils sont largement utilisés pour faire
@@ -127,7 +127,7 @@ export default function Privacy() {
         </div>
 
         <div className="mb-10">
-          <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
+          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold">
             Utilisation des cookies
           </h2>
           <p>
@@ -142,7 +142,7 @@ export default function Privacy() {
         </div>
 
         <div className="mb-10">
-          <h2 className="text-2xl font-semibold mb-4 border-b pb-2">
+          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold">
             Limitation de responsabilité
           </h2>
           <p>
@@ -154,7 +154,7 @@ export default function Privacy() {
           </p>
         </div>
 
-        <time dateTime="2024-08-02" className="block text-sm mt-12 text-center">
+        <time dateTime="2024-08-02" className="mt-12 block text-center text-sm">
           Dernière mise à jour : 02/08/2024
         </time>
       </div>

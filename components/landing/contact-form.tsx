@@ -75,7 +75,7 @@ export default function ContactForm() {
 
   return (
     <section id="contact">
-      <div className="py-14 px-4">
+      <div className="px-4 py-14">
         <div className="mx-auto max-w-5xl text-center">
           <h4 className="text-xl font-bold tracking-tight text-black dark:text-white">
             Contact
@@ -88,7 +88,7 @@ export default function ContactForm() {
             me contacter en remplissant le formulaire ci-dessous.
           </p>
         </div>
-        <div className="relative flex w-full flex-col items-center justify-center mx-auto max-w-xl my-12 bg-secondary/20 p-8 rounded-md">
+        <div className="relative mx-auto my-12 flex w-full max-w-xl flex-col items-center justify-center rounded-md bg-secondary/20 p-8">
           <BorderBeam className="z-[-100] " />
           <Form {...form}>
             <form
@@ -166,7 +166,7 @@ export default function ContactForm() {
                 {submitting ? (
                   <Button
                     type="button"
-                    className="space-x-2 ring-4 ring-primary/20 transition hover:bg-foreground/70 duration-300"
+                    className="space-x-2 ring-4 ring-primary/20 transition duration-300 hover:bg-foreground/70"
                   >
                     <Loader />
                     <span>Envoi en cours...</span>
@@ -174,13 +174,13 @@ export default function ContactForm() {
                 ) : (
                   <Button
                     type="submit"
-                    className="ring-4 ring-primary/20 transition hover:bg-foreground/70 duration-300"
+                    className="ring-4 ring-primary/20 transition duration-300 hover:bg-foreground/70"
                   >
                     Envoyer
                   </Button>
                 )}
               </div>
-              <div className="text-muted-foreground text-xs text-end italic">
+              <div className="text-end text-xs italic text-muted-foreground">
                 <span className="text-red-500">*</span> Champs obligatoires pour
                 le traitement de votre demande. Les informations collectées sont
                 à usage exclusif et ne seront en aucun cas transmises à des

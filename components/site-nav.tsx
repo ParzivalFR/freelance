@@ -26,27 +26,27 @@ const menuItem: MenuItemTypes[] = [
   {
     label: "Accueil",
     href: "/",
-    icon: () => <Home className="h-5 w-5" />,
+    icon: () => <Home className="size-5" />,
   },
   {
     label: "Témoignages",
     href: "#testimonials",
-    icon: () => <Star className="h-5 w-5" />,
+    icon: () => <Star className="size-5" />,
   },
   {
     label: "Tarifs",
     href: "#pricing",
-    icon: () => <PiggyBank className="h-5 w-5" />,
+    icon: () => <PiggyBank className="size-5" />,
   },
   {
     label: "FAQs",
     href: "#faq",
-    icon: () => <CircleHelp className="h-5 w-5" />,
+    icon: () => <CircleHelp className="size-5" />,
   },
   {
     label: "Contact",
     href: "#contact",
-    icon: () => <Mailbox className="h-5 w-5" />,
+    icon: () => <Mailbox className="size-5" />,
   },
 ];
 
@@ -64,11 +64,11 @@ const NavMobile = () => {
   const toggleMenu = () => setOpenMenu((prev) => !prev);
 
   return (
-    <header className="md:hidden bg-primary fixed z-[500] right-4 top-4 rounded-2xl px-1.5 py-1 flex justify-between space-x-2 items-center">
+    <header className="fixed right-4 top-4 z-[500] flex items-center justify-between space-x-2 rounded-2xl bg-primary px-1.5 py-1 md:hidden">
       <Avatar>
         <AvatarImage className="w-full" src="/photo-de-profil.jpg" />
         <AvatarFallback>
-          <AvatarIcon className="h-full w-full text-white" />
+          <AvatarIcon className="size-full text-white" />
         </AvatarFallback>
       </Avatar>
       <Button
@@ -96,20 +96,20 @@ const NavMobile = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "tween", duration: 0.3 }}
-              className="fixed inset-y-0 right-0 z-40 w-4/5 bg-background h-full p-5 shadow-black/25 shadow-lg"
+              className="shadow-lg fixed inset-y-0 right-0 z-40 h-full w-4/5 bg-background p-5 shadow-black/25"
             >
               {/* Contenu du menu */}
-              <div className="flex justify-between items-center mb-5">
+              <div className="mb-5 flex items-center justify-between">
                 <ThemeToggle align="start" />
                 <Button size="icon" variant="ghost" onClick={toggleMenu}>
                   <XIcon />
                 </Button>
               </div>
-              <div className="flex flex-col items-start mt-10 gap-4">
+              <div className="mt-10 flex flex-col items-start gap-4">
                 {menuItem.map((item, index) => (
                   <Link href={item.href} key={index} className="w-full">
                     <Button
-                      className="w-full flex items-center justify-start space-x-2 transition-colors hover:bg-secondary hover:text-primary duration-300 ease-in-out"
+                      className="flex w-full items-center justify-start space-x-2 transition-colors duration-300 ease-in-out hover:bg-secondary hover:text-primary"
                       onClick={toggleMenu}
                     >
                       <span>{item.icon()}</span>
@@ -117,7 +117,7 @@ const NavMobile = () => {
                     </Button>
                   </Link>
                 ))}
-                <div className="w-full flex items-center justify-between gap-4 mt-16">
+                <div className="mt-16 flex w-full items-center justify-between gap-4">
                   <Button className="w-full">
                     <Fingerprint className="mr-2" />
                     Connexion
@@ -138,18 +138,18 @@ const NavMobile = () => {
 
 const NavDesktop = () => {
   return (
-    <header className="hidden md:flex w-8/12 bg-foreground shadow-pxl shadow-primary/20 mx-auto p-1 mt-4 rounded-xl">
-      <nav className="w-full flex items-center justify-between">
+    <header className="mx-auto mt-4 hidden w-8/12 rounded-xl bg-foreground p-1 shadow-pxl shadow-primary/20 md:flex">
+      <nav className="flex w-full items-center justify-between">
         <Link href={"/"}>
-          <Avatar className="p-0 m-0">
+          <Avatar className="m-0 p-0">
             <AvatarImage className="w-full" src="/photo-de-profil.jpg" />
             <AvatarFallback>
-              <AvatarIcon className="h-full w-full text-white" />
+              <AvatarIcon className="size-full text-white" />
             </AvatarFallback>
           </Avatar>
         </Link>
-        <div className="hidden md:flex h-full items-center gap-2 mr-2">
-          <Link className="text-secondary text-md mr-4" href="/signin">
+        <div className="mr-2 hidden h-full items-center gap-2 md:flex">
+          <Link className="text-md mr-4 text-secondary" href="/signin">
             Connexion
           </Link>
           <Link

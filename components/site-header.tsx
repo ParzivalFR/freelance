@@ -2,6 +2,7 @@
 
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { MenuItemTypes } from "@/types/MenuItemsTypes";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   AlignJustify,
@@ -12,39 +13,37 @@ import {
   Star,
   XIcon,
 } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useId, useState } from "react";
-import Blob from "./Blob";
 import { ThemeToggle } from "./theme-toggle";
-import Image from "next/image";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { MenuItemTypes } from "@/types/MenuItemsTypes";
 
 export const menuItem: MenuItemTypes[] = [
   {
     label: "Accueil",
     href: "/",
-    icon: () => <Home className="h-5 w-5" />,
+    icon: () => <Home className="size-5" />,
   },
   {
     label: "Témoignages",
     href: "#testimonials",
-    icon: () => <Star className="h-5 w-5" />,
+    icon: () => <Star className="size-5" />,
   },
   {
     label: "Tarifs",
     href: "#pricing",
-    icon: () => <PiggyBank className="h-5 w-5" />,
+    icon: () => <PiggyBank className="size-5" />,
   },
   {
     label: "FAQs",
     href: "#faq",
-    icon: () => <CircleHelp className="h-5 w-5" />,
+    icon: () => <CircleHelp className="size-5" />,
   },
   {
     label: "Contact",
     href: "#contact",
-    icon: () => <Mailbox className="h-5 w-5" />,
+    icon: () => <Mailbox className="size-5" />,
   },
 ];
 
@@ -117,15 +116,15 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="fixed left-0 top-0 z-50 w-full translate-y-[-1rem] animate-fade-in border-b opacity-0 backdrop-blur-[12px] [--animation-delay:600ms]">
-        <div className="relative container flex h-[3.5rem] items-center justify-between px-2">
+      <header className="fixed left-0 top-0 z-50 w-full -translate-y-4 animate-fade-in border-b opacity-0 backdrop-blur-md [--animation-delay:600ms]">
+        <div className="container relative flex h-14 items-center justify-between px-2">
           <Link href="/">
             <Avatar>
               <AvatarImage src="/logo-todo.png" />
               <AvatarFallback>TO</AvatarFallback>
             </Avatar>
           </Link>
-          <div className="hidden md:flex h-full items-center">
+          <div className="hidden h-full items-center md:flex">
             <Link className="mr-6 text-sm" href="/signin">
               Connexion
             </Link>
@@ -140,7 +139,7 @@ export function SiteHeader() {
             </Link>
             <ThemeToggle />
           </div>
-          <div className="ml-6 md:hidden flex items-center gap-4">
+          <div className="ml-6 flex items-center gap-4 md:hidden">
             <ThemeToggle />
             <Button
               variant="ghost"
@@ -168,7 +167,7 @@ export function SiteHeader() {
             }
           )}
         >
-          <div className="container flex h-[3.5rem] py-10 items-center justify-between px-2">
+          <div className="container flex h-14 items-center justify-between px-2 py-10">
             <Link href="/" className="px-4">
               <Image src="/logo-todo.png" width={60} height={60} alt="logo" />
             </Link>
@@ -179,12 +178,12 @@ export function SiteHeader() {
               <span className="sr-only">Toggle menu</span>
               <XIcon
                 size={36}
-                className="transition hover:rotate-180 duration-500"
+                className="transition duration-500 hover:rotate-180"
               />
             </Button>
           </div>
           <motion.ul
-            className={`pt-12 pl-4 flex flex-col md:flex-row md:items-center uppercase md:normal-case ease-in`}
+            className={`flex flex-col pl-4 pt-12 uppercase ease-in md:flex-row md:items-center md:normal-case`}
             variants={containerVariants}
             initial="initial"
             animate={hamburgerMenuIsOpen ? "animate" : "exit"}
@@ -196,13 +195,13 @@ export function SiteHeader() {
                 className="px-6 py-2 md:border-none"
               >
                 <Link
-                  className={`hover:text-grey flex gap-4 h-[var(--navigation-height)] w-full items-center text-xl transition-[color,transform] duration-500 md:translate-y-0 md:text-sm md:transition-colors hover:bg-secondary/40 rounded-md transtion-colors  ${
+                  className={`hover:text-grey transtion-colors flex h-[var(--navigation-height)] w-full items-center gap-4 rounded-md text-xl transition-[color,transform] duration-500 hover:bg-secondary/40 md:translate-y-0 md:text-sm md:transition-colors  ${
                     hamburgerMenuIsOpen ? "[&_a]:translate-y-0" : ""
                   }`}
                   href={item.href}
                   onClick={() => setHamburgerMenuIsOpen(false)}
                 >
-                  <span className="bg-secondary/60 p-2 rounded-md">
+                  <span className="rounded-md bg-secondary/60 p-2">
                     {item.icon()}
                   </span>
                   {item.label}

@@ -1,9 +1,9 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 import { UserIcon } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 
 interface AvatarCirclesProps {
   className?: string;
@@ -22,7 +22,7 @@ const AvatarCircles = ({
         url ? (
           <Image
             key={index}
-            className="h-10 w-10 rounded-full border-2 border-white dark:border-gray-800"
+            className="size-10 rounded-full border-2 border-white dark:border-gray-800"
             src={url}
             width={40}
             height={40}
@@ -31,14 +31,14 @@ const AvatarCircles = ({
         ) : (
           <div
             key={index}
-            className="h-10 w-10 rounded-full border-2 border-white dark:border-gray-800 bg-primary flex items-center justify-center"
+            className="flex size-10 items-center justify-center rounded-full border-2 border-white bg-primary dark:border-gray-800"
           >
-            <UserIcon className="h-6 w-6 text-background" />
+            <UserIcon className="size-6 text-background" />
           </div>
         )
       )}
       <Link
-        className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-primary bg-secondary text-center text-xs font-medium text-primary hover:bg-primary hover:text-background hover:border-background transition-colors duration-300 ease-in-out"
+        className="flex size-10 items-center justify-center rounded-full border-2 border-primary bg-secondary text-center text-xs font-medium text-primary transition-colors duration-300 ease-in-out hover:border-background hover:bg-primary hover:text-background"
         href="#"
       >
         +{numPeople}

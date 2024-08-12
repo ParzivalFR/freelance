@@ -90,7 +90,7 @@ export default function FreelanceServicesSection() {
     <section id="pricing">
       <div className="mx-auto flex max-w-screen-xl flex-col gap-8 px-4 py-14 md:px-8">
         <div className="mx-auto max-w-5xl text-center">
-          <h4 className="text-lg sm:text-xl font-bold tracking-tight text-black dark:text-white">
+          <h4 className="text-lg font-bold tracking-tight text-black dark:text-white sm:text-xl">
             Services
           </h4>
 
@@ -98,7 +98,7 @@ export default function FreelanceServicesSection() {
             Services de Développement Freelance
           </h2>
 
-          <p className="mt-6 text-lgsm:text-xl leading-8 text-black/80 dark:text-white">
+          <p className="text-lgsm:text-xl mt-6 leading-8 text-black/80 dark:text-white">
             Choisissez l'
             <u>
               <strong>offre adaptée</strong>
@@ -110,7 +110,7 @@ export default function FreelanceServicesSection() {
 
         <AlerteNote />
 
-        <div className="flex w-full items-center justify-center space-x-2 mb-6">
+        <div className="mb-6 flex w-full items-center justify-center space-x-2">
           <Switch
             id="interval"
             onCheckedChange={(checked) => {
@@ -125,7 +125,7 @@ export default function FreelanceServicesSection() {
           </span>
         </div>
 
-        <div className="mx-auto grid w-full justify-center sm:grid-cols-2 lg:grid-cols-3 flex-col gap-6">
+        <div className="mx-auto grid w-full flex-col justify-center gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {freelanceServices.map((service, idx) => (
             <div
               key={service.id}
@@ -208,7 +208,7 @@ export default function FreelanceServicesSection() {
                       key={idx}
                       className="flex items-center gap-3 text-xs font-medium text-black dark:text-white"
                     >
-                      <CheckIcon className="h-5 w-5 shrink-0 rounded-full bg-green-400 p-[2px] text-black dark:text-white" />
+                      <CheckIcon className="size-5 shrink-0 rounded-full bg-green-400 p-[2px] text-black dark:text-white" />
                       <span className="flex">{feature}</span>
                     </li>
                   ))}
@@ -224,9 +224,9 @@ export default function FreelanceServicesSection() {
 
 const AlerteNote = () => {
   return (
-    <div className="bg-purple-100 border-l-4 border-purple-500 text-purple-700 p-4 mb-6 rounded-md max-w-screen-md mx-auto">
-      <p className="font-bold flex items-center gap-2">
-        <TriangleAlert className="h-5 w-5" />
+    <div className="mx-auto mb-6 max-w-screen-md rounded-md border-l-4 border-purple-500 bg-purple-100 p-4 text-purple-700">
+      <p className="flex items-center gap-2 font-bold">
+        <TriangleAlert className="size-5" />
         Note importante :
       </p>
       <p className="text-sm">

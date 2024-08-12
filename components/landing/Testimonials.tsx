@@ -4,7 +4,8 @@ import Marquee from "@/components/magicui/marquee";
 import { cn } from "@/lib/utils";
 import { ReviewCardProps } from "@/types/ReviewCardTypes";
 import { useOpenModal } from "@/zustand/state-form-testimonials";
-import { Star, UserIcon } from "lucide-react";
+import { StarFilledIcon } from "@radix-ui/react-icons";
+import { UserIcon } from "lucide-react";
 import Image from "next/image";
 import useSWR from "swr";
 import AvatarCircles from "../magicui/avatar-circle";
@@ -12,7 +13,6 @@ import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
 import AddTestimonialsForm from "./form-add-testimonials";
 import Modal from "./modal";
-import { StarFilledIcon } from "@radix-ui/react-icons";
 
 const ReviewCard = ({
   name,
@@ -38,15 +38,15 @@ const ReviewCard = ({
       <div className="flex flex-row items-center gap-2">
         {imgUrl ? (
           <Image
-            className="rounded-full aspect-square"
+            className="aspect-square rounded-full"
             width="32"
             height="32"
             alt=""
             src={imgUrl}
           />
         ) : (
-          <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
-            <UserIcon className="h-6 w-6 text-background" />
+          <div className="flex size-8 items-center justify-center rounded-full bg-primary">
+            <UserIcon className="size-6 text-background" />
           </div>
         )}
         <div className="flex flex-col">
@@ -56,7 +56,7 @@ const ReviewCard = ({
           <p className="text-xs font-medium dark:text-white/40">{role}</p>
         </div>
       </div>
-      <blockquote className="mt-2 text-sm flex-grow">{review}</blockquote>
+      <blockquote className="mt-2 grow text-sm">{review}</blockquote>
       {createdAt && (
         <p className="mt-4 text-xs text-gray-500 dark:text-gray-400">
           Créé le {new Date(createdAt).toLocaleDateString()}
@@ -67,16 +67,16 @@ const ReviewCard = ({
 };
 
 const SkeletonTestimonialCard = () => (
-  <div className="mb-4 flex w-full h-auto min-w-96 min-h-[200px] flex-col items-center justify-between gap-6 rounded-xl p-4 border border-neutral-200 bg-white dark:bg-black dark:[border:1px_solid_rgba(255,255,255,.1)]">
+  <div className="mb-4 flex h-auto min-h-[200px] w-full min-w-96 flex-col items-center justify-between gap-6 rounded-xl border border-neutral-200 bg-white p-4 dark:bg-black dark:[border:1px_solid_rgba(255,255,255,.1)]">
     <div className="w-full">
-      <Skeleton className="h-4 w-full mb-2" />
-      <Skeleton className="h-4 w-3/4 mb-2" />
+      <Skeleton className="mb-2 h-4 w-full" />
+      <Skeleton className="mb-2 h-4 w-3/4" />
       <Skeleton className="h-4 w-1/2" />
     </div>
     <div className="flex w-full items-center justify-start gap-5">
-      <Skeleton className="h-10 w-10 rounded-full" />
+      <Skeleton className="size-10 rounded-full" />
       <div>
-        <Skeleton className="h-4 w-24 mb-2" />
+        <Skeleton className="mb-2 h-4 w-24" />
         <Skeleton className="h-3 w-16" />
       </div>
     </div>
@@ -87,7 +87,7 @@ const SkeletonAvatarCircles = ({ count }: { count: number }) => {
   return (
     <div className="z-10 flex -space-x-4 rtl:space-x-reverse">
       {[...Array(count)].map((_, index) => (
-        <Skeleton key={index} className="h-10 w-10 rounded-full" />
+        <Skeleton key={index} className="size-10 rounded-full" />
       ))}
     </div>
   );
@@ -106,21 +106,21 @@ export function Testimonials() {
     <section id="testimonials">
       <div className="py-14">
         <div className="container mx-auto px-4 md:px-8">
-          <h3 className="text-center uppercase text-xl font-semibold text-foreground">
+          <h3 className="text-center text-xl font-semibold uppercase text-foreground">
             Témoignages
           </h3>
-          <h2 className="text-center text-4xl font-bold text-neutral-900 dark:text-neutral-100 mt-2">
+          <h2 className="mt-2 text-center text-4xl font-bold text-neutral-900 dark:text-neutral-100">
             Des projets réussis, des clients satisfaits
           </h2>
-          <p className="text-center text-lg text-neutral-500 dark:text-neutral-400 mt-4">
+          <p className="mt-4 text-center text-lg text-neutral-500 dark:text-neutral-400">
             En tant que développeur freelance passionné, je m'efforce de fournir
             un travail de qualité et une expérience client exceptionnelle. Voici
             quelques retours de mes clients récents.
           </p>
-          <div className="relative flex h-auto min-h-[300px] w-full flex-col items-center justify-center overflow-hidden mt-4">
+          <div className="relative mt-4 flex h-auto min-h-[300px] w-full flex-col items-center justify-center overflow-hidden">
             <Marquee
               pauseOnHover
-              className="[--duration:30s] sm:[--duration:50s] flex items-stretch"
+              className="flex items-stretch [--duration:30s] sm:[--duration:50s]"
             >
               {reviews &&
                 reviews.map((review: ReviewCardProps) => (
@@ -134,7 +134,7 @@ export function Testimonials() {
             <Marquee
               reverse
               pauseOnHover
-              className="[--duration:20s] sm:[--duration:30s] flex items-stretch"
+              className="flex items-stretch [--duration:20s] sm:[--duration:30s]"
             >
               {reviews &&
                 reviews.map((review: ReviewCardProps) => (
@@ -148,8 +148,8 @@ export function Testimonials() {
             <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-white dark:from-background"></div>
             <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-white dark:from-background"></div>
           </div>
-          <div className="flex justify-center items-center mt-4">
-            <div className="flex flex-col justify-center items-center gap-2 mt-4">
+          <div className="mt-4 flex items-center justify-center">
+            <div className="mt-4 flex flex-col items-center justify-center gap-2">
               {isLoading ? (
                 <SkeletonAvatarCircles count={5} />
               ) : (
@@ -167,7 +167,7 @@ export function Testimonials() {
               )}
               <Button onClick={() => toggleModal()}>
                 Laisser un avis
-                <StarFilledIcon className="text-yellow-500 ml-2 h-4 w-4" />
+                <StarFilledIcon className="ml-2 size-4 text-yellow-500" />
               </Button>
               <Modal
                 title="Ajouter un témoignage"
