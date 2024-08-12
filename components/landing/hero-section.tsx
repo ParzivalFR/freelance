@@ -47,7 +47,7 @@ export default function HeroSection() {
         <p className="mb-12 -translate-y-4 animate-fade-in text-balance text-lg tracking-tight text-gray-400 opacity-0 [--animation-delay:400ms] md:text-xl">
           Des solutions sur mesure pour vos projets web,
           <br className="hidden md:block" /> développées avec{" "}
-          <RoughNotation type="underline" order={2}>
+          <RoughNotation type="underline" order={2} animationDelay={1000}>
             passion
           </RoughNotation>{" "}
           et{" "}
