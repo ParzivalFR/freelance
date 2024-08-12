@@ -6,6 +6,7 @@ import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 
 const inter = Inter({
@@ -69,6 +70,29 @@ export default function RootLayout({
         >
           <TooltipProvider>{children}</TooltipProvider>
           <Toaster />
+          <Script id="axeptio-script" strategy="afterInteractive">
+            {`
+            window.axeptioSettings = {
+              clientId: "66b9b509db74cd6c5c11cdf1",
+              cookiesVersion: "site freelance-fr-EU-2",
+              googleConsentMode: {
+                default: {
+                  analytics_storage: "denied",
+                  ad_storage: "denied",
+                  ad_user_data: "denied",
+                  ad_personalization: "denied",
+                  wait_for_update: 500
+                }
+              }
+            };
+            
+            (function(d, s) {
+              var t = d.getElementsByTagName(s)[0], e = d.createElement(s);
+              e.async = true; e.src = "//static.axept.io/sdk.js";
+              t.parentNode.insertBefore(e, t);
+            })(document, "script");
+          `}
+          </Script>
         </ThemeProvider>
       </body>
     </html>
