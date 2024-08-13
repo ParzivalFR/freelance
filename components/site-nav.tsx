@@ -21,6 +21,7 @@ import { useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
 import { Avatar, AvatarFallback } from "./ui/avatar";
 import { Button, buttonVariants } from "./ui/button";
+import { useRouter } from "next/navigation";
 
 const menuItem: MenuItemTypes[] = [
   {
@@ -30,22 +31,22 @@ const menuItem: MenuItemTypes[] = [
   },
   {
     label: "Témoignages",
-    href: "#testimonials",
+    href: "/#testimonials",
     icon: () => <Star className="size-5" />,
   },
   {
     label: "Tarifs",
-    href: "#pricing",
+    href: "/#pricing",
     icon: () => <PiggyBank className="size-5" />,
   },
   {
     label: "FAQs",
-    href: "#faq",
+    href: "/#faq",
     icon: () => <CircleHelp className="size-5" />,
   },
   {
     label: "Contact",
-    href: "#contact",
+    href: "/#contact",
     icon: () => <Mailbox className="size-5" />,
   },
 ];
@@ -62,6 +63,7 @@ export default function SiteNav() {
 const NavMobile = () => {
   const [openMenu, setOpenMenu] = useState<boolean>(false);
   const toggleMenu = () => setOpenMenu((prev) => !prev);
+  const router = useRouter();
 
   return (
     <header className="fixed right-4 top-4 z-[500] flex items-center justify-between space-x-2 rounded-2xl bg-primary px-1.5 py-1 md:hidden">
@@ -118,11 +120,17 @@ const NavMobile = () => {
                   </Link>
                 ))}
                 <div className="mt-16 flex w-full items-center justify-between gap-4">
-                  <Button className="w-full">
+                  <Button
+                    className="w-full"
+                    onClick={() => router.push("/login")}
+                  >
                     <Fingerprint className="mr-2" />
                     Connexion
                   </Button>
-                  <Button className="w-full">
+                  <Button
+                    className="w-full"
+                    onClick={() => router.push("/signup")}
+                  >
                     <ClipboardPen className="mr-2" />
                     S'inscrire
                   </Button>
