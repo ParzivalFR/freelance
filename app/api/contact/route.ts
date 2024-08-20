@@ -1,32 +1,7 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-import { RateLimiterMemory } from "rate-limiter-flexible";
-
-// Crée un rate limiter en mémoire (pour limiter par IP)
-const rateLimiter = new RateLimiterMemory({
-  points: 5, // Nombre maximum de requêtes autorisées
-  duration: 60, // Intervalle de temps en secondes (ici 5 requêtes par minute)
-});
 
 export async function POST(request: Request) {
-  // Récupération de l'adresse IP du client (s'il y a un proxy, adapter)
-  const ip =
-    request.headers.get("x-forwarded-for") ||
-    request.headers.get("x-real-ip") ||
-    (request as any).socket?.remoteAddress;
-
-  try {
-    // Consomme 1 point (1 requête) pour l'IP du client
-    await rateLimiter.consume(ip);
-  } catch (rateLimiterRes) {
-    // Si le client dépasse les limites, on retourne un message d'erreur
-    return NextResponse.json(
-      { error: "🛑 Trop de requêtes, veuillez réessayer plus tard." },
-      { status: 429 }
-    );
-  }
-
-  // Traitement du formulaire
   const body = await request.json();
   const { firstName, lastName, email, message } = body;
 
@@ -34,13 +9,13 @@ export async function POST(request: Request) {
   const transporter = nodemailer.createTransport({
     host: "mail.infomaniak.com",
     port: 465,
-    secure: true,
+    secure: true, // Utilisation de SSL
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASSWORD,
     },
     tls: {
-      rejectUnauthorized: false,
+      rejectUnauthorized: false, // Facultatif : utile si vous rencontrez des problèmes de certificat
     },
   });
 
@@ -84,6 +59,7 @@ export async function POST(request: Request) {
     html: customMessage,
   };
 
+  // Personnalisation du message de confirmation pour le destinataire
   const confirmationMessage = `
   <html>
     <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
@@ -124,11 +100,11 @@ export async function POST(request: Request) {
   };
 
   try {
-    // Envoi de l'email principal
+    // Envoyer l'email principal
     let info = await transporter.sendMail(mailOptions);
     console.log("🍀 Email envoyé avec succès : ", info.response);
 
-    // Envoi de l'email de confirmation au destinataire
+    // Envoyer l'email de confirmation au destinataire
     let confirmationInfo = await transporter.sendMail(confirmationMailOptions);
     console.log(
       "🍀 Email de confirmation envoyé avec succès : ",
