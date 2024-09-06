@@ -37,7 +37,7 @@ export default function HeroSection() {
           <RoughNotation
             order={1}
             type="circle"
-            color="white"
+            color="gray"
             animationDelay={1000}
           >
             Propulsez

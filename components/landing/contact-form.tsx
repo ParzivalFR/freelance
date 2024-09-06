@@ -1,10 +1,9 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-// import { useState } from "react";
-import { useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
+import useSWRMutation from "swr/mutation";
 import { z } from "zod";
 import Loader from "../loader";
 import { BorderBeam } from "../magicui/border-beam";
@@ -36,9 +35,30 @@ const formSchema = z.object({
   files: z.array(z.instanceof(File)).optional(),
 });
 
+async function sendContactRequest(
+  url: string,
+  { arg }: { arg: z.infer<typeof formSchema> }
+) {
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(arg),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to send message");
+  }
+
+  return response.json();
+}
+
 export default function ContactForm() {
-  const ref = useRef<HTMLFormElement>(null);
-  const [submitting, setSubmitting] = useState(false);
+  const { trigger, isMutating } = useSWRMutation(
+    "/api/contact",
+    sendContactRequest
+  );
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
@@ -51,23 +71,10 @@ export default function ContactForm() {
   });
 
   async function onSubmit(data: z.infer<typeof formSchema>) {
-    setSubmitting(true);
     try {
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (response.ok) {
-        ref.current?.reset();
-        toast.success("Votre message a bien été envoyé !");
-        setSubmitting(false);
-      } else {
-        toast.error("Une erreur s'est produite. Veuillez réessayer.");
-      }
+      await trigger(data);
+      toast.success("Votre message a bien été envoyé !");
+      form.reset(); // Réinitialise le formulaire après un envoi réussi
     } catch (error) {
       toast.error("Une erreur s'est produite. Veuillez réessayer.");
     }
@@ -92,7 +99,6 @@ export default function ContactForm() {
           <BorderBeam className="z-[-100] " />
           <Form {...form}>
             <form
-              ref={ref}
               onSubmit={form.handleSubmit(onSubmit)}
               className="w-full space-y-6"
             >
@@ -163,10 +169,11 @@ export default function ContactForm() {
                 )}
               />
               <div className="flex items-center justify-end">
-                {submitting ? (
+                {isMutating ? (
                   <Button
                     type="button"
                     className="space-x-2 ring-4 ring-primary/20 transition duration-300 hover:bg-foreground/70"
+                    disabled
                   >
                     <Loader />
                     <span>Envoi en cours...</span>

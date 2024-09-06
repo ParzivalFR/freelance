@@ -240,10 +240,10 @@ const Feature = ({
         <div className="container flex w-full flex-col items-center justify-center p-4">
           <div className="mx-auto max-w-5xl text-center">
             <h4 className="text-xl font-bold tracking-tight text-black dark:text-white">
-              Features
+              Créations
             </h4>
             <h2 className="text-4xl font-bold tracking-tight text-black dark:text-white sm:text-6xl">
-              Blazingly fast to help your business grow
+              Découvrez les projets réalisés
             </h2>
           </div>
           <div className="mx-auto my-12 grid h-full max-w-5xl grid-cols-5 gap-x-10">

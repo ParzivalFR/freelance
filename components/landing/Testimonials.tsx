@@ -7,6 +7,7 @@ import { useOpenModal } from "@/zustand/state-form-testimonials";
 import { StarFilledIcon } from "@radix-ui/react-icons";
 import { UserIcon } from "lucide-react";
 import Image from "next/image";
+import { useEffect, useState } from "react";
 import useSWR from "swr";
 import AvatarCircles from "../magicui/avatar-circle";
 import { Button } from "../ui/button";
@@ -23,13 +24,27 @@ const ReviewCard = ({
   createdAt,
   ...props
 }: ReviewCardProps) => {
+  const [formattedDate, setFormattedDate] = useState("");
+
+  useEffect(() => {
+    if (createdAt) {
+      const date = new Date(createdAt);
+      setFormattedDate(
+        `${date.toLocaleDateString("fr-FR", {
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+        })}`
+      );
+    }
+  }, [createdAt]);
+
   return (
     <figure
       className={cn(
-        "relative w-96 flex flex-col justify-between cursor-pointer overflow-hidden rounded-xl border p-4",
-        // light styles
+        "relative w-96 flex flex-col justify-between cursor-pointer overflow-hidden rounded-xl border p-4 transition-all duration-500 ease-in-out",
+        // styles par défaut
         "border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]",
-        // dark styles
         "dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]",
         className
       )}
@@ -56,10 +71,15 @@ const ReviewCard = ({
           <p className="text-xs font-medium dark:text-white/40">{role}</p>
         </div>
       </div>
-      <blockquote className="mt-2 grow text-sm">{review}</blockquote>
+
+      {/* Review text with animation */}
+      <blockquote className="mt-2 max-h-24 overflow-hidden text-sm transition-all duration-500 ease-in-out hover:max-h-64">
+        {review}
+      </blockquote>
+
       {createdAt && (
         <p className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-          Créé le {new Date(createdAt).toLocaleDateString()}
+          Créé le {formattedDate}
         </p>
       )}
     </figure>

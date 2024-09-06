@@ -6,6 +6,7 @@ import {
   TwitterLogoIcon,
 } from "@radix-ui/react-icons";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { SiMalt } from "react-icons/si";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
@@ -93,6 +94,12 @@ const footerSocials = [
 ];
 
 export function SiteFooter() {
+  const [currentYear, setCurrentYear] = useState("");
+
+  useEffect(() => {
+    setCurrentYear(new Date().getFullYear().toString());
+  }, []);
+
   return (
     <footer className="footer-border">
       <div className="mx-auto w-full max-w-screen-xl xl:pb-2">
@@ -148,7 +155,7 @@ export function SiteFooter() {
             ))}
           </div>
           <div className="text-center text-xs text-gray-500 dark:text-gray-400 sm:text-sm">
-            Copyright © {new Date().getFullYear()}{" "}
+            Copyright © {currentYear}{" "}
             <Link href="#" className="font-extrabold">
               Gael RICHARD.
             </Link>{" "}

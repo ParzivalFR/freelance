@@ -3,63 +3,57 @@
 import Marquee from "@/components/magicui/marquee";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { ArrowRight, HeartHandshake } from "lucide-react";
+import { ArrowRight, HeartHandshake, UserIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import useSWR from "swr";
 
-const reviews = [
-  {
-    name: "Jack",
-    username: "@jack",
-    body: "I've never seen anything like this before. It's amazing. I love it.",
-    img: "https://avatar.vercel.sh/jack",
-  },
-  {
-    name: "Jill",
-    username: "@jill",
-    body: "I don't know what to say. I'm speechless. This is amazing.",
-    img: "https://avatar.vercel.sh/jill",
-  },
-  {
-    name: "John",
-    username: "@john",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: "https://avatar.vercel.sh/john",
-  },
-  {
-    name: "Jane",
-    username: "@jane",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: "https://avatar.vercel.sh/jane",
-  },
-  {
-    name: "Jenny",
-    username: "@jenny",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: "https://avatar.vercel.sh/jenny",
-  },
-  {
-    name: "James",
-    username: "@james",
-    body: "I'm at a loss for words. This is amazing. I love it.",
-    img: "https://avatar.vercel.sh/james",
-  },
-];
+// const review = [
+//   {
+//     name: "Jack",
+//     name: "@jack",
+//     review: "I've never seen anything like this before. It's amazing. I love it.",
+//     imgUrl: "https://avatar.vercel.sh/jack",
+//   },
+//   {
+//     name: "Jill",
+//     name: "@jill",
+//     review: "I don't know what to say. I'm speechless. This is amazing.",
+//     imgUrl: "https://avatar.vercel.sh/jill",
+//   },
+//   {
+//     name: "John",
+//     name: "@john",
+//     review: "I'm at a loss for words. This is amazing. I love it.",
+//     imgUrl: "https://avatar.vercel.sh/john",
+//   },
+//   {
+//     name: "Jane",
+//     name: "@jane",
+//     review: "I'm at a loss for words. This is amazing. I love it.",
+//     imgUrl: "https://avatar.vercel.sh/jane",
+//   },
+//   {
+//     name: "Jenny",
+//     name: "@jenny",
+//     review: "I'm at a loss for words. This is amazing. I love it.",
+//     imgUrl: "https://avatar.vercel.sh/jenny",
+//   },
+//   {
+//     name: "James",
+//     name: "@james",
+//     review: "I'm at a loss for words. This is amazing. I love it.",
+//     imgUrl: "https://avatar.vercel.sh/james",
+//   },
+// ];
 
-const firstRow = reviews.slice(0, reviews.length / 2);
-const secondRow = reviews.slice(reviews.length / 2);
-
-const ReviewCard = ({
-  img,
-  name,
-  username,
-  body,
-}: {
-  img: string;
+interface Review {
+  imgUrl: string;
   name: string;
-  username: string;
-  body: string;
-}) => {
+  review: React.ReactNode | string;
+}
+
+const ReviewCard = ({ imgUrl, name, review }: Review) => {
   return (
     <figure
       className={cn(
@@ -71,21 +65,27 @@ const ReviewCard = ({
       )}
     >
       <div className="flex flex-row items-center gap-2">
-        <Image
-          className="rounded-full"
-          width={32}
-          height={32}
-          alt="Image Avatar Vercel"
-          src={img}
-        />
+        {imgUrl ? (
+          <Image
+            className="rounded-full"
+            width={32}
+            height={32}
+            alt="Image Avatar Vercel"
+            src={imgUrl}
+          />
+        ) : (
+          <div className="flex size-8 items-center justify-center rounded-full bg-primary">
+            <UserIcon className="size-6 text-background" />
+          </div>
+        )}
+
         <div className="flex flex-col">
           <figcaption className="text-sm font-medium dark:text-white">
             {name}
           </figcaption>
-          <p className="text-xs font-medium dark:text-white/40">{username}</p>
         </div>
       </div>
-      <blockquote className="mt-2 text-sm">{body}</blockquote>
+      <blockquote className="mt-2 line-clamp-2 text-sm">{review}</blockquote>
     </figure>
   );
 };
@@ -96,55 +96,64 @@ export default function CallToActionSection() {
     router.push("#contact");
   };
 
+  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+  const {
+    data: review,
+    error,
+    isLoading,
+  } = useSWR("/api/testimonials", fetcher);
+
+  if (!review) return null;
+
   return (
     <section id="cta">
       <div className="py-14">
         <div className="container flex w-full flex-col items-center justify-center p-4">
           <div className="relative flex w-full max-w-[1000px] flex-col items-center justify-center overflow-hidden rounded-[2rem] border p-10 py-14">
             <div className="absolute rotate-[35deg]">
-              <Marquee pauseOnHover className="[--duration:20s]" repeat={3}>
-                {firstRow.map((review) => (
-                  <ReviewCard key={review.username} {...review} />
+              <Marquee pauseOnHover className="[--duration:30s]" repeat={3}>
+                {review.map((review: Review) => (
+                  <ReviewCard key={review.name} {...review} />
                 ))}
               </Marquee>
               <Marquee
                 reverse
                 pauseOnHover
-                className="[--duration:20s]"
+                className="[--duration:35s]"
                 repeat={3}
               >
-                {secondRow.map((review) => (
-                  <ReviewCard key={review.username} {...review} />
+                {review.map((review: Review) => (
+                  <ReviewCard key={review.name} {...review} />
                 ))}
               </Marquee>
-              <Marquee pauseOnHover className="[--duration:20s]" repeat={3}>
-                {firstRow.map((review) => (
-                  <ReviewCard key={review.username} {...review} />
+              <Marquee pauseOnHover className="[--duration:40s]" repeat={3}>
+                {review.map((review: Review) => (
+                  <ReviewCard key={review.name} {...review} />
                 ))}
               </Marquee>
               <Marquee
                 reverse
                 pauseOnHover
-                className="[--duration:20s]"
+                className="[--duration:25s]"
                 repeat={3}
               >
-                {secondRow.map((review) => (
-                  <ReviewCard key={review.username} {...review} />
+                {review.map((review: Review) => (
+                  <ReviewCard key={review.name} {...review} />
                 ))}
               </Marquee>
-              <Marquee pauseOnHover className="[--duration:20s]" repeat={3}>
-                {firstRow.map((review) => (
-                  <ReviewCard key={review.username} {...review} />
+              <Marquee pauseOnHover className="[--duration:50s]" repeat={3}>
+                {review.map((review: Review) => (
+                  <ReviewCard key={review.name} {...review} />
                 ))}
               </Marquee>
               <Marquee
                 reverse
                 pauseOnHover
-                className="[--duration:20s]"
+                className="[--duration:35s]"
                 repeat={3}
               >
-                {secondRow.map((review) => (
-                  <ReviewCard key={review.username} {...review} />
+                {review.map((review: Review) => (
+                  <ReviewCard key={review.name} {...review} />
                 ))}
               </Marquee>
             </div>
