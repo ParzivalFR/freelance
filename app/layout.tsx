@@ -55,6 +55,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
+      <head>
+        <script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="6623f3b3-5b5d-47bc-95d3-60287ce2dd10"
+        ></script>
+      </head>
       <Analytics />
       <SpeedInsights />
       <body
