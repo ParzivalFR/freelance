@@ -55,13 +55,6 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" suppressHydrationWarning>
-      <head>
-        <script
-          defer
-          src="https://cloud.umami.is/script.js"
-          data-website-id="6623f3b3-5b5d-47bc-95d3-60287ce2dd10"
-        ></script>
-      </head>
       <Analytics />
       <SpeedInsights />
       <body
@@ -77,6 +70,11 @@ export default function RootLayout({
         >
           <TooltipProvider>{children}</TooltipProvider>
           <Toaster />
+          <Script
+            async
+            src="https://cloud.umami.is/script.js"
+            data-website-id="6623f3b3-5b5d-47bc-95d3-60287ce2dd10"
+          />
           <Script id="axeptio-script" strategy="afterInteractive">
             {`
             window.axeptioSettings = {
