@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 const prisma = new PrismaClient();
 
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "https://874c-45-10-155-133.ngrok-free.app", // En production, remplace * par ton domaine portfolio
+  "Access-Control-Allow-Origin": "https://gael-dev.vercel.app", // En production, remplace * par ton domaine portfolio
   "Access-Control-Allow-Methods": "GET",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
