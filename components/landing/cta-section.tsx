@@ -8,45 +8,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import useSWR from "swr";
 
-// const review = [
-//   {
-//     name: "Jack",
-//     name: "@jack",
-//     review: "I've never seen anything like this before. It's amazing. I love it.",
-//     imgUrl: "https://avatar.vercel.sh/jack",
-//   },
-//   {
-//     name: "Jill",
-//     name: "@jill",
-//     review: "I don't know what to say. I'm speechless. This is amazing.",
-//     imgUrl: "https://avatar.vercel.sh/jill",
-//   },
-//   {
-//     name: "John",
-//     name: "@john",
-//     review: "I'm at a loss for words. This is amazing. I love it.",
-//     imgUrl: "https://avatar.vercel.sh/john",
-//   },
-//   {
-//     name: "Jane",
-//     name: "@jane",
-//     review: "I'm at a loss for words. This is amazing. I love it.",
-//     imgUrl: "https://avatar.vercel.sh/jane",
-//   },
-//   {
-//     name: "Jenny",
-//     name: "@jenny",
-//     review: "I'm at a loss for words. This is amazing. I love it.",
-//     imgUrl: "https://avatar.vercel.sh/jenny",
-//   },
-//   {
-//     name: "James",
-//     name: "@james",
-//     review: "I'm at a loss for words. This is amazing. I love it.",
-//     imgUrl: "https://avatar.vercel.sh/james",
-//   },
-// ];
-
 interface Review {
   imgUrl: string;
   name: string;
@@ -112,9 +73,11 @@ export default function CallToActionSection() {
           <div className="relative flex w-full max-w-[1000px] flex-col items-center justify-center overflow-hidden rounded-[2rem] border p-10 py-14">
             <div className="absolute rotate-[35deg]">
               <Marquee pauseOnHover className="[--duration:30s]" repeat={3}>
-                {review.map((review: Review) => (
-                  <ReviewCard key={review.name} {...review} />
-                ))}
+                {review &&
+                  Array.isArray(review) &&
+                  review.map((review: Review) => (
+                    <ReviewCard key={review.name} {...review} />
+                  ))}
               </Marquee>
               <Marquee
                 reverse
@@ -122,14 +85,16 @@ export default function CallToActionSection() {
                 className="[--duration:35s]"
                 repeat={3}
               >
-                {review.map((review: Review) => (
-                  <ReviewCard key={review.name} {...review} />
-                ))}
+                {Array.isArray(review) &&
+                  review.map((review: Review) => (
+                    <ReviewCard key={review.name} {...review} />
+                  ))}
               </Marquee>
               <Marquee pauseOnHover className="[--duration:40s]" repeat={3}>
-                {review.map((review: Review) => (
-                  <ReviewCard key={review.name} {...review} />
-                ))}
+                {Array.isArray(review) &&
+                  review.map((review: Review) => (
+                    <ReviewCard key={review.name} {...review} />
+                  ))}
               </Marquee>
               <Marquee
                 reverse
@@ -137,14 +102,16 @@ export default function CallToActionSection() {
                 className="[--duration:25s]"
                 repeat={3}
               >
-                {review.map((review: Review) => (
-                  <ReviewCard key={review.name} {...review} />
-                ))}
+                {Array.isArray(review) &&
+                  review.map((review: Review) => (
+                    <ReviewCard key={review.name} {...review} />
+                  ))}
               </Marquee>
               <Marquee pauseOnHover className="[--duration:50s]" repeat={3}>
-                {review.map((review: Review) => (
-                  <ReviewCard key={review.name} {...review} />
-                ))}
+                {Array.isArray(review) &&
+                  review.map((review: Review) => (
+                    <ReviewCard key={review.name} {...review} />
+                  ))}
               </Marquee>
               <Marquee
                 reverse
@@ -152,9 +119,10 @@ export default function CallToActionSection() {
                 className="[--duration:35s]"
                 repeat={3}
               >
-                {review.map((review: Review) => (
-                  <ReviewCard key={review.name} {...review} />
-                ))}
+                {Array.isArray(review) &&
+                  review.map((review: Review) => (
+                    <ReviewCard key={review.name} {...review} />
+                  ))}
               </Marquee>
             </div>
             <div className="shadow-2xl z-10 mx-auto size-24 rounded-[2rem] border bg-white/10 p-3 backdrop-blur-md dark:bg-black/10 lg:size-32">
