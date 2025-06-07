@@ -1,3 +1,4 @@
+// components/dashboard/quotes/quote-table.tsx
 "use client";
 
 import { updateQuoteStatus } from "@/app/actions/quotes";
@@ -28,8 +29,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  formatCurrency,
+  formatDate,
+  isExpired,
+  Quote,
+  QuoteStatus,
+  statusConfig,
+} from "@/types/QuoteTypes";
+import {
   Copy,
-  Download,
   Edit,
   Eye,
   FileText,
@@ -39,51 +47,12 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { PDFStyleSelector } from "./pdf-style-selector";
 import { QuoteViewer } from "./quote-viewer";
-import { SimplePDFButton } from "./simple-pdf-button";
-
-interface QuoteItem {
-  id: string;
-  description: string;
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
-}
-
-interface Client {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-}
-
-interface Quote {
-  id: string;
-  quoteNumber: string;
-  client: Client;
-  items: QuoteItem[];
-  subtotal: number;
-  vatRate: number;
-  vatAmount: number;
-  totalAmount: number;
-  status: "DRAFT" | "SENT" | "ACCEPTED" | "REJECTED" | "EXPIRED";
-  validUntil: Date;
-  notes?: string | null;
-  createdAt: Date;
-  updatedAt: Date;
-}
 
 interface QuotesTableProps {
   quotes: Quote[];
 }
-
-const statusConfig = {
-  DRAFT: { label: "Brouillon", variant: "secondary" as const, color: "gray" },
-  SENT: { label: "Envoyé", variant: "default" as const, color: "blue" },
-  ACCEPTED: { label: "Accepté", variant: "default" as const, color: "green" },
-  REJECTED: { label: "Refusé", variant: "destructive" as const, color: "red" },
-  EXPIRED: { label: "Expiré", variant: "outline" as const, color: "orange" },
-};
 
 export function QuotesTable({ quotes }: QuotesTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
@@ -97,21 +66,6 @@ export function QuotesTable({ quotes }: QuotesTableProps) {
       quote.client.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat("fr-FR", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    }).format(new Date(date));
-  };
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat("fr-FR", {
-      style: "currency",
-      currency: "EUR",
-    }).format(amount);
-  };
-
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
     toast.success(`${label} copié dans le presse-papiers`);
@@ -119,7 +73,7 @@ export function QuotesTable({ quotes }: QuotesTableProps) {
 
   const handleStatusChange = async (
     quoteId: string,
-    newStatus: Quote["status"]
+    newStatus: QuoteStatus
   ) => {
     try {
       await updateQuoteStatus(quoteId, newStatus);
@@ -127,10 +81,6 @@ export function QuotesTable({ quotes }: QuotesTableProps) {
     } catch (error) {
       toast.error("Erreur lors de la mise à jour du statut");
     }
-  };
-
-  const isExpired = (validUntil: Date) => {
-    return new Date() > new Date(validUntil);
   };
 
   return (
@@ -285,14 +235,12 @@ export function QuotesTable({ quotes }: QuotesTableProps) {
                             </DropdownMenuItem>
                           </QuoteViewer>
 
-                          <SimplePDFButton
-                            quote={quote}
-                            variant="default"
-                            className="w-full"
-                          >
-                            <Download className="mr-2 size-4" />
-                            Télécharger PDF
-                          </SimplePDFButton>
+                          <DropdownMenuItem asChild>
+                            <div className="flex items-center">
+                              {/* <SimpleDownloadButton quote={quote} /> */}
+                              <PDFStyleSelector quote={quote} />
+                            </div>
+                          </DropdownMenuItem>
 
                           <DropdownMenuSeparator />
 

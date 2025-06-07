@@ -10,9 +10,18 @@ const withPWA = nextPWA({
 });
 
 const nextConfig = {
-  // experimental: {
-  //   nodeMiddleware: true,
-  // },
+  webpack: (config, { isServer }) => {
+    // Configuration pour React-PDF
+    config.resolve.alias.canvas = false;
+    config.resolve.alias.encoding = false;
+
+    // Éviter les erreurs avec React-PDF côté serveur
+    if (isServer) {
+      config.externals = [...config.externals, "@react-pdf/renderer"];
+    }
+
+    return config;
+  },
 
   images: {
     remotePatterns: [

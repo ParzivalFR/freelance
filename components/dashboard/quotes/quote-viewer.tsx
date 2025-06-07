@@ -23,8 +23,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Eye } from "lucide-react";
-import { SimplePDFButton } from "./simple-pdf-button";
-
+import { PDFStyleSelector } from "./pdf-style-selector";
 interface QuoteItem {
   id: string;
   description: string;
@@ -56,6 +55,7 @@ interface Quote {
   validUntil: Date;
   notes?: string | null;
   createdAt: Date;
+  updatedAt: Date;
 }
 
 interface QuoteViewerProps {
@@ -241,10 +241,8 @@ export function QuoteViewer({ quote, children }: QuoteViewerProps) {
 
           {/* Actions */}
           <div className="flex justify-end space-x-2">
-            <SimplePDFButton
-              quote={quote}
-              className="transition-colors hover:bg-green-50"
-            />
+            {/* <SimpleDownloadButton quote={quote} /> */}
+            <PDFStyleSelector quote={quote} />
           </div>
         </div>
       </DialogContent>

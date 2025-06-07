@@ -7,6 +7,8 @@ import { QuotesStats } from "@/components/dashboard/quotes/quotes-stats";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { BarChart3, FileText, Plus } from "lucide-react";
 
+// Import dynamique de la table des devis pour éviter les erreurs SSR
+
 interface PageProps {
   searchParams: Promise<{ tab?: string }>;
 }

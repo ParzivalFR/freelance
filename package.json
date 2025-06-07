@@ -92,8 +92,11 @@
       "@types/react-dom": "19.1.6"
     },
     "onlyBuiltDependencies": [
+      "@prisma/client",
+      "@prisma/engines",
       "@vercel/speed-insights",
-      "core-js",
+      "prisma",
+      "sharp",
       "unrs-resolver"
     ]
   }
