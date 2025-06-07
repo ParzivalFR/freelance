@@ -1,3 +1,4 @@
+// components/dashboard/app-sidebar.tsx
 "use client";
 
 import { NavMain } from "@/components/dashboard/nav-main";
@@ -46,9 +47,9 @@ const data = {
       icon: Users,
     },
     {
-      title: "Devis", // ← Ajout
+      title: "Devis", // ← Ajout de la section devis
       url: "/dashboard/quotes",
-      icon: FileText, // ← Import FileText depuis lucide-react
+      icon: FileText,
     },
     {
       title: "Projets",

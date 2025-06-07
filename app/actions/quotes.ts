@@ -1,44 +1,101 @@
-// app/actions/quotes.ts
+// app/actions/quotes.ts - Ajout de fonction de sérialisation
 "use server";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { QuoteStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-// Schémas de validation
+// === FONCTION DE SÉRIALISATION ===
+function serializeQuote(quote: any) {
+  return {
+    ...quote,
+    subtotalHT: Number(quote.subtotalHT),
+    taxRate: Number(quote.taxRate),
+    taxAmount: Number(quote.taxAmount),
+    totalTTC: Number(quote.totalTTC),
+    items:
+      quote.items?.map((item: any) => ({
+        ...item,
+        quantity: Number(item.quantity),
+        unitPrice: Number(item.unitPrice),
+        totalPrice: Number(item.totalPrice),
+      })) || [],
+  };
+}
+
+// === SCHEMAS DE VALIDATION ===
+
 const QuoteItemSchema = z.object({
-  description: z.string().min(1, "La description est obligatoire").max(200),
-  quantity: z.number().min(1, "La quantité doit être d'au moins 1"),
-  unitPrice: z.number().min(0, "Le prix unitaire doit être positif"),
+  title: z.string().min(1, "Le titre est obligatoire").max(200),
+  description: z.string().optional(),
+  quantity: z.coerce.number().min(0.01, "La quantité doit être positive"),
+  unitPrice: z.coerce.number().min(0, "Le prix unitaire doit être positif"),
+  unit: z.string().min(1, "L'unité est obligatoire"),
+  order: z.coerce.number().default(0),
 });
 
-const QuoteSchema = z.object({
+const CreateQuoteSchema = z.object({
   clientId: z.string().min(1, "Le client est obligatoire"),
-  items: z.array(QuoteItemSchema).min(1, "Au moins un item est requis"),
-  vatRate: z.number().min(0).max(100).default(20),
-  validUntil: z.string().refine((date) => new Date(date) > new Date(), {
-    message: "La date de validité doit être dans le futur",
-  }),
+  title: z.string().min(1, "Le titre est obligatoire").max(200),
+  description: z.string().optional(),
+  validUntil: z.string().optional(),
+  paymentTerms: z.string().optional(),
+  deliveryTerms: z.string().optional(),
   notes: z.string().optional(),
+  taxRate: z.coerce.number().min(0).max(100).default(20),
+  items: z.array(QuoteItemSchema).min(1, "Au moins un item est requis"),
 });
 
-// Générer un numéro de devis unique
+const UpdateQuoteSchema = CreateQuoteSchema.partial().extend({
+  id: z.string().min(1),
+});
+
+// === FONCTIONS UTILITAIRES ===
+
 async function generateQuoteNumber(): Promise<string> {
   const year = new Date().getFullYear();
-  const count = await prisma.quote.count({
+  const prefix = `DEV-${year}-`;
+
+  // Trouver le dernier numéro de l'année
+  const lastQuote = await prisma.quote.findFirst({
     where: {
-      createdAt: {
-        gte: new Date(`${year}-01-01`),
-        lt: new Date(`${year + 1}-01-01`),
+      number: {
+        startsWith: prefix,
       },
+    },
+    orderBy: {
+      number: "desc",
     },
   });
 
-  return `DEV-${year}-${String(count + 1).padStart(4, "0")}`;
+  let nextNumber = 1;
+  if (lastQuote) {
+    const lastNumber = parseInt(lastQuote.number.split("-")[2]);
+    nextNumber = lastNumber + 1;
+  }
+
+  return `${prefix}${nextNumber.toString().padStart(3, "0")}`;
 }
 
-// Créer un devis
+function calculateQuoteTotals(items: any[], taxRate: number) {
+  const subtotalHT = items.reduce((sum, item) => {
+    return sum + item.quantity * item.unitPrice;
+  }, 0);
+
+  const taxAmount = (subtotalHT * taxRate) / 100;
+  const totalTTC = subtotalHT + taxAmount;
+
+  return {
+    subtotalHT: Math.round(subtotalHT * 100) / 100,
+    taxAmount: Math.round(taxAmount * 100) / 100,
+    totalTTC: Math.round(totalTTC * 100) / 100,
+  };
+}
+
+// === ACTIONS CRUD ===
+
 export async function createQuote(prevState: any, formData: FormData) {
   try {
     const session = await auth();
@@ -46,35 +103,21 @@ export async function createQuote(prevState: any, formData: FormData) {
       throw new Error("Session non trouvée");
     }
 
-    // Récupération des données du formulaire
-    const clientId = formData.get("clientId") as string;
-    const vatRate = parseFloat(formData.get("vatRate") as string) || 20;
-    const validUntil = formData.get("validUntil") as string;
-    const notes = formData.get("notes") as string;
-
-    // Récupération des items (JSON stringifié)
-    const itemsJson = formData.get("items") as string;
-    let items;
-    try {
-      items = JSON.parse(itemsJson);
-    } catch {
-      return {
-        errors: { items: ["Format des items invalide"] },
-        message: "Erreur de format des données",
-      };
-    }
-
-    const rawFormData = {
-      clientId,
-      items,
-      vatRate,
-      validUntil,
-      notes,
+    // Récupération et parsing des données
+    const rawData = {
+      clientId: formData.get("clientId") as string,
+      title: formData.get("title") as string,
+      description: formData.get("description") as string,
+      validUntil: formData.get("validUntil") as string,
+      paymentTerms: formData.get("paymentTerms") as string,
+      deliveryTerms: formData.get("deliveryTerms") as string,
+      notes: formData.get("notes") as string,
+      taxRate: formData.get("taxRate") as string,
+      items: JSON.parse((formData.get("items") as string) || "[]"),
     };
 
-    // Validation avec Zod
-    const validatedFields = QuoteSchema.safeParse(rawFormData);
-
+    // Validation
+    const validatedFields = CreateQuoteSchema.safeParse(rawData);
     if (!validatedFields.success) {
       return {
         errors: validatedFields.error.flatten().fieldErrors,
@@ -82,34 +125,65 @@ export async function createQuote(prevState: any, formData: FormData) {
       };
     }
 
-    // Calculs
-    const subtotal = validatedFields.data.items.reduce(
-      (sum, item) => sum + item.quantity * item.unitPrice,
-      0
-    );
-    const vatAmount = (subtotal * validatedFields.data.vatRate) / 100;
-    const totalAmount = subtotal + vatAmount;
+    const {
+      clientId,
+      title,
+      description,
+      validUntil,
+      paymentTerms,
+      deliveryTerms,
+      notes,
+      taxRate,
+      items,
+    } = validatedFields.data;
+
+    // Vérifier que le client existe
+    const client = await prisma.client.findUnique({
+      where: { id: clientId },
+    });
+
+    if (!client) {
+      return {
+        errors: { clientId: ["Client introuvable"] },
+        message: "Client non trouvé.",
+      };
+    }
+
+    // Calculer les totaux
+    const totals = calculateQuoteTotals(items, taxRate);
 
     // Générer le numéro de devis
     const quoteNumber = await generateQuoteNumber();
 
-    // Créer le devis avec les items
+    // Préparer la date de validité
+    const validityDate = validUntil
+      ? new Date(validUntil)
+      : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 jours par défaut
+
+    // Créer le devis avec ses items
     const quote = await prisma.quote.create({
       data: {
-        quoteNumber,
-        clientId: validatedFields.data.clientId,
-        subtotal,
-        vatRate: validatedFields.data.vatRate,
-        vatAmount,
-        totalAmount,
-        validUntil: new Date(validatedFields.data.validUntil),
-        notes: validatedFields.data.notes,
+        number: quoteNumber,
+        title,
+        description,
+        clientId,
+        validUntil: validityDate,
+        paymentTerms,
+        deliveryTerms,
+        notes,
+        taxRate,
+        subtotalHT: totals.subtotalHT,
+        taxAmount: totals.taxAmount,
+        totalTTC: totals.totalTTC,
         items: {
-          create: validatedFields.data.items.map((item) => ({
+          create: items.map((item, index) => ({
+            title: item.title,
             description: item.description,
             quantity: item.quantity,
             unitPrice: item.unitPrice,
             totalPrice: item.quantity * item.unitPrice,
+            unit: item.unit,
+            order: index,
           })),
         },
       },
@@ -120,7 +194,10 @@ export async function createQuote(prevState: any, formData: FormData) {
     });
 
     revalidatePath("/dashboard/quotes");
-    return { message: "Devis créé avec succès.", quote };
+    return {
+      message: `Devis ${quote.number} créé avec succès.`,
+      quoteId: quote.id,
+    };
   } catch (error) {
     console.error("Erreur lors de la création du devis:", error);
     return {
@@ -129,7 +206,8 @@ export async function createQuote(prevState: any, formData: FormData) {
   }
 }
 
-// Récupérer tous les devis
+// === FONCTIONS DE LECTURE (avec sérialisation) ===
+
 export async function getQuotes() {
   try {
     const session = await auth();
@@ -147,14 +225,14 @@ export async function getQuotes() {
       },
     });
 
-    return quotes;
+    // Sérialiser les quotes pour éviter les erreurs Decimal
+    return quotes.map(serializeQuote);
   } catch (error) {
     console.error("Erreur lors de la récupération des devis:", error);
     throw new Error("Impossible de récupérer les devis");
   }
 }
 
-// Récupérer un devis par ID
 export async function getQuoteById(id: string) {
   try {
     const session = await auth();
@@ -166,46 +244,101 @@ export async function getQuoteById(id: string) {
       where: { id },
       include: {
         client: true,
-        items: true,
+        items: {
+          orderBy: { order: "asc" },
+        },
       },
     });
 
-    return quote;
+    if (!quote) return null;
+
+    // Sérialiser le quote pour éviter les erreurs Decimal
+    return serializeQuote(quote);
   } catch (error) {
     console.error("Erreur lors de la récupération du devis:", error);
     throw new Error("Impossible de récupérer le devis");
   }
 }
 
-// Mettre à jour le statut d'un devis
-export async function updateQuoteStatus(
-  id: string,
-  status: "DRAFT" | "SENT" | "ACCEPTED" | "REJECTED" | "EXPIRED"
-) {
+export async function getQuotesByClientId(clientId: string) {
   try {
     const session = await auth();
     if (!session?.user) {
       throw new Error("Session non trouvée");
     }
 
-    const quote = await prisma.quote.update({
-      where: { id },
-      data: { status },
+    const quotes = await prisma.quote.findMany({
+      where: { clientId },
       include: {
         client: true,
         items: true,
       },
+      orderBy: {
+        createdAt: "desc",
+      },
     });
 
-    revalidatePath("/dashboard/quotes");
-    return { message: "Statut du devis mis à jour avec succès.", quote };
+    // Sérialiser les quotes pour éviter les erreurs Decimal
+    return quotes.map(serializeQuote);
   } catch (error) {
-    console.error("Erreur lors de la mise à jour du statut:", error);
-    throw new Error("Impossible de mettre à jour le statut du devis");
+    console.error("Erreur lors de la récupération des devis client:", error);
+    throw new Error("Impossible de récupérer les devis du client");
   }
 }
 
-// Supprimer un devis
+// === ACTIONS DE STATUT ===
+
+export async function updateQuoteStatus(id: string, status: QuoteStatus) {
+  try {
+    const session = await auth();
+    if (!session?.user) {
+      throw new Error("Session non trouvée");
+    }
+
+    const updateData: any = { status };
+
+    // Ajouter les dates selon le statut
+    switch (status) {
+      case QuoteStatus.SENT:
+        updateData.sentAt = new Date();
+        break;
+      case QuoteStatus.ACCEPTED:
+        updateData.acceptedAt = new Date();
+        break;
+      case QuoteStatus.REJECTED:
+        updateData.rejectedAt = new Date();
+        break;
+    }
+
+    const updatedQuote = await prisma.quote.update({
+      where: { id },
+      data: updateData,
+      include: { client: true },
+    });
+
+    revalidatePath("/dashboard/quotes");
+    revalidatePath(`/dashboard/quotes/${id}`);
+
+    const statusLabels = {
+      [QuoteStatus.DRAFT]: "brouillon",
+      [QuoteStatus.SENT]: "envoyé",
+      [QuoteStatus.ACCEPTED]: "accepté",
+      [QuoteStatus.REJECTED]: "refusé",
+      [QuoteStatus.EXPIRED]: "expiré",
+      [QuoteStatus.CANCELLED]: "annulé",
+    };
+
+    return {
+      message: `Devis ${updatedQuote.number} marqué comme ${statusLabels[status]}.`,
+    };
+  } catch (error) {
+    console.error("Erreur lors de la mise à jour du statut:", error);
+    return {
+      message: "Erreur lors de la mise à jour du statut.",
+    };
+  }
+}
+
 export async function deleteQuote(id: string) {
   try {
     const session = await auth();
@@ -213,16 +346,95 @@ export async function deleteQuote(id: string) {
       throw new Error("Session non trouvée");
     }
 
+    const quote = await prisma.quote.findUnique({
+      where: { id },
+    });
+
+    if (!quote) {
+      return {
+        message: "Devis non trouvé.",
+      };
+    }
+
+    if (quote.status === QuoteStatus.ACCEPTED) {
+      return {
+        message: "Impossible de supprimer un devis accepté.",
+      };
+    }
+
     await prisma.quote.delete({
       where: { id },
     });
 
     revalidatePath("/dashboard/quotes");
-    return { message: "Devis supprimé avec succès." };
+    return { message: `Devis ${quote.number} supprimé avec succès.` };
   } catch (error) {
     console.error("Erreur lors de la suppression du devis:", error);
     return {
       message: "Erreur de base de données : Impossible de supprimer le devis.",
+    };
+  }
+}
+
+export async function duplicateQuote(id: string) {
+  try {
+    const session = await auth();
+    if (!session?.user) {
+      throw new Error("Session non trouvée");
+    }
+
+    const originalQuote = await prisma.quote.findUnique({
+      where: { id },
+      include: { items: true },
+    });
+
+    if (!originalQuote) {
+      return {
+        message: "Devis non trouvé.",
+      };
+    }
+
+    const newQuoteNumber = await generateQuoteNumber();
+    const validityDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+    const duplicatedQuote = await prisma.quote.create({
+      data: {
+        number: newQuoteNumber,
+        title: `${originalQuote.title} (Copie)`,
+        description: originalQuote.description,
+        clientId: originalQuote.clientId,
+        validUntil: validityDate,
+        paymentTerms: originalQuote.paymentTerms,
+        deliveryTerms: originalQuote.deliveryTerms,
+        notes: originalQuote.notes,
+        taxRate: originalQuote.taxRate,
+        subtotalHT: originalQuote.subtotalHT,
+        taxAmount: originalQuote.taxAmount,
+        totalTTC: originalQuote.totalTTC,
+        status: QuoteStatus.DRAFT,
+        items: {
+          create: originalQuote.items.map((item) => ({
+            title: item.title,
+            description: item.description,
+            quantity: item.quantity,
+            unitPrice: item.unitPrice,
+            totalPrice: item.totalPrice,
+            unit: item.unit,
+            order: item.order,
+          })),
+        },
+      },
+    });
+
+    revalidatePath("/dashboard/quotes");
+    return {
+      message: `Devis ${duplicatedQuote.number} créé par duplication.`,
+      quoteId: duplicatedQuote.id,
+    };
+  } catch (error) {
+    console.error("Erreur lors de la duplication du devis:", error);
+    return {
+      message: "Erreur lors de la duplication du devis.",
     };
   }
 }

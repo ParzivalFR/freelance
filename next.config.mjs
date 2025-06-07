@@ -11,36 +11,6 @@ const withPWA = nextPWA({
 });
 
 const nextConfig = {
-  // Configuration ESSENTIELLE pour React-PDF
-  experimental: {
-    serverComponentsExternalPackages: ["@react-pdf/renderer"],
-  },
-
-  // Webpack config pour React-PDF
-  webpack: (config, { isServer }) => {
-    // Configuration obligatoire pour React-PDF
-    config.resolve.alias = {
-      ...config.resolve.alias,
-      canvas: false,
-    };
-
-    // Éviter les erreurs avec les modules node
-    config.externals = [...(config.externals || [])];
-
-    if (!isServer) {
-      config.resolve.fallback = {
-        ...config.resolve.fallback,
-        fs: false,
-        net: false,
-        dns: false,
-        child_process: false,
-        tls: false,
-      };
-    }
-
-    return config;
-  },
-
   // Configuration pour les images
   images: {
     remotePatterns: [
