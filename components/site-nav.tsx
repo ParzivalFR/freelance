@@ -1,27 +1,27 @@
+// components/site-nav.tsx
 "use client";
 
-import { cn } from "@/lib/utils";
 import { MenuItemTypes } from "@/types/MenuItemsTypes";
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { AvatarIcon } from "@radix-ui/react-icons";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   CircleHelp,
-  ClipboardPen,
   Fingerprint,
   Home,
   Mailbox,
   Menu,
   PiggyBank,
+  Settings,
   Star,
   XIcon,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
 import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Button, buttonVariants } from "./ui/button";
-import { useRouter } from "next/navigation";
+import { Button } from "./ui/button";
 
 const menuItem: MenuItemTypes[] = [
   {
@@ -63,7 +63,7 @@ export default function SiteNav() {
 const NavMobile = () => {
   const [openMenu, setOpenMenu] = useState<boolean>(false);
   const toggleMenu = () => setOpenMenu((prev) => !prev);
-  const router = useRouter();
+  const { data: session } = useSession();
 
   return (
     <header className="fixed right-4 top-4 z-[500] flex items-center justify-between space-x-2 rounded-2xl bg-primary px-1.5 py-1 md:hidden">
@@ -82,8 +82,6 @@ const NavMobile = () => {
         <Menu />
       </Button>
 
-      {/* OUVERTURE MENU */}
-
       <AnimatePresence>
         {openMenu && (
           <motion.nav
@@ -100,7 +98,6 @@ const NavMobile = () => {
               transition={{ type: "tween", duration: 0.3 }}
               className="shadow-lg fixed inset-y-0 right-0 z-40 h-full w-4/5 bg-background p-5 shadow-black/25"
             >
-              {/* Contenu du menu */}
               <div className="mb-5 flex items-center justify-between">
                 <ThemeToggle align="start" />
                 <Button size="icon" variant="ghost" onClick={toggleMenu}>
@@ -111,6 +108,7 @@ const NavMobile = () => {
                 {menuItem.map((item, index) => (
                   <Link href={item.href} key={index} className="w-full">
                     <Button
+                      variant="ghost"
                       className="flex w-full items-center justify-start space-x-2 transition-colors duration-300 ease-in-out hover:bg-secondary hover:text-primary"
                       onClick={toggleMenu}
                     >
@@ -120,20 +118,21 @@ const NavMobile = () => {
                   </Link>
                 ))}
                 <div className="mt-16 flex w-full items-center justify-between gap-4">
-                  <Button
-                    className="w-full"
-                    onClick={() => router.push("/login")}
-                  >
-                    <Fingerprint className="mr-2" />
-                    Connexion
-                  </Button>
-                  <Button
-                    className="w-full"
-                    onClick={() => router.push("/signup")}
-                  >
-                    <ClipboardPen className="mr-2" />
-                    S'inscrire
-                  </Button>
+                  {session ? (
+                    <Link href="/dashboard" className="w-full">
+                      <Button className="w-full" onClick={toggleMenu}>
+                        <Settings className="mr-2" />
+                        Dashboard
+                      </Button>
+                    </Link>
+                  ) : (
+                    <Link href="/signin" className="w-full">
+                      <Button className="w-full" onClick={toggleMenu}>
+                        <Fingerprint className="mr-2" />
+                        Connexion
+                      </Button>
+                    </Link>
+                  )}
                 </div>
               </div>
             </motion.div>
@@ -145,6 +144,8 @@ const NavMobile = () => {
 };
 
 const NavDesktop = () => {
+  const { data: session } = useSession();
+
   return (
     <header className="mx-auto mt-4 hidden w-8/12 rounded-xl bg-foreground p-1 shadow-pxl shadow-primary/20 md:flex">
       <nav className="flex w-full items-center justify-between">
@@ -157,15 +158,15 @@ const NavDesktop = () => {
           </Avatar>
         </Link>
         <div className="mr-2 hidden h-full items-center gap-2 md:flex">
-          <Link className="text-md mr-4 text-secondary" href="/signin">
-            Connexion
-          </Link>
-          <Link
-            className={cn(buttonVariants({ variant: "secondary" }), "text-sm")}
-            href="/signup"
-          >
-            S'inscrire
-          </Link>
+          {session ? (
+            <Link href="/dashboard">
+              <Button variant="secondary">Dashboard</Button>
+            </Link>
+          ) : (
+            <Link href="/signin">
+              <Button variant="secondary">Connexion</Button>
+            </Link>
+          )}
           <ThemeToggle align="end" />
         </div>
       </nav>

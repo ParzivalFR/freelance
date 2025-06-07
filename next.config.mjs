@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+
 import nextPWA from "next-pwa";
 
 const withPWA = nextPWA({
@@ -9,9 +10,10 @@ const withPWA = nextPWA({
 });
 
 const nextConfig = {
-  experimental: {
-    serverComponentsExternalPackages: ["@react-pdf/renderer"],
-  },
+  // experimental: {
+  //   nodeMiddleware: true,
+  // },
+
   images: {
     remotePatterns: [
       {
