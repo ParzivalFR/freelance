@@ -29,11 +29,11 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
+  Quote,
+  QuoteStatus,
   formatCurrency,
   formatDate,
   isExpired,
-  Quote,
-  QuoteStatus,
   statusConfig,
 } from "@/types/QuoteTypes";
 import {
@@ -47,8 +47,8 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { PDFStyleSelector } from "./pdf-style-selector";
 import { QuoteViewer } from "./quote-viewer";
+import { UpdatedSimplePDFButton } from "./updated-simple-pdf-button";
 
 interface QuotesTableProps {
   quotes: Quote[];
@@ -238,7 +238,9 @@ export function QuotesTable({ quotes }: QuotesTableProps) {
                           <DropdownMenuItem asChild>
                             <div className="flex items-center">
                               {/* <SimpleDownloadButton quote={quote} /> */}
-                              <PDFStyleSelector quote={quote} />
+                              {/* <UnifiedPDFSelector quote={quote} variant="outline" /> */}
+                              <UpdatedSimplePDFButton quote={quote} />
+                              {/* <PDFStyleSelector quote={quote} /> */}
                             </div>
                           </DropdownMenuItem>
 
