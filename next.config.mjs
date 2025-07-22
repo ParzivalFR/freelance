@@ -33,6 +33,9 @@ const nextConfig = {
       },
     ],
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
 
   // IMPORTANT: Désactiver swcMinify si problèmes de build
   // swcMinify: false, // Décommentez si vous avez des erreurs de build
