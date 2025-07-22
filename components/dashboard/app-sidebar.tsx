@@ -15,10 +15,8 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import {
-  BarChart3,
   Database,
   FileText,
-  FolderOpen,
   HelpCircle,
   Home,
   Search,
@@ -45,21 +43,6 @@ const data = {
       title: "Clients",
       url: "/dashboard/clients",
       icon: Users,
-    },
-    {
-      title: "Devis", // ← Ajout de la section devis
-      url: "/dashboard/quotes",
-      icon: FileText,
-    },
-    {
-      title: "Projets",
-      url: "/dashboard/projects",
-      icon: FolderOpen,
-    },
-    {
-      title: "Analytics",
-      url: "/dashboard/analytics",
-      icon: BarChart3,
     },
   ],
   navSecondary: [

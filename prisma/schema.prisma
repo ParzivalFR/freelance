@@ -110,3 +110,20 @@ model Client {
   @@map("clients")
 }
 
+model Project {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  image       String
+  url         String
+  technologies String[] // Technologies utilisées (React, Next.js, etc.)
+  category    String   @default("web") // web, mobile, design
+  isPublished Boolean  @default(true)
+  order       Int      @default(0) // Pour l'ordre d'affichage
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("projects")
+}
+

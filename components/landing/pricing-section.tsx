@@ -19,56 +19,75 @@ export const toHumanPrice = (price: number, decimals: number = 0) => {
 const freelanceServices = [
   {
     id: "service_1",
-    name: "Starter",
-    description: "Idéal pour les petits projets et les sites vitrines simples.",
+    name: "Association",
+    description: "Sites vitrines pour associations et événements locaux.",
     features: [
-      "Développement Frontend basique",
-      "Design adapté à tous les écrans",
-      "1 cycle de révision",
-      "Hébergement et nom de domaine",
-      "Support par email",
+      "Site vitrine responsive",
+      "Calendrier d'événements",
+      "Galerie photos intégrée",
+      "Formulaires d'adhésion",
+      "2 cycles de révision",
+      "Formation à la gestion",
+      "Support email prioritaire",
     ],
-    dailyRate: 150,
-    projectRate: 1200,
-    estimatedDays: "À définir",
+    dailyRate: 120,
+    projectRate: 800,
     isMostPopular: false,
   },
   {
-    id: "service_2",
-    name: "Standard",
-    description: "Parfait pour les projets de petite à moyenne envergure.",
+    id: "service_2", 
+    name: "Startup",
+    description: "Lance ta présence web rapidement et efficacement.",
     features: [
-      "Développement Frontend",
-      "Développement Backend basique",
-      "Design adapté à tous les écrans",
-      "2 cycles de révision",
-      "Intégration API simple",
-      "Hébergement et nom de domaine",
-      "Support par email",
-      "Support par Discord",
+      "Landing page moderne",
+      "CMS simple pour blog",
+      "Formulaires de contact avancés",
+      "Analytics et tracking",
+      "Optimisation SEO de base",
+      "3 cycles de révision",
+      "Support Discord",
+      "1 mois de maintenance offert",
     ],
-    dailyRate: 200,
-    projectRate: 2500,
-    estimatedDays: "À définir",
+    dailyRate: 150,
+    projectRate: 1200,
     isMostPopular: true,
   },
   {
     id: "service_3",
-    name: "Premium",
-    description: "Pour les projets nécessitant plus de fonctionnalités.",
+    name: "PME", 
+    description: "Solution complète pour petites et moyennes entreprises.",
     features: [
-      "Développement Frontend avancé",
-      "Développement Backend avancé",
-      "Design adapté à tous les écrans",
-      "3 cycles de révision",
-      "Intégration API avancée",
-      "Hébergement et nom de domaine",
-      "Support prioritaire aux choix",
+      "Site multi-pages professionnel",
+      "Système de réservation/devis",
+      "Intégration réseaux sociaux",
+      "SEO avancé et sitemap",
+      "Espace client sécurisé",
+      "Formation complète équipe",
+      "Support prioritaire multi-canal",
+      "3 mois de maintenance inclus",
     ],
-    dailyRate: 250,
-    projectRate: 5000,
-    estimatedDays: "À définir",
+    dailyRate: 180,
+    projectRate: 2000,
     isMostPopular: false,
+  },
+  {
+    id: "service_4",
+    name: "Association Gratuite",
+    description: "Engagement solidaire : 1 site associatif gratuit tous les 6 mois.",
+    features: [
+      "Développement 100% gratuit",
+      "Site vitrine responsive",
+      "Calendrier d'événements",
+      "Galerie photos",
+      "Formulaires de contact/adhésion",
+      "Formation à la gestion",
+      "Maintenance à 20€/mois (optionnelle)",
+      "Hébergement et domaine à vos frais",
+    ],
+    dailyRate: 0,
+    projectRate: 0,
+    isMostPopular: false,
+    isSpecial: true,
   },
 ];
 
@@ -95,16 +114,16 @@ export default function FreelanceServicesSection() {
           </h4>
 
           <h2 className="text-4xl font-bold tracking-tight text-black dark:text-white sm:text-6xl">
-            Services de Développement Freelance
+            Tarifs adaptés à vos besoins
           </h2>
 
-          <p className="text-lgsm:text-xl mt-6 leading-8 text-black/80 dark:text-white">
-            Choisissez l'
+          <p className="text-lg sm:text-xl mt-6 leading-8 text-black/80 dark:text-white">
+            Des solutions web
             <u>
-              <strong>offre adaptée</strong>
+              <strong> abordables et sur mesure</strong>
             </u>{" "}
-            à votre projet. En tant que développeur, je propose des solutions
-            abordables pour répondre à vos besoins de développement web.
+            pour associations, startups et PME. Développement professionnel sans 
+            compromis sur la qualité.
           </p>
         </div>
 
@@ -120,20 +139,20 @@ export default function FreelanceServicesSection() {
           <span>
             {interval === "day" ? "Taux Journalier" : "Forfait Projet"}
           </span>
-          <span className="inline-block whitespace-nowrap rounded-full bg-black px-2.5 py-1 text-[11px] font-semibold uppercase leading-5 tracking-wide text-white dark:bg-white dark:text-black">
-            Devis gratuit ✨
+          <span className="inline-block whitespace-nowrap rounded-xl bg-green-500 px-2.5 py-1 text-[11px] font-semibold uppercase leading-5 tracking-wide text-white">
+            Forfaits actifs ✨
           </span>
         </div>
 
-        <div className="mx-auto grid w-full flex-col justify-center gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mx-auto grid w-full flex-col justify-center gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {freelanceServices.map((service, idx) => (
             <div
               key={service.id}
               className={cn(
                 "relative flex max-w-[400px] flex-col gap-8 rounded-2xl border p-4 text-black dark:text-white overflow-hidden",
                 {
-                  "border-2 border-foreground scale-[1.08] ":
-                    service.isMostPopular,
+                  "border-2 border-foreground scale-[1.05]": service.isMostPopular,
+                  "border-2 border-green-500 bg-green-50/50 dark:bg-green-950/20": service.isSpecial,
                 }
               )}
             >
@@ -142,7 +161,7 @@ export default function FreelanceServicesSection() {
                   <h2 className="text-base font-semibold leading-7">
                     {service.name}
                   </h2>
-                  <p className="h-12 text-sm leading-5 text-black/70 dark:text-white">
+                  <p className="h-12 text-sm leading-5 text-black/70 dark:text-white/70">
                     {service.description}
                   </p>
                 </div>
@@ -170,30 +189,39 @@ export default function FreelanceServicesSection() {
                 className="flex flex-col gap-1"
               >
                 <span className="text-4xl font-bold text-black dark:text-white">
-                  {interval === "project"
-                    ? `${toHumanPrice(service.projectRate)}€`
-                    : `${toHumanPrice(service.dailyRate)}€`}
-                  <span className="text-xs">
-                    {" "}
-                    / {interval === "day" ? "jour" : "projet"}
-                  </span>
-                </span>
-                <span className="text-sm text-black/70 dark:text-white/70">
-                  Durée estimée : {service.estimatedDays}
+                  {service.isSpecial ? (
+                    <>
+                      <span className="text-green-600 dark:text-green-400">Gratuit</span>
+                      <span className="text-xs"> / projet</span>
+                    </>
+                  ) : (
+                    <>
+                      {interval === "project"
+                        ? `${toHumanPrice(service.projectRate)}€`
+                        : `${toHumanPrice(service.dailyRate)}€`}
+                      <span className="text-xs">
+                        {" "}
+                        / {interval === "day" ? "jour" : "projet"}
+                      </span>
+                    </>
+                  )}
                 </span>
               </motion.div>
 
               <Button
                 className={cn(
                   "group relative w-full gap-2 overflow-hidden text-lg font-semibold tracking-tighter",
-                  "transform-gpu ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-primary hover:ring-offset-2"
+                  "transform-gpu ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-primary hover:ring-offset-2",
+                  {
+                    "bg-green-600 hover:bg-green-700 text-white": service.isSpecial,
+                  }
                 )}
                 disabled={isLoading}
                 onClick={() => void onHireClick(service.id)}
               >
                 <span className="absolute right-0 -mt-12 h-32 w-8 translate-x-12 rotate-12 transform-gpu bg-white opacity-10 transition-all duration-1000 ease-out group-hover:-translate-x-96 dark:bg-black" />
                 {(!isLoading || (isLoading && id !== service.id)) && (
-                  <p>Me contacter</p>
+                  <p>{service.isSpecial ? "Postuler" : "Me contacter"}</p>
                 )}
 
                 {isLoading && id === service.id && <p>Traitement en cours</p>}
@@ -208,7 +236,7 @@ export default function FreelanceServicesSection() {
                       key={idx}
                       className="flex items-center gap-3 text-xs font-medium text-black dark:text-white"
                     >
-                      <CheckIcon className="size-5 shrink-0 rounded-full bg-green-400 p-[2px] text-black dark:text-white" />
+                      <CheckIcon className="size-5 shrink-0 rounded-lg bg-green-400 p-[2px] text-black dark:text-white " />
                       <span className="flex">{feature}</span>
                     </li>
                   ))}
@@ -224,15 +252,14 @@ export default function FreelanceServicesSection() {
 
 const AlerteNote = () => {
   return (
-    <div className="mx-auto mb-6 max-w-screen-md rounded-md border-l-4 border-purple-500 bg-purple-100 p-4 text-purple-700">
+    <div className="mx-auto mb-6 max-w-screen-md rounded-xl border-l-4 border-green-500 bg-green-50 p-4 text-green-800 dark:bg-green-950/30 dark:text-green-400">
       <p className="flex items-center gap-2 font-bold">
-        <TriangleAlert className="size-5" />
-        Note importante :
+        <CheckIcon className="size-5" />
+        Nouveau :
       </p>
       <p className="text-sm">
-        Actuellement, seuls les tarifs journaliers sont applicables. Les
-        forfaits projets sont donnés à titre indicatif et ne sont pas encore
-        disponibles.
+        Les forfaits projets sont désormais actifs ! Paiement possible en 3 fois 
+        sans frais pour les projets > 1000€. Devis détaillé gratuit sous 24h.
       </p>
     </div>
   );

@@ -24,7 +24,7 @@ export function SectionCards() {
         </CardContent>
         <CardFooter>
           <Badge variant="outline" className="text-xs">
-            <TrendingUp className="mr-1 h-3 w-3" />
+            <TrendingUp className="mr-1 size-3" />
             En progression
           </Badge>
         </CardFooter>
@@ -42,7 +42,7 @@ export function SectionCards() {
         </CardContent>
         <CardFooter>
           <Badge variant="outline" className="text-xs">
-            <TrendingUp className="mr-1 h-3 w-3" />
+            <TrendingUp className="mr-1 size-3" />
             Croissance
           </Badge>
         </CardFooter>
@@ -60,7 +60,7 @@ export function SectionCards() {
         </CardContent>
         <CardFooter>
           <Badge variant="outline" className="text-xs">
-            <TrendingUp className="mr-1 h-3 w-3" />
+            <TrendingUp className="mr-1 size-3" />
             Actif
           </Badge>
         </CardFooter>
