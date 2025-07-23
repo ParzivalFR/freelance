@@ -3,17 +3,11 @@
 import Marquee from "@/components/magicui/marquee";
 import { cn } from "@/lib/utils";
 import { ReviewCardProps } from "@/types/ReviewCardTypes";
-import { useOpenModal } from "@/zustand/state-form-testimonials";
-import { StarFilledIcon } from "@radix-ui/react-icons";
 import { UserIcon } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import useSWR from "swr";
-import AvatarCircles from "../magicui/avatar-circle";
-import { Button } from "../ui/button";
 import { Skeleton } from "../ui/skeleton";
-import AddTestimonialsForm from "./form-add-testimonials";
-import Modal from "./modal";
 
 const ReviewCard = ({
   name,
@@ -114,15 +108,6 @@ const SkeletonTestimonialCard = () => (
   </div>
 );
 
-const SkeletonAvatarCircles = ({ count }: { count: number }) => {
-  return (
-    <div className="z-10 flex -space-x-4 rtl:space-x-reverse">
-      {[...Array(count)].map((_, index) => (
-        <Skeleton key={index} className="size-10 rounded-full" />
-      ))}
-    </div>
-  );
-};
 
 export function Testimonials() {
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -131,7 +116,6 @@ export function Testimonials() {
     isLoading,
     error,
   } = useSWR("/api/testimonials", fetcher);
-  const { toggleModal } = useOpenModal();
 
   return (
     <section id="testimonials">
@@ -180,36 +164,6 @@ export function Testimonials() {
             </Marquee>
             <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-white dark:from-background"></div>
             <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-white dark:from-background"></div>
-          </div>
-          <div className="mt-4 flex items-center justify-center">
-            <div className="mt-4 flex flex-col items-center justify-center gap-2">
-              {isLoading ? (
-                <SkeletonAvatarCircles count={5} />
-              ) : (
-                reviews &&
-                Array.isArray(reviews) &&
-                reviews.length > 0 && (
-                  <AvatarCircles
-                    avatarUrls={reviews.map((review: ReviewCardProps) =>
-                      review.imgUrl && review.imgUrl !== ""
-                        ? review.imgUrl
-                        : null
-                    )}
-                    numPeople={reviews.length}
-                  />
-                )
-              )}
-              <Button onClick={() => toggleModal()}>
-                Laisser un avis
-                <StarFilledIcon className="ml-2 size-4 text-yellow-500" />
-              </Button>
-              <Modal
-                title="Ajouter un témoignage"
-                subtitle="Merci pour votre confiance et j'espère que vous avez apprécié le travail fourni."
-              >
-                <AddTestimonialsForm />
-              </Modal>
-            </div>
           </div>
         </div>
       </div>
