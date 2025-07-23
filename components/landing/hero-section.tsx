@@ -5,9 +5,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { Sparkles, UserIcon } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
-import { useEffect, useState } from "react";
 import useSWR from "swr";
 import TypewriterTerminal from "./typewriter-terminal";
 
@@ -20,13 +21,19 @@ interface RecentTestimonial {
 
 export default function HeroSection() {
   const router = useRouter();
-  const [imageErrors, setImageErrors] = useState<{[key: number]: boolean}>({});
-  
+  const [imageErrors, setImageErrors] = useState<{ [key: number]: boolean }>(
+    {}
+  );
+
   const fetcher = (url: string) => fetch(url).then((res) => res.json());
-  const { data: recentTestimonials } = useSWR<RecentTestimonial[]>("/api/testimonials/recent", fetcher);
+  const { data: recentTestimonials } = useSWR<RecentTestimonial[]>(
+    "/api/testimonials/recent",
+    fetcher
+  );
+  const { data: allTestimonials } = useSWR("/api/testimonials", fetcher);
 
   const handleImageError = (index: number) => {
-    setImageErrors(prev => ({ ...prev, [index]: true }));
+    setImageErrors((prev) => ({ ...prev, [index]: true }));
   };
 
   function handleRedirect() {
@@ -83,26 +90,26 @@ export default function HeroSection() {
           Lancer votre projet
           <ArrowRightIcon className="ml-1 size-4 transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
         </Button>
-        
+
         {/* Avatars des derniers témoignages */}
         {recentTestimonials && recentTestimonials.length > 0 && (
           <div className="mt-8 -translate-y-4 animate-fade-in opacity-0 [--animation-delay:700ms]">
             <div className="flex items-center justify-center gap-4">
               <div className="flex -space-x-3">
-                {recentTestimonials.map((testimonial, index) => (
+                {recentTestimonials.slice(0, 5).map((testimonial, index) =>
                   testimonial.imgUrl && !imageErrors[index] ? (
-                    testimonial.imgUrl.includes('dicebear.com') ? (
-                      <img
+                    testimonial.imgUrl.includes("dicebear.com") ? (
+                      <Image
                         key={testimonial.id}
-                        className="size-10 rounded-full border-2 border-white shadow-md dark:border-gray-800"
+                        className="shadow-md size-10 rounded-full border-2 border-white dark:border-gray-800"
                         src={testimonial.imgUrl}
                         alt={`Avatar de ${testimonial.name}`}
                         onError={() => handleImageError(index)}
                       />
                     ) : (
-                      <img
+                      <Image
                         key={testimonial.id}
-                        className="size-10 rounded-full border-2 border-white shadow-md dark:border-gray-800"
+                        className="shadow-md size-10 rounded-full border-2 border-white dark:border-gray-800"
                         src={testimonial.imgUrl}
                         alt={`Avatar de ${testimonial.name}`}
                         onError={() => handleImageError(index)}
@@ -111,15 +118,15 @@ export default function HeroSection() {
                   ) : (
                     <div
                       key={testimonial.id}
-                      className="flex size-10 items-center justify-center rounded-full border-2 border-white bg-primary shadow-md dark:border-gray-800"
+                      className="shadow-md flex size-10 items-center justify-center rounded-full border-2 border-white bg-primary dark:border-gray-800"
                     >
                       <UserIcon className="size-5 text-background" />
                     </div>
                   )
-                ))}
+                )}
               </div>
               <p className="text-sm text-muted-foreground">
-                Rejoint par {recentTestimonials.length} clients satisfaits
+                Rejoint par {allTestimonials?.length || 0} clients satisfaits
               </p>
             </div>
           </div>
