@@ -1,13 +1,23 @@
 "use client";
 
-import { Home, FolderOpen, Users, MessageSquare, Settings, LogOut } from "lucide-react";
+import {
+  FolderOpen,
+  Home,
+  LogOut,
+  MessageSquare,
+  Settings,
+  Users,
+} from "lucide-react";
+import { signOut } from "next-auth/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { signOut } from "next-auth/react";
 
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   Sidebar,
   SidebarContent,
+  SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
   SidebarGroupLabel,
@@ -15,10 +25,7 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarFooter,
 } from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 
 const menuItems = [
   {
@@ -58,7 +65,7 @@ export function AdminSidebar() {
     <Sidebar>
       <SidebarHeader className="border-b px-6 py-4">
         <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-8 h-8 bg-primary rounded-xl text-primary-foreground font-bold text-sm">
+          <div className="flex size-8 items-center justify-center rounded-xl bg-primary text-sm font-bold text-primary-foreground">
             G
           </div>
           <div>
@@ -67,7 +74,7 @@ export function AdminSidebar() {
           </div>
         </div>
       </SidebarHeader>
-      
+
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupLabel>Navigation</SidebarGroupLabel>
@@ -75,10 +82,7 @@ export function AdminSidebar() {
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild
-                    isActive={pathname === item.url}
-                  >
+                  <SidebarMenuButton asChild isActive={pathname === item.url}>
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -96,10 +100,7 @@ export function AdminSidebar() {
             <SidebarMenu>
               {settingsItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton 
-                    asChild
-                    isActive={pathname === item.url}
-                  >
+                  <SidebarMenuButton asChild isActive={pathname === item.url}>
                     <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
@@ -113,23 +114,23 @@ export function AdminSidebar() {
       </SidebarContent>
 
       <SidebarFooter className="border-t p-4">
-        <div className="flex items-center gap-3 mb-3">
-          <Avatar className="h-8 w-8">
+        <div className="mb-3 flex items-center gap-3">
+          <Avatar className="size-8">
             <AvatarImage src="/photo-de-profil.jpg" />
             <AvatarFallback>GR</AvatarFallback>
           </Avatar>
-          <div className="flex-1 min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="text-sm font-medium">Gael Richard</p>
             <p className="text-xs text-muted-foreground">Développeur</p>
           </div>
         </div>
-        <Button 
-          variant="ghost" 
-          size="sm" 
+        <Button
+          variant="ghost"
+          size="sm"
           className="w-full justify-start"
           onClick={() => signOut()}
         >
-          <LogOut className="mr-2 h-4 w-4" />
+          <LogOut className="mr-2 size-4" />
           Se déconnecter
         </Button>
       </SidebarFooter>

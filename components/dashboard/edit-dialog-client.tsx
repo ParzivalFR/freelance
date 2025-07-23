@@ -57,7 +57,7 @@ export function EditClientDialog({ client, children }: EditClientDialogProps) {
       toast.success(state.message);
       setOpen(false);
     }
-  }, [state?.message]);
+  }, [state?.message, state?.errors]);
 
   // Réinitialiser le formulaire quand on ouvre la dialog
   useEffect(() => {
@@ -75,11 +75,11 @@ export function EditClientDialog({ client, children }: EditClientDialogProps) {
       <DialogTrigger asChild>
         {children || (
           <Button variant="ghost" size="sm">
-            <Edit className="h-4 w-4" />
+            <Edit className="size-4" />
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Modifier le client</DialogTitle>
           <DialogDescription>
@@ -270,7 +270,7 @@ export function EditClientDialog({ client, children }: EditClientDialogProps) {
               Annuler
             </Button>
             <Button type="submit">
-              <Edit className="mr-2 h-4 w-4" />
+              <Edit className="mr-2 size-4" />
               Modifier
             </Button>
           </DialogFooter>

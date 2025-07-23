@@ -9,14 +9,30 @@ interface TerminalLine {
 }
 
 const terminalSequence: TerminalLine[] = [
-  { type: "command", text: "npx create-next-app@latest client-project", delay: 0 },
-  { type: "output", text: "✓ Creating a new Next.js app in /client-project", delay: 2000 },
+  {
+    type: "command",
+    text: "npx create-next-app@latest client-project",
+    delay: 0,
+  },
+  {
+    type: "output",
+    text: "✓ Creating a new Next.js app in /client-project",
+    delay: 2000,
+  },
   { type: "command", text: "cd client-project", delay: 3500 },
   { type: "command", text: "pnpm install", delay: 4500 },
-  { type: "command", text: "pnpm add @prisma/client tailwindcss framer-motion", delay: 5500 },
+  {
+    type: "command",
+    text: "pnpm add @prisma/client tailwindcss framer-motion",
+    delay: 5500,
+  },
   { type: "output", text: "✓ Packages installed successfully", delay: 7000 },
   { type: "command", text: "git init && git add .", delay: 8000 },
-  { type: "command", text: 'git commit -m "feat: initial project setup"', delay: 9000 },
+  {
+    type: "command",
+    text: 'git commit -m "feat: initial project setup"',
+    delay: 9000,
+  },
   { type: "success", text: "✓ Repository initialized", delay: 10000 },
   { type: "command", text: "pnpm dev", delay: 11000 },
   { type: "info", text: "🚀 Ready on http://localhost:3000", delay: 12500 },
@@ -32,7 +48,7 @@ export default function TypewriterTerminal() {
   // Cursor blinking effect
   useEffect(() => {
     const cursorInterval = setInterval(() => {
-      setShowCursor(prev => !prev);
+      setShowCursor((prev) => !prev);
     }, 530);
 
     return () => clearInterval(cursorInterval);
@@ -43,7 +59,7 @@ export default function TypewriterTerminal() {
     if (currentLineIndex >= terminalSequence.length) return;
 
     const currentLine = terminalSequence[currentLineIndex];
-    
+
     const startTyping = () => {
       let charIndex = 0;
       const typeInterval = setInterval(() => {
@@ -52,12 +68,12 @@ export default function TypewriterTerminal() {
           charIndex++;
         } else {
           clearInterval(typeInterval);
-          
+
           // Line completed, add to visible lines
           setTimeout(() => {
-            setVisibleLines(prev => [...prev, currentLine]);
+            setVisibleLines((prev) => [...prev, currentLine]);
             setCurrentText("");
-            setCurrentLineIndex(prev => prev + 1);
+            setCurrentLineIndex((prev) => prev + 1);
           }, 500);
         }
       }, 50); // Typing speed
@@ -89,26 +105,29 @@ export default function TypewriterTerminal() {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto">
-      <div className="bg-gray-900 rounded-lg shadow-2xl overflow-hidden border border-gray-800">
+    <div className="mx-auto w-full max-w-4xl">
+      <div className="shadow-2xl overflow-hidden rounded-lg border border-gray-800 bg-gray-900">
         {/* Terminal Header */}
-        <div className="flex items-center justify-between px-4 py-3 bg-gray-800 border-b border-gray-700">
+        <div className="flex items-center justify-between border-b border-gray-700 bg-gray-800 px-4 py-3">
           <div className="flex items-center space-x-2">
-            <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-            <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+            <div className="size-3 rounded-full bg-red-500"></div>
+            <div className="size-3 rounded-full bg-yellow-500"></div>
+            <div className="size-3 rounded-full bg-green-500"></div>
           </div>
-          <div className="text-gray-400 text-sm font-mono">
+          <div className="font-mono text-sm text-gray-400">
             terminal — zsh — 80×24
           </div>
           <div></div>
         </div>
 
         {/* Terminal Content */}
-        <div className="p-4 font-mono text-sm leading-relaxed min-h-[300px] bg-gray-900 text-left">
+        <div className="min-h-[300px] bg-gray-900 p-4 text-left font-mono text-sm leading-relaxed">
           {/* Visible completed lines */}
           {visibleLines.map((line, index) => (
-            <div key={index} className={`${getLineColor(line.type)} mb-1 text-left`}>
+            <div
+              key={index}
+              className={`${getLineColor(line.type)} mb-1 text-left`}
+            >
               {getPrompt(line.type)}
               {line.text}
             </div>
@@ -116,19 +135,26 @@ export default function TypewriterTerminal() {
 
           {/* Current typing line */}
           {currentLineIndex < terminalSequence.length && (
-            <div className={`${getLineColor(terminalSequence[currentLineIndex].type)} mb-1 text-left`}>
+            <div
+              className={`${getLineColor(
+                terminalSequence[currentLineIndex].type
+              )} mb-1 text-left`}
+            >
               {getPrompt(terminalSequence[currentLineIndex].type)}
               {currentText}
               {showCursor && (
-                <span className="bg-gray-300 text-gray-900 ml-0.5">▋</span>
+                <span className="ml-0.5 bg-gray-300 text-gray-900">▋</span>
               )}
             </div>
           )}
 
           {/* Empty prompt after completion */}
           {currentLineIndex >= terminalSequence.length && (
-            <div className="text-blue-400 mt-4 text-left">
-              $ {showCursor && <span className="bg-gray-300 text-gray-900 ml-0.5">▋</span>}
+            <div className="mt-4 text-left text-blue-400">
+              ${" "}
+              {showCursor && (
+                <span className="ml-0.5 bg-gray-300 text-gray-900">▋</span>
+              )}
             </div>
           )}
         </div>

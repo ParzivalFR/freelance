@@ -122,13 +122,13 @@ const Feature = ({
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const response = await fetch('/api/projects');
+        const response = await fetch("/api/projects");
         if (response.ok) {
           const data = await response.json();
           setProjects(data);
         }
       } catch (error) {
-        console.error('Error fetching projects:', error);
+        console.error("Error fetching projects:", error);
         // Fallback to empty array or show error
         setProjects([]);
       } finally {
@@ -241,11 +241,11 @@ const Feature = ({
               </h2>
             </div>
             <div className="mx-auto my-12 grid h-full max-w-5xl grid-cols-5 gap-x-10">
-              <div className="col-span-2 hidden md:flex justify-start">
-                <Skeleton className="w-[300px] h-[400px] rounded-xl" />
+              <div className="col-span-2 hidden justify-start md:flex">
+                <Skeleton className="h-[400px] w-[300px] rounded-xl" />
               </div>
               <div className="col-span-5 my-auto md:col-span-3">
-                <Skeleton className="w-full h-[400px] rounded-xl" />
+                <Skeleton className="h-[400px] w-full rounded-xl" />
               </div>
             </div>
           </div>
@@ -331,9 +331,7 @@ const Feature = ({
                     <AccordionTrigger className="text-xl font-bold">
                       {project.title}
                     </AccordionTrigger>
-                    <AccordionContent>
-                      {project.description}
-                    </AccordionContent>
+                    <AccordionContent>{project.description}</AccordionContent>
                   </AccordionItem>
                 ))}
               </Accordion.Root>

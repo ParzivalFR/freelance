@@ -1,11 +1,22 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { motion } from "framer-motion";
+import {
+  CheckCircle,
+  Loader2,
+  Mail,
+  MessageCircle,
+  Send,
+  User,
+} from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import useSWRMutation from "swr/mutation";
 import { z } from "zod";
+import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import {
   Form,
   FormControl,
@@ -15,13 +26,15 @@ import {
   FormMessage,
 } from "../ui/form";
 import { Input } from "../ui/input";
-import { Textarea } from "../ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Badge } from "../ui/badge";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { Separator } from "../ui/separator";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Mail, User, MessageCircle, Send, CheckCircle, Loader2 } from "lucide-react";
-import { motion } from "framer-motion";
+import { Textarea } from "../ui/textarea";
 
 const formSchema = z.object({
   firstName: z
@@ -37,18 +50,20 @@ const formSchema = z.object({
     .email({ message: "Veuillez entrer une adresse email valide." }),
   company: z
     .string()
-    .max(100, { message: "Le nom de l'entreprise ne peut pas dépasser 100 caractères." })
+    .max(100, {
+      message: "Le nom de l'entreprise ne peut pas dépasser 100 caractères.",
+    })
     .optional(),
   projectType: z
     .string()
     .min(1, { message: "Veuillez sélectionner un type de projet." }),
-  budget: z
-    .string()
-    .min(1, { message: "Veuillez indiquer votre budget." }),
+  budget: z.string().min(1, { message: "Veuillez indiquer votre budget." }),
   message: z
     .string()
     .min(20, { message: "Votre message doit contenir au moins 20 caractères." })
-    .max(1000, { message: "Votre message ne peut pas dépasser 1000 caractères." }),
+    .max(1000, {
+      message: "Votre message ne peut pas dépasser 1000 caractères.",
+    }),
 });
 
 async function sendContactRequest(
@@ -92,7 +107,7 @@ export default function ContactFormImproved() {
     "/api/contact",
     sendContactRequest
   );
-  
+
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: "onBlur",
@@ -110,7 +125,9 @@ export default function ContactFormImproved() {
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
       await trigger(data);
-      toast.success("Message envoyé avec succès ! Je vous recontacte rapidement.");
+      toast.success(
+        "Message envoyé avec succès ! Je vous recontacte rapidement."
+      );
       form.reset();
     } catch (error) {
       toast.error("Erreur lors de l'envoi. Veuillez réessayer.");
@@ -121,22 +138,23 @@ export default function ContactFormImproved() {
     <section id="contact" className="py-16">
       <div className="container mx-auto px-4">
         {/* Header */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="mx-auto max-w-3xl text-center mb-12"
+          className="mx-auto mb-12 max-w-3xl text-center"
         >
           <Badge variant="outline" className="mb-4">
-            <Mail className="w-4 h-4 mr-2" />
+            <Mail className="mr-2 size-4" />
             Contact
           </Badge>
-          <h2 className="text-4xl font-bold tracking-tight mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent sm:text-5xl">
+          <h2 className="mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-4xl font-bold tracking-tight text-transparent sm:text-5xl">
             Parlons de votre projet
           </h2>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Décrivez-moi votre vision et vos objectifs. Je vous répondrai sous 24h avec une proposition personnalisée.
+          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+            Décrivez-moi votre vision et vos objectifs. Je vous répondrai sous
+            24h avec une proposition personnalisée.
           </p>
         </motion.div>
 
@@ -149,22 +167,25 @@ export default function ContactFormImproved() {
           className="mx-auto max-w-2xl"
         >
           <Card className="shadow-lg">
-            <CardHeader className="text-center pb-8">
+            <CardHeader className="pb-8 text-center">
               <CardTitle className="flex items-center justify-center gap-2 text-xl">
-                <MessageCircle className="w-5 h-5 text-primary" />
+                <MessageCircle className="size-5 text-primary" />
                 Formulaire de contact
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-6">
               <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <form
+                  onSubmit={form.handleSubmit(onSubmit)}
+                  className="space-y-6"
+                >
                   {/* Informations personnelles */}
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                      <User className="w-4 h-4" />
+                      <User className="size-4" />
                       Informations personnelles
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <FormField
                         control={form.control}
                         name="firstName"
@@ -172,9 +193,9 @@ export default function ContactFormImproved() {
                           <FormItem>
                             <FormLabel>Prénom *</FormLabel>
                             <FormControl>
-                              <Input 
-                                placeholder="Jean" 
-                                {...field} 
+                              <Input
+                                placeholder="Jean"
+                                {...field}
                                 className="transition-all duration-200 focus:scale-[1.02]"
                               />
                             </FormControl>
@@ -189,9 +210,9 @@ export default function ContactFormImproved() {
                           <FormItem>
                             <FormLabel>Nom *</FormLabel>
                             <FormControl>
-                              <Input 
-                                placeholder="Dupont" 
-                                {...field} 
+                              <Input
+                                placeholder="Dupont"
+                                {...field}
                                 className="transition-all duration-200 focus:scale-[1.02]"
                               />
                             </FormControl>
@@ -200,8 +221,8 @@ export default function ContactFormImproved() {
                         )}
                       />
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <FormField
                         control={form.control}
                         name="email"
@@ -209,10 +230,10 @@ export default function ContactFormImproved() {
                           <FormItem>
                             <FormLabel>Email *</FormLabel>
                             <FormControl>
-                              <Input 
+                              <Input
                                 type="email"
-                                placeholder="jean.dupont@exemple.fr" 
-                                {...field} 
+                                placeholder="jean.dupont@exemple.fr"
+                                {...field}
                                 className="transition-all duration-200 focus:scale-[1.02]"
                               />
                             </FormControl>
@@ -227,9 +248,9 @@ export default function ContactFormImproved() {
                           <FormItem>
                             <FormLabel>Entreprise</FormLabel>
                             <FormControl>
-                              <Input 
-                                placeholder="Mon Entreprise (optionnel)" 
-                                {...field} 
+                              <Input
+                                placeholder="Mon Entreprise (optionnel)"
+                                {...field}
                                 className="transition-all duration-200 focus:scale-[1.02]"
                               />
                             </FormControl>
@@ -245,18 +266,21 @@ export default function ContactFormImproved() {
                   {/* Détails du projet */}
                   <div className="space-y-4">
                     <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                      <MessageCircle className="w-4 h-4" />
+                      <MessageCircle className="size-4" />
                       Détails du projet
                     </div>
-                    
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                       <FormField
                         control={form.control}
                         name="projectType"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Type de projet *</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
                               <FormControl>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Sélectionnez un type" />
@@ -264,7 +288,10 @@ export default function ContactFormImproved() {
                               </FormControl>
                               <SelectContent>
                                 {projectTypes.map((type) => (
-                                  <SelectItem key={type.value} value={type.value}>
+                                  <SelectItem
+                                    key={type.value}
+                                    value={type.value}
+                                  >
                                     {type.label}
                                   </SelectItem>
                                 ))}
@@ -274,14 +301,17 @@ export default function ContactFormImproved() {
                           </FormItem>
                         )}
                       />
-                      
+
                       <FormField
                         control={form.control}
                         name="budget"
                         render={({ field }) => (
                           <FormItem>
                             <FormLabel>Budget envisagé *</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select
+                              onValueChange={field.onChange}
+                              defaultValue={field.value}
+                            >
                               <FormControl>
                                 <SelectTrigger>
                                   <SelectValue placeholder="Sélectionnez un budget" />
@@ -289,7 +319,10 @@ export default function ContactFormImproved() {
                               </FormControl>
                               <SelectContent>
                                 {budgetRanges.map((range) => (
-                                  <SelectItem key={range.value} value={range.value}>
+                                  <SelectItem
+                                    key={range.value}
+                                    value={range.value}
+                                  >
                                     {range.label}
                                   </SelectItem>
                                 ))}
@@ -310,10 +343,10 @@ export default function ContactFormImproved() {
                       <FormItem>
                         <FormLabel>Décrivez votre projet *</FormLabel>
                         <FormControl>
-                          <Textarea 
+                          <Textarea
                             placeholder="Parlez-moi de votre vision, vos objectifs, vos contraintes techniques, délais souhaités..."
                             className="min-h-[120px] transition-all duration-200 focus:scale-[1.01]"
-                            {...field} 
+                            {...field}
                           />
                         </FormControl>
                         <div className="flex justify-between text-xs text-muted-foreground">
@@ -329,16 +362,16 @@ export default function ContactFormImproved() {
                     <Button
                       type="submit"
                       disabled={isMutating}
-                      className="w-full h-12 text-base font-semibold transition-all duration-200 hover:scale-[1.02] disabled:scale-100"
+                      className="h-12 w-full text-base font-semibold transition-all duration-200 hover:scale-[1.02] disabled:scale-100"
                     >
                       {isMutating ? (
                         <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          <Loader2 className="mr-2 size-4 animate-spin" />
                           Envoi en cours...
                         </>
                       ) : (
                         <>
-                          <Send className="mr-2 h-4 w-4" />
+                          <Send className="mr-2 size-4" />
                           Envoyer ma demande
                         </>
                       )}
@@ -346,9 +379,10 @@ export default function ContactFormImproved() {
                   </div>
 
                   {/* Footer note */}
-                  <div className="text-center text-xs text-muted-foreground pt-4 border-t">
-                    <CheckCircle className="inline w-3 h-3 mr-1 text-green-500" />
-                    Réponse garantie sous 24h • Vos données restent confidentielles
+                  <div className="border-t pt-4 text-center text-xs text-muted-foreground">
+                    <CheckCircle className="mr-1 inline size-3 text-green-500" />
+                    Réponse garantie sous 24h • Vos données restent
+                    confidentielles
                   </div>
                 </form>
               </Form>

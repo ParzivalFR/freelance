@@ -58,7 +58,7 @@ export function DeleteClientDialog({
             size="sm"
             className="text-red-600 hover:text-red-700"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="size-4" />
           </Button>
         )}
       </AlertDialogTrigger>
@@ -86,12 +86,12 @@ export function DeleteClientDialog({
           >
             {isDeleting ? (
               <>
-                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-transparent" />
+                <div className="mr-2 size-4 animate-spin rounded-full border-2 border-background border-t-transparent" />
                 Suppression...
               </>
             ) : (
               <>
-                <Trash2 className="mr-2 h-4 w-4" />
+                <Trash2 className="mr-2 size-4" />
                 Supprimer
               </>
             )}

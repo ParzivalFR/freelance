@@ -1,10 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { Edit, ExternalLink, Eye, MoreHorizontal, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { MoreHorizontal, Eye, Edit, Trash2, ExternalLink } from "lucide-react";
+import { useState } from "react";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Table,
   TableBody,
@@ -13,16 +23,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card } from "@/components/ui/card";
 
 type Project = {
   id: string;
@@ -49,17 +49,17 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
     setIsDeleting(id);
     try {
       const response = await fetch(`/api/admin/projects/${id}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
-      
+
       if (response.ok) {
         // Refresh the page or update the state
         window.location.reload();
       } else {
-        console.error('Failed to delete project');
+        console.error("Failed to delete project");
       }
     } catch (error) {
-      console.error('Error deleting project:', error);
+      console.error("Error deleting project:", error);
     } finally {
       setIsDeleting(null);
     }
@@ -68,18 +68,18 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
   const togglePublish = async (id: string, isPublished: boolean) => {
     try {
       const response = await fetch(`/api/admin/projects/${id}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ isPublished: !isPublished }),
       });
-      
+
       if (response.ok) {
         window.location.reload();
       }
     } catch (error) {
-      console.error('Error updating project:', error);
+      console.error("Error updating project:", error);
     }
   };
 
@@ -87,8 +87,8 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
     return (
       <Card className="p-8 text-center">
         <div className="space-y-4">
-          <div className="mx-auto w-12 h-12 bg-muted rounded-xl flex items-center justify-center">
-            <Eye className="h-6 w-6 text-muted-foreground" />
+          <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-muted">
+            <Eye className="size-6 text-muted-foreground" />
           </div>
           <div>
             <h3 className="text-lg font-semibold">Aucun projet</h3>
@@ -97,9 +97,7 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
             </p>
           </div>
           <Button asChild>
-            <Link href="/admin/projects/new">
-              Créer un projet
-            </Link>
+            <Link href="/admin/projects/new">Créer un projet</Link>
           </Button>
         </div>
       </Card>
@@ -125,7 +123,7 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
             <TableRow key={project.id}>
               <TableCell>
                 <div className="flex items-center gap-3">
-                  <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-muted flex-shrink-0">
+                  <div className="relative size-12 shrink-0 overflow-hidden rounded-xl bg-muted">
                     <Image
                       src={project.image}
                       alt={project.title}
@@ -134,15 +132,15 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
                     />
                   </div>
                   <div className="min-w-0">
-                    <p className="font-medium truncate">{project.title}</p>
-                    <p className="text-sm text-muted-foreground truncate max-w-[200px]">
+                    <p className="truncate font-medium">{project.title}</p>
+                    <p className="max-w-[200px] truncate text-sm text-muted-foreground">
                       {project.description}
                     </p>
                   </div>
                 </div>
               </TableCell>
               <TableCell>
-                <div className="flex flex-wrap gap-1 max-w-[200px]">
+                <div className="flex max-w-[200px] flex-wrap gap-1">
                   {project.technologies.slice(0, 3).map((tech) => (
                     <Badge key={tech} variant="secondary" className="text-xs">
                       {tech}
@@ -168,18 +166,18 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
                 </Badge>
               </TableCell>
               <TableCell>
-                <span className="text-sm font-mono">{project.order}</span>
+                <span className="font-mono text-sm">{project.order}</span>
               </TableCell>
               <TableCell>
                 <span className="text-sm text-muted-foreground">
-                  {new Date(project.createdAt).toLocaleDateString('fr-FR')}
+                  {new Date(project.createdAt).toLocaleDateString("fr-FR")}
                 </span>
               </TableCell>
               <TableCell>
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm">
-                      <MoreHorizontal className="h-4 w-4" />
+                      <MoreHorizontal className="size-4" />
                       <span className="sr-only">Ouvrir menu</span>
                     </Button>
                   </DropdownMenuTrigger>
@@ -191,13 +189,13 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
                         rel="noopener noreferrer"
                         className="flex items-center"
                       >
-                        <ExternalLink className="mr-2 h-4 w-4" />
+                        <ExternalLink className="mr-2 size-4" />
                         Voir le site
                       </a>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href={`/admin/projects/${project.id}`}>
-                        <Edit className="mr-2 h-4 w-4" />
+                        <Edit className="mr-2 size-4" />
                         Modifier
                       </Link>
                     </DropdownMenuItem>
@@ -207,8 +205,10 @@ export function ProjectsTable({ projects }: ProjectsTableProps) {
                       onClick={() => handleDelete(project.id)}
                       disabled={isDeleting === project.id}
                     >
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      {isDeleting === project.id ? 'Suppression...' : 'Supprimer'}
+                      <Trash2 className="mr-2 size-4" />
+                      {isDeleting === project.id
+                        ? "Suppression..."
+                        : "Supprimer"}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

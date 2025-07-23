@@ -100,7 +100,7 @@ export function ClientsTable({ clients }: ClientsTableProps) {
         {/* Barre de recherche */}
         <div className="flex items-center space-x-2">
           <div className="relative flex-1">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-2 top-2.5 size-4 text-muted-foreground" />
             <Input
               placeholder="Rechercher par nom, email, ou sujet..."
               value={searchTerm}
@@ -113,8 +113,8 @@ export function ClientsTable({ clients }: ClientsTableProps) {
 
       <CardContent>
         {filteredClients.length === 0 ? (
-          <div className="text-center py-8">
-            <User className="mx-auto h-12 w-12 text-gray-400" />
+          <div className="py-8 text-center">
+            <User className="mx-auto size-12 text-gray-400" />
             <h3 className="mt-2 text-sm font-semibold text-gray-900 dark:text-gray-100">
               Aucun client
             </h3>
@@ -156,12 +156,12 @@ export function ClientsTable({ clients }: ClientsTableProps) {
                     <TableCell>
                       <div className="flex flex-col space-y-1">
                         <div className="flex items-center text-sm">
-                          <Mail className="mr-1 h-3 w-3" />
+                          <Mail className="mr-1 size-3" />
                           {client.email}
                         </div>
                         {client.phone && (
                           <div className="flex items-center text-sm text-muted-foreground">
-                            <Phone className="mr-1 h-3 w-3" />
+                            <Phone className="mr-1 size-3" />
                             {client.phone}
                           </div>
                         )}
@@ -176,12 +176,12 @@ export function ClientsTable({ clients }: ClientsTableProps) {
                       >
                         {client.isProfessional ? (
                           <>
-                            <Building className="mr-1 h-3 w-3" />
+                            <Building className="mr-1 size-3" />
                             Professionnel
                           </>
                         ) : (
                           <>
-                            <User className="mr-1 h-3 w-3" />
+                            <User className="mr-1 size-3" />
                             Particulier
                           </>
                         )}
@@ -203,9 +203,9 @@ export function ClientsTable({ clients }: ClientsTableProps) {
                     <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" className="h-8 w-8 p-0">
+                          <Button variant="ghost" className="size-8 p-0">
                             <span className="sr-only">Ouvrir le menu</span>
-                            <MoreHorizontal className="h-4 w-4" />
+                            <MoreHorizontal className="size-4" />
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
@@ -216,7 +216,7 @@ export function ClientsTable({ clients }: ClientsTableProps) {
                               copyToClipboard(client.email, "Email")
                             }
                           >
-                            <Copy className="mr-2 h-4 w-4" />
+                            <Copy className="mr-2 size-4" />
                             Copier l'email
                           </DropdownMenuItem>
 
@@ -226,7 +226,7 @@ export function ClientsTable({ clients }: ClientsTableProps) {
                                 copyToClipboard(client.phone!, "Téléphone")
                               }
                             >
-                              <Copy className="mr-2 h-4 w-4" />
+                              <Copy className="mr-2 size-4" />
                               Copier le téléphone
                             </DropdownMenuItem>
                           )}
@@ -237,7 +237,7 @@ export function ClientsTable({ clients }: ClientsTableProps) {
                             <DropdownMenuItem
                               onSelect={(e) => e.preventDefault()}
                             >
-                              <Edit className="mr-2 h-4 w-4" />
+                              <Edit className="mr-2 size-4" />
                               Modifier
                             </DropdownMenuItem>
                           </EditClientDialog>
@@ -247,7 +247,7 @@ export function ClientsTable({ clients }: ClientsTableProps) {
                               onSelect={(e) => e.preventDefault()}
                               className="text-red-600 focus:text-red-600"
                             >
-                              <Trash2 className="mr-2 h-4 w-4" />
+                              <Trash2 className="mr-2 size-4" />
                               Supprimer
                             </DropdownMenuItem>
                           </DeleteClientDialog>

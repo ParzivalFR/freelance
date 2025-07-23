@@ -34,7 +34,7 @@ export function ClientForm() {
       formRef.current?.reset();
       setIsProfessional(false);
     }
-  }, [state?.message]);
+  }, [state?.message, state?.errors]);
 
   return (
     <Card className="mx-auto w-full max-w-2xl">

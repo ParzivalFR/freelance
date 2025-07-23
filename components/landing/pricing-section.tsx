@@ -6,7 +6,6 @@ import { Switch } from "@/components/ui/switch";
 import { cn } from "@/lib/utils";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { motion } from "framer-motion";
-import { TriangleAlert } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -35,7 +34,7 @@ const freelanceServices = [
     isMostPopular: false,
   },
   {
-    id: "service_2", 
+    id: "service_2",
     name: "Startup",
     description: "Lance ta présence web rapidement et efficacement.",
     features: [
@@ -54,7 +53,7 @@ const freelanceServices = [
   },
   {
     id: "service_3",
-    name: "PME", 
+    name: "PME",
     description: "Solution complète pour petites et moyennes entreprises.",
     features: [
       "Site multi-pages professionnel",
@@ -73,7 +72,8 @@ const freelanceServices = [
   {
     id: "service_4",
     name: "Association Gratuite",
-    description: "Engagement solidaire : 1 site associatif gratuit tous les 6 mois.",
+    description:
+      "Engagement solidaire : 1 site associatif gratuit tous les 6 mois.",
     features: [
       "Développement 100% gratuit",
       "Site vitrine responsive",
@@ -117,12 +117,12 @@ export default function FreelanceServicesSection() {
             Tarifs adaptés à vos besoins
           </h2>
 
-          <p className="text-lg sm:text-xl mt-6 leading-8 text-black/80 dark:text-white">
+          <p className="mt-6 text-lg leading-8 text-black/80 dark:text-white sm:text-xl">
             Des solutions web
             <u>
               <strong> abordables et sur mesure</strong>
             </u>{" "}
-            pour associations, startups et PME. Développement professionnel sans 
+            pour associations, startups et PME. Développement professionnel sans
             compromis sur la qualité.
           </p>
         </div>
@@ -151,8 +151,10 @@ export default function FreelanceServicesSection() {
               className={cn(
                 "relative flex max-w-[400px] flex-col gap-8 rounded-2xl border p-4 text-black dark:text-white overflow-hidden",
                 {
-                  "border-2 border-foreground scale-[1.05]": service.isMostPopular,
-                  "border-2 border-green-500 bg-green-50/50 dark:bg-green-950/20": service.isSpecial,
+                  "border-2 border-foreground scale-[1.05]":
+                    service.isMostPopular,
+                  "border-2 border-green-500 bg-green-50/50 dark:bg-green-950/20":
+                    service.isSpecial,
                 }
               )}
             >
@@ -191,7 +193,9 @@ export default function FreelanceServicesSection() {
                 <span className="text-4xl font-bold text-black dark:text-white">
                   {service.isSpecial ? (
                     <>
-                      <span className="text-green-600 dark:text-green-400">Gratuit</span>
+                      <span className="text-green-600 dark:text-green-400">
+                        Gratuit
+                      </span>
                       <span className="text-xs"> / projet</span>
                     </>
                   ) : (
@@ -213,7 +217,8 @@ export default function FreelanceServicesSection() {
                   "group relative w-full gap-2 overflow-hidden text-lg font-semibold tracking-tighter",
                   "transform-gpu ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-primary hover:ring-offset-2",
                   {
-                    "bg-green-600 hover:bg-green-700 text-white": service.isSpecial,
+                    "bg-green-600 hover:bg-green-700 text-white":
+                      service.isSpecial,
                   }
                 )}
                 disabled={isLoading}
@@ -258,8 +263,8 @@ const AlerteNote = () => {
         Nouveau :
       </p>
       <p className="text-sm">
-        Les forfaits projets sont désormais actifs ! Paiement possible en 3 fois 
-        sans frais pour les projets > 1000€. Devis détaillé gratuit sous 24h.
+        Les forfaits projets sont désormais actifs ! Paiement possible en 3 fois
+        sans frais pour les projets {">"}1000€. Devis détaillé gratuit sous 24h.
       </p>
     </div>
   );

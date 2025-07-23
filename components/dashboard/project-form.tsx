@@ -1,13 +1,16 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Plus, Upload, X } from "lucide-react";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Upload, X, Plus } from "lucide-react";
-import Image from "next/image";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Form,
   FormControl,
@@ -16,6 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -23,17 +27,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 const projectSchema = z.object({
   title: z.string().min(3, "Le titre doit faire au moins 3 caractères"),
-  description: z.string().min(10, "La description doit faire au moins 10 caractères"),
+  description: z
+    .string()
+    .min(10, "La description doit faire au moins 10 caractères"),
   url: z.string().url("URL invalide"),
   image: z.string().min(1, "Une image est requise"),
   category: z.string().min(1, "Sélectionnez une catégorie"),
@@ -58,16 +60,30 @@ const categories = [
 ];
 
 const commonTechnologies = [
-  "React", "Next.js", "TypeScript", "JavaScript", "Node.js",
-  "Tailwind CSS", "Prisma", "Supabase", "Vercel", "Figma",
-  "WordPress", "PHP", "MySQL", "PostgreSQL", "Firebase"
+  "React",
+  "Next.js",
+  "TypeScript",
+  "JavaScript",
+  "Node.js",
+  "Tailwind CSS",
+  "Prisma",
+  "Supabase",
+  "Vercel",
+  "Figma",
+  "WordPress",
+  "PHP",
+  "MySQL",
+  "PostgreSQL",
+  "Firebase",
 ];
 
 export function ProjectForm({ initialData }: ProjectFormProps) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>(initialData?.image || "");
+  const [imagePreview, setImagePreview] = useState<string>(
+    initialData?.image || ""
+  );
   const [newTechnology, setNewTechnology] = useState("");
 
   const form = useForm<ProjectFormData>({
@@ -88,20 +104,20 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
     if (!file) return "";
 
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     try {
-      const response = await fetch('/api/admin/upload', {
-        method: 'POST',
+      const response = await fetch("/api/admin/upload", {
+        method: "POST",
         body: formData,
       });
 
-      if (!response.ok) throw new Error('Upload failed');
+      if (!response.ok) throw new Error("Upload failed");
 
       const { url } = await response.json();
       return url;
     } catch (error) {
-      console.error('Error uploading image:', error);
+      console.error("Error uploading image:", error);
       toast.error("Erreur lors de l'upload de l'image");
       return "";
     }
@@ -112,7 +128,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
     if (!file) return;
 
     setImageFile(file);
-    
+
     // Create preview
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -131,7 +147,10 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
 
   const removeTechnology = (tech: string) => {
     const currentTechs = form.getValues("technologies");
-    form.setValue("technologies", currentTechs.filter(t => t !== tech));
+    form.setValue(
+      "technologies",
+      currentTechs.filter((t) => t !== tech)
+    );
   };
 
   const onSubmit = async (data: ProjectFormData) => {
@@ -139,7 +158,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
 
     try {
       let imageUrl = data.image;
-      
+
       // Upload new image if selected
       if (imageFile) {
         imageUrl = await handleImageUpload(imageFile);
@@ -156,28 +175,30 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
 
       const url = initialData?.id
         ? `/api/admin/projects/${initialData.id}`
-        : '/api/admin/projects';
-      
-      const method = initialData?.id ? 'PUT' : 'POST';
+        : "/api/admin/projects";
+
+      const method = initialData?.id ? "PUT" : "POST";
 
       const response = await fetch(url, {
         method,
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(projectData),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to save project');
+        throw new Error("Failed to save project");
       }
 
-      toast.success(initialData?.id ? 'Projet mis à jour' : 'Projet créé avec succès');
-      router.push('/admin/projects');
+      toast.success(
+        initialData?.id ? "Projet mis à jour" : "Projet créé avec succès"
+      );
+      router.push("/admin/projects");
       router.refresh();
     } catch (error) {
-      console.error('Error saving project:', error);
-      toast.error('Erreur lors de la sauvegarde');
+      console.error("Error saving project:", error);
+      toast.error("Erreur lors de la sauvegarde");
     } finally {
       setIsSubmitting(false);
     }
@@ -232,7 +253,10 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
                     <FormItem>
                       <FormLabel>URL du projet *</FormLabel>
                       <FormControl>
-                        <Input placeholder="https://mon-projet.com" {...field} />
+                        <Input
+                          placeholder="https://mon-projet.com"
+                          {...field}
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -246,7 +270,10 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Catégorie *</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Sélectionner" />
@@ -254,7 +281,10 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
                           </FormControl>
                           <SelectContent>
                             {categories.map((category) => (
-                              <SelectItem key={category.value} value={category.value}>
+                              <SelectItem
+                                key={category.value}
+                                value={category.value}
+                              >
                                 {category.label}
                               </SelectItem>
                             ))}
@@ -275,7 +305,9 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
                           <Input
                             type="number"
                             {...field}
-                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                            onChange={(e) =>
+                              field.onChange(parseInt(e.target.value) || 0)
+                            }
                           />
                         </FormControl>
                         <FormMessage />
@@ -290,7 +322,9 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
                   render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
                       <div className="space-y-0.5">
-                        <FormLabel className="text-base">Publier le projet</FormLabel>
+                        <FormLabel className="text-base">
+                          Publier le projet
+                        </FormLabel>
                         <div className="text-sm text-muted-foreground">
                           Le projet sera visible sur votre portfolio
                         </div>
@@ -323,7 +357,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
                       <FormControl>
                         <div className="space-y-4">
                           {imagePreview && (
-                            <div className="relative w-full h-48 rounded-xl overflow-hidden bg-muted">
+                            <div className="relative h-48 w-full overflow-hidden rounded-xl bg-muted">
                               <Image
                                 src={imagePreview}
                                 alt="Preview"
@@ -332,10 +366,13 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
                               />
                             </div>
                           )}
-                          <div className="flex items-center justify-center w-full">
-                            <label htmlFor="image-upload" className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer bg-muted/50 hover:bg-muted">
-                              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
+                          <div className="flex w-full items-center justify-center">
+                            <label
+                              htmlFor="image-upload"
+                              className="flex h-32 w-full cursor-pointer flex-col items-center justify-center rounded-xl border-2 border-dashed bg-muted/50 hover:bg-muted"
+                            >
+                              <div className="flex flex-col items-center justify-center pb-6 pt-5">
+                                <Upload className="mb-2 size-8 text-muted-foreground" />
                                 <p className="text-sm text-muted-foreground">
                                   Cliquez pour upload une image
                                 </p>
@@ -374,7 +411,11 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
                         {field.value.length > 0 && (
                           <div className="flex flex-wrap gap-2">
                             {field.value.map((tech) => (
-                              <Badge key={tech} variant="secondary" className="pl-3 pr-1">
+                              <Badge
+                                key={tech}
+                                variant="secondary"
+                                className="pl-3 pr-1"
+                              >
                                 {tech}
                                 <Button
                                   type="button"
@@ -383,7 +424,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
                                   className="ml-1 h-auto p-1"
                                   onClick={() => removeTechnology(tech)}
                                 >
-                                  <X className="h-3 w-3" />
+                                  <X className="size-3" />
                                 </Button>
                               </Badge>
                             ))}
@@ -397,7 +438,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
                             value={newTechnology}
                             onChange={(e) => setNewTechnology(e.target.value)}
                             onKeyDown={(e) => {
-                              if (e.key === 'Enter') {
+                              if (e.key === "Enter") {
                                 e.preventDefault();
                                 if (newTechnology.trim()) {
                                   addTechnology(newTechnology.trim());
@@ -414,13 +455,15 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
                               }
                             }}
                           >
-                            <Plus className="h-4 w-4" />
+                            <Plus className="size-4" />
                           </Button>
                         </div>
 
                         {/* Technologies communes */}
                         <div className="space-y-2">
-                          <p className="text-sm text-muted-foreground">Technologies courantes :</p>
+                          <p className="text-sm text-muted-foreground">
+                            Technologies courantes :
+                          </p>
                           <div className="flex flex-wrap gap-2">
                             {commonTechnologies.map((tech) => (
                               <Badge
@@ -448,12 +491,16 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
           <Button
             type="button"
             variant="outline"
-            onClick={() => router.push('/admin/projects')}
+            onClick={() => router.push("/admin/projects")}
           >
             Annuler
           </Button>
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Sauvegarde...' : (initialData?.id ? 'Mettre à jour' : 'Créer le projet')}
+            {isSubmitting
+              ? "Sauvegarde..."
+              : initialData?.id
+              ? "Mettre à jour"
+              : "Créer le projet"}
           </Button>
         </div>
       </form>

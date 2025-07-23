@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
-import { FolderOpen, Users, MessageSquare, TrendingUp } from "lucide-react";
+import { FolderOpen, MessageSquare, TrendingUp, Users } from "lucide-react";
 
 export default async function AdminDashboard() {
   // Récupérer les statistiques
@@ -59,7 +59,7 @@ export default async function AdminDashboard() {
               <CardTitle className="text-sm font-medium">
                 {stat.title}
               </CardTitle>
-              <stat.icon className={`h-4 w-4 ${stat.color}`} />
+              <stat.icon className={`size-4 ${stat.color}`} />
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{stat.value}</div>
@@ -76,16 +76,16 @@ export default async function AdminDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <FolderOpen className="h-5 w-5" />
+              <FolderOpen className="size-5" />
               Derniers Projets
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="mb-4 text-sm text-muted-foreground">
               Gérez votre portfolio facilement
             </p>
             <Badge variant="outline">
-              {projectsCount} projet{projectsCount > 1 ? 's' : ''} en ligne
+              {projectsCount} projet{projectsCount > 1 ? "s" : ""} en ligne
             </Badge>
           </CardContent>
         </Card>
@@ -93,16 +93,17 @@ export default async function AdminDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Users className="h-5 w-5" />
+              <Users className="size-5" />
               Gestion Clients
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="mb-4 text-sm text-muted-foreground">
               Suivez vos prospects et clients
             </p>
             <Badge variant="outline">
-              {clientsCount} client{clientsCount > 1 ? 's' : ''} enregistré{clientsCount > 1 ? 's' : ''}
+              {clientsCount} client{clientsCount > 1 ? "s" : ""} enregistré
+              {clientsCount > 1 ? "s" : ""}
             </Badge>
           </CardContent>
         </Card>
@@ -110,16 +111,17 @@ export default async function AdminDashboard() {
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5" />
+              <MessageSquare className="size-5" />
               Témoignages
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-sm text-muted-foreground mb-4">
+            <p className="mb-4 text-sm text-muted-foreground">
               Avis et retours clients
             </p>
             <Badge variant="outline">
-              {testimonialsCount} témoignage{testimonialsCount > 1 ? 's' : ''} publié{testimonialsCount > 1 ? 's' : ''}
+              {testimonialsCount} témoignage{testimonialsCount > 1 ? "s" : ""}{" "}
+              publié{testimonialsCount > 1 ? "s" : ""}
             </Badge>
           </CardContent>
         </Card>

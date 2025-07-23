@@ -1,16 +1,13 @@
 import { Plus } from "lucide-react";
 import Link from "next/link";
 
-import { Button } from "@/components/ui/button";
 import { ProjectsTable } from "@/components/dashboard/projects-table";
+import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 
 export default async function ProjectsPage() {
   const projects = await prisma.project.findMany({
-    orderBy: [
-      { order: 'asc' },
-      { createdAt: 'desc' }
-    ],
+    orderBy: [{ order: "asc" }, { createdAt: "desc" }],
   });
 
   return (
@@ -24,7 +21,7 @@ export default async function ProjectsPage() {
         </div>
         <Button asChild>
           <Link href="/admin/projects/new">
-            <Plus className="mr-2 h-4 w-4" />
+            <Plus className="mr-2 size-4" />
             Nouveau Projet
           </Link>
         </Button>
