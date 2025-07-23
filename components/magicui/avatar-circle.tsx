@@ -22,9 +22,15 @@ const AvatarCircles = ({
   const handleImageError = (index: number) => {
     setImageErrors(prev => ({ ...prev, [index]: true }));
   };
+
+  // Limiter à 5 avatars maximum
+  const maxAvatars = 5;
+  const displayedAvatars = avatarUrls.slice(0, maxAvatars);
+  const remainingCount = Math.max(0, (numPeople || avatarUrls.length) - maxAvatars);
+
   return (
     <div className={cn("z-10 flex -space-x-4 rtl:space-x-reverse", className)}>
-      {avatarUrls.map((url, index) =>
+      {displayedAvatars.map((url, index) =>
         url && !imageErrors[index] ? (
           url.includes('dicebear.com') ? (
             <img
@@ -54,12 +60,11 @@ const AvatarCircles = ({
           </div>
         )
       )}
-      <Link
-        className="flex size-10 items-center justify-center rounded-full border-2 border-primary bg-secondary text-center text-xs font-medium text-primary transition-colors duration-300 ease-in-out hover:border-background hover:bg-primary hover:text-background"
-        href="#"
-      >
-        +{numPeople}
-      </Link>
+      {remainingCount > 0 && (
+        <div className="flex size-10 items-center justify-center rounded-full border-2 border-primary bg-secondary text-center text-xs font-medium text-primary">
+          +{remainingCount}
+        </div>
+      )}
     </div>
   );
 };
