@@ -47,8 +47,8 @@ export default async function TestimonialPage({ params }: PageProps) {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="max-w-md w-full mx-auto p-6 text-center">
           <div className="mb-6">
-            <div className="w-16 h-16 mx-auto mb-4 bg-destructive/10 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="size-16 mx-auto mb-4 bg-destructive/10 rounded-full flex items-center justify-center">
+              <svg className="size-8 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
@@ -67,8 +67,8 @@ export default async function TestimonialPage({ params }: PageProps) {
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="max-w-md w-full mx-auto p-6 text-center">
           <div className="mb-6">
-            <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="size-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+              <svg className="size-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             </div>

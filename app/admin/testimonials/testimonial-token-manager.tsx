@@ -266,7 +266,7 @@ export default function TestimonialTokenManager() {
                         )
                       }
                     >
-                      <Copy className="w-4 h-4 mr-1" />
+                      <Copy className="size-4 mr-1" />
                       Copier lien
                     </Button>
                     
@@ -280,7 +280,7 @@ export default function TestimonialTokenManager() {
                         )
                       }
                     >
-                      <ExternalLink className="w-4 h-4 mr-1" />
+                      <ExternalLink className="size-4 mr-1" />
                       Ouvrir
                     </Button>
                     
@@ -290,7 +290,7 @@ export default function TestimonialTokenManager() {
                       onClick={() => sendEmailManually(token.id)}
                       disabled={token.isUsed || isExpired(token.expiresAt)}
                     >
-                      <Send className="w-4 h-4 mr-1" />
+                      <Send className="size-4 mr-1" />
                       Envoyer par email
                     </Button>
                   </div>
