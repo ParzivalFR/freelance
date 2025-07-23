@@ -25,6 +25,7 @@ const ReviewCard = ({
   ...props
 }: ReviewCardProps) => {
   const [formattedDate, setFormattedDate] = useState("");
+  const [imageError, setImageError] = useState(false);
 
   useEffect(() => {
     if (createdAt) {
@@ -51,13 +52,14 @@ const ReviewCard = ({
       {...props}
     >
       <div className="flex flex-row items-center gap-2">
-        {imgUrl ? (
+        {imgUrl && !imageError ? (
           <Image
             className="aspect-square rounded-full"
             width="32"
             height="32"
             alt=""
             src={imgUrl}
+            onError={() => setImageError(true)}
           />
         ) : (
           <div className="flex size-8 items-center justify-center rounded-full bg-primary">
