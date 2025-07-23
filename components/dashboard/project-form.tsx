@@ -37,7 +37,7 @@ const projectSchema = z.object({
     .string()
     .min(10, "La description doit faire au moins 10 caractères"),
   url: z.string().url("URL invalide"),
-  image: z.string().min(1, "Une image est requise"),
+  image: z.string().optional(),
   category: z.string().min(1, "Sélectionnez une catégorie"),
   technologies: z.array(z.string()).min(1, "Ajoutez au moins une technologie"),
   isPublished: z.boolean().default(true),
@@ -135,6 +135,11 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
       setImagePreview(e.target?.result as string);
     };
     reader.readAsDataURL(file);
+    
+    // Clear any existing image validation error
+    form.clearErrors("image");
+    // Set a temporary value to indicate an image is selected
+    form.setValue("image", "temp-file-selected");
   };
 
   const addTechnology = (tech: string) => {
@@ -166,6 +171,13 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
           setIsSubmitting(false);
           return;
         }
+      }
+
+      // Validate that we have an image (either existing or newly uploaded)
+      if (!imageUrl) {
+        form.setError("image", { message: "Une image est requise" });
+        setIsSubmitting(false);
+        return;
       }
 
       const projectData = {
