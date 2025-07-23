@@ -12,6 +12,13 @@ import React, {
 
 import { cn } from "@/lib/utils";
 import { Skeleton } from "../ui/skeleton";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "../ui/carousel";
 
 type AccordionItemProps = {
   children: React.ReactNode;
@@ -106,12 +113,11 @@ const Feature = ({
   ltr = false,
   linePosition = "left",
 }: FeatureProps) => {
-  const [currentIndex, setCurrentIndex] = useState<number>(-1);
+  const [currentIndex, setCurrentIndex] = useState<number>(0);
   const [isChanging, setIsChanging] = useState(false);
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  const carouselRef = useRef<HTMLUListElement>(null);
   const ref = useRef(null);
   const isInView = useInView(ref, {
     once: true,
@@ -143,8 +149,6 @@ const Feature = ({
     const timer = setTimeout(() => {
       if (isInView && projects.length > 0) {
         setCurrentIndex(0);
-      } else {
-        setCurrentIndex(-1);
       }
     }, 100);
 
@@ -160,34 +164,14 @@ const Feature = ({
     });
   }, [projects]);
 
-  const scrollToIndex = (index: number) => {
-    if (carouselRef.current) {
-      const card = carouselRef.current.querySelectorAll(".card")[index];
-      if (card) {
-        const cardRect = card.getBoundingClientRect();
-        const carouselRect = carouselRef.current.getBoundingClientRect();
-        const offset =
-          cardRect.left -
-          carouselRect.left -
-          (carouselRect.width - cardRect.width) / 2;
-
-        carouselRef.current.scrollTo({
-          left: carouselRef.current.scrollLeft + offset,
-          behavior: "smooth",
-        });
-      }
-    }
-  };
-
+  // Auto-rotation des projets
   useEffect(() => {
     if (projects.length === 0) return;
 
     const timer = setInterval(() => {
       if (!isChanging) {
         setIsChanging(true);
-        setCurrentIndex((prevIndex) =>
-          prevIndex !== undefined ? (prevIndex + 1) % projects.length : 0
-        );
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % projects.length);
         setTimeout(() => setIsChanging(false), 500);
       }
     }, collapseDelay);
@@ -195,37 +179,6 @@ const Feature = ({
     return () => clearInterval(timer);
   }, [collapseDelay, currentIndex, isChanging, projects.length]);
 
-  useEffect(() => {
-    const handleAutoScroll = () => {
-      if (!isChanging && projects.length > 0) {
-        const nextIndex =
-          (currentIndex !== undefined ? currentIndex + 1 : 0) % projects.length;
-        scrollToIndex(nextIndex);
-      }
-    };
-
-    const autoScrollTimer = setInterval(handleAutoScroll, collapseDelay);
-
-    return () => clearInterval(autoScrollTimer);
-  }, [collapseDelay, currentIndex, isChanging, projects.length]);
-
-  useEffect(() => {
-    const carousel = carouselRef.current;
-    if (carousel && projects.length > 0) {
-      const handleScroll = () => {
-        const scrollLeft = carousel.scrollLeft;
-        const cardWidth = carousel.querySelector(".card")?.clientWidth || 0;
-        const newIndex = Math.min(
-          Math.floor(scrollLeft / cardWidth),
-          projects.length - 1
-        );
-        setCurrentIndex(newIndex);
-      };
-
-      carousel.addEventListener("scroll", handleScroll);
-      return () => carousel.removeEventListener("scroll", handleScroll);
-    }
-  }, [projects.length]);
 
   if (isLoading) {
     return (
@@ -288,113 +241,118 @@ const Feature = ({
               Découvrez les projets réalisés
             </h2>
           </div>
-          <div className="mx-auto my-12 grid h-full max-w-5xl grid-cols-5 gap-x-10">
-            <div
-              className={`col-span-2 hidden md:flex ${
-                ltr ? "md:order-2 md:justify-end" : "justify-start"
-              }`}
-            >
-              <Accordion.Root
-                className="w-[300px]"
-                type="single"
-                defaultValue={`item-${currentIndex}`}
-                value={`item-${currentIndex}`}
-                onValueChange={(value) =>
-                  setCurrentIndex(Number(value.split("-")[1]))
-                }
-              >
-                {projects.map((project, index) => (
-                  <AccordionItem
-                    key={project.id}
-                    className="relative mb-8 last:mb-0"
-                    value={`item-${index}`}
-                  >
-                    <div
-                      className={`absolute inset-y-0 h-full w-0.5 overflow-hidden rounded-lg bg-neutral-300/50 dark:bg-neutral-300/30 ${
-                        linePosition === "right"
-                          ? "left-auto right-0"
-                          : "left-0 right-auto"
-                      }`}
-                    >
-                      <div
-                        className={`absolute left-0 top-0 w-full ${
-                          currentIndex === index ? "h-full" : "h-0"
-                        } origin-top bg-neutral-500 transition-all ease-linear dark:bg-white`}
-                        style={{
-                          transitionDuration:
-                            currentIndex === index
-                              ? `${collapseDelay}ms`
-                              : "0s",
-                        }}
-                      ></div>
+          
+          <div className="mx-auto my-12 w-full max-w-5xl">
+            {/* Image en haut */}
+            <div className="mb-8 flex justify-center">
+              <div className="relative w-full max-w-3xl">
+                <AnimatePresence mode="wait">
+                  {projects[currentIndex]?.image ? (
+                    <motion.img
+                      key={projects[currentIndex].id}
+                      src={projects[currentIndex].image}
+                      alt={projects[currentIndex].title}
+                      className="aspect-video w-full rounded-xl border border-neutral-300/50 object-cover"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.5, ease: "easeInOut" }}
+                    />
+                  ) : (
+                    <div className="aspect-video w-full">
+                      <Skeleton className="size-full rounded-xl" />
                     </div>
-                    <AccordionTrigger className="text-xl font-bold">
-                      {project.title}
-                    </AccordionTrigger>
-                    <AccordionContent>{project.description}</AccordionContent>
-                  </AccordionItem>
-                ))}
-              </Accordion.Root>
-            </div>
-            <div
-              className={`col-span-5 my-auto size-auto min-h-[200px] md:col-span-3 ${
-                ltr && "md:order-1"
-              }`}
-            >
-              <AnimatePresence mode="wait">
-                {projects[currentIndex]?.image ? (
-                  <motion.img
-                    key={projects[currentIndex].id}
-                    src={projects[currentIndex].image}
-                    alt="feature"
-                    className="size-full rounded-xl border border-neutral-300/50 object-cover p-1"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
-                  />
-                ) : (
-                  <div className="relative w-full pb-[56.25%]">
-                    <Skeleton className="absolute inset-0 size-full rounded-xl" />
-                  </div>
-                )}
-              </AnimatePresence>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
 
-            <ul
-              ref={carouselRef}
-              className="col-span-5 flex h-full snap-x snap-mandatory flex-nowrap overflow-x-auto py-10 [-ms-overflow-style:none] [-webkit-mask-image:linear-gradient(90deg,transparent,black_20%,white_80%,transparent)] [mask-image:linear-gradient(90deg,transparent,black_20%,white_80%,transparent)] [scrollbar-width:none] md:hidden [&::-webkit-scrollbar]:hidden"
-              style={{
-                padding: "50px calc(50%)",
+            {/* Carousel Shadcn avec accordéons */}
+            <Carousel
+              opts={{
+                align: "start",
+                loop: true,
               }}
+              className="w-full"
             >
-              {projects.map((project, index) => (
-                <div
-                  key={project.id}
-                  className="card relative mr-8 grid h-full max-w-60 shrink-0 items-start justify-center py-4 last:mr-0"
-                  onClick={() => setCurrentIndex(index)}
-                  style={{
-                    scrollSnapAlign: "center",
-                  }}
-                >
-                  <div className="absolute inset-y-0 left-0 right-auto h-0.5 w-full overflow-hidden rounded-lg bg-neutral-300/50 dark:bg-neutral-300/30">
-                    <div
-                      className={`absolute left-0 top-0 h-full ${
-                        currentIndex === index ? "w-full" : "w-0"
-                      } origin-top bg-neutral-500 transition-all ease-linear dark:bg-white`}
-                      style={{
-                        transitionDuration:
-                          currentIndex === index ? `${collapseDelay}ms` : "0s",
+              <CarouselContent className="-ml-2 md:-ml-4">
+                {projects.map((project, index) => (
+                  <CarouselItem key={project.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
+                    <Accordion.Root
+                      type="single"
+                      value={currentIndex === index ? `item-${index}` : ""}
+                      onValueChange={(value) => {
+                        if (value) {
+                          const idx = Number(value.split("-")[1]);
+                          setCurrentIndex(idx);
+                        }
                       }}
-                    ></div>
-                  </div>
-                  <h2 className="text-xl font-bold">{project.title}</h2>
-                  <p className="mx-0 max-w-sm text-balance text-sm">
-                    {project.description}
-                  </p>
-                </div>
-              ))}
-            </ul>
+                    >
+                      <AccordionItem
+                        className="relative cursor-pointer rounded-lg border bg-card p-4 hover:bg-accent/50 transition-colors shadow-sm"
+                        value={`item-${index}`}
+                        onClick={() => setCurrentIndex(index)}
+                      >
+                        <div
+                          className="absolute left-0 top-0 h-1 w-full overflow-hidden rounded-t-lg bg-neutral-300/50 dark:bg-neutral-300/30"
+                        >
+                          <div
+                            className={`absolute left-0 top-0 h-full ${
+                              currentIndex === index ? "w-full" : "w-0"
+                            } bg-primary transition-all ease-linear`}
+                            style={{
+                              transitionDuration:
+                                currentIndex === index ? `${collapseDelay}ms` : "0s",
+                            }}
+                          ></div>
+                        </div>
+                        
+                        <AccordionTrigger className="text-left text-lg font-bold hover:no-underline [&[data-state=open]>svg]:rotate-180">
+                          {project.title}
+                        </AccordionTrigger>
+                        
+                        <AccordionContent className="pt-2">
+                          <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                            {project.description}
+                          </p>
+                          
+                          {project.technologies && project.technologies.length > 0 && (
+                            <div className="flex flex-wrap gap-2">
+                              {project.technologies.slice(0, 3).map((tech, techIndex) => (
+                                <span
+                                  key={techIndex}
+                                  className="rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary"
+                                >
+                                  {tech}
+                                </span>
+                              ))}
+                              {project.technologies.length > 3 && (
+                                <span className="rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+                                  +{project.technologies.length - 3}
+                                </span>
+                              )}
+                            </div>
+                          )}
+                          
+                          {project.url && (
+                            <a
+                              href={project.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="mt-3 inline-flex items-center text-xs text-primary hover:text-primary/80 transition-colors"
+                            >
+                              Voir le projet →
+                            </a>
+                          )}
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion.Root>
+                  </CarouselItem>
+                ))}
+              </CarouselContent>
+              <CarouselPrevious className="left-2" />
+              <CarouselNext className="right-2" />
+            </Carousel>
           </div>
         </div>
       </div>

@@ -45,6 +45,16 @@ export async function POST(request: Request) {
       order,
     } = body;
 
+    // Auto-incrément de l'ordre si non fourni
+    let finalOrder = order;
+    if (finalOrder === undefined || finalOrder === null || finalOrder === 0) {
+      const maxOrderResult = await prisma.project.findFirst({
+        orderBy: { order: 'desc' },
+        select: { order: true }
+      });
+      finalOrder = (maxOrderResult?.order ?? -1) + 1;
+    }
+
     const project = await prisma.project.create({
       data: {
         title,
@@ -54,7 +64,7 @@ export async function POST(request: Request) {
         technologies,
         category,
         isPublished: isPublished ?? true,
-        order: order ?? 0,
+        order: finalOrder,
       },
     });
 

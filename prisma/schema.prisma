@@ -127,3 +127,21 @@ model Project {
   @@map("projects")
 }
 
+model TestimonialToken {
+  id           String    @id @default(cuid())
+  token        String    @unique @default(cuid())
+  clientEmail  String    @map("client_email")
+  clientName   String    @map("client_name")
+  projectName  String?   @map("project_name") // Optionnel : nom du projet
+  isUsed       Boolean   @default(false) @map("is_used")
+  expiresAt    DateTime  @map("expires_at")
+  testimonialId String?  @map("testimonial_id") // ID du testimonial créé
+  emailSentAt  DateTime? @map("email_sent_at") // Quand l'email a été envoyé
+  
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @default(now()) @map("updated_at")
+  usedAt       DateTime? @map("used_at") // Quand le token a été utilisé
+
+  @@map("testimonial_tokens")
+}
+
