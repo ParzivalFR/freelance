@@ -119,7 +119,7 @@ const NavMobile = () => {
                 ))}
                 <div className="mt-16 flex w-full items-center justify-between gap-4">
                   {session ? (
-                    <Link href="/dashboard" className="w-full">
+                    <Link href="/admin" className="w-full">
                       <Button className="w-full" onClick={toggleMenu}>
                         <Settings className="mr-2" />
                         Dashboard
@@ -159,7 +159,7 @@ const NavDesktop = () => {
         </Link>
         <div className="mr-2 hidden h-full items-center gap-2 md:flex">
           {session ? (
-            <Link href="/dashboard">
+            <Link href="/admin">
               <Button variant="secondary">Dashboard</Button>
             </Link>
           ) : (
