@@ -36,46 +36,46 @@ const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/dashboard",
+      url: "/admin",
       icon: Home,
     },
     {
       title: "Clients",
-      url: "/dashboard/clients",
+      url: "/admin/clients",
       icon: Users,
     },
   ],
   navSecondary: [
     {
       title: "Paramètres",
-      url: "/dashboard/settings",
+      url: "/admin/settings",
       icon: Settings,
     },
     {
       title: "Aide",
-      url: "/dashboard/help",
+      url: "/admin/help",
       icon: HelpCircle,
     },
     {
       title: "Recherche",
-      url: "/dashboard/search",
+      url: "/admin/search",
       icon: Search,
     },
   ],
   documents: [
     {
       name: "Base de données",
-      url: "/dashboard/database",
+      url: "/admin/database",
       icon: Database,
     },
     {
       name: "Rapports",
-      url: "/dashboard/reports",
+      url: "/admin/reports",
       icon: FileText,
     },
     {
       name: "Documents",
-      url: "/dashboard/documents",
+      url: "/admin/documents",
       icon: FileText,
     },
   ],
@@ -98,7 +98,7 @@ export function AppSidebar({ session, ...props }: AppSidebarProps) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton size="lg" asChild>
-              <a href="/dashboard">
+              <a href="/admin">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                   <User className="size-4" />
                 </div>
