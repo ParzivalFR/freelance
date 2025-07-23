@@ -4,13 +4,30 @@ import TextShimmer from "@/components/magicui/text-shimmer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { ArrowRightIcon } from "@radix-ui/react-icons";
-import { Sparkles } from "lucide-react";
+import { Sparkles, UserIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
+import { useEffect, useState } from "react";
+import useSWR from "swr";
 import TypewriterTerminal from "./typewriter-terminal";
+
+interface RecentTestimonial {
+  id: string;
+  name: string;
+  imgUrl: string;
+  createdAt: string;
+}
 
 export default function HeroSection() {
   const router = useRouter();
+  const [imageErrors, setImageErrors] = useState<{[key: number]: boolean}>({});
+  
+  const fetcher = (url: string) => fetch(url).then((res) => res.json());
+  const { data: recentTestimonials } = useSWR<RecentTestimonial[]>("/api/testimonials/recent", fetcher);
+
+  const handleImageError = (index: number) => {
+    setImageErrors(prev => ({ ...prev, [index]: true }));
+  };
 
   function handleRedirect() {
     router.push("#contact");
@@ -66,7 +83,48 @@ export default function HeroSection() {
           Lancer votre projet
           <ArrowRightIcon className="ml-1 size-4 transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
         </Button>
-        <div className="relative mt-32 animate-fade-up opacity-0 [--animation-delay:800ms]">
+        
+        {/* Avatars des derniers témoignages */}
+        {recentTestimonials && recentTestimonials.length > 0 && (
+          <div className="mt-8 -translate-y-4 animate-fade-in opacity-0 [--animation-delay:700ms]">
+            <div className="flex items-center justify-center gap-4">
+              <div className="flex -space-x-3">
+                {recentTestimonials.map((testimonial, index) => (
+                  testimonial.imgUrl && !imageErrors[index] ? (
+                    testimonial.imgUrl.includes('dicebear.com') ? (
+                      <img
+                        key={testimonial.id}
+                        className="size-10 rounded-full border-2 border-white shadow-md dark:border-gray-800"
+                        src={testimonial.imgUrl}
+                        alt={`Avatar de ${testimonial.name}`}
+                        onError={() => handleImageError(index)}
+                      />
+                    ) : (
+                      <img
+                        key={testimonial.id}
+                        className="size-10 rounded-full border-2 border-white shadow-md dark:border-gray-800"
+                        src={testimonial.imgUrl}
+                        alt={`Avatar de ${testimonial.name}`}
+                        onError={() => handleImageError(index)}
+                      />
+                    )
+                  ) : (
+                    <div
+                      key={testimonial.id}
+                      className="flex size-10 items-center justify-center rounded-full border-2 border-white bg-primary shadow-md dark:border-gray-800"
+                    >
+                      <UserIcon className="size-5 text-background" />
+                    </div>
+                  )
+                ))}
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Rejoint par {recentTestimonials.length} clients satisfaits
+              </p>
+            </div>
+          </div>
+        )}
+        <div className="relative mt-32 animate-fade-up opacity-0 [--animation-delay:900ms]">
           <TypewriterTerminal />
         </div>
       </section>

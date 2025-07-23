@@ -57,7 +57,7 @@ export async function POST(request: Request) {
           role,
           review,
           rating: rating || 5,
-          imgUrl: avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${name.toLowerCase().replace(/\s+/g, "")}&backgroundColor=3b82f6,ef4444,10b981,f59e0b,8b5cf6&textColor=ffffff`,
+          imgUrl: avatarUrl || "", // Chaîne vide si pas d'avatar uploadé
         },
       });
 

@@ -33,9 +33,7 @@ export default function TestimonialForm({
     role: "",
     review: "",
     rating: 5,
-    avatarType: "dicebear" as "dicebear" | "upload",
     avatarUrl: "",
-    avatarSeed: clientName.toLowerCase().replace(/\s+/g, ""),
   });
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
@@ -57,9 +55,7 @@ export default function TestimonialForm({
           role: formData.role,
           review: formData.review,
           rating: formData.rating,
-          avatarUrl: formData.avatarType === "dicebear" 
-            ? `https://api.dicebear.com/7.x/initials/svg?seed=${formData.avatarSeed}&backgroundColor=3b82f6,ef4444,10b981,f59e0b,8b5cf6&textColor=ffffff`
-            : formData.avatarUrl,
+          avatarUrl: formData.avatarUrl,
         }),
       });
 
@@ -102,16 +98,8 @@ export default function TestimonialForm({
     }
   };
 
-  const generateNewAvatar = () => {
-    const newSeed = Math.random().toString(36).substring(7);
-    setFormData(prev => ({ ...prev, avatarSeed: newSeed }));
-  };
-
   const getCurrentAvatarUrl = () => {
-    if (formData.avatarType === "upload" && formData.avatarUrl) {
-      return formData.avatarUrl;
-    }
-    return `https://api.dicebear.com/7.x/initials/svg?seed=${formData.avatarSeed}&backgroundColor=3b82f6,ef4444,10b981,f59e0b,8b5cf6&textColor=ffffff`;
+    return formData.avatarUrl;
   };
 
   return (
@@ -147,64 +135,26 @@ export default function TestimonialForm({
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Section Avatar */}
             <div className="space-y-4">
-              <Label className="text-base font-semibold">Choisir votre avatar</Label>
-              <Tabs 
-                value={formData.avatarType} 
-                onValueChange={(value) => setFormData(prev => ({ ...prev, avatarType: value as "dicebear" | "upload" }))}
-                className="w-full"
-              >
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="dicebear" className="flex items-center gap-2">
-                    <User className="w-4 h-4" />
-                    Avatar généré
-                  </TabsTrigger>
-                  <TabsTrigger value="upload" className="flex items-center gap-2">
-                    <Upload className="w-4 h-4" />
-                    Télécharger
-                  </TabsTrigger>
-                </TabsList>
-                
-                <TabsContent value="dicebear" className="space-y-3">
-                  <div className="flex items-center justify-between p-4 bg-muted/50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <Avatar className="h-12 w-12">
-                        <AvatarImage src={getCurrentAvatarUrl()} alt="Avatar généré" />
-                        <AvatarFallback>{formData.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}</AvatarFallback>
-                      </Avatar>
-                      <div>
-                        <p className="font-medium">Avatar automatique</p>
-                        <p className="text-sm text-muted-foreground">Généré à partir de vos initiales</p>
-                      </div>
-                    </div>
-                    <Button type="button" variant="outline" size="sm" onClick={generateNewAvatar}>
-                      <Sparkles className="w-4 h-4 mr-1" />
-                      Nouveau
-                    </Button>
+              <Label className="text-base font-semibold">Avatar personnalisé (optionnel)</Label>
+              <div className="p-4 bg-muted/50 rounded-lg">
+                <div className="flex items-center gap-4">
+                  {avatarPreview && (
+                    <Avatar className="h-12 w-12">
+                      <AvatarImage src={avatarPreview} alt="Avatar téléchargé" />
+                      <AvatarFallback>{formData.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}</AvatarFallback>
+                    </Avatar>
+                  )}
+                  <div className="flex-1">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleAvatarFileChange}
+                      className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">PNG, JPG jusqu'à 5MB. Si rien n'est sélectionné, un avatar par défaut sera utilisé.</p>
                   </div>
-                </TabsContent>
-                
-                <TabsContent value="upload" className="space-y-3">
-                  <div className="p-4 bg-muted/50 rounded-lg">
-                    <div className="flex items-center gap-4">
-                      {avatarPreview && (
-                        <Avatar className="h-12 w-12">
-                          <AvatarImage src={avatarPreview} alt="Avatar téléchargé" />
-                          <AvatarFallback>{formData.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase()}</AvatarFallback>
-                        </Avatar>
-                      )}
-                      <div className="flex-1">
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleAvatarFileChange}
-                          className="block w-full text-sm text-muted-foreground file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-primary file:text-primary-foreground hover:file:bg-primary/90"
-                        />
-                        <p className="text-xs text-muted-foreground mt-1">PNG, JPG jusqu'à 5MB</p>
-                      </div>
-                    </div>
-                  </div>
-                </TabsContent>
-              </Tabs>
+                </div>
+              </div>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

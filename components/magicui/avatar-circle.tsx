@@ -26,15 +26,25 @@ const AvatarCircles = ({
     <div className={cn("z-10 flex -space-x-4 rtl:space-x-reverse", className)}>
       {avatarUrls.map((url, index) =>
         url && !imageErrors[index] ? (
-          <Image
-            key={index}
-            className="size-10 rounded-full border-2 border-white dark:border-gray-800"
-            src={url}
-            width={40}
-            height={40}
-            alt={`Avatar ${index + 1}`}
-            onError={() => handleImageError(index)}
-          />
+          url.includes('dicebear.com') ? (
+            <img
+              key={index}
+              className="size-10 rounded-full border-2 border-white dark:border-gray-800"
+              src={url}
+              alt={`Avatar ${index + 1}`}
+              onError={() => handleImageError(index)}
+            />
+          ) : (
+            <Image
+              key={index}
+              className="size-10 rounded-full border-2 border-white dark:border-gray-800"
+              src={url}
+              width={40}
+              height={40}
+              alt={`Avatar ${index + 1}`}
+              onError={() => handleImageError(index)}
+            />
+          )
         ) : (
           <div
             key={index}

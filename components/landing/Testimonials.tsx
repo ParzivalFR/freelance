@@ -53,14 +53,23 @@ const ReviewCard = ({
     >
       <div className="flex flex-row items-center gap-2">
         {imgUrl && !imageError ? (
-          <Image
-            className="aspect-square rounded-full"
-            width="32"
-            height="32"
-            alt=""
-            src={imgUrl}
-            onError={() => setImageError(true)}
-          />
+          imgUrl.includes('dicebear.com') ? (
+            <img
+              className="aspect-square rounded-full size-8"
+              alt=""
+              src={imgUrl}
+              onError={() => setImageError(true)}
+            />
+          ) : (
+            <Image
+              className="aspect-square rounded-full"
+              width="32"
+              height="32"
+              alt=""
+              src={imgUrl}
+              onError={() => setImageError(true)}
+            />
+          )
         ) : (
           <div className="flex size-8 items-center justify-center rounded-full bg-primary">
             <UserIcon className="size-6 text-background" />
