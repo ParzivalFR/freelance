@@ -4,7 +4,7 @@ import { prisma } from "@/lib/prisma";
 export async function POST(request: Request) {
   try {
     const body = await request.json();
-    const { token, name, role, review, rating } = body;
+    const { token, name, role, review, rating, avatarUrl } = body;
 
     if (!token || !name || !role || !review) {
       return NextResponse.json(
@@ -56,7 +56,8 @@ export async function POST(request: Request) {
           name,
           role,
           review,
-          imgUrl: "", // Vous pouvez ajouter une image par défaut ou laisser vide
+          rating: rating || 5,
+          imgUrl: avatarUrl || `https://api.dicebear.com/7.x/initials/svg?seed=${name.toLowerCase().replace(/\s+/g, "")}&backgroundColor=3b82f6,ef4444,10b981,f59e0b,8b5cf6&textColor=ffffff`,
         },
       });
 

@@ -90,6 +90,7 @@ model Testimonial {
   role      String
   imgUrl    String
   review    String
+  rating    Int      @default(5)
   createdAt DateTime @default(now())
 }
 
