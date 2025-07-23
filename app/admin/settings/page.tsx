@@ -9,7 +9,7 @@ export default function AdminSettingsPage() {
       </div>
       
       <div className="rounded-lg border p-8 text-center">
-        <h2 className="text-xl font-semibold mb-2">Page en construction</h2>
+        <h2 className="mb-2 text-xl font-semibold">Page en construction</h2>
         <p className="text-muted-foreground">
           Cette page sera bientôt disponible.
         </p>

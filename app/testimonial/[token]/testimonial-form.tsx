@@ -150,8 +150,8 @@ export default function TestimonialForm({
             </p>
           </div>
 
-          <div className="bg-muted/50 p-4 rounded-lg">
-            <p className="text-sm text-muted-foreground mb-2">
+          <div className="rounded-lg bg-muted/50 p-4">
+            <p className="mb-2 text-sm text-muted-foreground">
               <strong>Note :</strong> En soumettant cet avis, vous acceptez qu'il puisse être affiché publiquement sur notre site web pour témoigner de la qualité de nos services.
             </p>
           </div>

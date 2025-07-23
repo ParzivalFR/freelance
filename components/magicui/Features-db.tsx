@@ -277,7 +277,7 @@ const Feature = ({
             >
               <CarouselContent className="-ml-2 md:-ml-4">
                 {projects.map((project, index) => (
-                  <CarouselItem key={project.id} className="pl-2 md:pl-4 basis-full sm:basis-1/2 lg:basis-1/3">
+                  <CarouselItem key={project.id} className="basis-full pl-2 sm:basis-1/2 md:pl-4 lg:basis-1/3">
                     <Accordion.Root
                       type="single"
                       value={currentIndex === index ? `item-${index}` : ""}
@@ -289,7 +289,7 @@ const Feature = ({
                       }}
                     >
                       <AccordionItem
-                        className="relative cursor-pointer rounded-lg border bg-card p-4 hover:bg-accent/50 transition-colors shadow-sm"
+                        className="relative cursor-pointer rounded-lg border p-4 bg-card shadow-sm transition-colors hover:bg-accent/50"
                         value={`item-${index}`}
                         onClick={() => setCurrentIndex(index)}
                       >
@@ -312,7 +312,7 @@ const Feature = ({
                         </AccordionTrigger>
                         
                         <AccordionContent className="pt-2">
-                          <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                          <p className="mb-3 text-sm leading-relaxed text-muted-foreground">
                             {project.description}
                           </p>
                           
@@ -339,7 +339,7 @@ const Feature = ({
                               href={project.url}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="mt-3 inline-flex items-center text-xs text-primary hover:text-primary/80 transition-colors"
+                              className="mt-3 inline-flex items-center text-xs text-primary transition-colors hover:text-primary/80"
                             >
                               Voir le projet →
                             </a>

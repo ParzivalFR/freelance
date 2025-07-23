@@ -62,7 +62,7 @@ export async function POST(request: Request) {
     if (sendEmail) {
       try {
         // Configuration Nodemailer pour Infomaniak
-        const transporter = nodemailer.createTransporter({
+        const transporter = nodemailer.createTransport({
           host: "mail.infomaniak.com",
           port: 587,
           secure: false,

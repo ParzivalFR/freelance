@@ -139,7 +139,7 @@ export default function TestimonialTokenManager() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="clientName">Nom du client *</Label>
                 <Input
@@ -208,9 +208,9 @@ export default function TestimonialTokenManager() {
         </CardHeader>
         <CardContent>
           {isLoading ? (
-            <div className="text-center py-8">Chargement...</div>
+            <div className="py-8 text-center">Chargement...</div>
           ) : tokens.length === 0 ? (
-            <div className="text-center py-8 text-muted-foreground">
+            <div className="py-8 text-center text-muted-foreground">
               Aucun lien généré
             </div>
           ) : (
@@ -218,7 +218,7 @@ export default function TestimonialTokenManager() {
               {tokens.map((token) => (
                 <div
                   key={token.id}
-                  className="border rounded-lg p-4 space-y-2"
+                  className="space-y-2 rounded-lg border p-4"
                 >
                   <div className="flex items-start justify-between">
                     <div className="space-y-1">
@@ -242,7 +242,7 @@ export default function TestimonialTokenManager() {
                         <Badge variant="default">Actif</Badge>
                       )}
                       
-                      <div className="text-xs text-muted-foreground text-right">
+                      <div className="text-right text-xs text-muted-foreground">
                         Créé: {new Date(token.createdAt).toLocaleDateString()}
                         <br />
                         Expire: {new Date(token.expiresAt).toLocaleDateString()}
@@ -266,7 +266,7 @@ export default function TestimonialTokenManager() {
                         )
                       }
                     >
-                      <Copy className="size-4 mr-1" />
+                      <Copy className="mr-1 size-4" />
                       Copier lien
                     </Button>
                     
@@ -280,7 +280,7 @@ export default function TestimonialTokenManager() {
                         )
                       }
                     >
-                      <ExternalLink className="size-4 mr-1" />
+                      <ExternalLink className="mr-1 size-4" />
                       Ouvrir
                     </Button>
                     
@@ -290,7 +290,7 @@ export default function TestimonialTokenManager() {
                       onClick={() => sendEmailManually(token.id)}
                       disabled={token.isUsed || isExpired(token.expiresAt)}
                     >
-                      <Send className="size-4 mr-1" />
+                      <Send className="mr-1 size-4" />
                       Envoyer par email
                     </Button>
                   </div>
