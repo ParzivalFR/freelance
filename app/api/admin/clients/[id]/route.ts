@@ -1,11 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { NextRequest, NextResponse } from "next/server";
 
 // GET - Récupérer un client spécifique
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -13,8 +13,9 @@ export async function GET(
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
     }
 
+    const resolvedParams = await params;
     const client = await prisma.client.findUnique({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
     });
 
     if (!client) {
@@ -37,7 +38,7 @@ export async function GET(
 // PUT - Mettre à jour un client
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -45,6 +46,7 @@ export async function PUT(
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
     }
 
+    const resolvedParams = await params;
     const body = await request.json();
     const {
       firstName,
@@ -62,7 +64,7 @@ export async function PUT(
 
     // Vérifier si le client existe
     const existingClient = await prisma.client.findUnique({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
     });
 
     if (!existingClient) {
@@ -87,7 +89,7 @@ export async function PUT(
     }
 
     const updatedClient = await prisma.client.update({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
       data: {
         firstName,
         lastName,
@@ -117,7 +119,7 @@ export async function PUT(
 // DELETE - Supprimer un client
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -125,9 +127,10 @@ export async function DELETE(
       return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
     }
 
+    const resolvedParams = await params;
     // Vérifier si le client existe
     const existingClient = await prisma.client.findUnique({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
     });
 
     if (!existingClient) {
@@ -138,7 +141,7 @@ export async function DELETE(
     }
 
     await prisma.client.delete({
-      where: { id: params.id },
+      where: { id: resolvedParams.id },
     });
 
     return NextResponse.json({ message: "Client supprimé avec succès" });

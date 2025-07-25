@@ -1,17 +1,16 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { ClientDialog } from "@/components/dashboard/client-dialog";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -20,27 +19,27 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  Plus,
-  Search,
-  MoreHorizontal,
-  Edit,
-  Trash2,
-  Mail,
-  Phone,
-  Building,
-  Calendar,
-  Filter,
-} from "lucide-react";
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { ClientDialog } from "@/components/dashboard/client-dialog";
+import {
+  Building,
+  Calendar,
+  Edit,
+  Filter,
+  Mail,
+  MoreHorizontal,
+  Phone,
+  Search,
+  Trash2,
+} from "lucide-react";
+import { useEffect, useState } from "react";
 
 interface Client {
   id: string;
@@ -69,8 +68,10 @@ interface ClientsResponse {
 }
 
 const statusColors = {
-  prospect: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300",
-  active: "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300",
+  prospect:
+    "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300",
+  active:
+    "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300",
   inactive: "bg-gray-100 text-gray-800 dark:bg-gray-900/20 dark:text-gray-300",
   archived: "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-300",
 };
@@ -103,7 +104,8 @@ export default function AdminClientsPage() {
       });
 
       if (search) params.append("search", search);
-      if (statusFilter && statusFilter !== "all") params.append("status", statusFilter);
+      if (statusFilter && statusFilter !== "all")
+        params.append("status", statusFilter);
 
       const response = await fetch(`/api/admin/clients?${params}`);
       if (!response.ok) throw new Error("Erreur lors du chargement");
@@ -119,13 +121,16 @@ export default function AdminClientsPage() {
   };
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      if (pagination.page !== 1) {
-        setPagination(prev => ({ ...prev, page: 1 })); // Reset à la page 1 lors d'une recherche
-      } else {
-        fetchClients();
-      }
-    }, search ? 300 : 0); // Debounce de 300ms pour la recherche
+    const timeoutId = setTimeout(
+      () => {
+        if (pagination.page !== 1) {
+          setPagination((prev) => ({ ...prev, page: 1 })); // Reset à la page 1 lors d'une recherche
+        } else {
+          fetchClients();
+        }
+      },
+      search ? 300 : 0
+    ); // Debounce de 300ms pour la recherche
 
     return () => clearTimeout(timeoutId);
   }, [search, statusFilter]);
@@ -177,7 +182,7 @@ export default function AdminClientsPage() {
             <div className="text-2xl font-bold">{pagination.total}</div>
           </CardContent>
         </Card>
-        
+
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Prospects</CardTitle>
@@ -185,31 +190,35 @@ export default function AdminClientsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {clients.filter(c => c.status === "prospect").length}
+              {clients.filter((c) => c.status === "prospect").length}
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Clients Actifs</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Clients Actifs
+            </CardTitle>
             <Building className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {clients.filter(c => c.status === "active").length}
+              {clients.filter((c) => c.status === "active").length}
             </div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Professionnels</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Professionnels
+            </CardTitle>
             <Building className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {clients.filter(c => c.isProfessional).length}
+              {clients.filter((c) => c.isProfessional).length}
             </div>
           </CardContent>
         </Card>
@@ -258,13 +267,13 @@ export default function AdminClientsPage() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8">
+                  <TableCell colSpan={6} className="py-8 text-center">
                     Chargement...
                   </TableCell>
                 </TableRow>
               ) : clients.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center py-8">
+                  <TableCell colSpan={6} className="py-8 text-center">
                     Aucun client trouvé
                   </TableCell>
                 </TableRow>
@@ -299,21 +308,35 @@ export default function AdminClientsPage() {
                     </TableCell>
                     <TableCell>
                       <Badge
-                        className={statusColors[client.status as keyof typeof statusColors]}
+                        className={
+                          statusColors[
+                            client.status as keyof typeof statusColors
+                          ]
+                        }
                       >
-                        {statusLabels[client.status as keyof typeof statusLabels]}
+                        {
+                          statusLabels[
+                            client.status as keyof typeof statusLabels
+                          ]
+                        }
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <Badge variant="outline">
-                        {client.isProfessional ? "Professionnel" : "Particulier"}
+                        {client.isProfessional
+                          ? "Professionnel"
+                          : "Particulier"}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       {client.lastContactAt
-                        ? format(new Date(client.lastContactAt), "dd MMM yyyy", {
-                            locale: fr,
-                          })
+                        ? format(
+                            new Date(client.lastContactAt),
+                            "dd MMM yyyy",
+                            {
+                              locale: fr,
+                            }
+                          )
                         : "Jamais"}
                     </TableCell>
                     <TableCell className="text-right">
@@ -324,11 +347,13 @@ export default function AdminClientsPage() {
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <ClientDialog 
+                          <ClientDialog
                             client={client}
                             onSuccess={fetchClients}
                             trigger={
-                              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
+                              <DropdownMenuItem
+                                onSelect={(e) => e.preventDefault()}
+                              >
                                 <Edit className="mr-2 size-4" />
                                 Modifier
                               </DropdownMenuItem>
@@ -360,14 +385,17 @@ export default function AdminClientsPage() {
       {pagination.pages > 1 && (
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
-            Page {pagination.page} sur {pagination.pages} ({pagination.total} clients)
+            Page {pagination.page} sur {pagination.pages} ({pagination.total}{" "}
+            clients)
           </div>
           <div className="flex gap-2">
             <Button
               variant="outline"
               size="sm"
               disabled={pagination.page <= 1}
-              onClick={() => setPagination(prev => ({ ...prev, page: prev.page - 1 }))}
+              onClick={() =>
+                setPagination((prev) => ({ ...prev, page: prev.page - 1 }))
+              }
             >
               Précédent
             </Button>
@@ -375,7 +403,9 @@ export default function AdminClientsPage() {
               variant="outline"
               size="sm"
               disabled={pagination.page >= pagination.pages}
-              onClick={() => setPagination(prev => ({ ...prev, page: prev.page + 1 }))}
+              onClick={() =>
+                setPagination((prev) => ({ ...prev, page: prev.page + 1 }))
+              }
             >
               Suivant
             </Button>
