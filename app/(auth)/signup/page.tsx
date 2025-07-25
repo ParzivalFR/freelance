@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function SignUpPage() {
   return (
-    <div className="container flex h-screen w-screen flex-col items-center justify-center">
+    <div className="container flex h-dvh w-screen flex-col items-center justify-center">
       <Link
         href="/"
         className={cn(

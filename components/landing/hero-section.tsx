@@ -10,7 +10,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
 import useSWR from "swr";
-import TypewriterTerminal from "./typewriter-terminal";
+import SafariTerminal from "./safari-terminal";
 
 interface RecentTestimonial {
   id: string;
@@ -104,6 +104,8 @@ export default function HeroSection() {
                         className="shadow-md size-10 rounded-full border-2 border-white dark:border-gray-800"
                         src={testimonial.imgUrl}
                         alt={`Avatar de ${testimonial.name}`}
+                        width={40}
+                        height={40}
                         onError={() => handleImageError(index)}
                       />
                     ) : (
@@ -112,6 +114,8 @@ export default function HeroSection() {
                         className="shadow-md size-10 rounded-full border-2 border-white dark:border-gray-800"
                         src={testimonial.imgUrl}
                         alt={`Avatar de ${testimonial.name}`}
+                        width={40}
+                        height={40}
                         onError={() => handleImageError(index)}
                       />
                     )
@@ -132,7 +136,7 @@ export default function HeroSection() {
           </div>
         )}
         <div className="relative mt-32 animate-fade-up opacity-0 [--animation-delay:900ms]">
-          <TypewriterTerminal />
+          <SafariTerminal />
         </div>
       </section>
     </RoughNotationGroup>

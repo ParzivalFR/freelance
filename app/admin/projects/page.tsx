@@ -11,18 +11,19 @@ export default async function ProjectsPage() {
   });
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Projets</h1>
-          <p className="text-muted-foreground">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Projets</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">
             Gérez votre portfolio et vos réalisations
           </p>
         </div>
-        <Button asChild>
+        <Button asChild size="sm" className="w-fit">
           <Link href="/admin/projects/new">
             <Plus className="mr-2 size-4" />
-            Nouveau Projet
+            <span className="hidden sm:inline">Nouveau Projet</span>
+            <span className="sm:hidden">Nouveau</span>
           </Link>
         </Button>
       </div>

@@ -10,7 +10,7 @@ export default function NotFound() {
   };
 
   return (
-    <div className="grid h-screen place-content-center bg-background px-4">
+    <div className="grid h-dvh place-content-center bg-background px-4">
       <div className="text-center">
         <h1 className="text-9xl font-black text-primary/70">404</h1>
 

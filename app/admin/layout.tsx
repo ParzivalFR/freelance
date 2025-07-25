@@ -1,7 +1,13 @@
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
 import { AdminSidebar } from "@/components/dashboard/admin-sidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { UserDropdown } from "@/components/dashboard/user-dropdown";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { auth } from "@/lib/auth";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default async function AdminLayout({
   children,
@@ -9,7 +15,7 @@ export default async function AdminLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-  
+
   // Redirect if not authenticated or not admin
   if (!session?.user?.email) {
     redirect("/signin");
@@ -17,12 +23,49 @@ export default async function AdminLayout({
 
   return (
     <SidebarProvider>
-      <div className="flex h-screen w-full">
-        <AdminSidebar />
-        <main className="flex-1 overflow-auto p-6">
-          {children}
-        </main>
-      </div>
+      <AdminSidebar />
+      <SidebarInset className="group/sidebar-inset bg-sidebar">
+        <header className="dark relative flex h-16 shrink-0 items-center gap-2 bg-sidebar px-4 text-sidebar-foreground before:absolute before:inset-y-3 before:-left-px before:z-50 before:w-px before:bg-gradient-to-b before:from-white/5 before:via-white/15 before:to-white/5 md:px-6 lg:px-8">
+          <SidebarTrigger className="-ms-2" />
+          <div className="ml-auto flex items-center gap-8">
+            <nav className="flex items-center text-sm font-medium max-sm:hidden">
+              <Link
+                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 [&[aria-current]]:text-sidebar-foreground"
+                href="/admin"
+                aria-current
+              >
+                Dashboard
+              </Link>
+              <Link
+                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 [&[aria-current]]:text-sidebar-foreground"
+                href="/admin/projects"
+              >
+                Projets
+              </Link>
+              <a
+                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 [&[aria-current]]:text-sidebar-foreground"
+                href="/admin/testimonials"
+              >
+                Témoignages
+              </a>
+              <a
+                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 [&[aria-current]]:text-sidebar-foreground"
+                href="/admin/clients"
+              >
+                Clients
+              </a>
+            </nav>
+            <UserDropdown />
+          </div>
+        </header>
+        <div className="md:group-peer-data-[state=collapsed]/sidebar-inset:rounded-s-none flex h-[calc(100dvh-4rem)] bg-background transition-all duration-300 ease-in-out md:rounded-s-3xl">
+          <main className="flex-1 overflow-auto">
+            <div className="flex h-full flex-col px-4 md:px-6 lg:px-8">
+              <div className="py-6">{children}</div>
+            </div>
+          </main>
+        </div>
+      </SidebarInset>
     </SidebarProvider>
   );
 }

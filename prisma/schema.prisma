@@ -101,9 +101,13 @@ model Client {
   email          String  @unique
   phone          String?
   address        String?
+  company        String? // Nom de l'entreprise
+  website        String? // Site web du client
   isProfessional Boolean @default(false) @map("is_professional")
+  status         String  @default("prospect") // prospect, active, inactive, archived
   subject        String? // Objet de la discussion
   internalNote   String? @map("internal_note") @db.Text
+  lastContactAt  DateTime? @map("last_contact_at") // Dernière interaction
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")

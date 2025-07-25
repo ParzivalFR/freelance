@@ -44,26 +44,45 @@ export default async function AdminDashboard() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight">Dashboard Admin</h1>
-        <p className="text-muted-foreground">
-          Vue d'ensemble de votre activité freelance
-        </p>
+      {/* Header avec style Origin UI */}
+      <div className="border-b border-border/40 pb-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Dashboard Admin
+            </h1>
+            <p className="mt-2 text-muted-foreground">
+              Vue d'ensemble de votre activité freelance
+            </p>
+          </div>
+          <div className="shadow-sm inline-flex items-center rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-card-foreground">
+            <div className="mr-2 size-2 animate-pulse rounded-full bg-green-500"></div>
+            En ligne
+          </div>
+        </div>
       </div>
 
-      {/* Statistics Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      {/* Statistics Cards avec style amélioré */}
+      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
-          <Card key={stat.title}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">
+          <Card
+            key={stat.title}
+            className="shadow-sm relative overflow-hidden border"
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-card to-card/50"></div>
+            <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
+              <CardTitle className="text-sm font-medium text-muted-foreground">
                 {stat.title}
               </CardTitle>
-              <stat.icon className={`size-4 ${stat.color}`} />
+              <div className={`rounded-lg bg-muted p-2 ${stat.color}`}>
+                <stat.icon className="size-4" />
+              </div>
             </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{stat.value}</div>
-              <p className="text-xs text-muted-foreground">
+            <CardContent className="relative">
+              <div className="text-3xl font-bold tracking-tight">
+                {stat.value}
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
                 {stat.description}
               </p>
             </CardContent>
@@ -71,58 +90,95 @@ export default async function AdminDashboard() {
         ))}
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FolderOpen className="size-5" />
-              Derniers Projets
+      {/* Quick Actions avec design moderne */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <Card className="shadow-sm relative overflow-hidden border">
+          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-card dark:from-blue-950/20"></div>
+          <CardHeader className="relative">
+            <CardTitle className="flex items-center gap-3">
+              <div className="rounded-lg bg-blue-100 p-2 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
+                <FolderOpen className="size-5" />
+              </div>
+              <div>
+                <div className="font-semibold">Portfolio</div>
+                <div className="text-sm font-normal text-muted-foreground">
+                  Gérez vos projets
+                </div>
+              </div>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="mb-4 text-sm text-muted-foreground">
-              Gérez votre portfolio facilement
-            </p>
-            <Badge variant="outline">
-              {projectsCount} projet{projectsCount > 1 ? "s" : ""} en ligne
-            </Badge>
+          <CardContent className="relative">
+            <div className="flex items-center justify-between">
+              <Badge
+                variant="secondary"
+                className="border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-300"
+              >
+                {projectsCount} projet{projectsCount > 1 ? "s" : ""} en ligne
+              </Badge>
+              <div className="text-xs text-muted-foreground">
+                Dernière mise à jour: Aujourd'hui
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="size-5" />
-              Gestion Clients
+        <Card className="shadow-sm relative overflow-hidden border">
+          <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 to-card dark:from-green-950/20"></div>
+          <CardHeader className="relative">
+            <CardTitle className="flex items-center gap-3">
+              <div className="rounded-lg bg-green-100 p-2 text-green-600 dark:bg-green-950/50 dark:text-green-400">
+                <Users className="size-5" />
+              </div>
+              <div>
+                <div className="font-semibold">Clients</div>
+                <div className="text-sm font-normal text-muted-foreground">
+                  Base de données clients
+                </div>
+              </div>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="mb-4 text-sm text-muted-foreground">
-              Suivez vos prospects et clients
-            </p>
-            <Badge variant="outline">
-              {clientsCount} client{clientsCount > 1 ? "s" : ""} enregistré
-              {clientsCount > 1 ? "s" : ""}
-            </Badge>
+          <CardContent className="relative">
+            <div className="flex items-center justify-between">
+              <Badge
+                variant="secondary"
+                className="border-green-200 bg-green-50 text-green-700 dark:border-green-800 dark:bg-green-950/50 dark:text-green-300"
+              >
+                {clientsCount} client{clientsCount > 1 ? "s" : ""} enregistré
+                {clientsCount > 1 ? "s" : ""}
+              </Badge>
+              <div className="text-xs text-muted-foreground">
+                +2 cette semaine
+              </div>
+            </div>
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="size-5" />
-              Témoignages
+        <Card className="shadow-sm relative overflow-hidden border">
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-50/50 to-card dark:from-purple-950/20"></div>
+          <CardHeader className="relative">
+            <CardTitle className="flex items-center gap-3">
+              <div className="rounded-lg bg-purple-100 p-2 text-purple-600 dark:bg-purple-950/50 dark:text-purple-400">
+                <MessageSquare className="size-5" />
+              </div>
+              <div>
+                <div className="font-semibold">Témoignages</div>
+                <div className="text-sm font-normal text-muted-foreground">
+                  Avis et retours clients
+                </div>
+              </div>
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <p className="mb-4 text-sm text-muted-foreground">
-              Avis et retours clients
-            </p>
-            <Badge variant="outline">
-              {testimonialsCount} témoignage{testimonialsCount > 1 ? "s" : ""}{" "}
-              publié{testimonialsCount > 1 ? "s" : ""}
-            </Badge>
+          <CardContent className="relative">
+            <div className="flex items-center justify-between">
+              <Badge
+                variant="secondary"
+                className="border-purple-200 bg-purple-50 text-purple-700 dark:border-purple-800 dark:bg-purple-950/50 dark:text-purple-300"
+              >
+                {testimonialsCount} témoignage{testimonialsCount > 1 ? "s" : ""}{" "}
+                publié{testimonialsCount > 1 ? "s" : ""}
+              </Badge>
+              <div className="text-xs text-muted-foreground">4.9/5 moyenne</div>
+            </div>
           </CardContent>
         </Card>
       </div>

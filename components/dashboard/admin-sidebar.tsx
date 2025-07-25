@@ -1,19 +1,6 @@
 "use client";
 
-import {
-  FolderOpen,
-  Home,
-  LogOut,
-  MessageSquare,
-  Settings,
-  Users,
-} from "lucide-react";
-import { signOut } from "next-auth/react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { TeamSwitcher } from "@/components/dashboard/team-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -26,113 +13,157 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import {
+  BarChart3,
+  FolderOpen,
+  LayoutDashboard,
+  Mail,
+  MessageSquare,
+  Settings,
+  Users,
+} from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import * as React from "react";
 
-const menuItems = [
-  {
-    title: "Dashboard",
-    url: "/admin",
-    icon: Home,
-  },
-  {
-    title: "Projets",
-    url: "/admin/projects",
-    icon: FolderOpen,
-  },
-  {
-    title: "Clients",
-    url: "/admin/clients",
-    icon: Users,
-  },
-  {
-    title: "Témoignages",
-    url: "/admin/testimonials",
-    icon: MessageSquare,
-  },
-];
+// Data for the sidebar
+const data = {
+  teams: [
+    {
+      name: "Freelance Portfolio",
+      logo: "https://raw.githubusercontent.com/origin-space/origin-images/refs/heads/main/exp2/logo-01_upxvqe.png",
+    },
+  ],
+  navMain: [
+    {
+      title: "Administration",
+      url: "#",
+      items: [
+        {
+          title: "Dashboard",
+          url: "/admin",
+          icon: LayoutDashboard,
+        },
+        {
+          title: "Projets",
+          url: "/admin/projects",
+          icon: FolderOpen,
+        },
+        {
+          title: "Témoignages",
+          url: "/admin/testimonials",
+          icon: MessageSquare,
+        },
+        {
+          title: "Clients",
+          url: "/admin/clients",
+          icon: Users,
+        },
+        {
+          title: "Analytics",
+          url: "/admin/analytics",
+          icon: BarChart3,
+        },
+      ],
+    },
+    {
+      title: "Configuration",
+      url: "#",
+      items: [
+        {
+          title: "Paramètres",
+          url: "/admin/settings",
+          icon: Settings,
+        },
+        {
+          title: "Email Templates",
+          url: "/admin/email-templates",
+          icon: Mail,
+        },
+      ],
+    },
+  ],
+};
 
-const settingsItems = [
-  {
-    title: "Paramètres",
-    url: "/admin/settings",
-    icon: Settings,
-  },
-];
-
-export function AdminSidebar() {
+export function AdminSidebar({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
 
   return (
-    <Sidebar>
-      <SidebarHeader className="border-b px-6 py-4">
-        <div className="flex items-center gap-2">
-          <div className="flex size-8 items-center justify-center rounded-xl bg-primary text-sm font-bold text-primary-foreground">
-            G
-          </div>
-          <div>
-            <h2 className="font-semibold">Admin Panel</h2>
-            <p className="text-xs text-muted-foreground">Gael Richard</p>
-          </div>
-        </div>
+    <Sidebar {...props} className="dark !border-none">
+      <SidebarHeader>
+        <TeamSwitcher teams={data.teams} />
       </SidebarHeader>
-
       <SidebarContent>
+        {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel>Navigation</SidebarGroupLabel>
-          <SidebarGroupContent>
+          <SidebarGroupLabel className="uppercase text-sidebar-foreground/50">
+            {data.navMain[0]?.title}
+          </SidebarGroupLabel>
+          <SidebarGroupContent className="px-2">
             <SidebarMenu>
-              {menuItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={pathname === item.url}>
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
-
-        <SidebarGroup>
-          <SidebarGroupLabel>Paramètres</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {settingsItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild isActive={pathname === item.url}>
-                    <Link href={item.url}>
-                      <item.icon />
-                      <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+              {data.navMain[0]?.items.map((item) => {
+                const isActive = pathname === item.url;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      className="group/menu-button h-9 gap-3 rounded-md font-medium data-[active=true]:bg-white/10 data-[active=true]:backdrop-blur-md data-[active=true]:border data-[active=true]:border-white/20 data-[active=true]:shadow-lg data-[active=true]:shadow-white/10 data-[active=true]:text-white data-[active=true]:hover:bg-white/15 [&>svg]:size-auto"
+                      isActive={isActive}
+                    >
+                      <Link href={item.url}>
+                        {item.icon && (
+                          <item.icon
+                            className="text-sidebar-foreground/50 group-data-[active=true]/menu-button:text-white"
+                            size={22}
+                            aria-hidden="true"
+                          />
+                        )}
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-
-      <SidebarFooter className="border-t p-4">
-        <div className="mb-3 flex items-center gap-3">
-          <Avatar className="size-8">
-            <AvatarImage src="/photo-de-profil.jpg" />
-            <AvatarFallback>GR</AvatarFallback>
-          </Avatar>
-          <div className="min-w-0 flex-1">
-            <p className="text-sm font-medium">Gael Richard</p>
-            <p className="text-xs text-muted-foreground">Développeur</p>
-          </div>
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="w-full justify-start"
-          onClick={() => signOut()}
-        >
-          <LogOut className="mr-2 size-4" />
-          Se déconnecter
-        </Button>
+      <SidebarFooter>
+        {/* Secondary Navigation */}
+        <SidebarGroup>
+          <SidebarGroupLabel className="uppercase text-sidebar-foreground/50">
+            {data.navMain[1]?.title}
+          </SidebarGroupLabel>
+          <SidebarGroupContent className="px-2">
+            <SidebarMenu>
+              {data.navMain[1]?.items.map((item) => {
+                const isActive = pathname === item.url;
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton
+                      asChild
+                      className="group/menu-button h-9 gap-3 rounded-md font-medium data-[active=true]:bg-white/10 data-[active=true]:backdrop-blur-md data-[active=true]:border data-[active=true]:border-white/20 data-[active=true]:shadow-lg data-[active=true]:shadow-white/10 data-[active=true]:text-white data-[active=true]:hover:bg-white/15 [&>svg]:size-auto"
+                      isActive={isActive}
+                    >
+                      <Link href={item.url}>
+                        {item.icon && (
+                          <item.icon
+                            className="text-sidebar-foreground/50 group-data-[active=true]/menu-button:text-white"
+                            size={22}
+                            aria-hidden="true"
+                          />
+                        )}
+                        <span>{item.title}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
       </SidebarFooter>
     </Sidebar>
   );

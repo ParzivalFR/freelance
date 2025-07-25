@@ -45,7 +45,7 @@ export default async function TestimonialPage({ params }: PageProps) {
 
   if (result.expired) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="flex min-h-dvh items-center justify-center bg-background">
         <div className="mx-auto w-full max-w-md p-6 text-center">
           <div className="mb-6">
             <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-destructive/10">
@@ -65,7 +65,7 @@ export default async function TestimonialPage({ params }: PageProps) {
 
   if (result.used) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-background">
+      <div className="flex min-h-dvh items-center justify-center bg-background">
         <div className="mx-auto w-full max-w-md p-6 text-center">
           <div className="mb-6">
             <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-primary/10">
@@ -84,7 +84,7 @@ export default async function TestimonialPage({ params }: PageProps) {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-dvh bg-background">
       <div className="container mx-auto px-4 py-12">
         <div className="mx-auto max-w-2xl">
           <div className="mb-8 text-center">

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function SuccessPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
+    <div className="flex min-h-dvh items-center justify-center bg-background">
       <div className="mx-auto w-full max-w-md p-6 text-center">
         <div className="mb-6">
           <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-green-100 dark:bg-green-900/20">
