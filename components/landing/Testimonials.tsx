@@ -47,9 +47,9 @@ const ReviewCard = ({
     >
       <div className="flex flex-row items-center gap-2">
         {imgUrl && !imageError ? (
-          imgUrl.includes('dicebear.com') ? (
-            <img
-              className="aspect-square rounded-full size-8"
+          imgUrl.includes("dicebear.com") ? (
+            <Image
+              className="aspect-square size-8 rounded-full"
               alt=""
               src={imgUrl}
               onError={() => setImageError(true)}
@@ -107,7 +107,6 @@ const SkeletonTestimonialCard = () => (
     </div>
   </div>
 );
-
 
 export function Testimonials() {
   const fetcher = (url: string) => fetch(url).then((res) => res.json());

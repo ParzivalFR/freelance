@@ -14,8 +14,10 @@ export default async function ProjectsPage() {
     <div className="space-y-4 sm:space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Projets</h1>
-          <p className="text-sm sm:text-base text-muted-foreground">
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
+            Projets
+          </h1>
+          <p className="text-sm text-muted-foreground sm:text-base">
             Gérez votre portfolio et vos réalisations
           </p>
         </div>

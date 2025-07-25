@@ -39,7 +39,7 @@ import {
   Search,
   Trash2,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 interface Client {
   id: string;
@@ -95,7 +95,7 @@ export default function AdminClientsPage() {
     pages: 0,
   });
 
-  const fetchClients = async () => {
+  const fetchClients = useCallback(async () => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -118,7 +118,7 @@ export default function AdminClientsPage() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [pagination.page, pagination.limit, search, statusFilter]);
 
   useEffect(() => {
     const timeoutId = setTimeout(
@@ -133,11 +133,11 @@ export default function AdminClientsPage() {
     ); // Debounce de 300ms pour la recherche
 
     return () => clearTimeout(timeoutId);
-  }, [search, statusFilter]);
+  }, [search, statusFilter, fetchClients, pagination.page]);
 
   useEffect(() => {
     fetchClients();
-  }, [pagination.page]);
+  }, [pagination.page, fetchClients]);
 
   const handleDelete = async (clientId: string) => {
     if (!confirm("Êtes-vous sûr de vouloir supprimer ce client ?")) return;

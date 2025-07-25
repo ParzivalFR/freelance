@@ -109,7 +109,7 @@ export function AdminSidebar({
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
-                      className="group/menu-button h-9 gap-3 rounded-md font-medium data-[active=true]:bg-white/10 data-[active=true]:backdrop-blur-md data-[active=true]:border data-[active=true]:border-white/20 data-[active=true]:shadow-lg data-[active=true]:shadow-white/10 data-[active=true]:text-white data-[active=true]:hover:bg-white/15 [&>svg]:size-auto"
+                      className="group/menu-button data-[active=true]:shadow-lg h-9 gap-3 rounded-md font-medium data-[active=true]:border data-[active=true]:border-white/20 data-[active=true]:bg-white/10 data-[active=true]:text-white data-[active=true]:shadow-white/10 data-[active=true]:backdrop-blur-md data-[active=true]:hover:bg-white/15 [&>svg]:size-auto"
                       isActive={isActive}
                     >
                       <Link href={item.url}>
@@ -144,7 +144,7 @@ export function AdminSidebar({
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
-                      className="group/menu-button h-9 gap-3 rounded-md font-medium data-[active=true]:bg-white/10 data-[active=true]:backdrop-blur-md data-[active=true]:border data-[active=true]:border-white/20 data-[active=true]:shadow-lg data-[active=true]:shadow-white/10 data-[active=true]:text-white data-[active=true]:hover:bg-white/15 [&>svg]:size-auto"
+                      className="group/menu-button data-[active=true]:shadow-lg h-9 gap-3 rounded-md font-medium data-[active=true]:border data-[active=true]:border-white/20 data-[active=true]:bg-white/10 data-[active=true]:text-white data-[active=true]:shadow-white/10 data-[active=true]:backdrop-blur-md data-[active=true]:hover:bg-white/15 [&>svg]:size-auto"
                       isActive={isActive}
                     >
                       <Link href={item.url}>

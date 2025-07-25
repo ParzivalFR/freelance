@@ -1,6 +1,5 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -18,7 +17,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -27,10 +25,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { useForm } from "react-hook-form";
+import { Textarea } from "@/components/ui/textarea";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2, Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Plus, Edit, Loader2 } from "lucide-react";
 
 const clientSchema = z.object({
   firstName: z.string().min(1, "Le prénom est obligatoire"),
@@ -41,7 +41,9 @@ const clientSchema = z.object({
   company: z.string().optional(),
   website: z.string().url("URL invalide").optional().or(z.literal("")),
   isProfessional: z.boolean().default(false),
-  status: z.enum(["prospect", "active", "inactive", "archived"]).default("prospect"),
+  status: z
+    .enum(["prospect", "active", "inactive", "archived"])
+    .default("prospect"),
   subject: z.string().optional(),
   internalNote: z.string().optional(),
 });
@@ -69,7 +71,11 @@ interface ClientDialogProps {
   trigger?: React.ReactNode;
 }
 
-export function ClientDialog({ client, onSuccess, trigger }: ClientDialogProps) {
+export function ClientDialog({
+  client,
+  onSuccess,
+  trigger,
+}: ClientDialogProps) {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -128,10 +134,10 @@ export function ClientDialog({ client, onSuccess, trigger }: ClientDialogProps) 
   const onSubmit = async (data: ClientFormData) => {
     setLoading(true);
     try {
-      const url = isEditing 
-        ? `/api/admin/clients/${client.id}` 
+      const url = isEditing
+        ? `/api/admin/clients/${client.id}`
         : "/api/admin/clients";
-      
+
       const method = isEditing ? "PUT" : "POST";
 
       const response = await fetch(url, {
@@ -167,10 +173,8 @@ export function ClientDialog({ client, onSuccess, trigger }: ClientDialogProps) 
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        {trigger || defaultTrigger}
-      </DialogTrigger>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? "Modifier le client" : "Nouveau client"}
@@ -220,10 +224,10 @@ export function ClientDialog({ client, onSuccess, trigger }: ClientDialogProps) 
                   <FormItem>
                     <FormLabel>Email *</FormLabel>
                     <FormControl>
-                      <Input 
-                        type="email" 
-                        placeholder="john.doe@example.com" 
-                        {...field} 
+                      <Input
+                        type="email"
+                        placeholder="john.doe@example.com"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -251,7 +255,10 @@ export function ClientDialog({ client, onSuccess, trigger }: ClientDialogProps) 
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>Statut</FormLabel>
-                      <Select onValueChange={field.onChange} value={field.value}>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
                         <FormControl>
                           <SelectTrigger>
                             <SelectValue placeholder="Sélectionner un statut" />
@@ -277,10 +284,10 @@ export function ClientDialog({ client, onSuccess, trigger }: ClientDialogProps) 
                   <FormItem>
                     <FormLabel>Adresse</FormLabel>
                     <FormControl>
-                      <Textarea 
+                      <Textarea
                         placeholder="123 Rue de la Paix, 75001 Paris"
                         className="min-h-[60px]"
-                        {...field} 
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -294,14 +301,16 @@ export function ClientDialog({ client, onSuccess, trigger }: ClientDialogProps) 
               <h3 className="text-sm font-medium text-muted-foreground">
                 Informations professionnelles
               </h3>
-              
+
               <FormField
                 control={form.control}
                 name="isProfessional"
                 render={({ field }) => (
                   <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Client professionnel</FormLabel>
+                      <FormLabel className="text-base">
+                        Client professionnel
+                      </FormLabel>
                       <div className="text-sm text-muted-foreground">
                         Ce client représente une entreprise ou organisation
                       </div>
@@ -351,7 +360,7 @@ export function ClientDialog({ client, onSuccess, trigger }: ClientDialogProps) 
               <h3 className="text-sm font-medium text-muted-foreground">
                 Informations projet
               </h3>
-              
+
               <FormField
                 control={form.control}
                 name="subject"
@@ -359,9 +368,9 @@ export function ClientDialog({ client, onSuccess, trigger }: ClientDialogProps) 
                   <FormItem>
                     <FormLabel>Sujet/Objet</FormLabel>
                     <FormControl>
-                      <Input 
-                        placeholder="Création d'un site e-commerce" 
-                        {...field} 
+                      <Input
+                        placeholder="Création d'un site e-commerce"
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />
@@ -376,10 +385,10 @@ export function ClientDialog({ client, onSuccess, trigger }: ClientDialogProps) 
                   <FormItem>
                     <FormLabel>Notes internes</FormLabel>
                     <FormControl>
-                      <Textarea 
+                      <Textarea
                         placeholder="Notes privées sur ce client..."
                         className="min-h-[80px]"
-                        {...field} 
+                        {...field}
                       />
                     </FormControl>
                     <FormMessage />

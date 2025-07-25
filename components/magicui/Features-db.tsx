@@ -11,7 +11,6 @@ import React, {
 } from "react";
 
 import { cn } from "@/lib/utils";
-import { Skeleton } from "../ui/skeleton";
 import {
   Carousel,
   CarouselContent,
@@ -19,6 +18,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "../ui/carousel";
+import { Skeleton } from "../ui/skeleton";
 
 type AccordionItemProps = {
   children: React.ReactNode;
@@ -179,7 +179,6 @@ const Feature = ({
     return () => clearInterval(timer);
   }, [collapseDelay, currentIndex, isChanging, projects.length]);
 
-
   if (isLoading) {
     return (
       <section ref={ref} id="features">
@@ -241,7 +240,7 @@ const Feature = ({
               Découvrez les projets réalisés
             </h2>
           </div>
-          
+
           <div className="mx-auto my-12 w-full max-w-5xl">
             {/* Image en haut */}
             <div className="mb-8 flex justify-center">
@@ -277,7 +276,10 @@ const Feature = ({
             >
               <CarouselContent className="-ml-2 md:-ml-4">
                 {projects.map((project, index) => (
-                  <CarouselItem key={project.id} className="basis-full pl-2 sm:basis-1/2 md:pl-4 lg:basis-1/3">
+                  <CarouselItem
+                    key={project.id}
+                    className="basis-full pl-2 sm:basis-1/2 md:pl-4 lg:basis-1/3"
+                  >
                     <Accordion.Root
                       type="single"
                       value={currentIndex === index ? `item-${index}` : ""}
@@ -289,51 +291,54 @@ const Feature = ({
                       }}
                     >
                       <AccordionItem
-                        className="relative cursor-pointer rounded-lg border p-4 bg-card shadow-sm transition-colors hover:bg-accent/50"
+                        className="shadow-sm relative cursor-pointer rounded-lg border bg-card p-4 transition-colors hover:bg-accent/50"
                         value={`item-${index}`}
                         onClick={() => setCurrentIndex(index)}
                       >
-                        <div
-                          className="absolute left-0 top-0 h-1 w-full overflow-hidden rounded-t-lg bg-neutral-300/50 dark:bg-neutral-300/30"
-                        >
+                        <div className="absolute left-0 top-0 h-1 w-full overflow-hidden rounded-t-lg bg-neutral-300/50 dark:bg-neutral-300/30">
                           <div
                             className={`absolute left-0 top-0 h-full ${
                               currentIndex === index ? "w-full" : "w-0"
                             } bg-primary transition-all ease-linear`}
                             style={{
                               transitionDuration:
-                                currentIndex === index ? `${collapseDelay}ms` : "0s",
+                                currentIndex === index
+                                  ? `${collapseDelay}ms`
+                                  : "0s",
                             }}
                           ></div>
                         </div>
-                        
+
                         <AccordionTrigger className="text-left text-lg font-bold hover:no-underline [&[data-state=open]>svg]:rotate-180">
                           {project.title}
                         </AccordionTrigger>
-                        
+
                         <AccordionContent className="pt-2">
                           <p className="mb-3 text-sm leading-relaxed text-muted-foreground">
                             {project.description}
                           </p>
-                          
-                          {project.technologies && project.technologies.length > 0 && (
-                            <div className="flex flex-wrap gap-2">
-                              {project.technologies.slice(0, 3).map((tech, techIndex) => (
-                                <span
-                                  key={techIndex}
-                                  className="rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary"
-                                >
-                                  {tech}
-                                </span>
-                              ))}
-                              {project.technologies.length > 3 && (
-                                <span className="rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
-                                  +{project.technologies.length - 3}
-                                </span>
-                              )}
-                            </div>
-                          )}
-                          
+
+                          {project.technologies &&
+                            project.technologies.length > 0 && (
+                              <div className="flex flex-wrap gap-2">
+                                {project.technologies
+                                  .slice(0, 3)
+                                  .map((tech, techIndex) => (
+                                    <span
+                                      key={techIndex}
+                                      className="rounded-md bg-primary/10 px-2 py-1 text-xs font-medium text-primary"
+                                    >
+                                      {tech}
+                                    </span>
+                                  ))}
+                                {project.technologies.length > 3 && (
+                                  <span className="rounded-md bg-muted px-2 py-1 text-xs font-medium text-muted-foreground">
+                                    +{project.technologies.length - 3}
+                                  </span>
+                                )}
+                              </div>
+                            )}
+
                           {project.url && (
                             <a
                               href={project.url}
