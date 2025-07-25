@@ -52,6 +52,8 @@ const ReviewCard = ({
               className="aspect-square size-8 rounded-full"
               alt=""
               src={imgUrl}
+              width="32"
+              height="32"
               onError={() => setImageError(true)}
             />
           ) : (

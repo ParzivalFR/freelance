@@ -20,7 +20,7 @@ export const AnimatedSpan = ({
     initial={{ opacity: 0, y: -5 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ duration: 0.3, delay: delay / 1000 }}
-    className={cn("grid text-sm font-normal tracking-tight", className)}
+    className={cn("block text-left text-sm font-normal leading-tight md:leading-relaxed", className)}
     {...props}
   >
     {children}
@@ -104,18 +104,18 @@ export const Terminal = ({ children, className }: TerminalProps) => {
         className
       )}
     >
-      <div className="flex flex-col gap-y-2 border-b border-border p-4">
+      <div className="flex flex-col gap-y-1 border-b border-border p-2 md:gap-y-2 md:p-4">
         <div className="flex flex-row gap-x-2">
           <div className="size-3 rounded-full bg-red-500"></div>
           <div className="size-3 rounded-full bg-yellow-500"></div>
           <div className="size-3 rounded-full bg-green-500"></div>
         </div>
       </div>
-      <pre className="p-6 text-sm">
-        <code className="grid gap-y-2 overflow-auto font-mono text-green-400">
+      <div className="h-full max-h-[200px] overflow-auto bg-black p-2 md:max-h-[320px] md:p-4">
+        <div className="text-left text-xs font-mono leading-tight text-green-400 md:text-sm md:leading-relaxed">
           {children}
-        </code>
-      </pre>
+        </div>
+      </div>
     </div>
   );
 };

@@ -135,7 +135,7 @@ export default function HeroSection() {
             </div>
           </div>
         )}
-        <div className="relative mt-32 animate-fade-up opacity-0 [--animation-delay:900ms]">
+        <div className="relative mt-20 animate-fade-up px-4 opacity-0 [--animation-delay:900ms] hidden md:block">
           <SafariTerminal />
         </div>
       </section>
