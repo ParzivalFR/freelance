@@ -19,6 +19,7 @@ import {
   LayoutDashboard,
   Mail,
   MessageSquare,
+  Search,
   Settings,
   Users,
 } from "lucide-react";
@@ -63,6 +64,11 @@ const data = {
           title: "Analytics",
           url: "/admin/analytics",
           icon: BarChart3,
+        },
+        {
+          title: "Prospection",
+          url: "/admin/prospection",
+          icon: Search,
         },
       ],
     },
