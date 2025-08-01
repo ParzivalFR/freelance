@@ -411,7 +411,6 @@ export default function ProspectionPage() {
 
           {/* Résultats */}
           <div className="grid grid-cols-1 gap-4">
-            {console.log('🎨 Rendu des résultats, searchResults.length:', searchResults.length)}
             {searchResults.map((company) => (
               <Card key={company.siren} className="hover:shadow-md transition-shadow">
                 <CardContent className="p-6">
