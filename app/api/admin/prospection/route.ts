@@ -166,7 +166,6 @@ async function checkWebsite(companyName: string, city: string): Promise<boolean>
       try {
         const response = await fetch(`http://${domain}`, { 
           method: 'HEAD',
-          timeout: 3000,
           signal: AbortSignal.timeout(3000)
         });
         if (response.ok) return true;
@@ -419,8 +418,6 @@ export async function POST(request: NextRequest) {
         // Debug pour votre entreprise
         if (etablissement.siren === '930448600') {
           console.log('=== VOTRE ENTREPRISE TROUVÉE ===');
-          console.log('Coordonnées Lambert:', lambertX, lambertY);
-          console.log('Coordonnées GPS:', coords);
           console.log('Distance calculée:', distance, 'km');
           console.log('Rayon limite:', radius, 'km');
         }
