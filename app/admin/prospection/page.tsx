@@ -53,7 +53,7 @@ export default function ProspectionPage() {
   const [citySuggestions, setCitySuggestions] = useState<City[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isLoadingCities, setIsLoadingCities] = useState(false);
-  const suggestionTimeoutRef = useRef<NodeJS.Timeout>();
+  const suggestionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
   // Fonction pour rechercher les villes
