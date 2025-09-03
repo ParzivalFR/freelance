@@ -57,7 +57,7 @@ export default async function AdminLayout({
             <UserDropdown />
           </div>
         </header>
-        <div className="flex h-[calc(100dvh-4rem)] bg-background transition-all duration-300 ease-in-out md:rounded-s-3xl md:group-peer-data-[state=collapsed]/sidebar-inset:rounded-s-none">
+        <div className="md:group-peer-data-[state=collapsed]/sidebar-inset:rounded-s-none flex h-[calc(100dvh-4rem)] bg-background transition-all duration-300 ease-in-out md:rounded-s-3xl">
           <main className="flex-1 overflow-auto">
             <div className="flex h-full flex-col px-4 py-6 md:px-6 lg:px-8">
               {children}

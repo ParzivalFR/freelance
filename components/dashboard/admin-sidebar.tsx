@@ -104,7 +104,7 @@ export function AdminSidebar({
       <SidebarContent>
         {/* Main Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel className="uppercase text-sidebar-foreground/50">
+          <SidebarGroupLabel className="uppercase text-sidebar-foreground/70">
             {data.navMain[0]?.title}
           </SidebarGroupLabel>
           <SidebarGroupContent className="px-2">
@@ -115,13 +115,13 @@ export function AdminSidebar({
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
-                      className="group/menu-button data-[active=true]:shadow-lg h-9 gap-3 rounded-md font-medium data-[active=true]:border data-[active=true]:border-white/20 data-[active=true]:bg-white/10 data-[active=true]:text-white data-[active=true]:shadow-white/10 data-[active=true]:backdrop-blur-md data-[active=true]:hover:bg-white/15 [&>svg]:size-auto"
+                      className="group/menu-button text-sidebar-foreground/80 hover:text-sidebar-foreground/90 hover:bg-white/5 data-[active=true]:shadow-lg h-9 gap-3 rounded-md font-medium data-[active=true]:border data-[active=true]:border-white/20 data-[active=true]:bg-white/10 data-[active=true]:text-white data-[active=true]:shadow-white/10 data-[active=true]:backdrop-blur-md data-[active=true]:hover:bg-white/15 [&>svg]:size-auto"
                       isActive={isActive}
                     >
                       <Link href={item.url}>
                         {item.icon && (
                           <item.icon
-                            className="text-sidebar-foreground/50 group-data-[active=true]/menu-button:text-white"
+                            className="text-sidebar-foreground/70 group-hover/menu-button:text-sidebar-foreground/80 group-data-[active=true]/menu-button:text-white"
                             size={22}
                             aria-hidden="true"
                           />
@@ -139,7 +139,7 @@ export function AdminSidebar({
       <SidebarFooter>
         {/* Secondary Navigation */}
         <SidebarGroup>
-          <SidebarGroupLabel className="uppercase text-sidebar-foreground/50">
+          <SidebarGroupLabel className="uppercase text-sidebar-foreground/70">
             {data.navMain[1]?.title}
           </SidebarGroupLabel>
           <SidebarGroupContent className="px-2">
@@ -150,13 +150,13 @@ export function AdminSidebar({
                   <SidebarMenuItem key={item.title}>
                     <SidebarMenuButton
                       asChild
-                      className="group/menu-button data-[active=true]:shadow-lg h-9 gap-3 rounded-md font-medium data-[active=true]:border data-[active=true]:border-white/20 data-[active=true]:bg-white/10 data-[active=true]:text-white data-[active=true]:shadow-white/10 data-[active=true]:backdrop-blur-md data-[active=true]:hover:bg-white/15 [&>svg]:size-auto"
+                      className="group/menu-button text-sidebar-foreground/80 hover:text-sidebar-foreground/90 hover:bg-white/5 data-[active=true]:shadow-lg h-9 gap-3 rounded-md font-medium data-[active=true]:border data-[active=true]:border-white/20 data-[active=true]:bg-white/10 data-[active=true]:text-white data-[active=true]:shadow-white/10 data-[active=true]:backdrop-blur-md data-[active=true]:hover:bg-white/15 [&>svg]:size-auto"
                       isActive={isActive}
                     >
                       <Link href={item.url}>
                         {item.icon && (
                           <item.icon
-                            className="text-sidebar-foreground/50 group-data-[active=true]/menu-button:text-white"
+                            className="text-sidebar-foreground/70 group-hover/menu-button:text-sidebar-foreground/80 group-data-[active=true]/menu-button:text-white"
                             size={22}
                             aria-hidden="true"
                           />

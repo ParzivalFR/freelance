@@ -17,7 +17,7 @@ export function createTestimonialEmailTemplate({
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Partagez votre expérience avec nous</title>
+    <title>Partagez votre expérience</title>
     <style>
         * {
             margin: 0;
@@ -26,197 +26,258 @@ export function createTestimonialEmailTemplate({
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
-            color: #333333;
-            background-color: #f8fafc;
+            color: #0f0f0f;
+            background-color: #fafafa;
+            padding: 20px 0;
         }
         
         .container {
             max-width: 600px;
             margin: 0 auto;
             background-color: #ffffff;
-            border-radius: 8px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(15, 15, 15, 0.1);
         }
         
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px 30px;
+            padding: 48px 32px 32px;
             text-align: center;
+            border-bottom: 1px solid rgba(15, 15, 15, 0.05);
         }
         
         .header h1 {
             font-size: 28px;
-            font-weight: 700;
+            font-weight: 600;
+            color: #0f0f0f;
             margin-bottom: 8px;
+            letter-spacing: -0.025em;
         }
         
         .header p {
+            color: #737373;
             font-size: 16px;
-            opacity: 0.9;
+            font-weight: 400;
         }
         
         .content {
-            padding: 40px 30px;
+            padding: 32px;
         }
         
         .greeting {
             font-size: 18px;
-            margin-bottom: 20px;
-            color: #2d3748;
+            font-weight: 500;
+            margin-bottom: 24px;
+            color: #0f0f0f;
         }
         
         .message {
             font-size: 16px;
             line-height: 1.7;
-            color: #4a5568;
-            margin-bottom: 30px;
+            color: #404040;
+            margin-bottom: 32px;
         }
         
         .project-highlight {
-            background-color: #f7fafc;
-            border-left: 4px solid #667eea;
-            padding: 20px;
-            margin: 25px 0;
-            border-radius: 0 8px 8px 0;
+            background-color: rgba(15, 15, 15, 0.01);
+            border: 1px solid rgba(15, 15, 15, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            margin: 32px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .project-highlight:hover {
+            background-color: rgba(15, 15, 15, 0.05);
         }
         
         .project-highlight h3 {
-            color: #2d3748;
-            font-size: 16px;
+            color: #0f0f0f;
+            font-size: 14px;
+            font-weight: 600;
             margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
         
         .project-highlight p {
-            color: #667eea;
-            font-weight: 600;
+            color: #0f0f0f;
+            font-weight: 500;
+            font-size: 16px;
         }
         
         .cta-container {
             text-align: center;
-            margin: 40px 0;
+            margin: 48px 0;
+            padding: 40px 24px;
+            background-color: rgba(15, 15, 15, 0.01);
+            border-radius: 12px;
+            border: 1px solid rgba(15, 15, 15, 0.1);
+        }
+        
+        .cta-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #0f0f0f;
+            margin-bottom: 8px;
+            letter-spacing: -0.025em;
+        }
+        
+        .cta-subtitle {
+            color: #737373;
+            margin-bottom: 32px;
+            font-size: 14px;
         }
         
         .cta-button {
             display: inline-block;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 16px 32px;
+            background-color: #0f0f0f;
+            color: #ffffff;
+            padding: 12px 24px;
             text-decoration: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 16px;
-            transition: transform 0.2s;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+            border-radius: 12px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: 1px solid #0f0f0f;
         }
         
         .cta-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+            background-color: #404040;
+            transform: translateY(-1px);
         }
         
-        .features {
-            background-color: #f8fafc;
-            border-radius: 8px;
-            padding: 25px;
-            margin: 30px 0;
+        .benefits {
+            margin: 40px 0;
         }
         
-        .features h3 {
-            color: #2d3748;
+        .benefits-title {
             font-size: 16px;
-            margin-bottom: 15px;
+            font-weight: 600;
+            color: #0f0f0f;
+            margin-bottom: 20px;
             text-align: center;
         }
         
-        .feature-list {
+        .benefit-list {
             list-style: none;
             padding: 0;
         }
         
-        .feature-list li {
-            padding: 8px 0;
-            color: #4a5568;
+        .benefit-item {
+            padding: 16px 0;
+            color: #404040;
+            font-size: 14px;
             display: flex;
-            align-items: center;
+            align-items: flex-start;
+            line-height: 1.6;
         }
         
-        .feature-list li:before {
-            content: "✓";
-            background-color: #48bb78;
-            color: white;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 12px;
-            font-size: 12px;
+        .benefit-item::before {
+            content: "•";
+            color: #0f0f0f;
             font-weight: bold;
+            width: 20px;
+            margin-right: 8px;
+            margin-top: 2px;
+            flex-shrink: 0;
         }
         
         .note {
-            background-color: #fef5e7;
-            border: 1px solid #f6e05e;
-            border-radius: 6px;
-            padding: 16px;
-            margin: 25px 0;
+            background-color: rgba(15, 15, 15, 0.01);
+            border: 1px solid rgba(15, 15, 15, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 32px 0;
         }
         
         .note p {
-            color: #744210;
-            font-size: 14px;
+            color: #404040;
+            font-size: 13px;
             margin: 0;
+            line-height: 1.6;
         }
         
         .footer {
-            background-color: #2d3748;
-            color: #a0aec0;
-            padding: 30px;
+            background-color: rgba(15, 15, 15, 0.01);
+            border-top: 1px solid rgba(15, 15, 15, 0.1);
+            padding: 32px;
             text-align: center;
         }
         
-        .footer h4 {
-            color: white;
-            margin-bottom: 15px;
+        .footer-brand {
+            color: #0f0f0f;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
         }
         
-        .footer p {
-            font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 10px;
+        .footer-tagline {
+            color: #737373;
+            font-size: 13px;
+            margin-bottom: 20px;
         }
         
-        .footer a {
-            color: #667eea;
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .footer-link {
+            color: #0f0f0f;
             text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            transition: color 0.3s ease;
         }
         
-        .footer a:hover {
-            text-decoration: underline;
+        .footer-link:hover {
+            color: #404040;
+        }
+        
+        .footer-disclaimer {
+            font-size: 11px;
+            color: #737373;
+            line-height: 1.5;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(15, 15, 15, 0.1);
         }
         
         @media (max-width: 600px) {
-            .container {
-                margin: 0;
-                border-radius: 0;
+            body {
+                padding: 10px;
             }
             
-            .header, .content, .footer {
-                padding: 30px 20px;
+            .container {
+                margin: 0;
+                border-radius: 8px;
+            }
+            
+            .header {
+                padding: 32px 24px 24px;
+            }
+            
+            .content {
+                padding: 24px;
             }
             
             .header h1 {
                 font-size: 24px;
             }
             
-            .cta-button {
-                padding: 14px 28px;
-                font-size: 15px;
+            .cta-container {
+                padding: 32px 20px;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+                gap: 12px;
             }
         }
     </style>
@@ -224,8 +285,8 @@ export function createTestimonialEmailTemplate({
 <body>
     <div class="container">
         <div class="header">
-            <h1>🌟 Votre avis compte pour nous</h1>
-            <p>Aidez-nous à nous améliorer en partageant votre expérience</p>
+            <h1>Partagez votre expérience</h1>
+            <p>Votre avis compte pour nous</p>
         </div>
         
         <div class="content">
@@ -234,56 +295,56 @@ export function createTestimonialEmailTemplate({
             </div>
             
             <div class="message">
-                J'espère que vous êtes pleinement satisfait${projectName ? ` de notre collaboration sur le projet <strong>"${projectName}"</strong>` : ' de nos services'}. 
-                Votre retour est précieux pour nous aider à maintenir la qualité de nos prestations.
+                J'espère que vous êtes satisfait${projectName ? ` de notre collaboration sur le projet <strong>"${projectName}"</strong>` : ' de nos services'}. Votre retour est précieux pour nous aider à maintenir la qualité de nos prestations et rassurer nos futurs clients.
             </div>
             
             ${projectName ? `
             <div class="project-highlight">
-                <h3>📋 Projet réalisé</h3>
+                <h3>Projet réalisé</h3>
                 <p>${projectName}</p>
             </div>
             ` : ''}
             
-            <div class="features">
-                <h3>Votre témoignage nous permet de :</h3>
-                <ul class="feature-list">
-                    <li>Améliorer continuellement nos services</li>
-                    <li>Rassurer nos futurs clients</li>
-                    <li>Valoriser notre expertise</li>
-                    <li>Construire une relation de confiance</li>
-                </ul>
+            <div class="cta-container">
+                <div class="cta-title">Laisser votre avis</div>
+                <div class="cta-subtitle">Cela ne prendra que quelques minutes</div>
+                <a href="${testimonialUrl}" class="cta-button">
+                    Partager mon expérience
+                </a>
             </div>
             
-            <div class="cta-container">
-                <a href="${testimonialUrl}" class="cta-button">
-                    ✍️ Laisser mon avis (2 minutes)
-                </a>
+            <div class="benefits">
+                <div class="benefits-title">Votre témoignage nous aide à :</div>
+                <ul class="benefit-list">
+                    <li class="benefit-item">Améliorer continuellement nos services</li>
+                    <li class="benefit-item">Rassurer nos futurs clients</li>
+                    <li class="benefit-item">Valoriser notre expertise</li>
+                    <li class="benefit-item">Construire une relation de confiance</li>
+                </ul>
             </div>
             
             <div class="note">
                 <p>
-                    <strong>Important :</strong> Ce lien est personnel et sécurisé. Il ne peut être utilisé qu'une seule fois et expire automatiquement dans 30 jours.
+                    <strong>Important :</strong> Ce lien est personnel et sécurisé. Il ne peut être utilisé qu'une seule fois et expire dans 30 jours.
                 </p>
             </div>
             
             <div class="message">
-                Si vous avez des questions ou souhaitez discuter de votre expérience avant de laisser votre avis, 
-                n'hésitez pas à me répondre directement à cet email.
+                Si vous avez des questions, n'hésitez pas à me répondre directement à cet email.
             </div>
         </div>
         
         <div class="footer">
-            <h4>Gael Richard - Développeur Freelance</h4>
-            <p>Spécialisé dans le développement web moderne</p>
-            <p>
-                <a href="${siteUrl}">🌐 ${siteUrl.replace('https://', '')}</a> • 
-                <a href="mailto:hello@gael-dev.fr">✉️ hello@gael-dev.fr</a>
-            </p>
-            <p style="margin-top: 20px; font-size: 12px; color: #718096;">
+            <div class="footer-brand">Gael Richard</div>
+            <div class="footer-tagline">Développeur Freelance</div>
+            <div class="footer-links">
+                <a href="${siteUrl}" class="footer-link">Portfolio</a>
+                <a href="mailto:hello@gael-dev.fr" class="footer-link">Contact</a>
+            </div>
+            <div class="footer-disclaimer">
                 Vous recevez cet email car vous avez récemment fait appel à nos services. 
                 Cet email concerne uniquement votre expérience client.
-            </p>
+            </div>
         </div>
     </div>
 </body>

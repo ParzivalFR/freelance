@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "WebFetch(domain:api.dicebear.com)",
-      "Bash(node:*)"
+      "Bash(node:*)",
+      "Bash(npm outdated)"
     ],
     "deny": []
   }
