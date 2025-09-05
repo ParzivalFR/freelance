@@ -150,3 +150,102 @@ model TestimonialToken {
   @@map("testimonial_tokens")
 }
 
+model Devis {
+  id                String   @id @default(cuid())
+  devisNumber       String   @unique @map("devis_number") // DEV-2024-001
+  status            String   @default("draft") // draft, sent, accepted, rejected, expired
+  
+  // Informations client
+  clientFirstName   String   @map("client_first_name")
+  clientLastName    String   @map("client_last_name")
+  clientEmail       String   @map("client_email")
+  clientPhone       String?  @map("client_phone")
+  clientCompany     String?  @map("client_company")
+  clientAddress     String?  @map("client_address") @db.Text
+  
+  // Informations entreprise
+  companyName       String   @map("company_name")
+  companyAddress    String   @map("company_address") @db.Text
+  companyPhone      String   @map("company_phone")
+  companyEmail      String   @map("company_email")
+  companySiret      String   @map("company_siret")
+  
+  // Dates
+  date              DateTime
+  validUntil        DateTime @map("valid_until")
+  
+  // Montants
+  subtotal          Float
+  tvaRate           Float    @map("tva_rate") // Taux TVA en pourcentage
+  tvaAmount         Float    @map("tva_amount")
+  total             Float
+  tvaApplicable     Boolean  @map("tva_applicable")
+  
+  // Prestations (JSON)
+  items             Json     // Array d'objets {id, description, quantity, unitPrice, total}
+  
+  // Notes
+  notes             String?  @db.Text
+  
+  // Dates système
+  sentAt            DateTime? @map("sent_at") // Quand le devis a été envoyé
+  acceptedAt        DateTime? @map("accepted_at") // Quand le devis a été accepté
+  rejectedAt        DateTime? @map("rejected_at") // Quand le devis a été refusé
+  
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@map("devis")
+}
+
+model Facture {
+  id                String   @id @default(cuid())
+  factureNumber     String   @unique @map("facture_number") // FAC-2024-001
+  status            String   @default("pending") // pending, paid, overdue, cancelled
+  
+  // Lien vers le devis d'origine
+  devisId           String?  @map("devis_id")
+  
+  // Informations client (dupliquées depuis le devis)
+  clientFirstName   String   @map("client_first_name")
+  clientLastName    String   @map("client_last_name")
+  clientEmail       String   @map("client_email")
+  clientPhone       String?  @map("client_phone")
+  clientCompany     String?  @map("client_company")
+  clientAddress     String?  @map("client_address") @db.Text
+  
+  // Informations entreprise
+  companyName       String   @map("company_name")
+  companyAddress    String   @map("company_address") @db.Text
+  companyPhone      String   @map("company_phone")
+  companyEmail      String   @map("company_email")
+  companySiret      String   @map("company_siret")
+  
+  // Dates
+  date              DateTime // Date de facturation
+  dueDate           DateTime @map("due_date") // Date d'échéance
+  
+  // Montants
+  subtotal          Float
+  tvaRate           Float    @map("tva_rate")
+  tvaAmount         Float    @map("tva_amount")
+  total             Float
+  tvaApplicable     Boolean  @map("tva_applicable")
+  
+  // Prestations (JSON)
+  items             Json
+  
+  // Notes
+  notes             String?  @db.Text
+  
+  // Paiement
+  paidAt            DateTime? @map("paid_at")
+  paymentMethod     String?   @map("payment_method") // wire_transfer, check, card, etc.
+  paymentReference  String?   @map("payment_reference")
+  
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
+
+  @@map("factures")
+}
+

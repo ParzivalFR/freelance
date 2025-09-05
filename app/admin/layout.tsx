@@ -53,6 +53,12 @@ export default async function AdminLayout({
               >
                 Clients
               </Link>
+              <Link
+                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 [&[aria-current]]:text-sidebar-foreground"
+                href="/admin/devis"
+              >
+                Devis
+              </Link>
             </nav>
             <UserDropdown />
           </div>

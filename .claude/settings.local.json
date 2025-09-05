@@ -3,7 +3,15 @@
     "allow": [
       "WebFetch(domain:api.dicebear.com)",
       "Bash(node:*)",
-      "Bash(npm outdated)"
+      "Bash(npm outdated)",
+      "Bash(npm install:*)",
+      "Bash(pnpm install:*)",
+      "Bash(pnpm run:*)",
+      "Bash(pnpm remove:*)",
+      "Bash(del \"lib\\pdf-generator.tsx\")",
+      "Bash(taskkill:*)",
+      "Bash(pnpm prisma migrate dev:*)",
+      "Bash(find:*)"
     ],
     "deny": []
   }

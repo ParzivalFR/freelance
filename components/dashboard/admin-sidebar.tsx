@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 import {
   BarChart3,
+  FileText,
   FolderOpen,
   LayoutDashboard,
   Mail,
@@ -59,6 +60,16 @@ const data = {
           title: "Clients",
           url: "/admin/clients",
           icon: Users,
+        },
+        {
+          title: "Devis",
+          url: "/admin/devis",
+          icon: FileText,
+        },
+        {
+          title: "Liste des devis",
+          url: "/admin/devis/list",
+          icon: FileText,
         },
         {
           title: "Analytics",
