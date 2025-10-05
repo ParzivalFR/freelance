@@ -1,9 +1,20 @@
 import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
+import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   const body = await request.json();
   const { firstName, lastName, email, message } = body;
+
+  // Récupérer les paramètres pour l'email de notification
+  let settings = await prisma.settings.findUnique({
+    where: { id: "default" },
+  });
+
+  // Email de destination (paramètres ou fallback)
+  const destinationEmail = settings?.notificationEmail || settings?.email || process.env.EMAIL_USER;
+  const senderName = settings?.fullName || "Gael Richard";
+  const emailSignature = settings?.emailSignature || `Cordialement,\nVotre partenaire Gael Richard.`;
 
   // Configuration du transporteur Nodemailer
   const transporter = nodemailer.createTransport({
@@ -44,8 +55,7 @@ export async function POST(request: Request) {
             </td>
           </tr>
         </table>
-        <p style="margin-top: 20px;">Cordialement,</p>
-        <p style="margin: 0;">Votre partenaire Gael Richard.</p>
+        <p style="margin-top: 20px;">${emailSignature.replace(/\n/g, '<br>')}</p>
       </div>
     </body>
   </html>
@@ -54,7 +64,7 @@ export async function POST(request: Request) {
   const mailOptions = {
     from: process.env.EMAIL_USER,
     replyTo: `${firstName} ${lastName} <${email}>`,
-    to: process.env.EMAIL_USER,
+    to: destinationEmail,
     subject: `🚀 Nouveau message de ${firstName} ${lastName}.`,
     html: customMessage,
   };
@@ -85,8 +95,7 @@ export async function POST(request: Request) {
             </td>
           </tr>
         </table>
-        <p style="margin-top: 20px;">Cordialement,</p>
-        <p style="margin: 0;">Votre partenaire Gael Richard.</p>
+        <p style="margin-top: 20px;">${emailSignature.replace(/\n/g, '<br>')}</p>
       </div>
     </body>
   </html>

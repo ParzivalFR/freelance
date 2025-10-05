@@ -1,0 +1,31 @@
+-- CreateTable
+CREATE TABLE "settings" (
+    "id" TEXT NOT NULL DEFAULT 'default',
+    "full_name" TEXT,
+    "email" TEXT,
+    "phone" TEXT,
+    "bio" TEXT,
+    "profile_image" TEXT,
+    "linkedin_url" TEXT,
+    "github_url" TEXT,
+    "twitter_url" TEXT,
+    "company_name" TEXT,
+    "company_address" TEXT,
+    "company_siret" TEXT,
+    "company_tva" TEXT,
+    "email_signature" TEXT,
+    "hourly_rate" DOUBLE PRECISION,
+    "default_tva_rate" DOUBLE PRECISION DEFAULT 20,
+    "meta_title" TEXT,
+    "meta_description" TEXT,
+    "og_image" TEXT,
+    "favicon" TEXT,
+    "primary_color" TEXT DEFAULT '#3b82f6',
+    "notification_email" TEXT,
+    "email_new_contact" BOOLEAN NOT NULL DEFAULT true,
+    "email_new_testimonial" BOOLEAN NOT NULL DEFAULT true,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "settings_pkey" PRIMARY KEY ("id")
+);

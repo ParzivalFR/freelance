@@ -11,7 +11,8 @@
       "Bash(del \"lib\\pdf-generator.tsx\")",
       "Bash(taskkill:*)",
       "Bash(pnpm prisma migrate dev:*)",
-      "Bash(find:*)"
+      "Bash(find:*)",
+      "Bash(pnpm prisma generate:*)"
     ],
     "deny": []
   }

@@ -14,10 +14,11 @@ const inter = Inter({
   variable: "--font-sans",
 });
 
+// Metadata statique par défaut
+// Les métadonnées dynamiques seront gérées via generateMetadata() dans chaque page si nécessaire
 export const metadata: Metadata = {
   title: "Gael Richard - Développeur Freelance",
   manifest: "/manifest.json",
-
   description:
     "Propulsez votre présence sur le web. Des solutions sur mesure pour vos projets web, développées avec passion et expertise avec une attention particulière pour l'expérience utilisateur.",
   openGraph: {

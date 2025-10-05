@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -38,7 +38,7 @@ interface CompanyInfo {
 
 const DevisGenerator: React.FC = () => {
   const [devisNumber, setDevisNumber] = useState(`DEV-${new Date().getFullYear()}-${String(Date.now()).slice(-3)}`);
-  
+
   const [client, setClient] = useState<ClientInfo>({
     firstName: '',
     lastName: '',
@@ -47,15 +47,15 @@ const DevisGenerator: React.FC = () => {
     company: '',
     address: '',
   });
-  
+
   const [companyInfo, setCompanyInfo] = useState<CompanyInfo>({
-    name: 'Gaël RICHARD',
-    address: '7 rue du pré de la ramée 44550 Montoir De Bretagne',
-    phone: '06 33 36 40 94',
-    email: 'hello@gael-dev.fr',
-    siret: '93044860000013',
+    name: '',
+    address: '',
+    phone: '',
+    email: '',
+    siret: '',
   });
-  
+
   const [items, setItems] = useState<DevisItem[]>([
     {
       id: '1',
@@ -65,11 +65,53 @@ const DevisGenerator: React.FC = () => {
       total: 0,
     },
   ]);
-  
+
   const [tvaApplicable, setTvaApplicable] = useState(true);
   const [tvaRate, setTvaRate] = useState(20);
   const [notes, setNotes] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const [settingsLoaded, setSettingsLoaded] = useState(false);
+
+  // Charger les paramètres depuis l'API
+  useEffect(() => {
+    const loadSettings = async () => {
+      try {
+        const response = await fetch('/api/admin/settings');
+        if (response.ok) {
+          const settings = await response.json();
+
+          // Mettre à jour les informations de l'entreprise depuis les paramètres
+          setCompanyInfo({
+            name: settings.companyName || settings.fullName || 'Gaël RICHARD',
+            address: settings.companyAddress || '7 rue du pré de la ramée 44550 Montoir De Bretagne',
+            phone: settings.phone || '06 33 36 40 94',
+            email: settings.email || 'hello@gael-dev.fr',
+            siret: settings.companySiret || '93044860000013',
+          });
+
+          // Mettre à jour le taux de TVA par défaut
+          if (settings.defaultTvaRate) {
+            setTvaRate(settings.defaultTvaRate);
+          }
+
+          setSettingsLoaded(true);
+        }
+      } catch (error) {
+        console.error('Error loading settings:', error);
+        // Utiliser les valeurs par défaut en cas d'erreur
+        setCompanyInfo({
+          name: 'Gaël RICHARD',
+          address: '7 rue du pré de la ramée 44550 Montoir De Bretagne',
+          phone: '06 33 36 40 94',
+          email: 'hello@gael-dev.fr',
+          siret: '93044860000013',
+        });
+        setSettingsLoaded(true);
+      }
+    };
+
+    loadSettings();
+  }, []);
 
   const addItem = () => {
     const newItem: DevisItem = {

@@ -7,7 +7,17 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { FileText, Search, Eye, Download, Calendar, Euro, ExternalLink, User, Building2, MapPin, Phone, Mail, Send, Check, X, Clock, Receipt } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { FileText, Search, Eye, Download, Calendar, Euro, ExternalLink, User, Building2, MapPin, Phone, Mail, Send, Check, X, Clock, Receipt, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
 
@@ -54,6 +64,8 @@ export default function DevisListPage() {
   const [total, setTotal] = useState(0);
   const [selectedDevis, setSelectedDevis] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [devisToDelete, setDevisToDelete] = useState<DevisItem | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const fetchDevis = useCallback(async () => {
     try {
@@ -213,7 +225,7 @@ export default function DevisListPage() {
       }
 
       const result = await response.json();
-      
+
       toast.success(
         `Facture ${result.facture.factureNumber} créée avec succès !`,
         {
@@ -229,10 +241,41 @@ export default function DevisListPage() {
 
       // Fermer la modal
       setIsModalOpen(false);
-      
+
     } catch (error: any) {
       console.error('Erreur:', error);
       toast.error(error.message || 'Erreur lors de la conversion en facture');
+    }
+  };
+
+  const handleDeleteDevis = async () => {
+    if (!devisToDelete) return;
+
+    try {
+      const response = await fetch(`/api/devis/${devisToDelete.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la suppression');
+      }
+
+      toast.success(`Devis ${devisToDelete.devisNumber} supprimé avec succès`);
+
+      // Fermer la modal de détail si elle est ouverte
+      if (selectedDevis?.id === devisToDelete.id) {
+        setIsModalOpen(false);
+      }
+
+      // Rafraîchir la liste
+      await fetchDevis();
+
+    } catch (error) {
+      console.error('Erreur:', error);
+      toast.error('Erreur lors de la suppression du devis');
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setDevisToDelete(null);
     }
   };
 
@@ -366,21 +409,32 @@ export default function DevisListPage() {
                   </div>
 
                   <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => handleViewDevis(devis)}
                     >
                       <Eye className="size-4 mr-2" />
                       Voir
                     </Button>
-                    <Button 
-                      variant="outline" 
+                    <Button
+                      variant="outline"
                       size="sm"
                       onClick={() => handleDownloadPDF(devis)}
                     >
                       <Download className="size-4 mr-2" />
                       PDF
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        setDevisToDelete(devis);
+                        setIsDeleteDialogOpen(true);
+                      }}
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="size-4" />
                     </Button>
                   </div>
                 </div>
@@ -661,6 +715,34 @@ export default function DevisListPage() {
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Dialog de confirmation de suppression */}
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Confirmer la suppression</AlertDialogTitle>
+            <AlertDialogDescription>
+              Êtes-vous sûr de vouloir supprimer le devis <strong>{devisToDelete?.devisNumber}</strong> ?
+              <br />
+              Client : <strong>{devisToDelete?.clientFirstName} {devisToDelete?.clientLastName}</strong>
+              <br />
+              <br />
+              Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setDevisToDelete(null)}>
+              Annuler
+            </AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteDevis}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

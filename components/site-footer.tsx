@@ -8,7 +8,17 @@ import {
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { SiMalt } from "react-icons/si";
+import { FaGithub } from "react-icons/fa";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+
+interface Settings {
+  fullName?: string;
+  bio?: string;
+  profileImage?: string;
+  linkedinUrl?: string;
+  githubUrl?: string;
+  twitterUrl?: string;
+}
 
 const footerNavs = [
   {
@@ -95,10 +105,47 @@ const footerSocials = [
 
 export function SiteFooter() {
   const [currentYear, setCurrentYear] = useState("");
+  const [settings, setSettings] = useState<Settings>({});
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear().toString());
+
+    // Charger les paramètres
+    const loadSettings = async () => {
+      try {
+        const response = await fetch("/api/admin/settings");
+        if (response.ok) {
+          const data = await response.json();
+          setSettings(data);
+        }
+      } catch (error) {
+        console.error("Error loading settings:", error);
+      }
+    };
+
+    loadSettings();
   }, []);
+
+  // Construire dynamiquement les liens sociaux basés sur les paramètres
+  const dynamicSocials = [
+    settings.twitterUrl && {
+      href: settings.twitterUrl,
+      name: "Twitter",
+      icon: <TwitterLogoIcon className="size-4" />,
+    },
+    settings.linkedinUrl && {
+      href: settings.linkedinUrl,
+      name: "LinkedIn",
+      icon: <LinkedInLogoIcon className="size-4" />,
+    },
+    settings.githubUrl && {
+      href: settings.githubUrl,
+      name: "GitHub",
+      icon: <FaGithub className="size-4" />,
+    },
+  ].filter(Boolean);
+
+  const socialsToDisplay = dynamicSocials.length > 0 ? dynamicSocials : footerSocials;
 
   return (
     <footer className="footer-border">
@@ -107,12 +154,16 @@ export function SiteFooter() {
           <div className="mb-12 flex flex-col items-center gap-4">
             <Link href="/" className="flex items-center justify-center">
               <Avatar className="size-20">
-                <AvatarImage src="/photo-de-profil.jpg" />
-                <AvatarFallback>GR</AvatarFallback>
+                <AvatarImage src={settings.profileImage || "/photo-de-profil.jpg"} />
+                <AvatarFallback>
+                  {settings.fullName
+                    ? settings.fullName.split(" ").map(n => n[0]).join("")
+                    : "GR"}
+                </AvatarFallback>
               </Avatar>
             </Link>
             <p className="w-full max-w-xs self-center text-center text-primary/70">
-              Partenaire de votre satisfaction.
+              {settings.bio || "Partenaire de votre satisfaction."}
             </p>
           </div>
           <div className="grid grid-cols-2 place-items-start gap-10 sm:grid-cols-3 sm:place-items-start">
@@ -143,7 +194,7 @@ export function SiteFooter() {
 
         <div className="flex flex-col gap-2 rounded-md border-neutral-700/20 p-4 sm:flex sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <div className="flex items-center justify-center space-x-5 sm:mt-0 sm:justify-start">
-            {footerSocials.map((social) => (
+            {socialsToDisplay.map((social: any) => (
               <Link
                 key={social.name}
                 href={social.href}
@@ -157,7 +208,7 @@ export function SiteFooter() {
           <div className="text-center text-xs text-gray-500 dark:text-gray-400 sm:text-sm">
             Copyright © {currentYear}{" "}
             <Link href="#" className="font-extrabold">
-              Gael RICHARD.
+              {settings.fullName || "Gael RICHARD"}.
             </Link>{" "}
             Tous droits réservés.
           </div>

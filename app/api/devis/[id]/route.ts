@@ -44,7 +44,7 @@ export async function PATCH(
 ) {
   try {
     const session = await auth();
-    
+
     if (!session?.user?.email) {
       return NextResponse.json(
         { error: 'Non autorisé' },
@@ -54,9 +54,9 @@ export async function PATCH(
 
     const { status } = await request.json();
     const { id } = await params;
-    
+
     const updateData: any = { status };
-    
+
     // Mettre à jour les dates selon le statut
     if (status === 'sent') {
       updateData.sentAt = new Date();
@@ -74,6 +74,52 @@ export async function PATCH(
     return NextResponse.json(devis);
   } catch (error) {
     console.error('Erreur lors de la mise à jour du devis:', error);
+    return NextResponse.json(
+      { error: 'Erreur serveur' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.email) {
+      return NextResponse.json(
+        { error: 'Non autorisé' },
+        { status: 401 }
+      );
+    }
+
+    const { id } = await params;
+
+    // Vérifier que le devis existe
+    const devis = await prisma.devis.findUnique({
+      where: { id }
+    });
+
+    if (!devis) {
+      return NextResponse.json(
+        { error: 'Devis non trouvé' },
+        { status: 404 }
+      );
+    }
+
+    // Supprimer le devis
+    await prisma.devis.delete({
+      where: { id }
+    });
+
+    return NextResponse.json(
+      { message: 'Devis supprimé avec succès' },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error('Erreur lors de la suppression du devis:', error);
     return NextResponse.json(
       { error: 'Erreur serveur' },
       { status: 500 }

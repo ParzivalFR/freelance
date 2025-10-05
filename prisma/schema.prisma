@@ -249,3 +249,47 @@ model Facture {
   @@map("factures")
 }
 
+model Settings {
+  id String @id @default("default") // Un seul enregistrement de paramètres
+
+  // Profil & Contact
+  fullName          String? @map("full_name")
+  email             String?
+  phone             String?
+  bio               String? @db.Text
+  profileImage      String? @map("profile_image")
+
+  // Liens sociaux
+  linkedinUrl       String? @map("linkedin_url")
+  githubUrl         String? @map("github_url")
+  twitterUrl        String? @map("twitter_url")
+
+  // Informations Business
+  companyName       String? @map("company_name")
+  companyAddress    String? @map("company_address") @db.Text
+  companySiret      String? @map("company_siret")
+  companyTva        String? @map("company_tva")
+  emailSignature    String? @map("email_signature") @db.Text
+
+  // Tarifs
+  hourlyRate        Float?  @map("hourly_rate")
+  defaultTvaRate    Float?  @default(20) @map("default_tva_rate")
+
+  // SEO & Branding
+  metaTitle         String? @map("meta_title")
+  metaDescription   String? @map("meta_description") @db.Text
+  ogImage           String? @map("og_image")
+  favicon           String?
+  primaryColor      String? @default("#3b82f6") @map("primary_color")
+
+  // Notifications
+  notificationEmail String? @map("notification_email")
+  emailNewContact   Boolean @default(true) @map("email_new_contact")
+  emailNewTestimonial Boolean @default(true) @map("email_new_testimonial")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("settings")
+}
+
