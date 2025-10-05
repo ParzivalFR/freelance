@@ -1,12 +1,19 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
-import { 
-  BarChart3, 
-  Eye, 
-  MousePointer, 
-  TrendingUp, 
-  Users, 
+import {
+  getPlausibleStats,
+  getPlausibleComparison,
+  formatNumber,
+  formatVisitDuration,
+  calculateChangePercent
+} from "@/lib/plausible";
+import {
+  BarChart3,
+  Eye,
+  MousePointer,
+  TrendingUp,
+  Users,
   Calendar,
   Globe,
   Clock
@@ -18,7 +25,9 @@ export default async function AnalyticsPage() {
     totalProjects,
     totalClients,
     totalTestimonials,
-    recentClients
+    recentClients,
+    plausibleStats,
+    plausibleComparison
   ] = await Promise.all([
     prisma.project.count(),
     prisma.client.count(),
@@ -32,39 +41,102 @@ export default async function AnalyticsPage() {
         createdAt: true,
         status: true
       }
-    })
+    }),
+    getPlausibleStats("30d"),
+    getPlausibleComparison("30d")
   ]);
 
-  // Données fictives pour les statistiques web (à remplacer par des données réelles)
-  const webStats = [
+  // Préparer les statistiques web avec les vraies données de Plausible
+  const webStats = plausibleStats ? [
     {
       title: "Visiteurs uniques",
-      value: "2,847",
-      change: "+12.5%",
+      value: formatNumber(plausibleStats.visitors.value),
+      change: plausibleComparison
+        ? calculateChangePercent(
+            plausibleComparison.visitors.value,
+            plausibleComparison.visitors.comparison_value || plausibleComparison.visitors.value
+          )
+        : "N/A",
+      icon: Users,
+      color: "text-blue-600",
+      trend: plausibleComparison && plausibleComparison.visitors.change
+        ? (plausibleComparison.visitors.change >= 0 ? "up" : "down")
+        : "up"
+    },
+    {
+      title: "Pages vues",
+      value: formatNumber(plausibleStats.pageviews.value),
+      change: plausibleComparison
+        ? calculateChangePercent(
+            plausibleComparison.pageviews.value,
+            plausibleComparison.pageviews.comparison_value || plausibleComparison.pageviews.value
+          )
+        : "N/A",
+      icon: Eye,
+      color: "text-green-600",
+      trend: plausibleComparison && plausibleComparison.pageviews.change
+        ? (plausibleComparison.pageviews.change >= 0 ? "up" : "down")
+        : "up"
+    },
+    {
+      title: "Taux de rebond",
+      value: `${plausibleStats.bounce_rate.value}%`,
+      change: plausibleComparison
+        ? calculateChangePercent(
+            plausibleComparison.bounce_rate.value,
+            plausibleComparison.bounce_rate.comparison_value || plausibleComparison.bounce_rate.value
+          )
+        : "N/A",
+      icon: MousePointer,
+      color: "text-purple-600",
+      trend: plausibleComparison && plausibleComparison.bounce_rate.change
+        ? (plausibleComparison.bounce_rate.change <= 0 ? "up" : "down") // Inversé car moins = mieux
+        : "up"
+    },
+    {
+      title: "Temps moyen",
+      value: formatVisitDuration(plausibleStats.visit_duration.value),
+      change: plausibleComparison
+        ? calculateChangePercent(
+            plausibleComparison.visit_duration.value,
+            plausibleComparison.visit_duration.comparison_value || plausibleComparison.visit_duration.value
+          )
+        : "N/A",
+      icon: Clock,
+      color: "text-orange-600",
+      trend: plausibleComparison && plausibleComparison.visit_duration.change
+        ? (plausibleComparison.visit_duration.change >= 0 ? "up" : "down")
+        : "up"
+    }
+  ] : [
+    {
+      title: "Visiteurs uniques",
+      value: "N/A",
+      change: "N/A",
       icon: Users,
       color: "text-blue-600",
       trend: "up"
     },
     {
       title: "Pages vues",
-      value: "8,421",
-      change: "+8.2%",
+      value: "N/A",
+      change: "N/A",
       icon: Eye,
       color: "text-green-600",
       trend: "up"
     },
     {
       title: "Taux de rebond",
-      value: "34.2%",
-      change: "-2.1%",
+      value: "N/A",
+      change: "N/A",
       icon: MousePointer,
       color: "text-purple-600",
-      trend: "down"
+      trend: "up"
     },
     {
       title: "Temps moyen",
-      value: "3m 24s",
-      change: "+5.3%",
+      value: "N/A",
+      change: "N/A",
       icon: Clock,
       color: "text-orange-600",
       trend: "up"
@@ -72,7 +144,7 @@ export default async function AnalyticsPage() {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pb-8">
       {/* Header */}
       <div className="border-b border-border/40 pb-6">
         <div className="flex items-center justify-between">

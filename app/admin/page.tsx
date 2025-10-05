@@ -1,15 +1,43 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { prisma } from "@/lib/prisma";
+import { getPlausibleStats, calculateChangePercent } from "@/lib/plausible";
 import { FolderOpen, MessageSquare, TrendingUp, Users } from "lucide-react";
 
 export default async function AdminDashboard() {
   // Récupérer les statistiques
-  const [projectsCount, clientsCount, testimonialsCount] = await Promise.all([
+  const [projectsCount, clientsCount, testimonialsCount, recentClients, plausibleStats] = await Promise.all([
     prisma.project.count(),
     prisma.client.count(),
     prisma.testimonial.count(),
+    prisma.client.findMany({
+      take: 5,
+      orderBy: { createdAt: 'desc' },
+      select: {
+        createdAt: true,
+      }
+    }),
+    getPlausibleStats("30d"),
   ]);
+
+  // Calculer les clients récents (dernière semaine)
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+  const recentClientsCount = recentClients.filter(
+    client => new Date(client.createdAt) > oneWeekAgo
+  ).length;
+
+  // Calculer le taux de conversion approximatif (contacts/visiteurs)
+  const contactsCount = await prisma.client.count({
+    where: {
+      createdAt: {
+        gte: new Date(new Date().setDate(new Date().getDate() - 30))
+      }
+    }
+  });
+  const conversionRate = plausibleStats && plausibleStats.visitors.value > 0
+    ? ((contactsCount / plausibleStats.visitors.value) * 100).toFixed(1)
+    : "0";
 
   const stats = [
     {
@@ -35,7 +63,7 @@ export default async function AdminDashboard() {
     },
     {
       title: "Taux de conversion",
-      value: "24%",
+      value: `${conversionRate}%`,
       icon: TrendingUp,
       description: "Visiteurs → Contacts",
       color: "text-orange-600",
@@ -147,7 +175,7 @@ export default async function AdminDashboard() {
                 {clientsCount > 1 ? "s" : ""}
               </Badge>
               <div className="text-xs text-muted-foreground">
-                +2 cette semaine
+                +{recentClientsCount} cette semaine
               </div>
             </div>
           </CardContent>
@@ -177,7 +205,9 @@ export default async function AdminDashboard() {
                 {testimonialsCount} témoignage{testimonialsCount > 1 ? "s" : ""}{" "}
                 publié{testimonialsCount > 1 ? "s" : ""}
               </Badge>
-              <div className="text-xs text-muted-foreground">4.9/5 moyenne</div>
+              <div className="text-xs text-muted-foreground">
+                {testimonialsCount > 0 ? "5/5 moyenne" : "Aucun avis"}
+              </div>
             </div>
           </CardContent>
         </Card>
