@@ -16,8 +16,13 @@ export default async function AdminLayout({
 }) {
   const session = await auth();
 
+  console.log("Admin Layout - Session:", session);
+  console.log("Admin Layout - User:", session?.user);
+  console.log("Admin Layout - Email:", session?.user?.email);
+
   // Redirect if not authenticated or not admin
   if (!session?.user?.email) {
+    console.log("Redirecting to signin - no session/user/email");
     redirect("/signin");
   }
 

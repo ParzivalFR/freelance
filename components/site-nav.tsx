@@ -99,7 +99,7 @@ const NavMobile = () => {
               className="shadow-lg fixed inset-y-0 right-0 z-40 h-full w-4/5 bg-background p-5 shadow-black/25"
             >
               <div className="mb-5 flex items-center justify-between">
-                <ThemeToggle align="start" />
+                <ThemeToggle />
                 <Button size="icon" variant="ghost" onClick={toggleMenu}>
                   <XIcon />
                 </Button>
@@ -167,7 +167,7 @@ const NavDesktop = () => {
               <Button variant="secondary">Connexion</Button>
             </Link>
           )}
-          <ThemeToggle align="end" />
+          <ThemeToggle className="text-background hover:bg-secondary/20 hover:text-background" />
         </div>
       </nav>
     </header>

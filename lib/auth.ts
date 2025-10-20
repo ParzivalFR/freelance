@@ -59,13 +59,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: "database",
     maxAge: 30 * 24 * 60 * 60, // 30 jours
   },
-  // events: {
-  //   async signOut() {
-  //     console.log("Utilisateur déconnecté");
-  //   },
-  //   async signIn({ user }) {
-  //     console.log(`Connexion réussie pour: ${user.email}`);
-  //   },
-  // },
-  // debug: process.env.NODE_ENV === "development",
+  events: {
+    async signOut() {
+      console.log("Utilisateur déconnecté");
+    },
+    async signIn({ user }) {
+      console.log(`Connexion réussie pour: ${user.email}`);
+    },
+  },
+  debug: process.env.NODE_ENV === "development",
 });
