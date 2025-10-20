@@ -43,11 +43,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return false; // Refuse tous les autres providers
     },
     async session({ session, user }) {
-      // Vérification supplémentaire côté session
-      if (session?.user?.email !== AUTHORIZED_EMAIL) {
-        throw new Error("Accès non autorisé");
-      }
-
       if (session?.user && user) {
         session.user.id = user.id;
       }

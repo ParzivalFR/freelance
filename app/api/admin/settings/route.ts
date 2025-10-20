@@ -1,9 +1,14 @@
 import { prisma } from "@/lib/prisma";
+import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
 // GET - Récupérer les paramètres
 export async function GET() {
   try {
+    const session = await auth();
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
     let settings = await prisma.settings.findUnique({
       where: { id: "default" },
     });
@@ -30,6 +35,11 @@ export async function GET() {
 // PUT - Mettre à jour les paramètres
 export async function PUT(request: Request) {
   try {
+    const session = await auth();
+    if (!session?.user?.email) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
+
     const body = await request.json();
 
     // Vérifier si les paramètres existent
