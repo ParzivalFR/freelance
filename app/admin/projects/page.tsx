@@ -6,9 +6,16 @@ import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
 
 export default async function ProjectsPage() {
-  const projects = await prisma.project.findMany({
-    orderBy: [{ order: "asc" }, { createdAt: "desc" }],
-  });
+  let projects;
+
+  try {
+    projects = await prisma.project.findMany({
+      orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+    });
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    throw error; // Re-throw to see the actual error in Vercel logs
+  }
 
   return (
     <div className="space-y-4 sm:space-y-6">
