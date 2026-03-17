@@ -17,21 +17,24 @@ export const toHumanPrice = (price: number, decimals: number = 0) => {
 
 const freelanceServices = [
   {
-    id: "service_1",
-    name: "Association",
-    description: "Sites vitrines pour associations et événements locaux.",
+    id: "service_4",
+    name: "Association Gratuite",
+    description:
+      "Engagement solidaire : 1 site associatif gratuit tous les 6 mois.",
     features: [
+      "Développement 100% gratuit",
       "Site vitrine responsive",
       "Calendrier d'événements",
-      "Galerie photos intégrée",
-      "Formulaires d'adhésion",
-      "2 cycles de révision",
+      "Galerie photos",
+      "Formulaires de contact/adhésion",
       "Formation à la gestion",
-      "Support email prioritaire",
+      "Maintenance à 20€/mois (optionnelle)",
+      "Hébergement et domaine à vos frais",
     ],
-    dailyRate: 120,
-    projectRate: 800,
+    dailyRate: 0,
+    projectRate: 0,
     isMostPopular: false,
+    isSpecial: true,
   },
   {
     id: "service_2",
@@ -69,26 +72,6 @@ const freelanceServices = [
     projectRate: 2000,
     isMostPopular: false,
   },
-  {
-    id: "service_4",
-    name: "Association Gratuite",
-    description:
-      "Engagement solidaire : 1 site associatif gratuit tous les 6 mois.",
-    features: [
-      "Développement 100% gratuit",
-      "Site vitrine responsive",
-      "Calendrier d'événements",
-      "Galerie photos",
-      "Formulaires de contact/adhésion",
-      "Formation à la gestion",
-      "Maintenance à 20€/mois (optionnelle)",
-      "Hébergement et domaine à vos frais",
-    ],
-    dailyRate: 0,
-    projectRate: 0,
-    isMostPopular: false,
-    isSpecial: true,
-  },
 ];
 
 export default function FreelanceServicesSection() {
@@ -118,7 +101,7 @@ export default function FreelanceServicesSection() {
           </h2>
 
           <p className="mt-6 text-lg leading-8 text-black/80 dark:text-white sm:text-xl">
-            Des solutions web
+            Des solutions web & automation
             <u>
               <strong> abordables et sur mesure</strong>
             </u>{" "}
@@ -144,7 +127,7 @@ export default function FreelanceServicesSection() {
           </span>
         </div>
 
-        <div className="mx-auto grid w-full flex-col justify-center gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="mx-auto grid w-full flex-col justify-center gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {freelanceServices.map((service, idx) => (
             <div
               key={service.id}

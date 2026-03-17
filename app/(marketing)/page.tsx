@@ -1,4 +1,6 @@
 import AboutSection from "@/components/landing/about-section";
+import BotBuilderPreview from "@/components/landing/bot-builder-preview";
+import BotPricingSection from "@/components/landing/bot-pricing-section";
 import ContactFormImproved from "@/components/landing/contact-form-improved";
 import CallToActionSection from "@/components/landing/cta-section";
 import { FAQ } from "@/components/landing/faq-section";
@@ -16,6 +18,8 @@ export default async function Page() {
       <Testimonials />
       <FeatureSectionDB />
       <PricingSection />
+      <BotBuilderPreview />
+      <BotPricingSection />
       <CircleLight />
       <CallToActionSection />
       <FAQ />

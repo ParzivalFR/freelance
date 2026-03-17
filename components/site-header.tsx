@@ -3,7 +3,7 @@
 import { Button, buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { MenuItemTypes } from "@/types/MenuItemsTypes";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, Variants } from "framer-motion";
 import {
   AlignJustify,
   CircleHelp,
@@ -49,7 +49,7 @@ export const menuItem: MenuItemTypes[] = [
 
 export function SiteHeader() {
   const id = useId();
-  const mobilenavbarVariant = {
+  const mobilenavbarVariant: Variants = {
     initial: {
       opacity: 0,
       scale: 0.8,
@@ -72,7 +72,7 @@ export function SiteHeader() {
     },
   };
 
-  const mobileLinkVar = {
+  const mobileLinkVar: Variants = {
     initial: {
       y: -20,
       opacity: 0,
@@ -87,7 +87,7 @@ export function SiteHeader() {
     },
   };
 
-  const containerVariants = {
+  const containerVariants: Variants = {
     animate: {
       transition: {
         staggerChildren: 0.1,
