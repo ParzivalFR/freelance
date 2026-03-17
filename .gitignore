@@ -35,3 +35,11 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# prisma generated client
+prisma/generated/
+
+# next-sitemap & next-pwa generated files
+public/sitemap*.xml
+public/sw.js
+public/workbox-*.js
