@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/prisma/generated/client";
 
 export async function POST(request: Request) {
   try {
@@ -49,7 +50,8 @@ export async function POST(request: Request) {
     }
 
     // Créer le testimonial et marquer le token comme utilisé
-    const result = await prisma.$transaction(async (tx) => {
+    const result = await prisma.$transaction(async (rawTx) => {
+      const tx = rawTx as unknown as typeof prisma;
       // Créer le testimonial
       const testimonial = await tx.testimonial.create({
         data: {

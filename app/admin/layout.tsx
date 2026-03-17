@@ -6,6 +6,7 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -16,9 +17,18 @@ export default async function AdminLayout({
 }) {
   const session = await auth();
 
-  // Redirect if not authenticated or not admin
-  if (!session?.user?.email) {
+  if (!session?.user?.id) {
     redirect("/signin");
+  }
+
+  // Vérification du rôle directement en base — ne pas se fier à la session
+  const dbUser = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { role: true },
+  });
+
+  if (dbUser?.role !== "ADMIN") {
+    redirect("/dashboard/bot");
   }
 
   return (

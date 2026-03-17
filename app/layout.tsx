@@ -64,7 +64,7 @@ export default function RootLayout({
       <SpeedInsights />
       <body
         className={cn(
-          "min-h-dvh bg-background font-sans antialiased",
+          "min-h-dvh bg-background font-sans antialiased flex flex-col",
           inter.variable
         )}
       >

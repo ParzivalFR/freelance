@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { Project } from "@/prisma/generated/client";
 
 export async function POST() {
   try {
@@ -18,7 +19,7 @@ export async function POST() {
     });
 
     // Réassigner les ordres de façon séquentielle
-    const updates = projects.map((project, index) => 
+    const updates = projects.map((project: Project, index: number) => 
       prisma.project.update({
         where: { id: project.id },
         data: { order: index }
@@ -29,7 +30,7 @@ export async function POST() {
 
     return NextResponse.json({ 
       message: `Fixed orders for ${projects.length} projects`,
-      projects: projects.map((p, i) => ({ id: p.id, title: p.title, oldOrder: p.order, newOrder: i }))
+      projects: projects.map((p: Project, i: number) => ({ id: p.id, title: p.title, oldOrder: p.order, newOrder: i }))
     });
 
   } catch (error) {

@@ -1,9 +1,11 @@
 // Script pour migrer les projets hardcodés vers la base de données
 // Exécuter avec: npx tsx scripts/migrate-projects.ts
 
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '../prisma/generated/client';
+import { PrismaPg } from '@prisma/adapter-pg';
 
-const prisma = new PrismaClient();
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+const prisma = new PrismaClient({ adapter });
 
 const existingProjects = [
   {
