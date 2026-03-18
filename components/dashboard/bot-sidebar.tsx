@@ -23,6 +23,7 @@ import {
 import {
   Activity,
   Bot,
+  BookOpen,
   LayoutDashboard,
   LogOut,
   MoreVertical,
@@ -40,6 +41,7 @@ const nav = [
     label: "Système",
     items: [
       { title: "Vue d'ensemble", url: "/dashboard/bot", icon: LayoutDashboard, exact: true },
+      { title: "Guide de configuration", url: "/dashboard/bot/guide", icon: BookOpen, exact: false },
     ],
   },
   {
