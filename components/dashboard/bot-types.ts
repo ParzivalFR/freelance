@@ -65,6 +65,9 @@ export interface ModuleConfig {
   logsColorModeration?: string;
   logsColorTickets?: string;
   logsColorLevels?: string;
+  logsColorDiscord?: string;
+  // Logs — salon discord natif
+  logsChannelDiscord?: string;
   // Tickets
   categoryId?: string;
   staffRoleId?: string;

@@ -605,16 +605,23 @@ export default function BotModulesPage() {
               onChange={(v) => updateModuleConfig("logsChannelLevels", v)}
               placeholder="level up"
             />
+            <CyberInput
+              label="salon_discord_natif"
+              value={config.config.logsChannelDiscord ?? ""}
+              onChange={(v) => updateModuleConfig("logsChannelDiscord", v)}
+              placeholder="msgs, vocal, rôles, salons..."
+            />
           </div>
 
           {/* Couleurs */}
           <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— couleurs d&apos;embed —</p>
           <div className="grid grid-cols-2 gap-2">
             {([
-              ["logsColorMembers",    "couleur_membres",    "22c55e"],
-              ["logsColorModeration", "couleur_modération", "ef4444"],
-              ["logsColorTickets",    "couleur_tickets",    "3b82f6"],
-              ["logsColorLevels",     "couleur_niveaux",    "f59e0b"],
+              ["logsColorMembers",    "couleur_membres",         "22c55e"],
+              ["logsColorModeration", "couleur_modération",      "ef4444"],
+              ["logsColorTickets",    "couleur_tickets",         "3b82f6"],
+              ["logsColorLevels",     "couleur_niveaux",         "f59e0b"],
+              ["logsColorDiscord",    "couleur_discord_natif",   "5865f2"],
             ] as const).map(([key, label, placeholder]) => (
               <div key={key} className="flex items-center gap-2">
                 <div
@@ -680,20 +687,35 @@ export default function BotModulesPage() {
           <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— filtrage des événements —</p>
           <div className="grid grid-cols-2 gap-x-4 gap-y-1.5">
             {([
-              ["member.join",          "📥 member.join"],
-              ["member.leave",         "📤 member.leave"],
-              ["moderation.ban",       "🔨 moderation.ban"],
-              ["moderation.unban",     "✅ moderation.unban"],
-              ["moderation.kick",      "👢 moderation.kick"],
-              ["moderation.warn",      "⚠️ moderation.warn"],
-              ["moderation.unwarn",    "✅ moderation.unwarn"],
-              ["moderation.timeout",   "🔇 moderation.timeout"],
-              ["moderation.untimeout", "🔊 moderation.untimeout"],
-              ["moderation.clear",     "🗑️ moderation.clear"],
-              ["moderation.automod",   "🤖 moderation.automod"],
-              ["ticket.create",        "🎫 ticket.create"],
-              ["ticket.close",         "🔒 ticket.close"],
-              ["levels.levelup",       "⬆️ levels.levelup"],
+              ["member.join",               "📥 member.join"],
+              ["member.leave",              "📤 member.leave"],
+              ["moderation.ban",            "🔨 moderation.ban"],
+              ["moderation.unban",          "✅ moderation.unban"],
+              ["moderation.kick",           "👢 moderation.kick"],
+              ["moderation.warn",           "⚠️ moderation.warn"],
+              ["moderation.unwarn",         "✅ moderation.unwarn"],
+              ["moderation.timeout",        "🔇 moderation.timeout"],
+              ["moderation.untimeout",      "🔊 moderation.untimeout"],
+              ["moderation.clear",          "🗑️ moderation.clear"],
+              ["moderation.automod",        "🤖 moderation.automod"],
+              ["ticket.create",             "🎫 ticket.create"],
+              ["ticket.close",              "🔒 ticket.close"],
+              ["levels.levelup",            "⬆️ levels.levelup"],
+              ["discord.message.delete",    "🗑️ msg.delete"],
+              ["discord.message.edit",      "✏️ msg.edit"],
+              ["discord.message.bulk",      "🗑️ msg.bulk"],
+              ["discord.voice.join",        "🔊 voice.join"],
+              ["discord.voice.leave",       "🔇 voice.leave"],
+              ["discord.voice.move",        "🔀 voice.move"],
+              ["discord.channel.create",    "📁 channel.create"],
+              ["discord.channel.delete",    "📁 channel.delete"],
+              ["discord.channel.update",    "📝 channel.update"],
+              ["discord.role.create",       "🎭 role.create"],
+              ["discord.role.delete",       "🎭 role.delete"],
+              ["discord.role.update",       "🎭 role.update"],
+              ["discord.member.update",     "👤 member.update"],
+              ["discord.invite.create",     "🔗 invite.create"],
+              ["discord.invite.delete",     "🔗 invite.delete"],
             ] as const).map(([evt, label]) => {
               const disabled = config.config.logsDisabledEvents?.includes(evt) ?? false;
               return (
