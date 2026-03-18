@@ -314,7 +314,7 @@ Pour que ton bot tourne en permanence sans laisser ton PC allumé :
   const zipBuffer = zip.toBuffer();
   const filename = `${bot.name.replace(/\s+/g, "-").toLowerCase()}-bot.zip`;
 
-  return new NextResponse(zipBuffer, {
+  return new NextResponse(new Uint8Array(zipBuffer), {
     headers: {
       "Content-Type": "application/zip",
       "Content-Disposition": `attachment; filename="${filename}"`,
