@@ -283,7 +283,7 @@ export default async function AnalyticsPage() {
           <CardContent>
             <div className="space-y-3">
               {recentClients.length > 0 ? (
-                recentClients.map((client, index) => (
+                recentClients.map((client: { firstName: string; lastName: string; createdAt: Date; status: string }, index: number) => (
                   <div key={index} className="flex items-center justify-between border-b border-border/50 pb-3 last:border-0 last:pb-0">
                     <div className="flex items-center gap-3">
                       <div className="flex size-8 items-center justify-center rounded-full bg-muted">

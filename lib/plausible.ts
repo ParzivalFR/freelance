@@ -67,7 +67,7 @@ export async function getPlausibleStats(
 /**
  * Récupère les statistiques comparées (période actuelle vs période précédente)
  */
-export async function getPlausibleComparison(period: string = "30d") {
+export async function getPlausibleComparison(period: string = "30d"): Promise<Record<string, { value: number; change_percent: number }> | null> {
   const apiKey = process.env.PLAUSIBLE_API_KEY;
 
   if (!apiKey) {

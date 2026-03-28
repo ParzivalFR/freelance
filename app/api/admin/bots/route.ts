@@ -2,6 +2,8 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
+type BotWithUser = Awaited<ReturnType<typeof prisma.discordBot.findFirst>> & object;
+
 const HEARTBEAT_TIMEOUT_MS = 90_000;
 
 function computeStatus(bot: { status: string; lastHeartbeatAt?: Date | null }): string {
@@ -32,7 +34,7 @@ export async function GET() {
     },
   });
 
-  const result = bots.map((bot) => ({
+  const result = bots.map((bot: BotWithUser) => ({
     ...bot,
     status: computeStatus(bot),
   }));

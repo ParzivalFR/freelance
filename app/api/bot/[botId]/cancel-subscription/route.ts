@@ -41,7 +41,9 @@ export async function POST(
     cancel_at_period_end: true,
   });
 
-  const planEndsAt = new Date(subscription.current_period_end * 1000);
+  const planEndsAt = subscription.cancel_at
+    ? new Date(subscription.cancel_at * 1000)
+    : null;
 
   await prisma.discordBot.update({
     where: { id: botId },

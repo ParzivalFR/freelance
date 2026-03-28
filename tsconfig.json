@@ -24,6 +24,12 @@
     "paths": {
       "@/*": [
         "./*"
+      ],
+      "@auth/prisma-adapter": [
+        "./node_modules/.pnpm/@auth+prisma-adapter@2.11.1_61f8beb8aed973780ec5ef64d296fed9/node_modules/@auth/prisma-adapter"
+      ],
+      "stripe": [
+        "./node_modules/.pnpm/stripe@21.0.1_@types+node@20.19.37/node_modules/stripe"
       ]
     },
     "target": "ES2017"
@@ -35,6 +41,7 @@
     ".next/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "prisma.config.ts"
   ]
 }

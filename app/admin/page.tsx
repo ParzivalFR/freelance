@@ -24,7 +24,7 @@ export default async function AdminDashboard() {
   const oneWeekAgo = new Date();
   oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
   const recentClientsCount = recentClients.filter(
-    (client) => new Date(client.createdAt) > oneWeekAgo
+    (client: { createdAt: Date }) => new Date(client.createdAt) > oneWeekAgo
   ).length;
 
   // Calculer le taux de conversion approximatif (contacts/visiteurs)
