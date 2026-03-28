@@ -12,7 +12,6 @@ import {
   AlertTriangle,
   CheckCircle2,
   ChevronRight,
-  Copy,
   ExternalLink,
   Key,
   Link2,
@@ -321,18 +320,12 @@ const STEPS = [
           {[
             {
               text: 'Va dans "Identité & Token" et colle ton token',
-              url: "/dashboard/bot/config",
-              label: "Identité & Token",
             },
             {
               text: 'Active les modules que tu veux dans "Modules"',
-              url: "/dashboard/bot/modules",
-              label: "Modules",
             },
             {
               text: 'Choisis ton plan et déploie dans "Déploiement"',
-              url: "/dashboard/bot/deploy",
-              label: "Déploiement",
             },
           ].map((step, i) => (
             <li key={i} className="flex items-start gap-3">

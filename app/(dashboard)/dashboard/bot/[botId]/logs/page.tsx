@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { Shield } from "lucide-react";
 import { PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 
@@ -24,20 +25,24 @@ const TYPE_COLORS: Record<string, string> = {
 };
 
 export default function BotLogsPage() {
+  const params = useParams();
+  const botId = params?.botId as string;
+
   const [infractions, setInfractions] = useState<Infraction[] | null>(null);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const limit = 20;
 
   useEffect(() => {
+    if (!botId) return;
     setInfractions(null);
-    fetch(`/api/bot/infractions?page=${page}&limit=${limit}`)
+    fetch(`/api/bot/infractions?botId=${botId}&page=${page}&limit=${limit}`)
       .then((r) => r.json())
       .then((data) => {
         setInfractions(data.infractions ?? []);
         setTotal(data.total ?? 0);
       });
-  }, [page]);
+  }, [botId, page]);
 
   const totalPages = Math.max(1, Math.ceil(total / limit));
 

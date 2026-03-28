@@ -2,16 +2,30 @@
 
 import { useCallback, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Download, Rocket, Power, RotateCw, Square } from "lucide-react";
+import { AlertTriangle, Download, Power, Rocket, RotateCw, Square, XCircle } from "lucide-react";
 import { FaDiscord } from "react-icons/fa";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 
 export default function BotDeployPage() {
   const { config, setConfig } = useBotConfig();
   const [showPlanModal, setShowPlanModal] = useState(false);
   const [checkingOut, setCheckingOut] = useState<"RAR" | "MANAGED" | null>(null);
   const [workerLoading, setWorkerLoading] = useState<"START" | "STOP" | "RESTART" | null>(null);
+  const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
 
   const sendWorkerCommand = useCallback(
     async (cmd: "START" | "STOP" | "RESTART") => {
@@ -23,10 +37,7 @@ export default function BotDeployPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ id: config.id, workerCommand: cmd }),
         });
-        if (res.ok) {
-          const updated = await res.json();
-          setConfig(updated);
-        }
+        if (res.ok) setConfig(await res.json());
       } finally {
         setWorkerLoading(null);
       }
@@ -53,9 +64,25 @@ export default function BotDeployPage() {
     [config]
   );
 
+  const handleCancelSubscription = useCallback(async () => {
+    if (!config) return;
+    setCancelling(true);
+    try {
+      const res = await fetch(`/api/bot/${config.id}/cancel-subscription`, { method: "POST" });
+      if (res.ok) {
+        const { planEndsAt } = await res.json();
+        setConfig((prev) => prev ? { ...prev, planEndsAt } : prev);
+      }
+    } finally {
+      setCancelling(false);
+      setShowCancelDialog(false);
+    }
+  }, [config, setConfig]);
+
   if (!config) return <LoadingScreen />;
 
   const hasPlan = !!config.plan;
+  const isCancelPending = !!config.planEndsAt;
 
   return (
     <div className="space-y-6 px-5 py-6 md:px-7 lg:px-8">
@@ -66,7 +93,7 @@ export default function BotDeployPage() {
         status={config.status}
       />
 
-      {/* Current plan status */}
+      {/* Plan RAR */}
       {config.plan === "RAR" && (
         <div className="space-y-3">
           <div className="rounded-xl border border-green-500/20 bg-green-500/5 px-4 py-3">
@@ -91,30 +118,50 @@ export default function BotDeployPage() {
         </div>
       )}
 
+      {/* Plan MANAGED */}
       {config.plan === "MANAGED" && (
         <div className="space-y-3">
-          <div className="rounded-xl border border-green-500/20 bg-green-500/5 px-4 py-4">
-            <div className="flex items-center gap-3">
-              <div className="flex size-10 items-center justify-center rounded-xl bg-green-500/15 text-2xl">
-                🚀
-              </div>
+
+          {/* Annulation en cours */}
+          {isCancelPending && (
+            <div className="flex items-start gap-3 rounded-xl border border-yellow-500/20 bg-yellow-500/5 px-4 py-3">
+              <AlertTriangle className="mt-0.5 size-4 shrink-0 text-yellow-500" />
               <div>
-                <p className="font-mono text-xs font-bold text-green-500">Bot géré — actif 24/7</p>
-                <p className="font-mono text-[10px] text-muted-foreground">
-                  Ton bot est hébergé et géré par nos soins. Aucune intervention requise.
+                <p className="font-mono text-[10px] font-bold uppercase tracking-widest text-yellow-500">
+                  Abonnement annulé
+                </p>
+                <p className="mt-0.5 font-mono text-[11px] text-muted-foreground">
+                  Ton bot reste actif jusqu&apos;au{" "}
+                  <span className="font-bold text-foreground">
+                    {format(new Date(config.planEndsAt!), "dd MMMM yyyy", { locale: fr })}
+                  </span>
+                  , puis sera automatiquement arrêté.
                 </p>
               </div>
             </div>
-            <div className="mt-3 grid grid-cols-2 gap-2">
-              {["Uptime 24/7 garanti", "Mises à jour automatiques", "Support prioritaire", "Monitoring inclus"].map(
-                (f) => (
-                  <p key={f} className="font-mono text-[10px] text-muted-foreground">
-                    ✓ {f}
+          )}
+
+          {/* Statut actif */}
+          {!isCancelPending && (
+            <div className="rounded-xl border border-green-500/20 bg-green-500/5 px-4 py-4">
+              <div className="flex items-center gap-3">
+                <div className="flex size-10 items-center justify-center rounded-xl bg-green-500/15 text-2xl">
+                  🚀
+                </div>
+                <div>
+                  <p className="font-mono text-xs font-bold text-green-500">Bot géré — actif 24/7</p>
+                  <p className="font-mono text-[10px] text-muted-foreground">
+                    Ton bot est hébergé et géré par nos soins. Aucune intervention requise.
                   </p>
-                )
-              )}
+                </div>
+              </div>
+              <div className="mt-3 grid grid-cols-2 gap-2">
+                {["Uptime 24/7 garanti", "Mises à jour automatiques", "Support prioritaire", "Monitoring inclus"].map((f) => (
+                  <p key={f} className="font-mono text-[10px] text-muted-foreground">✓ {f}</p>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
 
           {/* Contrôles du processus */}
           <div className="rounded-xl border border-dashed bg-card p-4">
@@ -154,9 +201,21 @@ export default function BotDeployPage() {
               La commande est transmise au worker — prise en compte sous ~15s
             </p>
           </div>
+
+          {/* Annuler l'abonnement */}
+          {!isCancelPending && (
+            <button
+              onClick={() => setShowCancelDialog(true)}
+              className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-red-500/20 px-4 py-3 font-mono text-[11px] text-red-400/60 transition hover:border-red-500/40 hover:text-red-400"
+            >
+              <XCircle className="size-3.5" />
+              annuler_abonnement
+            </button>
+          )}
         </div>
       )}
 
+      {/* Pas de plan */}
       {!hasPlan && (
         <div className="space-y-4">
           <div className="rounded-xl border border-dashed bg-card p-4">
@@ -166,19 +225,12 @@ export default function BotDeployPage() {
             <div className="mt-3 space-y-2">
               {[
                 { ok: !!config.token, label: "Token Discord configuré" },
-                {
-                  ok: config.moduleWelcome || config.moduleModeration || config.moduleTickets,
-                  label: "Au moins un module activé",
-                },
+                { ok: config.moduleWelcome || config.moduleModeration || config.moduleTickets, label: "Au moins un module activé" },
                 { ok: !!config.name, label: "Nom du bot défini" },
               ].map(({ ok, label }) => (
                 <div key={label} className="flex items-center gap-2">
-                  <div
-                    className={`size-1.5 rounded-full ${ok ? "bg-green-500" : "bg-muted-foreground/30"}`}
-                  />
-                  <span
-                    className={`font-mono text-[11px] ${ok ? "text-foreground" : "text-muted-foreground/50"}`}
-                  >
+                  <div className={`size-1.5 rounded-full ${ok ? "bg-green-500" : "bg-muted-foreground/30"}`} />
+                  <span className={`font-mono text-[11px] ${ok ? "text-foreground" : "text-muted-foreground/50"}`}>
                     {label}
                   </span>
                 </div>
@@ -196,7 +248,7 @@ export default function BotDeployPage() {
         </div>
       )}
 
-      {/* Discord integration info */}
+      {/* Invite Discord */}
       <div className="rounded-xl border border-dashed bg-card p-4">
         <div className="flex items-center gap-2 mb-3">
           <FaDiscord className="size-3.5 text-muted-foreground/50" />
@@ -205,13 +257,12 @@ export default function BotDeployPage() {
           </span>
         </div>
         <p className="font-mono text-[10px] text-muted-foreground/70">
-          Pour inviter ton bot sur un serveur Discord, génère un lien d'invitation depuis le{" "}
-          <span className="text-blue-400">Portal Développeur Discord</span> avec les permissions
-          nécessaires (Administrator ou permissions manuelles).
+          Pour inviter ton bot sur un serveur Discord, génère un lien d&apos;invitation depuis le{" "}
+          <span className="text-blue-400">Portal Développeur Discord</span> avec les permissions nécessaires.
         </p>
       </div>
 
-      {/* Plan modal */}
+      {/* Modal choix de plan */}
       <AnimatePresence>
         {showPlanModal && (
           <motion.div
@@ -231,19 +282,10 @@ export default function BotDeployPage() {
             >
               <div className="mb-5 flex items-center justify-between">
                 <div>
-                  <h2 className="font-mono text-sm font-bold text-foreground">
-                    Choisir un plan de déploiement
-                  </h2>
-                  <p className="font-mono text-[10px] text-muted-foreground">
-                    Sélectionne comment tu veux recevoir ton bot
-                  </p>
+                  <h2 className="font-mono text-sm font-bold text-foreground">Choisir un plan de déploiement</h2>
+                  <p className="font-mono text-[10px] text-muted-foreground">Sélectionne comment tu veux recevoir ton bot</p>
                 </div>
-                <button
-                  onClick={() => setShowPlanModal(false)}
-                  className="text-muted-foreground/50 hover:text-foreground transition-colors"
-                >
-                  ✕
-                </button>
+                <button onClick={() => setShowPlanModal(false)} className="text-muted-foreground/50 hover:text-foreground transition-colors">✕</button>
               </div>
 
               <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -252,28 +294,15 @@ export default function BotDeployPage() {
                   disabled={!!checkingOut}
                   className="group relative flex flex-col gap-3 rounded-xl border border-dashed p-5 text-left transition hover:border-blue-500/40 hover:bg-blue-500/5 disabled:opacity-50"
                 >
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-muted text-xl">
-                    📦
-                  </div>
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-muted text-xl">📦</div>
                   <div>
                     <p className="font-mono text-xs font-bold text-foreground">Livraison .zip</p>
-                    <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">
-                      Reçois les fichiers de ton bot, tu gères tout toi-même.
-                    </p>
+                    <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">Reçois les fichiers de ton bot, tu gères tout toi-même.</p>
                   </div>
-                  <p className="font-mono text-lg font-bold text-blue-500">
-                    {checkingOut === "RAR" ? "..." : "49€ — paiement unique"}
-                  </p>
+                  <p className="font-mono text-lg font-bold text-blue-500">{checkingOut === "RAR" ? "..." : "49€ — paiement unique"}</p>
                   <div className="space-y-1">
-                    {[
-                      "Fichiers source complets",
-                      "Token Discord inclus",
-                      "Hébergement à ta charge",
-                      "Support par email",
-                    ].map((f) => (
-                      <p key={f} className="font-mono text-[10px] text-muted-foreground">
-                        ✓ {f}
-                      </p>
+                    {["Fichiers source complets", "Token Discord inclus", "Hébergement à ta charge", "Support par email"].map((f) => (
+                      <p key={f} className="font-mono text-[10px] text-muted-foreground">✓ {f}</p>
                     ))}
                   </div>
                 </button>
@@ -286,28 +315,15 @@ export default function BotDeployPage() {
                   <div className="absolute right-3 top-3 rounded-full border border-blue-500/30 bg-blue-500/10 px-2 py-0.5 font-mono text-[9px] uppercase tracking-widest text-blue-400">
                     Recommandé
                   </div>
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-blue-500/15 text-xl">
-                    🚀
-                  </div>
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-blue-500/15 text-xl">🚀</div>
                   <div>
                     <p className="font-mono text-xs font-bold text-foreground">Bot géré par nous</p>
-                    <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">
-                      On héberge et gère tout. Ton bot tourne 24/7 sans intervention.
-                    </p>
+                    <p className="mt-0.5 font-mono text-[10px] text-muted-foreground">On héberge et gère tout. Ton bot tourne 24/7 sans intervention.</p>
                   </div>
-                  <p className="font-mono text-lg font-bold text-blue-500">
-                    {checkingOut === "MANAGED" ? "..." : "19€ / mois"}
-                  </p>
+                  <p className="font-mono text-lg font-bold text-blue-500">{checkingOut === "MANAGED" ? "..." : "19€ / mois"}</p>
                   <div className="space-y-1">
-                    {[
-                      "Déploiement immédiat",
-                      "Uptime 24/7 garanti",
-                      "Mises à jour incluses",
-                      "Support prioritaire",
-                    ].map((f) => (
-                      <p key={f} className="font-mono text-[10px] text-muted-foreground">
-                        ✓ {f}
-                      </p>
+                    {["Déploiement immédiat", "Uptime 24/7 garanti", "Mises à jour incluses", "Support prioritaire"].map((f) => (
+                      <p key={f} className="font-mono text-[10px] text-muted-foreground">✓ {f}</p>
                     ))}
                   </div>
                 </button>
@@ -320,6 +336,28 @@ export default function BotDeployPage() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Dialog confirmation annulation */}
+      <AlertDialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Annuler l&apos;abonnement ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Ton bot restera actif jusqu&apos;à la fin de la période déjà payée, puis sera automatiquement arrêté. Tu pourras toujours le relancer en souscrivant à nouveau.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Garder l&apos;abonnement</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleCancelSubscription}
+              disabled={cancelling}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            >
+              {cancelling ? "Annulation..." : "Confirmer l'annulation"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

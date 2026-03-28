@@ -1,167 +1,152 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { Bot, Plus } from "lucide-react";
 import { FaDiscord } from "react-icons/fa";
-import { Terminal } from "lucide-react";
-import { StatCard, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
-import type { BotConfig } from "@/components/dashboard/bot-types";
 
-export default function BotOverviewPage() {
-  const [config, setConfig] = useState<BotConfig | null>(null);
-  const [logs, setLogs] = useState<string[]>([
-    "> SYSTEM_BOOT..................OK",
-    "> LOADING_ENGINE..............OK",
-    "> AWAITING_CONFIG.............READY",
-  ]);
+interface BotItem {
+  id: string;
+  name: string;
+  status: string;
+  plan: string | null;
+  moduleWelcome: boolean;
+  moduleModeration: boolean;
+  moduleTickets: boolean;
+  moduleLevel: boolean;
+  moduleLog: boolean;
+}
 
-  const addLog = (msg: string) =>
-    setLogs((prev) => [...prev.slice(-6), `> ${msg}`]);
+export default function BotsListPage() {
+  const router = useRouter();
+  const [bots, setBots] = useState<BotItem[] | null>(null);
+  const [creating, setCreating] = useState(false);
 
   useEffect(() => {
-    fetch("/api/bot/config")
+    fetch("/api/bot/bots")
       .then((r) => r.json())
-      .then((data) => {
-        setConfig({ ...data, config: data.config ?? {} });
-        addLog(`BOT_LOADED: ${data.name}`);
-      });
-
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("success")) {
-      const plan = params.get("plan");
-      addLog(`PAYMENT_SUCCESS: ${plan}.....OK`);
-      window.history.replaceState({}, "", "/dashboard/bot");
-    }
-    if (params.get("cancelled")) {
-      addLog("PAYMENT_CANCELLED.........");
-      window.history.replaceState({}, "", "/dashboard/bot");
-    }
-
-    const interval = setInterval(() => {
-      fetch("/api/bot/config")
-        .then((r) => r.json())
-        .then((data) => {
-          setConfig((prev) => {
-            if (!prev) return prev;
-            if (prev.status !== data.status) {
-              addLog(`BOT_STATUS: ${data.status}`);
-            }
-            return { ...prev, status: data.status };
-          });
-        })
-        .catch(() => {});
-    }, 5000);
-
-    return () => clearInterval(interval);
+      .then((data) => setBots(Array.isArray(data) ? data : []));
   }, []);
 
-  if (!config) return <LoadingScreen />;
-
-  const activeModules = [
-    config.moduleWelcome,
-    config.moduleModeration,
-    config.moduleTickets,
-    config.moduleLevel,
-  ].filter(Boolean).length;
+  const handleCreate = async () => {
+    setCreating(true);
+    try {
+      const res = await fetch("/api/bot/bots", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({}) });
+      if (res.ok) {
+        const newBot = await res.json();
+        router.push(`/dashboard/bot/${newBot.id}`);
+      }
+    } finally {
+      setCreating(false);
+    }
+  };
 
   return (
-    <div className="space-y-6 px-5 py-6 md:px-7 lg:px-8">
-      <PageHeader
-        icon={<FaDiscord className="size-4" />}
-        title="Vue d'ensemble"
-        subtitle="Moteur propriétaire — v1.0.0"
-        status={config.status}
-      />
-
-      {/* Stat cards */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
-        <StatCard
-          label="bot_status"
-          value={config.status}
-          sub={
-            config.status === "ONLINE"
-              ? "Connecté et opérationnel"
-              : "Inactif — déploiement requis"
-          }
-          accent={config.status === "ONLINE"}
-          pulse
-        />
-        <StatCard
-          label="modules_actifs"
-          value={`${activeModules} / 4`}
-          sub={`${4 - activeModules} module(s) disponible(s)`}
-          accent={activeModules > 0}
-        />
-        <StatCard
-          label="token"
-          value={config.token ? "CONFIGURÉ" : "MANQUANT"}
-          sub={
-            config.token
-              ? "Chiffré — connexion sécurisée"
-              : "Token requis pour déployer"
-          }
-          accent={!!config.token}
-        />
-      </div>
-
-      {/* Plan badge */}
-      <div className="flex items-center gap-3 rounded-xl border border-dashed bg-card px-4 py-3">
-        <div className="flex-1">
-          <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">plan_actif</p>
-          <p className="mt-1 font-mono text-sm font-bold text-foreground">
-            {config.plan === "RAR"
-              ? "Livraison .zip"
-              : config.plan === "MANAGED"
-                ? "Bot Géré 24/7"
-                : "Aucun plan"}
+    <div className="min-h-screen space-y-6 px-5 py-8 md:px-8 lg:px-12">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <div className="mb-1 flex items-center gap-2 font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+            <FaDiscord className="size-3" />
+            dashboard
+          </div>
+          <h1 className="font-mono text-xl font-bold text-foreground">Mes bots</h1>
+          <p className="mt-0.5 font-mono text-[11px] text-muted-foreground/60">
+            {bots === null ? "Chargement..." : `${bots.length} bot${bots.length !== 1 ? "s" : ""} configuré${bots.length !== 1 ? "s" : ""}`}
           </p>
         </div>
-        <div
-          className={`rounded-full px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest ${
-            config.plan
-              ? "border border-green-500/30 bg-green-500/10 text-green-500"
-              : "border border-dashed text-muted-foreground/40"
-          }`}
+        <button
+          onClick={handleCreate}
+          disabled={creating}
+          className="flex items-center gap-2 rounded-lg border border-blue-500/30 bg-blue-500/10 px-4 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-blue-400 transition hover:bg-blue-500/20 disabled:opacity-50"
         >
-          {config.plan ?? "FREE"}
-        </div>
+          <Plus className="size-3.5" />
+          {creating ? "Création..." : "Créer un bot"}
+        </button>
       </div>
 
-      {/* Terminal logs */}
-      <div className="rounded-xl border border-dashed bg-card">
-        <div className="flex items-center gap-2 border-b border-dashed px-4 py-3">
-          <Terminal className="size-3.5 text-muted-foreground/50" />
-          <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-            system_log
-          </span>
-          <div className="ml-auto flex items-center gap-1.5">
-            <div className="size-1.5 animate-pulse rounded-full bg-green-500" />
-            <span className="font-mono text-[9px] uppercase text-muted-foreground/50">live</span>
-          </div>
+      {/* Loading */}
+      {bots === null && (
+        <div className="flex items-center gap-2 font-mono text-[10px] text-muted-foreground/40">
+          <div className="size-1.5 animate-pulse rounded-full bg-blue-500" />
+          Chargement des bots...
         </div>
-        <div className="p-4">
-          <div className="space-y-1">
-            {logs.map((log, i) => (
-              <motion.p
-                key={`${log}-${i}`}
-                initial={{ opacity: 0, x: -4 }}
-                animate={{ opacity: 1, x: 0 }}
-                className={`font-mono text-[11px] ${
-                  i === logs.length - 1
-                    ? "text-blue-500"
-                    : "text-muted-foreground/40"
-                }`}
+      )}
+
+      {/* Empty state */}
+      {bots !== null && bots.length === 0 && (
+        <div className="flex flex-col items-center justify-center gap-4 rounded-xl border border-dashed bg-card py-20">
+          <div className="flex size-14 items-center justify-center rounded-xl border border-dashed text-muted-foreground/30">
+            <Bot className="size-7" />
+          </div>
+          <div className="text-center">
+            <p className="font-mono text-sm font-bold text-foreground">Aucun bot configuré</p>
+            <p className="mt-1 font-mono text-[11px] text-muted-foreground/50">
+              Crée ton premier bot Discord pour commencer
+            </p>
+          </div>
+          <button
+            onClick={handleCreate}
+            disabled={creating}
+            className="flex items-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-white transition hover:bg-blue-500 disabled:opacity-50"
+          >
+            <Plus className="size-3.5" />
+            {creating ? "Création..." : "Créer mon premier bot"}
+          </button>
+        </div>
+      )}
+
+      {/* Bots grid */}
+      {bots !== null && bots.length > 0 && (
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          {bots.map((bot) => {
+            const activeModules = [bot.moduleWelcome, bot.moduleModeration, bot.moduleTickets, bot.moduleLevel, bot.moduleLog].filter(Boolean).length;
+            const isOnline = bot.status === "ONLINE";
+            return (
+              <button
+                key={bot.id}
+                onClick={() => router.push(`/dashboard/bot/${bot.id}`)}
+                className="group flex flex-col gap-3 rounded-xl border border-dashed bg-card p-5 text-left transition hover:border-blue-500/30 hover:bg-blue-500/5"
               >
-                {log}
-              </motion.p>
-            ))}
-          </div>
-        </div>
-      </div>
+                {/* Top row */}
+                <div className="flex items-start justify-between gap-2">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-lg border border-dashed bg-muted text-muted-foreground/50 group-hover:border-blue-500/30 group-hover:text-blue-400 transition">
+                    <FaDiscord className="size-4" />
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <div className={`size-1.5 rounded-full ${isOnline ? "bg-green-500 animate-pulse" : "bg-muted-foreground/30"}`} />
+                    <span className={`font-mono text-[9px] uppercase tracking-widest ${isOnline ? "text-green-500" : "text-muted-foreground/40"}`}>
+                      {bot.status}
+                    </span>
+                  </div>
+                </div>
 
-      <p className="pb-2 text-center font-mono text-[9px] uppercase tracking-widest text-muted-foreground/30">
-        bot-engine v1.0.0 — moteur propriétaire — connexion chiffrée
-      </p>
+                {/* Name */}
+                <div>
+                  <p className="font-mono text-sm font-bold text-foreground group-hover:text-blue-400 transition">
+                    {bot.name}
+                  </p>
+                  <p className="mt-0.5 font-mono text-[10px] text-muted-foreground/50">
+                    {activeModules} module{activeModules !== 1 ? "s" : ""} actif{activeModules !== 1 ? "s" : ""}
+                  </p>
+                </div>
+
+                {/* Plan */}
+                <div className="flex items-center justify-between">
+                  <span className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/40">plan</span>
+                  <span className={`rounded-full px-2 py-0.5 font-mono text-[9px] uppercase tracking-widest ${
+                    bot.plan
+                      ? "border border-green-500/30 bg-green-500/10 text-green-500"
+                      : "border border-dashed text-muted-foreground/30"
+                  }`}>
+                    {bot.plan ?? "FREE"}
+                  </span>
+                </div>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

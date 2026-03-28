@@ -12,26 +12,27 @@ function computeStatus(bot: { status: string; lastHeartbeatAt?: Date | null }): 
   return elapsed > HEARTBEAT_TIMEOUT_MS ? "OFFLINE" : "ONLINE";
 }
 
-// GET — récupère le bot de l'utilisateur connecté
-export async function GET() {
+// GET — récupère le bot par botId (query param), vérifie ownership
+export async function GET(request: Request) {
   const session = await auth();
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
   }
 
+  const { searchParams } = new URL(request.url);
+  const botId = searchParams.get("botId");
+
+  if (!botId) {
+    return NextResponse.json({ error: "botId manquant" }, { status: 400 });
+  }
+
   try {
-    let bot = await prisma.discordBot.findFirst({
-      where: { userId: session.user.id },
+    const bot = await prisma.discordBot.findFirst({
+      where: { id: botId, userId: session.user.id },
     });
 
     if (!bot) {
-      bot = await prisma.discordBot.create({
-        data: {
-          userId: session.user.id,
-          name: "Mon Super Bot",
-          status: "OFFLINE",
-        },
-      });
+      return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
     }
 
     // Statut calculé à partir du heartbeat

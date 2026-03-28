@@ -33,8 +33,8 @@ export async function POST(request: Request) {
   const checkoutSession = await stripe.checkout.sessions.create({
     mode: plan === "MANAGED" ? "subscription" : "payment",
     line_items: [{ price: PRICES[plan as keyof typeof PRICES], quantity: 1 }],
-    success_url: `${process.env.NEXTAUTH_URL}/dashboard/bot?success=1&plan=${plan}`,
-    cancel_url:  `${process.env.NEXTAUTH_URL}/dashboard/bot?cancelled=1`,
+    success_url: `${process.env.NEXTAUTH_URL}/dashboard/bot/${botId}?success=1&plan=${plan}`,
+    cancel_url:  `${process.env.NEXTAUTH_URL}/dashboard/bot/${botId}?cancelled=1`,
     metadata: {
       botId,
       userId: session.user.id,

@@ -12,10 +12,16 @@ export async function GET(request: Request) {
   const page = parseInt(searchParams.get("page") ?? "1");
   const limit = parseInt(searchParams.get("limit") ?? "20");
   const skip = (page - 1) * limit;
+  const botId = searchParams.get("botId");
 
   try {
+    if (!botId) {
+      return NextResponse.json({ error: "botId manquant" }, { status: 400 });
+    }
+
+    // Vérifie que le bot appartient à l'utilisateur connecté
     const bot = await prisma.discordBot.findFirst({
-      where: { userId: session.user.id },
+      where: { id: botId, userId: session.user.id },
     });
 
     if (!bot) {

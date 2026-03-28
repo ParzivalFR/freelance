@@ -89,6 +89,8 @@ export interface BotConfig {
   status: string;
   plan: string | null;
   paidAt: string | null;
+  planEndsAt: string | null;
+  stripeSubscriptionId: string | null;
   moduleWelcome: boolean;
   moduleModeration: boolean;
   moduleTickets: boolean;

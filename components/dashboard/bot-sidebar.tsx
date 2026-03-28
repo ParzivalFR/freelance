@@ -32,38 +32,44 @@ import {
   Shield,
 } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { FaDiscord } from "react-icons/fa";
 
-const nav = [
-  {
-    label: "Système",
-    items: [
-      { title: "Vue d'ensemble", url: "/dashboard/bot", icon: LayoutDashboard, exact: true },
-      { title: "Guide de configuration", url: "/dashboard/bot/guide", icon: BookOpen, exact: false },
-    ],
-  },
-  {
-    label: "Configuration",
-    items: [
-      { title: "Identité & Token", url: "/dashboard/bot/config", icon: Bot, exact: false },
-      { title: "Modules", url: "/dashboard/bot/modules", icon: Puzzle, exact: false },
-      { title: "Déploiement", url: "/dashboard/bot/deploy", icon: Rocket, exact: false },
-    ],
-  },
-  {
-    label: "Monitoring",
-    items: [
-      { title: "Logs système", url: "/dashboard/bot/logs", icon: Shield, exact: false },
-      { title: "Activité", url: "/dashboard/bot/activity", icon: Activity, exact: false },
-    ],
-  },
-];
+function buildNav(botId: string) {
+  return [
+    {
+      label: "Système",
+      items: [
+        { title: "Vue d'ensemble", url: `/dashboard/bot/${botId}`, icon: LayoutDashboard, exact: true },
+        { title: "Guide de configuration", url: `/dashboard/bot/${botId}/guide`, icon: BookOpen, exact: false },
+      ],
+    },
+    {
+      label: "Configuration",
+      items: [
+        { title: "Identité & Token", url: `/dashboard/bot/${botId}/config`, icon: Bot, exact: false },
+        { title: "Modules", url: `/dashboard/bot/${botId}/modules`, icon: Puzzle, exact: false },
+        { title: "Déploiement", url: `/dashboard/bot/${botId}/deploy`, icon: Rocket, exact: false },
+      ],
+    },
+    {
+      label: "Monitoring",
+      items: [
+        { title: "Logs système", url: `/dashboard/bot/${botId}/logs`, icon: Shield, exact: false },
+        { title: "Activité", url: `/dashboard/bot/${botId}/activity`, icon: Activity, exact: false },
+      ],
+    },
+  ];
+}
 
 export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const pathname = usePathname();
   const { data: session } = useSession();
+  const params = useParams();
+  const botId = params?.botId as string | undefined;
+
+  const nav = botId ? buildNav(botId) : [];
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -78,7 +84,7 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <div className="flex size-5 items-center justify-center rounded bg-blue-500/20 text-blue-400">
                   <FaDiscord className="size-3.5" />
                 </div>
-                <span className="font-mono text-sm font-bold">Bot Dashboard</span>
+                <span className="font-mono text-sm font-bold">← Mes bots</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

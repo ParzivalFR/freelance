@@ -1,23 +1,29 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { Activity } from "lucide-react";
 import { PageHeader, StatCard, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import type { BotConfig } from "@/components/dashboard/bot-types";
 
 export default function BotActivityPage() {
+  const params = useParams();
+  const botId = params?.botId as string;
+
   const [config, setConfig] = useState<BotConfig | null>(null);
   const [infractionCount, setInfractionCount] = useState<number | null>(null);
 
   useEffect(() => {
-    fetch("/api/bot/config")
+    if (!botId) return;
+
+    fetch(`/api/bot/config?botId=${botId}`)
       .then((r) => r.json())
       .then((data) => setConfig({ ...data, config: data.config ?? {} }));
 
-    fetch("/api/bot/infractions?limit=1")
+    fetch(`/api/bot/infractions?botId=${botId}&limit=1`)
       .then((r) => r.json())
       .then((data) => setInfractionCount(data.total ?? 0));
-  }, []);
+  }, [botId]);
 
   if (!config) return <LoadingScreen />;
 

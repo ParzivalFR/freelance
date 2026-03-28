@@ -49,9 +49,11 @@ model DiscordBot {
   config Json? @default("{}") // ex: { welcomeChannel: "123", ticketCategory: "456" }
 
   // Paiement
-  plan            String?   @map("plan")
-  stripeSessionId String?   @map("stripe_session_id")
-  paidAt          DateTime? @map("paid_at")
+  plan                   String?   @map("plan")
+  stripeSessionId        String?   @map("stripe_session_id")
+  stripeSubscriptionId   String?   @map("stripe_subscription_id")
+  paidAt                 DateTime? @map("paid_at")
+  planEndsAt             DateTime? @map("plan_ends_at") // Date de fin après annulation
 
   lastHeartbeatAt DateTime? @map("last_heartbeat_at")
   workerCommand   String?   @map("worker_command") // START | STOP | RESTART
