@@ -54,7 +54,7 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json();
-    const { id, name, token, prefix, moduleWelcome, moduleModeration, moduleTickets, moduleLevel, moduleLog, config, status, workerCommand } = body;
+    const { id, name, token, prefix, moduleWelcome, moduleModeration, moduleTickets, moduleLevel, moduleLog, moduleSurvey, config, status, workerCommand } = body;
 
     if (!id) {
       return NextResponse.json({ error: "ID manquant" }, { status: 400 });
@@ -80,6 +80,7 @@ export async function PATCH(request: Request) {
         ...(moduleTickets !== undefined && { moduleTickets }),
         ...(moduleLevel !== undefined && { moduleLevel }),
         ...(moduleLog !== undefined && { moduleLog }),
+        ...(moduleSurvey !== undefined && { moduleSurvey }),
         ...(config !== undefined && { config }),
         ...(status !== undefined && { status }),
         ...(workerCommand !== undefined && { workerCommand }),

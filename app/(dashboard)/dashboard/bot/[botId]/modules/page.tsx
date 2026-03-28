@@ -1,6 +1,6 @@
 "use client";
 
-import { MessageSquare, Puzzle, Save, ScrollText, Shield, Star, Ticket } from "lucide-react";
+import { BarChart2, MessageSquare, Puzzle, Save, ScrollText, Shield, Star, Ticket } from "lucide-react";
 import type { LevelReward } from "@/components/dashboard/bot-types";
 import { FaDiscord } from "react-icons/fa";
 import { Switch } from "@/components/ui/switch";
@@ -737,6 +737,37 @@ export default function BotModulesPage() {
                 </div>
               );
             })}
+          </div>
+        </ModuleToggle>
+
+        {/* ── Survey ── */}
+        <ModuleToggle
+          icon={<BarChart2 className="size-3.5" />}
+          label="survey"
+          description="Sondages avancés (choix multiple, classé, pondéré)"
+          enabled={config.moduleSurvey}
+          onToggle={() => update("moduleSurvey", !config.moduleSurvey)}
+        >
+          <CyberInput
+            label="poll_channel_id (défaut)"
+            value={config.config.pollChannelId ?? ""}
+            onChange={(v) => updateModuleConfig("pollChannelId", v)}
+            placeholder="123456789012345678"
+          />
+          <CyberInput
+            label="poll_manager_role_id"
+            value={config.config.pollManagerRoleId ?? ""}
+            onChange={(v) => updateModuleConfig("pollManagerRoleId", v)}
+            placeholder="vide = tout le monde peut créer"
+          />
+          <PlaceholderRef />
+          <div className="rounded-lg border border-dashed p-2">
+            <p className="font-mono text-[8px] text-muted-foreground/40">
+              Commandes disponibles : /poll, /quickpoll, /poll-end, /poll-results
+            </p>
+            <p className="mt-0.5 font-mono text-[8px] text-muted-foreground/30">
+              Gérez vos sondages depuis l&apos;onglet &quot;Sondages&quot; dans la sidebar.
+            </p>
           </div>
         </ModuleToggle>
 

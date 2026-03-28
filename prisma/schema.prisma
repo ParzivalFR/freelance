@@ -44,6 +44,7 @@ model DiscordBot {
   moduleWelcome    Boolean @default(false) @map("module_welcome")
   moduleLevel      Boolean @default(false) @map("module_level")
   moduleLog        Boolean @default(false) @map("module_log")
+  moduleSurvey     Boolean @default(false) @map("module_survey")
 
   // Paramètres spécifiques aux modules (JSON pour plus de flexibilité)
   config Json? @default("{}") // ex: { welcomeChannel: "123", ticketCategory: "456" }
@@ -63,6 +64,7 @@ model DiscordBot {
   infractions  Infraction[]
   userLevels   UserLevel[]
   levelRewards LevelReward[]
+  polls        Poll[]
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -115,6 +117,82 @@ model LevelReward {
   @@unique([botId, level])
   @@map("level_rewards")
 }
+
+// ─── Sondages ─────────────────────────────────────────────────────────────────
+
+model Poll {
+  id          String    @id @default(cuid())
+  botId       String    @map("bot_id")
+  guildId     String    @map("guild_id")
+  channelId   String    @map("channel_id")
+  messageId   String?   @map("message_id")   // Discord message ID once posted
+  threadId    String?   @map("thread_id")    // Discussion thread ID (auto_thread)
+
+  title       String
+  description String?   @db.Text
+
+  // MULTIPLE_CHOICE | YES_NO | RANKED
+  type        String    @default("MULTIPLE_CHOICE") @map("type")
+
+  // [{ id: string, label: string, emoji?: string }]
+  options     Json
+
+  // Comportement
+  isAnonymous   Boolean @default(false) @map("is_anonymous")   // cache qui a voté
+  isBlind       Boolean @default(false) @map("is_blind")       // cache résultats avant fermeture
+  allowMultiple Boolean @default(false) @map("allow_multiple") // plusieurs choix autorisés
+  allowChange   Boolean @default(true)  @map("allow_change")   // peut changer son vote
+  maxChoices    Int     @default(1)     @map("max_choices")     // nb max si allowMultiple
+
+  // Contrôle d'accès
+  allowedRoleIds Json? @map("allowed_role_ids") // String[] — rôles autorisés à voter
+  roleWeights    Json? @map("role_weights")     // { [roleId]: number } — pondération par rôle
+
+  // Seuil de révélation
+  minVotes Int @default(0) @map("min_votes") // résultats cachés jusqu'à X votes
+
+  // Thread automatique
+  autoThread Boolean @default(false) @map("auto_thread")
+
+  // Planification
+  startsAt DateTime? @map("starts_at")
+  endsAt   DateTime? @map("ends_at")
+
+  // Récurrence
+  isRecurring   Boolean @default(false) @map("is_recurring")
+  recurInterval String? @map("recur_interval") // daily | weekly | monthly
+
+  // PENDING | ACTIVE | CLOSED
+  status String @default("ACTIVE")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt      @map("updated_at")
+
+  bot   DiscordBot @relation(fields: [botId], references: [id], onDelete: Cascade)
+  votes PollVote[]
+
+  @@map("polls")
+}
+
+model PollVote {
+  id     String @id @default(cuid())
+  pollId String @map("poll_id")
+  userId String @map("user_id") // Discord user ID
+
+  // MULTIPLE_CHOICE/YES_NO : ["optionId1", ...]
+  // RANKED                 : [{ optionId: string, rank: number }, ...]
+  choices Json
+
+  weight  Float    @default(1)           @map("weight")   // pondération via rôle
+  votedAt DateTime @default(now())       @map("voted_at")
+
+  poll Poll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+
+  @@unique([pollId, userId])
+  @@map("poll_votes")
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
 
 model Account {
   userId            String
