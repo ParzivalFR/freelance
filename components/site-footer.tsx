@@ -149,7 +149,7 @@ export function SiteFooter() {
 
   return (
     <footer className="footer-border">
-      <div className="mx-auto w-full max-w-screen-xl xl:pb-2">
+      <div className="mx-auto w-full max-w-(--breakpoint-xl) xl:pb-2">
         <div className="gap-4 p-4 px-8 py-16 sm:pb-16 md:flex md:justify-between">
           <div className="mb-12 flex flex-col items-center gap-4">
             <Link href="/" className="flex items-center justify-center">

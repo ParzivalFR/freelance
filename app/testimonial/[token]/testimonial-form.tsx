@@ -216,7 +216,7 @@ export default function TestimonialForm({
                       type="button"
                       className={`text-3xl transition-all duration-200 hover:scale-110 ${
                         star <= formData.rating
-                          ? "text-yellow-500 drop-shadow-sm"
+                          ? "text-yellow-500 drop-shadow-xs"
                           : "text-gray-300 hover:text-yellow-300"
                       }`}
                       onClick={() =>

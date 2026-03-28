@@ -114,7 +114,7 @@ export function AdminSidebar({
   const pathname = usePathname();
 
   return (
-    <Sidebar {...props} className="dark !border-none">
+    <Sidebar {...props} className="dark border-none!">
       <SidebarHeader>
         <TeamSwitcher teams={data.teams} />
       </SidebarHeader>

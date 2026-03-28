@@ -6,16 +6,16 @@ export const SphereMask = ({ reverse = false }: { reverse?: boolean }) => {
       className={cn(
         // color
         "[--color:var(--color-three)]",
-        "pointer-events-none relative -z-[2] mx-auto h-[50rem] overflow-hidden",
+        "pointer-events-none relative -z-2 mx-auto h-200 overflow-hidden",
 
         // sphere mask
-        "[mask-image:radial-gradient(ellipse_at_center_center,#000,transparent_70%)]",
+        "mask-[radial-gradient(ellipse_at_center_center,#000,transparent_70%)]",
 
         // reverse
-        reverse ? "my-[-22rem] rotate-180 md:mt-[-30rem]" : "my-[-18.8rem]",
+        reverse ? "-my-88 rotate-180 md:-mt-120" : "my-[-18.8rem]",
 
         // before
-        "before:absolute before:inset-0 before:h-full before:w-full before:opacity-40 before:[background-image:radial-gradient(circle_at_bottom_center,var(--color-three),transparent_70%)]",
+        "before:absolute before:inset-0 before:h-full before:w-full before:opacity-40 before:bg-[radial-gradient(circle_at_bottom_center,var(--color-three),transparent_70%)]",
 
         // after
         "after:absolute after:-left-1/2 after:top-1/2 after:aspect-[1/0.7] after:w-[200%] after:rounded-[50%] after:border-t after:border-foreground/20 after:bg-background"

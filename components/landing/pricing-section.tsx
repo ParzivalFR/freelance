@@ -90,7 +90,7 @@ export default function FreelanceServicesSection() {
 
   return (
     <section id="pricing">
-      <div className="mx-auto flex max-w-screen-xl flex-col gap-8 px-4 py-14 md:px-8">
+      <div className="mx-auto flex max-w-(--breakpoint-xl) flex-col gap-8 px-4 py-14 md:px-8">
         <div className="mx-auto max-w-5xl text-center">
           <h4 className="text-lg font-bold tracking-tight text-black dark:text-white sm:text-xl">
             Services
@@ -216,7 +216,7 @@ export default function FreelanceServicesSection() {
                 {isLoading && id === service.id && <Loader />}
               </Button>
 
-              <hr className="m-0 h-px w-full border-none bg-gradient-to-r from-neutral-200/0 via-neutral-500/30 to-neutral-200/0" />
+              <hr className="m-0 h-px w-full border-none bg-linear-to-r from-neutral-200/0 via-neutral-500/30 to-neutral-200/0" />
               {service.features && service.features.length > 0 && (
                 <ul className="flex flex-col gap-2 font-normal">
                   {service.features.map((feature: any, idx: any) => (
@@ -240,7 +240,7 @@ export default function FreelanceServicesSection() {
 
 const AlerteNote = () => {
   return (
-    <div className="mx-auto mb-6 max-w-screen-md rounded-xl border-l-4 border-green-500 bg-green-50 p-4 text-green-800 dark:bg-green-950/30 dark:text-green-400">
+    <div className="mx-auto mb-6 max-w-(--breakpoint-md) rounded-xl border-l-4 border-green-500 bg-green-50 p-4 text-green-800 dark:bg-green-950/30 dark:text-green-400">
       <p className="flex items-center gap-2 font-bold">
         <CheckIcon className="size-5" />
         Nouveau :

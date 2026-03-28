@@ -35,42 +35,42 @@ export default async function AdminLayout({
     <SidebarProvider>
       <AdminSidebar />
       <SidebarInset className="group/sidebar-inset bg-sidebar">
-        <header className="dark relative flex h-16 shrink-0 items-center gap-2 bg-sidebar px-4 text-sidebar-foreground before:absolute before:inset-y-3 before:-left-px before:z-50 before:w-px before:bg-gradient-to-b before:from-white/5 before:via-white/15 before:to-white/5 md:px-6 lg:px-8">
+        <header className="dark relative flex h-16 shrink-0 items-center gap-2 bg-sidebar px-4 text-sidebar-foreground before:absolute before:inset-y-3 before:-left-px before:z-50 before:w-px before:bg-linear-to-b before:from-white/5 before:via-white/15 before:to-white/5 md:px-6 lg:px-8">
           <SidebarTrigger className="-ms-2" />
           <div className="ml-auto flex items-center gap-8">
             <nav className="hidden items-center text-sm font-medium md:flex">
               <Link
-                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 [&[aria-current]]:text-sidebar-foreground"
+                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 aria-[current]:text-sidebar-foreground"
                 href="/admin"
               >
                 Dashboard
               </Link>
               <Link
-                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 [&[aria-current]]:text-sidebar-foreground"
+                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 aria-[current]:text-sidebar-foreground"
                 href="/admin/projects"
               >
                 Projets
               </Link>
               <Link
-                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 [&[aria-current]]:text-sidebar-foreground"
+                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 aria-[current]:text-sidebar-foreground"
                 href="/admin/testimonials"
               >
                 Témoignages
               </Link>
               <Link
-                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 [&[aria-current]]:text-sidebar-foreground"
+                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 aria-[current]:text-sidebar-foreground"
                 href="/admin/clients"
               >
                 Clients
               </Link>
               <Link
-                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 [&[aria-current]]:text-sidebar-foreground"
+                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 aria-[current]:text-sidebar-foreground"
                 href="/admin/devis"
               >
                 Devis
               </Link>
               <Link
-                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 [&[aria-current]]:text-sidebar-foreground"
+                className="text-sidebar-foreground/50 transition-colors before:px-4 before:text-sidebar-foreground/30 before:content-['/'] first:before:hidden hover:text-sidebar-foreground/70 aria-[current]:text-sidebar-foreground"
                 href="/admin/bots"
               >
                 Bots

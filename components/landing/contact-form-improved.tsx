@@ -149,7 +149,7 @@ export default function ContactFormImproved() {
             <Mail className="mr-2 size-4" />
             Contact
           </Badge>
-          <h2 className="mb-4 bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-4xl font-bold tracking-tight text-transparent sm:text-5xl">
+          <h2 className="mb-4 bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-4xl font-bold tracking-tight text-transparent sm:text-5xl">
             Parlons de votre projet
           </h2>
           <p className="mx-auto max-w-2xl text-lg text-muted-foreground">

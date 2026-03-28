@@ -119,7 +119,7 @@ export function FAQ() {
               meilleurs délais.
             </p>
           </div>
-          <div className="container mx-auto my-12 max-w-screen-md space-y-12 px-4">
+          <div className="container mx-auto my-12 max-w-(--breakpoint-md) space-y-12 px-4">
             {faqs.map((faq, idx) => (
               <section key={idx} id={"faq-" + faq.section}>
                 <h2 className="mb-4 text-left text-base font-semibold tracking-tight text-muted-foreground">

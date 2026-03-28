@@ -12,7 +12,11 @@
       "Bash(taskkill:*)",
       "Bash(pnpm prisma migrate dev:*)",
       "Bash(find:*)",
-      "Bash(pnpm prisma generate:*)"
+      "Bash(pnpm prisma generate:*)",
+      "Bash(cd \"C:\\\\Users\\\\Gaelr\\\\Documents\\\\Developpement\\\\freelance\" && pnpm eslint --version && pnpm eslint app/page.tsx 2>&1 | head -30)",
+      "Bash(npm show:*)",
+      "Bash(cd \"C:\\\\Users\\\\Gaelr\\\\Documents\\\\Developpement\\\\freelance\" && pnpm add -D typescript@^6 2>&1 | tail -8)",
+      "Bash(cd \"C:\\\\Users\\\\Gaelr\\\\Documents\\\\Developpement\\\\freelance\" && pnpm tsc --noEmit 2>&1 | head -50)"
     ],
     "deny": []
   }

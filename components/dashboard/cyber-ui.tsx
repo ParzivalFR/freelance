@@ -43,7 +43,7 @@ export function CyberInput({
           value={value}
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full rounded-lg border border-dashed bg-background py-2.5 pl-7 pr-9 font-mono text-sm text-foreground placeholder-muted-foreground/40 outline-none transition focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/10"
+          className="w-full rounded-lg border border-dashed bg-background py-2.5 pl-7 pr-9 font-mono text-sm text-foreground placeholder-muted-foreground/40 outline-hidden transition focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/10"
         />
         {isPassword && (
           <button
@@ -127,7 +127,7 @@ export function CyberTextarea({
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           rows={rows}
-          className="w-full resize-y rounded-lg border border-dashed bg-background py-2.5 pl-7 pr-3 font-mono text-sm text-foreground placeholder-muted-foreground/40 outline-none transition focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/10"
+          className="w-full resize-y rounded-lg border border-dashed bg-background py-2.5 pl-7 pr-3 font-mono text-sm text-foreground placeholder-muted-foreground/40 outline-hidden transition focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/10"
         />
       </div>
     </div>
