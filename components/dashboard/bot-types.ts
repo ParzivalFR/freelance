@@ -79,6 +79,9 @@ export interface ModuleConfig {
   enableRating?: boolean;
   enableClaim?: boolean;
   openMessage?: string;
+  // Survey (paramètres globaux du module)
+  pollChannelId?: string;     // salon par défaut pour les sondages
+  pollManagerRoleId?: string; // rôle autorisé à créer des sondages (vide = @everyone)
 }
 
 export interface BotConfig {
@@ -96,6 +99,7 @@ export interface BotConfig {
   moduleTickets: boolean;
   moduleLevel: boolean;
   moduleLog: boolean;
+  moduleSurvey: boolean;
   config: ModuleConfig;
   workerCommand: string | null;
 }

@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import {
   Activity,
+  BarChart2,
   Bot,
   BookOpen,
   LayoutDashboard,
@@ -58,6 +59,7 @@ function buildNav(botId: string) {
       items: [
         { title: "Logs système", url: `/dashboard/bot/${botId}/logs`, icon: Shield, exact: false },
         { title: "Activité", url: `/dashboard/bot/${botId}/activity`, icon: Activity, exact: false },
+        { title: "Sondages", url: `/dashboard/bot/${botId}/polls`, icon: BarChart2, exact: false },
       ],
     },
   ];
