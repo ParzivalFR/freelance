@@ -55,7 +55,7 @@ export default function BotPricingSection() {
 
   return (
     <section id="bot-pricing" className="relative">
-      <div className="mx-auto flex max-w-screen-xl flex-col gap-8 px-4 py-14 md:px-8">
+      <div className="mx-auto flex max-w-(--breakpoint-xl) flex-col gap-8 px-4 py-14 md:px-8">
         <div className="mx-auto max-w-5xl text-center">
           <h4 className="text-lg font-bold tracking-tight text-black dark:text-white sm:text-xl">
             Bot Discord
@@ -124,7 +124,7 @@ export default function BotPricingSection() {
                   {plan.cta}
                 </Button>
 
-                <hr className="m-0 h-px w-full border-none bg-gradient-to-r from-neutral-200/0 via-neutral-500/30 to-neutral-200/0" />
+                <hr className="m-0 h-px w-full border-none bg-linear-to-r from-neutral-200/0 via-neutral-500/30 to-neutral-200/0" />
 
                 <ul className="flex flex-col gap-2">
                   {plan.features.map((feature, i) => (

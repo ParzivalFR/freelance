@@ -18,11 +18,11 @@ const ReviewCard = ({ imgUrl, name, review }: Review) => {
   return (
     <figure
       className={cn(
-        "relative w-64 cursor-pointer overflow-hidden rounded-[2rem] border p-4",
+        "relative w-64 cursor-pointer overflow-hidden rounded-4xl border p-4",
         // light styles
-        "border-gray-950/[.1] bg-gray-950/[.01] hover:bg-gray-950/[.05]",
+        "border-gray-950/10 bg-gray-950/1 hover:bg-gray-950/5",
         // dark styles
-        "dark:border-gray-50/[.1] dark:bg-gray-50/[.10] dark:hover:bg-gray-50/[.15]"
+        "dark:border-gray-50/10 dark:bg-gray-50/10 dark:hover:bg-gray-50/15"
       )}
     >
       <div className="flex flex-row items-center gap-2">
@@ -70,8 +70,8 @@ export default function CallToActionSection() {
     <section id="cta">
       <div className="py-14">
         <div className="container flex w-full flex-col items-center justify-center p-4">
-          <div className="relative flex w-full max-w-[1000px] flex-col items-center justify-center overflow-hidden rounded-[2rem] border p-10 py-14">
-            <div className="absolute rotate-[35deg]">
+          <div className="relative flex w-full max-w-[1000px] flex-col items-center justify-center overflow-hidden rounded-4xl border p-10 py-14">
+            <div className="absolute rotate-35">
               <Marquee pauseOnHover className="[--duration:30s]" repeat={3}>
                 {review &&
                   Array.isArray(review) &&
@@ -125,7 +125,7 @@ export default function CallToActionSection() {
                   ))}
               </Marquee>
             </div>
-            <div className="shadow-2xl z-10 mx-auto size-24 rounded-[2rem] border bg-white/10 p-3 backdrop-blur-md dark:bg-black/10 lg:size-32">
+            <div className="shadow-2xl z-10 mx-auto size-24 rounded-4xl border bg-white/10 p-3 backdrop-blur-md dark:bg-black/10 lg:size-32">
               <HeartHandshake className="mx-auto size-16 text-black dark:text-white lg:size-24" />
             </div>
             <div className="z-10 mt-4 flex flex-col items-center text-center text-black dark:text-white">
@@ -137,14 +137,14 @@ export default function CallToActionSection() {
                 sur mesure adaptées à vos besoins.
               </p>
               <Button
-                className="group mt-6 flex items-center rounded-[2rem] px-6 ring-4 ring-primary/20"
+                className="group mt-6 flex items-center rounded-4xl px-6 ring-4 ring-primary/20"
                 onClick={() => handleRedirect()}
               >
                 Allons-y
                 <ArrowRight className="ml-1 size-4 transition-all duration-300 ease-out group-hover:translate-x-3" />
               </Button>
             </div>
-            <div className="absolute inset-x-0 bottom-0 h-full bg-gradient-to-b from-transparent to-white to-90% dark:to-black" />
+            <div className="absolute inset-x-0 bottom-0 h-full bg-linear-to-b from-transparent to-white to-90% dark:to-black" />
           </div>
         </div>
       </div>

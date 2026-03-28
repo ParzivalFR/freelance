@@ -35,7 +35,7 @@ export default function BotBuilderPreview() {
           Nouveauté : Bot Builder
         </Badge>
         
-        <h2 className="text-balance bg-gradient-to-br from-black from-30% to-black/40 bg-clip-text pb-6 text-4xl font-medium tracking-tighter text-transparent dark:from-white dark:to-white/40 sm:text-5xl md:text-6xl">
+        <h2 className="text-balance bg-linear-to-br from-black from-30% to-black/40 bg-clip-text pb-6 text-4xl font-medium tracking-tighter text-transparent dark:from-white dark:to-white/40 sm:text-5xl md:text-6xl">
           Créez votre bot Discord <br />
           <RoughNotation type="highlight" show={true} color="#bfdbfe" strokeWidth={2} animationDelay={1000}>
             <span className="text-black dark:text-white">sans compromis.</span>
@@ -52,7 +52,7 @@ export default function BotBuilderPreview() {
       <div className="mt-16 grid grid-cols-1 gap-12 lg:grid-cols-2 lg:items-center">
         {/* Mockup de l'interface - Style Safari/Clean */}
         <div className="relative group">
-          <div className="absolute -inset-1 rounded-[2rem] bg-gradient-to-r from-blue-500 to-purple-500 opacity-20 blur-2xl transition duration-1000 group-hover:opacity-30" />
+          <div className="absolute -inset-1 rounded-4xl bg-linear-to-r from-blue-500 to-purple-500 opacity-20 blur-2xl transition duration-1000 group-hover:opacity-30" />
           
           <div className="relative rounded-xl border bg-card text-card-foreground shadow-2xl">
             {/* Header style Safari */}

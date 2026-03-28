@@ -161,7 +161,7 @@ export function SiteHeader() {
           variants={mobilenavbarVariant}
           animate={hamburgerMenuIsOpen ? "animate" : "exit"}
           className={cn(
-            `fixed left-0 top-0 z-50 h-screen w-full overflow-auto bg-background/70 backdrop-blur-[12px] `,
+            `fixed left-0 top-0 z-50 h-screen w-full overflow-auto bg-background/70 backdrop-blur-md `,
             {
               "pointer-events-none": !hamburgerMenuIsOpen,
             }
@@ -195,7 +195,7 @@ export function SiteHeader() {
                 className="px-6 py-2 md:border-none"
               >
                 <Link
-                  className={`hover:text-grey transtion-colors flex h-[var(--navigation-height)] w-full items-center gap-4 rounded-md text-xl transition-[color,transform] duration-500 hover:bg-secondary/40 md:translate-y-0 md:text-sm md:transition-colors  ${
+                  className={`hover:text-grey transtion-colors flex h-(--navigation-height) w-full items-center gap-4 rounded-md text-xl transition-[color,transform] duration-500 hover:bg-secondary/40 md:translate-y-0 md:text-sm md:transition-colors  ${
                     hamburgerMenuIsOpen ? "[&_a]:translate-y-0" : ""
                   }`}
                   href={item.href}

@@ -15,7 +15,7 @@ export default function SafariTerminal() {
           height={600}
           className="mx-auto w-full drop-shadow-2xl"
         >
-          <Terminal className="border-gray-700 bg-black/95 backdrop-blur-sm">
+          <Terminal className="border-gray-700 bg-black/95 backdrop-blur-xs">
             <AnimatedSpan delay={0}>
               <span className="text-cyan-400">gael@macbook</span>
               <span className="text-white">:</span>

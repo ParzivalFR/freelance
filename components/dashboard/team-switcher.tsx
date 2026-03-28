@@ -62,7 +62,7 @@ export function TeamSwitcher({
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
-            className="dark w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-md"
+            className="dark w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-md"
             align="start"
             side="bottom"
             sideOffset={4}

@@ -7,7 +7,7 @@ export default function ClientSection() {
       className="mx-auto max-w-7xl px-6 text-center md:px-8"
     >
       <div className="py-14">
-        <div className="mx-auto max-w-screen-xl px-4 md:px-8">
+        <div className="mx-auto max-w-(--breakpoint-xl) px-4 md:px-8">
           <h2 className="text-center text-sm font-semibold text-gray-600">
             Ils nous font confiance
           </h2>

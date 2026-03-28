@@ -323,7 +323,7 @@ export default function BotModulesPage() {
                       cats[i] = { ...cats[i], emoji: e.target.value };
                       updateModuleConfig("categories", cats);
                     }}
-                    className="w-9 shrink-0 rounded border border-dashed bg-background px-1 py-1 text-center font-mono text-sm outline-none focus:border-blue-500/50"
+                    className="w-9 shrink-0 rounded border border-dashed bg-background px-1 py-1 text-center font-mono text-sm outline-hidden focus:border-blue-500/50"
                     placeholder="🎫"
                   />
                   <input
@@ -333,7 +333,7 @@ export default function BotModulesPage() {
                       cats[i] = { ...cats[i], label: e.target.value };
                       updateModuleConfig("categories", cats);
                     }}
-                    className="min-w-0 flex-1 rounded border border-dashed bg-background px-2 py-1 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                    className="min-w-0 flex-1 rounded border border-dashed bg-background px-2 py-1 font-mono text-xs text-foreground outline-hidden focus:border-blue-500/50"
                     placeholder="Support"
                   />
                   <button
@@ -354,7 +354,7 @@ export default function BotModulesPage() {
                     cats[i] = { ...cats[i], description: e.target.value };
                     updateModuleConfig("categories", cats);
                   }}
-                  className="w-full rounded border border-dashed bg-background px-2 py-1 font-mono text-xs text-muted-foreground outline-none focus:border-blue-500/50"
+                  className="w-full rounded border border-dashed bg-background px-2 py-1 font-mono text-xs text-muted-foreground outline-hidden focus:border-blue-500/50"
                   placeholder="Description affichée dans le select menu"
                 />
               </div>
@@ -495,7 +495,7 @@ export default function BotModulesPage() {
                       rewards[i] = { ...rewards[i], level: Number(e.target.value) };
                       updateModuleConfig("levelRewards", rewards);
                     }}
-                    className="w-full rounded border border-dashed bg-background px-2 py-1 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                    className="w-full rounded border border-dashed bg-background px-2 py-1 font-mono text-xs text-foreground outline-hidden focus:border-blue-500/50"
                     placeholder="niv."
                   />
                 </div>
@@ -506,7 +506,7 @@ export default function BotModulesPage() {
                     rewards[i] = { ...rewards[i], roleId: e.target.value };
                     updateModuleConfig("levelRewards", rewards);
                   }}
-                  className="min-w-0 flex-1 rounded border border-dashed bg-background px-2 py-1 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                  className="min-w-0 flex-1 rounded border border-dashed bg-background px-2 py-1 font-mono text-xs text-foreground outline-hidden focus:border-blue-500/50"
                   placeholder="ID du rôle Discord"
                 />
                 <button

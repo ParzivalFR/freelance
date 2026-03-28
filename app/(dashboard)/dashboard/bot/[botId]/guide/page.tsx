@@ -399,7 +399,7 @@ export default function GuidePage() {
               className={`cursor-pointer border transition-all ${
                 isOpen
                   ? "border-blue-500/30 bg-blue-500/5"
-                  : "border-white/5 bg-white/[0.02] hover:border-white/10"
+                  : "border-white/5 bg-white/2 hover:border-white/10"
               }`}
               onClick={() => setOpenStep(isOpen ? null : step.id)}
             >

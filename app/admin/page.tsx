@@ -97,7 +97,7 @@ export default async function AdminDashboard() {
             key={stat.title}
             className="shadow-sm relative overflow-hidden border"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-card to-card/50"></div>
+            <div className="absolute inset-0 bg-linear-to-br from-card to-card/50"></div>
             <CardHeader className="relative flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-medium text-muted-foreground">
                 {stat.title}
@@ -121,7 +121,7 @@ export default async function AdminDashboard() {
       {/* Quick Actions avec design moderne */}
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card className="shadow-sm relative overflow-hidden border">
-          <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 to-card dark:from-blue-950/20"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-blue-50/50 to-card dark:from-blue-950/20"></div>
           <CardHeader className="relative">
             <CardTitle className="flex items-center gap-3">
               <div className="rounded-lg bg-blue-100 p-2 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
@@ -151,7 +151,7 @@ export default async function AdminDashboard() {
         </Card>
 
         <Card className="shadow-sm relative overflow-hidden border">
-          <div className="absolute inset-0 bg-gradient-to-br from-green-50/50 to-card dark:from-green-950/20"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-green-50/50 to-card dark:from-green-950/20"></div>
           <CardHeader className="relative">
             <CardTitle className="flex items-center gap-3">
               <div className="rounded-lg bg-green-100 p-2 text-green-600 dark:bg-green-950/50 dark:text-green-400">
@@ -182,7 +182,7 @@ export default async function AdminDashboard() {
         </Card>
 
         <Card className="shadow-sm relative overflow-hidden border">
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-50/50 to-card dark:from-purple-950/20"></div>
+          <div className="absolute inset-0 bg-linear-to-br from-purple-50/50 to-card dark:from-purple-950/20"></div>
           <CardHeader className="relative">
             <CardTitle className="flex items-center gap-3">
               <div className="rounded-lg bg-purple-100 p-2 text-purple-600 dark:bg-purple-950/50 dark:text-purple-400">

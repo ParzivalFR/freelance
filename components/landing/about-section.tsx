@@ -44,14 +44,14 @@ export default function AboutSection() {
               viewport={{ once: true }}
               className="relative"
             >
-              <div className="relative mx-auto size-80 overflow-hidden rounded-2xl bg-gradient-to-br from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20">
+              <div className="relative mx-auto size-80 overflow-hidden rounded-2xl bg-linear-to-br from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20">
                 <Image
                   src="/photo-de-profil.jpg"
                   alt="Gael Richard - Développeur Freelance"
                   fill
                   className="object-cover"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
               </div>
             </motion.div>
 
