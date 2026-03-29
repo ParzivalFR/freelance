@@ -1,2 +1,3 @@
 ALTER TABLE "polls" ADD COLUMN "color" TEXT;
+ALTER TABLE "polls" ADD COLUMN "color_closed" TEXT;
 ALTER TABLE "polls" ADD COLUMN "use_embed" BOOLEAN NOT NULL DEFAULT TRUE;

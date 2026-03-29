@@ -163,6 +163,7 @@ model Poll {
   recurInterval String? @map("recur_interval") // daily | weekly | monthly
 
   color       String?
+  colorClosed String?   @map("color_closed")
   useEmbed    Boolean   @default(true)  @map("use_embed")
 
   // PENDING | ACTIVE | CLOSED
