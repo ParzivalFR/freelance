@@ -58,6 +58,9 @@ interface Poll {
   allowedRoleIds?: string[];
   endsAt?: string;
   startsAt?: string;
+  color?: string;
+  colorClosed?: string;
+  useEmbed: boolean;
   createdAt: string;
   _count: { votes: number };
   analytics?: PollAnalytics;
@@ -348,6 +351,9 @@ interface CreateForm {
   isRecurring: boolean;
   recurInterval: string;
   roleWeightsRaw: string; // JSON textarea
+  color: string;
+  colorClosed: string;
+  useEmbed: boolean;
 }
 
 const defaultForm: CreateForm = {
@@ -371,6 +377,9 @@ const defaultForm: CreateForm = {
   isRecurring: false,
   recurInterval: "weekly",
   roleWeightsRaw: "",
+  color: "",
+  colorClosed: "",
+  useEmbed: true,
 };
 
 function CreatePollForm({
@@ -458,6 +467,9 @@ function CreatePollForm({
           isRecurring: form.isRecurring,
           recurInterval: form.isRecurring ? form.recurInterval : null,
           roleWeights,
+          color: form.color.trim() || null,
+          colorClosed: form.colorClosed.trim() || null,
+          useEmbed: form.useEmbed,
         }),
       });
 
@@ -727,6 +739,70 @@ function CreatePollForm({
           <p className="mt-1 font-mono text-[8px] text-muted-foreground/30">
             Attribue un poids différent aux votes selon le rôle Discord. Ex: les Boosters comptent double.
           </p>
+        </div>
+
+        {/* Apparence */}
+        <div className="rounded-lg border border-dashed p-3">
+          <p className="mb-3 font-mono text-[9px] uppercase tracking-widest text-muted-foreground/40">
+            apparence
+          </p>
+
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <div>
+              <span className="font-mono text-[9px] text-foreground">embed_discord</span>
+              <p className="font-mono text-[8px] text-muted-foreground/40">affiche le sondage en embed (sinon texte brut)</p>
+            </div>
+            <Switch
+              checked={form.useEmbed}
+              onCheckedChange={(v) => set("useEmbed", v)}
+              className="scale-75"
+            />
+          </div>
+
+          {form.useEmbed && (
+            <div className="grid gap-3 sm:grid-cols-2 border-t border-dashed pt-3">
+              <div>
+                <label className="mb-1 block font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
+                  couleur_active
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={form.color ? `#${form.color}` : "#5865f2"}
+                    onChange={(e) => set("color", e.target.value.replace("#", ""))}
+                    className="h-8 w-10 cursor-pointer rounded border border-dashed bg-background p-0.5"
+                  />
+                  <input
+                    value={form.color}
+                    onChange={(e) => set("color", e.target.value.replace("#", ""))}
+                    placeholder="5865f2 (optionnel)"
+                    maxLength={6}
+                    className="flex-1 rounded-lg border border-dashed bg-background px-3 py-2 font-mono text-xs text-foreground outline-none placeholder:text-muted-foreground/30 focus:border-blue-500/50"
+                  />
+                </div>
+              </div>
+              <div>
+                <label className="mb-1 block font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
+                  couleur_fermé
+                </label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={form.colorClosed ? `#${form.colorClosed}` : "#4b5563"}
+                    onChange={(e) => set("colorClosed", e.target.value.replace("#", ""))}
+                    className="h-8 w-10 cursor-pointer rounded border border-dashed bg-background p-0.5"
+                  />
+                  <input
+                    value={form.colorClosed}
+                    onChange={(e) => set("colorClosed", e.target.value.replace("#", ""))}
+                    placeholder="4b5563 (optionnel)"
+                    maxLength={6}
+                    className="flex-1 rounded-lg border border-dashed bg-background px-3 py-2 font-mono text-xs text-foreground outline-none placeholder:text-muted-foreground/30 focus:border-blue-500/50"
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {error && (

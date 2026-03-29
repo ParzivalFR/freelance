@@ -52,6 +52,7 @@ export async function POST(request: Request) {
     isAnonymous, isBlind, allowMultiple, allowChange, maxChoices,
     allowedRoleIds, roleWeights, minVotes, autoThread,
     startsAt, endsAt, isRecurring, recurInterval,
+    color, colorClosed, useEmbed,
   } = body;
 
   if (!botId || !guildId || !channelId || !title || !options?.length) {
@@ -88,6 +89,9 @@ export async function POST(request: Request) {
       endsAt: endsAt ? new Date(endsAt) : null,
       isRecurring: isRecurring ?? false,
       recurInterval: recurInterval ?? null,
+      color: color ?? null,
+      colorClosed: colorClosed ?? null,
+      useEmbed: useEmbed ?? true,
       status: isPending ? "PENDING" : "ACTIVE",
     },
   });
