@@ -82,6 +82,7 @@ export interface ModuleConfig {
   // Survey (paramètres globaux du module)
   pollChannelId?: string;     // salon par défaut pour les sondages
   pollManagerRoleId?: string; // rôle autorisé à créer des sondages (vide = @everyone)
+  pollColor?: string;
 }
 
 export interface BotConfig {

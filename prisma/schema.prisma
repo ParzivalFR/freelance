@@ -162,6 +162,9 @@ model Poll {
   isRecurring   Boolean @default(false) @map("is_recurring")
   recurInterval String? @map("recur_interval") // daily | weekly | monthly
 
+  color       String?
+  useEmbed    Boolean   @default(true)  @map("use_embed")
+
   // PENDING | ACTIVE | CLOSED
   status String @default("ACTIVE")
 
