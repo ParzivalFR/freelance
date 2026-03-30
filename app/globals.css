@@ -80,7 +80,7 @@
   animation-name: fade-in;
   animation-duration: 1000ms;
   animation-timing-function: ease;
-  animation-fill-mode: forwards;
+  animation-fill-mode: both;
   animation-delay: var(--animation-delay, 0ms);
 }
 
@@ -88,7 +88,7 @@
   animation-name: fade-up;
   animation-duration: 1000ms;
   animation-timing-function: ease;
-  animation-fill-mode: forwards;
+  animation-fill-mode: both;
   animation-delay: var(--animation-delay, 0ms);
 }
 
