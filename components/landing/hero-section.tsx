@@ -48,7 +48,7 @@ export default function HeroSection() {
       >
         <Badge
           variant="outline"
-          className="group -translate-y-4 animate-fade-in cursor-pointer rounded-xl px-4 py-2 transition-all duration-300 [--animation-delay:0ms] hover:bg-primary/10"
+          className="group animate-fade-in cursor-pointer rounded-xl px-4 py-2 transition-all duration-300 [--animation-delay:0ms] hover:bg-primary/10"
         >
           <TextShimmer className="inline-flex items-center justify-center">
             <Sparkles className="mr-1 size-4 animate-pulse text-yellow-400" />
@@ -56,7 +56,7 @@ export default function HeroSection() {
             <ArrowRightIcon className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
           </TextShimmer>
         </Badge>
-        <h1 className="-translate-y-4 animate-fade-in text-balance bg-linear-to-br from-black from-30% to-black/40 bg-clip-text py-6 text-5xl font-medium leading-none tracking-tighter text-transparent [--animation-delay:200ms] dark:from-white dark:to-white/40 sm:text-6xl md:text-7xl lg:text-8xl">
+        <h1 className="animate-fade-in text-balance bg-linear-to-br from-black from-30% to-black/40 bg-clip-text py-6 text-5xl font-medium leading-none tracking-tighter text-transparent [--animation-delay:200ms] dark:from-white dark:to-white/40 sm:text-6xl md:text-7xl lg:text-8xl">
           <RoughNotation
             order={1}
             type="circle"
@@ -67,7 +67,7 @@ export default function HeroSection() {
           </RoughNotation>{" "}
           votre présence sur le web.
         </h1>
-        <p className="mb-12 -translate-y-4 animate-fade-in text-balance text-lg tracking-tight text-gray-400 [--animation-delay:400ms] md:text-xl">
+        <p className="mb-12 animate-fade-in text-balance text-lg tracking-tight text-gray-400 [--animation-delay:400ms] md:text-xl">
           Des solutions sur mesure pour vos projets web,
           <br className="hidden md:block" /> développées avec{" "}
           <RoughNotation type="underline" order={2} animationDelay={1000}>
@@ -84,7 +84,7 @@ export default function HeroSection() {
           .
         </p>
         <Button
-          className="-translate-y-4 animate-fade-in gap-1 text-white ring-4 ring-primary/20 duration-300 ease-in-out [--animation-delay:600ms] hover:bg-foreground/70 dark:text-black"
+          className="animate-fade-in gap-1 text-white ring-4 ring-primary/20 duration-300 ease-in-out [--animation-delay:600ms] hover:bg-foreground/70 dark:text-black"
           onClick={handleRedirect}
         >
           Lancer votre projet
@@ -93,7 +93,7 @@ export default function HeroSection() {
 
         {/* Avatars des derniers témoignages */}
         {recentTestimonials && recentTestimonials.length > 0 && (
-          <div className="mt-8 -translate-y-4 animate-fade-in [--animation-delay:700ms]">
+          <div className="mt-8 animate-fade-in [--animation-delay:700ms]">
             <div className="flex items-center justify-center gap-4">
               <div className="flex -space-x-3">
                 {recentTestimonials.slice(0, 5).map((testimonial, index) =>

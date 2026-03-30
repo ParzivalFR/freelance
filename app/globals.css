@@ -78,17 +78,17 @@
 
 @utility animate-fade-in {
   animation-name: fade-in;
-  animation-duration: 1000ms;
+  animation-duration: 800ms;
   animation-timing-function: ease;
-  animation-fill-mode: both;
+  animation-fill-mode: forwards;
   animation-delay: var(--animation-delay, 0ms);
 }
 
 @utility animate-fade-up {
   animation-name: fade-up;
-  animation-duration: 1000ms;
+  animation-duration: 800ms;
   animation-timing-function: ease;
-  animation-fill-mode: both;
+  animation-fill-mode: forwards;
   animation-delay: var(--animation-delay, 0ms);
 }
 
@@ -117,24 +117,12 @@
   100% { opacity: 0.4; }
 }
 @keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+  from { transform: translateY(-10px); }
+  to { transform: none; }
 }
 @keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+  from { transform: translateY(20px); }
+  to { transform: none; }
 }
 @keyframes shimmer {
   0%, 90%, 100% {
