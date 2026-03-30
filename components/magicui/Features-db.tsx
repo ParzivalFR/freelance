@@ -181,7 +181,7 @@ const Feature = ({
 
   if (isLoading) {
     return (
-      <section ref={ref} id="features">
+      <section ref={ref} id="features" className="overflow-x-hidden">
         <div className="py-14">
           <div className="container flex w-full flex-col items-center justify-center p-4">
             <div className="mx-auto max-w-5xl text-center">
@@ -208,7 +208,7 @@ const Feature = ({
 
   if (projects.length === 0) {
     return (
-      <section ref={ref} id="features">
+      <section ref={ref} id="features" className="overflow-x-hidden">
         <div className="py-14">
           <div className="container flex w-full flex-col items-center justify-center p-4">
             <div className="mx-auto max-w-5xl text-center">
@@ -229,7 +229,7 @@ const Feature = ({
   }
 
   return (
-    <section ref={ref} id="features">
+    <section ref={ref} id="features" className="overflow-x-hidden">
       <div className="py-14">
         <div className="container flex w-full flex-col items-center justify-center p-4">
           <div className="mx-auto max-w-5xl text-center">
@@ -244,14 +244,14 @@ const Feature = ({
           <div className="mx-auto my-12 w-full max-w-5xl">
             {/* Image en haut */}
             <div className="mb-8 flex justify-center">
-              <div className="relative w-full max-w-3xl">
+              <div className="relative w-full max-w-3xl overflow-hidden rounded-xl">
                 <AnimatePresence mode="wait">
                   {projects[currentIndex]?.image ? (
                     <motion.img
                       key={projects[currentIndex].id}
                       src={projects[currentIndex].image}
                       alt={projects[currentIndex].title}
-                      className="aspect-video w-full rounded-xl border border-neutral-300/50 object-cover"
+                      className="aspect-video w-full max-w-full rounded-xl border border-neutral-300/50 object-cover"
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
@@ -267,6 +267,7 @@ const Feature = ({
             </div>
 
             {/* Carousel Shadcn avec accordéons */}
+            <div className="relative sm:px-12">
             <Carousel
               opts={{
                 align: "start",
@@ -355,9 +356,10 @@ const Feature = ({
                   </CarouselItem>
                 ))}
               </CarouselContent>
-              <CarouselPrevious className="left-2" />
-              <CarouselNext className="right-2" />
+              <CarouselPrevious className="hidden sm:flex" />
+              <CarouselNext className="hidden sm:flex" />
             </Carousel>
+            </div>
           </div>
         </div>
       </div>

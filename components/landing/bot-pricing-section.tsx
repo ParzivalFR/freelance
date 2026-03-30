@@ -69,7 +69,7 @@ export default function BotPricingSection() {
           </p>
         </div>
 
-        <div className="mx-auto grid w-full max-w-3xl gap-6 sm:grid-cols-2">
+        <div className="mx-auto grid w-full max-w-3xl gap-6 py-4 sm:grid-cols-2">
           {botPlans.map((plan, idx) => {
             const Icon = plan.icon;
             return (
@@ -82,7 +82,7 @@ export default function BotPricingSection() {
                 className={cn(
                   "relative flex flex-col gap-6 rounded-2xl border p-6 text-black dark:text-white",
                   {
-                    "border-2 border-foreground scale-[1.03]":
+                    "border-2 border-foreground sm:scale-[1.03]":
                       plan.isMostPopular,
                   }
                 )}

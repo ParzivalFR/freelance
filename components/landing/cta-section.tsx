@@ -1,6 +1,6 @@
 "use client";
 
-import Marquee from "@/components/magicui/marquee";
+import { Marquee } from "@/components/magicui/marquee";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { ArrowRight, HeartHandshake, UserIcon } from "lucide-react";

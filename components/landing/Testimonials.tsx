@@ -1,6 +1,6 @@
 "use client";
 
-import Marquee from "@/components/magicui/marquee";
+import { Marquee } from "@/components/magicui/marquee";
 import { cn } from "@/lib/utils";
 import { ReviewCardProps } from "@/types/ReviewCardTypes";
 import { UserIcon } from "lucide-react";

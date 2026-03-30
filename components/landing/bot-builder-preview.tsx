@@ -123,7 +123,7 @@ export default function BotBuilderPreview() {
           ))}
           
           <div className="mt-4">
-            <Button size="lg" className="group rounded-xl px-8" onClick={() => window.location.href = "/dashboard/bot"}>
+            <Button size="lg" className="group w-full rounded-xl sm:w-auto" onClick={() => window.location.href = "/dashboard/bot"}>
               Configurer mon bot personnalisé
               <ArrowRightIcon className="ml-2 size-4 transition-transform group-hover:translate-x-1" />
             </Button>
