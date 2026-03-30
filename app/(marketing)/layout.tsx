@@ -11,7 +11,7 @@ export default async function MarketingLayout({
   return (
     <>
       <SiteNav />
-      <main className="mx-auto flex-1 overflow-hidden">{children}</main>
+      <main className="mx-auto flex-1 overflow-x-hidden">{children}</main>
       <SiteFooter />
     </>
   );
