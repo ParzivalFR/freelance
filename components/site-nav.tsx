@@ -66,7 +66,7 @@ const NavMobile = () => {
   const { data: session } = useSession();
 
   return (
-    <header className="fixed right-4 top-4 z-500 flex items-center justify-between space-x-2 rounded-2xl bg-primary px-1.5 py-1 md:hidden">
+    <header className="fixed right-4 top-4 z-[500] flex items-center justify-between space-x-2 rounded-2xl bg-primary px-1.5 py-1 md:hidden">
       <Avatar>
         <AvatarImage className="w-full" src="/photo-de-profil.jpg" />
         <AvatarFallback>
