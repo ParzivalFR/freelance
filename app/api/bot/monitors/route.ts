@@ -1,13 +1,13 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
-import { encrypt, maskConnectionString } from "@/lib/monitor-crypto";
+import { encrypt } from "@/lib/monitor-crypto";
 import { NextResponse } from "next/server";
 
 const DB_TYPES = ["POSTGRES", "MYSQL"];
 
-function sanitizeTarget(type: string, target: string): string {
-  if (DB_TYPES.includes(type)) return maskConnectionString(target);
-  return target;
+function sanitizeTarget(type: string): string {
+  if (DB_TYPES.includes(type)) return `[${type} — connexion chiffrée]`;
+  return "";
 }
 
 export async function GET(request: Request) {
@@ -36,7 +36,7 @@ export async function GET(request: Request) {
   // Mask DB passwords before sending to client
   const sanitized = monitors.map((m) => ({
     ...m,
-    target: sanitizeTarget(m.type, m.target),
+    target: DB_TYPES.includes(m.type) ? sanitizeTarget(m.type) : m.target,
   }));
 
   return NextResponse.json({ monitors: sanitized });
@@ -71,6 +71,6 @@ export async function POST(request: Request) {
   });
 
   return NextResponse.json({
-    monitor: { ...monitor, target: sanitizeTarget(type, target) },
+    monitor: { ...monitor, target: DB_TYPES.includes(type) ? sanitizeTarget(type) : target },
   });
 }
