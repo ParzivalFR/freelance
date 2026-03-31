@@ -1,6 +1,6 @@
 "use client";
 
-import { BarChart2, MessageSquare, Puzzle, Save, ScrollText, Shield, Star, Ticket } from "lucide-react";
+import { Activity, BarChart2, MessageSquare, Puzzle, Save, ScrollText, Shield, Star, Ticket } from "lucide-react";
 import type { LevelReward } from "@/components/dashboard/bot-types";
 import { FaDiscord } from "react-icons/fa";
 import { Switch } from "@/components/ui/switch";
@@ -29,6 +29,36 @@ export default function BotModulesPage() {
       />
 
       <div className="space-y-3">
+
+        {/* ── Monitor ── */}
+        <ModuleToggle
+          icon={<Activity className="size-3.5" />}
+          label="monitor"
+          description="Surveillance de disponibilité (HTTP / TCP / PING)"
+          enabled={config.moduleMonitor}
+          onToggle={() => update("moduleMonitor", !config.moduleMonitor)}
+        >
+          <CyberInput
+            label="salon_alerte_par_défaut"
+            value={config.config.monitorAlertChannelId ?? ""}
+            onChange={(v) => updateModuleConfig("monitorAlertChannelId", v)}
+            placeholder="ID du salon Discord pour les alertes"
+          />
+          <CyberInput
+            label="rôle_à_mentionner (optionnel)"
+            value={config.config.monitorAlertRoleId ?? ""}
+            onChange={(v) => updateModuleConfig("monitorAlertRoleId", v)}
+            placeholder="ID du rôle à mentionner lors d'un incident"
+          />
+          <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-3">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500">
+              ▶ gérer les monitors
+            </p>
+            <p className="mt-1 font-mono text-[10px] text-muted-foreground">
+              Gérez vos monitors depuis l&apos;onglet &quot;Monitor&quot; dans la sidebar.
+            </p>
+          </div>
+        </ModuleToggle>
 
         {/* ── Welcome ── */}
         <ModuleToggle

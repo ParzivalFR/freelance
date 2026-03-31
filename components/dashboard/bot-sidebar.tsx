@@ -27,10 +27,14 @@ import {
   BookOpen,
   LayoutDashboard,
   LogOut,
+  MessageSquare,
   MoreVertical,
   Puzzle,
   Rocket,
+  ScrollText,
   Shield,
+  Star,
+  Ticket,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -57,8 +61,18 @@ function buildNav(botId: string) {
     {
       label: "Monitoring",
       items: [
-        { title: "Logs système", url: `/dashboard/bot/${botId}/logs`, icon: Shield, exact: false },
         { title: "Activité", url: `/dashboard/bot/${botId}/activity`, icon: Activity, exact: false },
+      ],
+    },
+    {
+      label: "Modules",
+      items: [
+        { title: "Monitor", url: `/dashboard/bot/${botId}/monitor`, icon: Activity, exact: false },
+        { title: "Welcome", url: `/dashboard/bot/${botId}/welcome`, icon: MessageSquare, exact: false },
+        { title: "Modération", url: `/dashboard/bot/${botId}/moderation`, icon: Shield, exact: false },
+        { title: "Tickets", url: `/dashboard/bot/${botId}/tickets`, icon: Ticket, exact: false },
+        { title: "Niveaux & XP", url: `/dashboard/bot/${botId}/levels`, icon: Star, exact: false },
+        { title: "Logs", url: `/dashboard/bot/${botId}/logs`, icon: ScrollText, exact: false },
         { title: "Sondages", url: `/dashboard/bot/${botId}/polls`, icon: BarChart2, exact: false },
       ],
     },

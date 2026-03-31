@@ -83,6 +83,9 @@ export interface ModuleConfig {
   pollChannelId?: string;     // salon par défaut pour les sondages
   pollManagerRoleId?: string; // rôle autorisé à créer des sondages (vide = @everyone)
   pollColor?: string;
+  // Monitor
+  monitorAlertChannelId?: string;
+  monitorAlertRoleId?: string;
 }
 
 export interface BotConfig {
@@ -101,6 +104,7 @@ export interface BotConfig {
   moduleLevel: boolean;
   moduleLog: boolean;
   moduleSurvey: boolean;
+  moduleMonitor: boolean;
   config: ModuleConfig;
   workerCommand: string | null;
 }

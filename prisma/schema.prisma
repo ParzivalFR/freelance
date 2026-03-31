@@ -45,6 +45,7 @@ model DiscordBot {
   moduleLevel      Boolean @default(false) @map("module_level")
   moduleLog        Boolean @default(false) @map("module_log")
   moduleSurvey     Boolean @default(false) @map("module_survey")
+  moduleMonitor    Boolean @default(false) @map("module_monitor")
 
   // Paramètres spécifiques aux modules (JSON pour plus de flexibilité)
   config Json? @default("{}") // ex: { welcomeChannel: "123", ticketCategory: "456" }
@@ -65,6 +66,7 @@ model DiscordBot {
   userLevels   UserLevel[]
   levelRewards LevelReward[]
   polls        Poll[]
+  monitors     Monitor[]
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -417,6 +419,56 @@ model Facture {
 
   @@map("factures")
 }
+
+// ─── Monitor ──────────────────────────────────────────────────────────────────
+
+model Monitor {
+  id             String    @id @default(cuid())
+  botId          String    @map("bot_id")
+  name           String
+  type           String    // HTTP | TCP | PING
+  target         String    // URL, host:port, or IP/hostname
+  interval       Int       @default(5)         // minutes: 1|5|15|30|60
+  status         String    @default("PENDING") // PENDING | UP | DOWN
+  lastCheckedAt  DateTime? @map("last_checked_at")
+  responseTime   Int?      @map("response_time") // ms
+  alertChannelId String?   @map("alert_channel_id")
+  alertRoleId    String?   @map("alert_role_id")
+  active         Boolean   @default(true)
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt      @map("updated_at")
+
+  bot       DiscordBot        @relation(fields: [botId], references: [id], onDelete: Cascade)
+  checks    MonitorCheck[]
+  incidents MonitorIncident[]
+
+  @@map("monitors")
+}
+
+model MonitorCheck {
+  id           String   @id @default(cuid())
+  monitorId    String   @map("monitor_id")
+  status       String   // UP | DOWN
+  responseTime Int?     @map("response_time") // ms
+  checkedAt    DateTime @default(now()) @map("checked_at")
+
+  monitor Monitor @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+
+  @@map("monitor_checks")
+}
+
+model MonitorIncident {
+  id         String    @id @default(cuid())
+  monitorId  String    @map("monitor_id")
+  startedAt  DateTime  @default(now()) @map("started_at")
+  resolvedAt DateTime? @map("resolved_at")
+
+  monitor Monitor @relation(fields: [monitorId], references: [id], onDelete: Cascade)
+
+  @@map("monitor_incidents")
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
 
 model Settings {
   id String @id @default("default") // Un seul enregistrement de paramètres
