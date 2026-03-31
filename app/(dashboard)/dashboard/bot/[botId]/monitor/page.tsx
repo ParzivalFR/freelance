@@ -48,7 +48,7 @@ interface Monitor {
 
 interface NewMonitorForm {
   name: string;
-  type: "HTTP" | "TCP" | "PING";
+  type: "HTTP" | "TCP" | "PING" | "POSTGRES" | "MYSQL";
   target: string;
   interval: number;
   alertChannelId: string;
@@ -88,9 +88,11 @@ function formatDuration(startedAt: string, resolvedAt: string | null): string {
   return `${hours}h ${minutes % 60}min`;
 }
 
-function getTypeHint(type: "HTTP" | "TCP" | "PING"): string {
+function getTypeHint(type: "HTTP" | "TCP" | "PING" | "POSTGRES" | "MYSQL"): string {
   if (type === "HTTP") return "https://example.com";
   if (type === "TCP") return "example.com:25565";
+  if (type === "POSTGRES") return "postgresql://user:password@host:5432/db";
+  if (type === "MYSQL") return "mysql://user:password@host:3306/db";
   return "192.168.1.1 ou example.com";
 }
 
@@ -132,6 +134,8 @@ export default function MonitorPage() {
     alertRoleId: "",
   });
 
+  const isDbType = form.type === "POSTGRES" || form.type === "MYSQL";
+
   const fetchMonitors = useCallback(async () => {
     if (!botId) return;
     try {
@@ -160,14 +164,7 @@ export default function MonitorPage() {
         body: JSON.stringify({ botId, ...form }),
       });
       if (res.ok) {
-        setForm({
-          name: "",
-          type: "HTTP",
-          target: "",
-          interval: 5,
-          alertChannelId: "",
-          alertRoleId: "",
-        });
+        setForm({ name: "", type: "HTTP", target: "", interval: 5, alertChannelId: "", alertRoleId: "" });
         setShowForm(false);
         await fetchMonitors();
       }
@@ -482,12 +479,12 @@ export default function MonitorPage() {
               <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
                 type
               </p>
-              <div className="flex gap-2">
-                {(["HTTP", "TCP", "PING"] as const).map((t) => (
+              <div className="flex flex-wrap gap-2">
+                {(["HTTP", "TCP", "PING", "POSTGRES", "MYSQL"] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
-                    onClick={() => setForm((f) => ({ ...f, type: t }))}
+                    onClick={() => setForm((f) => ({ ...f, type: t, target: "" }))}
                     className={`rounded-lg border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition ${
                       form.type === t
                         ? "border-blue-500/40 bg-blue-500/10 text-blue-400"
@@ -503,12 +500,13 @@ export default function MonitorPage() {
             {/* Target */}
             <div className="space-y-1">
               <label className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
-                cible
+                {isDbType ? "chaîne de connexion" : "cible"}
               </label>
               <input
                 value={form.target}
                 onChange={(e) => setForm((f) => ({ ...f, target: e.target.value }))}
                 placeholder={getTypeHint(form.type)}
+                type={isDbType ? "password" : "text"}
                 required
                 className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
               />
@@ -516,6 +514,8 @@ export default function MonitorPage() {
                 {form.type === "HTTP" && "URL complète avec protocole (https://)"}
                 {form.type === "TCP" && "Format : hôte:port — ex: play.example.com:25565"}
                 {form.type === "PING" && "Adresse IP ou nom de domaine"}
+                {form.type === "POSTGRES" && "Chiffrée AES-256 avant stockage — ex: postgresql://user:pass@host:5432/db"}
+                {form.type === "MYSQL" && "Chiffrée AES-256 avant stockage — ex: mysql://user:pass@host:3306/db"}
               </p>
             </div>
 

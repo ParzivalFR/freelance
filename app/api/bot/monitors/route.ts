@@ -1,6 +1,14 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { encrypt, maskConnectionString } from "@/lib/monitor-crypto";
 import { NextResponse } from "next/server";
+
+const DB_TYPES = ["POSTGRES", "MYSQL"];
+
+function sanitizeTarget(type: string, target: string): string {
+  if (DB_TYPES.includes(type)) return maskConnectionString(target);
+  return target;
+}
 
 export async function GET(request: Request) {
   const session = await auth();
@@ -25,7 +33,13 @@ export async function GET(request: Request) {
     },
   });
 
-  return NextResponse.json({ monitors });
+  // Mask DB passwords before sending to client
+  const sanitized = monitors.map((m) => ({
+    ...m,
+    target: sanitizeTarget(m.type, m.target),
+  }));
+
+  return NextResponse.json({ monitors: sanitized });
 }
 
 export async function POST(request: Request) {
@@ -41,17 +55,22 @@ export async function POST(request: Request) {
   });
   if (!bot) return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
 
+  // Encrypt connection strings for DB types
+  const storedTarget = DB_TYPES.includes(type) ? encrypt(target) : target;
+
   const monitor = await prisma.monitor.create({
     data: {
       botId: bot.id,
       name,
       type,
-      target,
+      target: storedTarget,
       interval: interval ?? 5,
       alertChannelId: alertChannelId || null,
       alertRoleId: alertRoleId || null,
     },
   });
 
-  return NextResponse.json({ monitor });
+  return NextResponse.json({
+    monitor: { ...monitor, target: sanitizeTarget(type, target) },
+  });
 }
