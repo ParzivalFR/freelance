@@ -30,9 +30,14 @@ export default auth((req) => {
     }
   }
 
+  // /signin — redirige vers le dashboard si déjà connecté
+  if (pathname.startsWith("/signin") && isLoggedIn) {
+    return NextResponse.redirect(new URL("/dashboard/bot", req.url));
+  }
+
   return NextResponse.next();
 });
 
 export const config = {
-  matcher: ["/admin/:path*", "/dashboard/:path*"],
+  matcher: ["/admin/:path*", "/dashboard/:path*", "/signin"],
 };
