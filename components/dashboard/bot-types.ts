@@ -86,6 +86,13 @@ export interface ModuleConfig {
   // Monitor
   monitorAlertChannelId?: string;
   monitorAlertRoleId?: string;
+  // Monitor — Status Board
+  statusBoardEnabled?: boolean;
+  statusBoardChannelId?: string;
+  statusBoardMessageId?: string;
+  statusBoardTitle?: string;
+  statusBoardUseEmbed?: boolean;
+  statusBoardShowResponseTime?: boolean;
 }
 
 export interface BotConfig {

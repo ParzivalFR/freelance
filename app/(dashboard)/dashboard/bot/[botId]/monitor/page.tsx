@@ -13,6 +13,8 @@ import {
   PowerOff,
   Pencil,
   Check,
+  Tv2,
+  Save,
 } from "lucide-react";
 import { PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 
@@ -129,6 +131,42 @@ function defaultPort(type: string): string {
   return type === "POSTGRES" ? "5432" : "3306";
 }
 
+// ─── UptimeBar component ──────────────────────────────────────────────────────
+
+function UptimeBar({ check }: { check: MonitorCheck }) {
+  const color = getStatusColor(check.status);
+  const date = new Date(check.checkedAt).toLocaleString("fr-FR", {
+    day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit",
+  });
+  const isUp = check.status === "UP";
+  const statusColor = isUp ? "text-green-500" : check.status === "DOWN" ? "text-red-500" : "text-muted-foreground";
+
+  return (
+    <div className="group relative flex-shrink-0 cursor-pointer">
+      {/* Bar */}
+      <div
+        className={`h-6 w-1.5 rounded-sm ${color} opacity-70 transition-all duration-150 group-hover:opacity-100 group-hover:scale-y-110 group-hover:w-2 origin-bottom`}
+      />
+      {/* Tooltip */}
+      <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2.5 -translate-x-1/2 flex-col items-center hidden group-hover:flex animate-in fade-in zoom-in-95 duration-100">
+        <div className="rounded-lg border border-dashed bg-card px-3 py-2 shadow-xl whitespace-nowrap space-y-0.5">
+          <p className={`font-mono text-[10px] font-bold ${statusColor}`}>
+            {check.status}
+          </p>
+          <p className="font-mono text-[9px] text-muted-foreground">{date}</p>
+          {check.responseTime !== null && (
+            <p className={`font-mono text-[9px] font-medium ${check.responseTime < 200 ? "text-green-500" : check.responseTime < 500 ? "text-yellow-500" : "text-red-500"}`}>
+              {check.responseTime}ms
+            </p>
+          )}
+        </div>
+        {/* Arrow */}
+        <div className="w-2 h-2 rotate-45 border-b border-r border-dashed bg-card -mt-1" />
+      </div>
+    </div>
+  );
+}
+
 // ─── StatusDot component ──────────────────────────────────────────────────────
 
 function StatusDot({ status }: { status: string }) {
@@ -165,6 +203,17 @@ export default function MonitorPage() {
   const [editForm, setEditForm] = useState<{ name: string; interval: number; alertChannelId: string; alertRoleId: string; target: string; dbFields: DbFields; ssh: SshFields; dbInputMode: "fields" | "string" } | null>(null);
   const [editSubmitting, setEditSubmitting] = useState(false);
 
+  const [boardForm, setBoardForm] = useState({
+    enabled: false,
+    channelId: "",
+    title: "",
+    useEmbed: true,
+    showResponseTime: true,
+  });
+  const [boardLoaded, setBoardLoaded] = useState(false);
+  const [savingBoard, setSavingBoard] = useState(false);
+  const [boardOpen, setBoardOpen] = useState(false);
+
   const [form, setForm] = useState<NewMonitorForm>({
     name: "",
     type: "HTTP",
@@ -194,6 +243,52 @@ export default function MonitorPage() {
     const interval = setInterval(fetchMonitors, 30_000);
     return () => clearInterval(interval);
   }, [fetchMonitors]);
+
+  useEffect(() => {
+    if (!botId || boardLoaded) return;
+    fetch(`/api/bot/config?botId=${botId}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.config) {
+          const c = data.config;
+          setBoardForm({
+            enabled: c.statusBoardEnabled ?? false,
+            channelId: c.statusBoardChannelId ?? "",
+            title: c.statusBoardTitle ?? "",
+            useEmbed: c.statusBoardUseEmbed !== false,
+            showResponseTime: c.statusBoardShowResponseTime !== false,
+          });
+        }
+        setBoardLoaded(true);
+      })
+      .catch(() => setBoardLoaded(true));
+  }, [botId, boardLoaded]);
+
+  async function saveBoard() {
+    setSavingBoard(true);
+    try {
+      const res = await fetch("/api/bot/config?botId=" + botId, { method: "GET" });
+      const data = await res.json();
+      const existingConfig = data?.config ?? {};
+      await fetch("/api/bot/config", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          id: botId,
+          config: {
+            ...existingConfig,
+            statusBoardEnabled: boardForm.enabled,
+            statusBoardChannelId: boardForm.channelId,
+            statusBoardTitle: boardForm.title,
+            statusBoardUseEmbed: boardForm.useEmbed,
+            statusBoardShowResponseTime: boardForm.showResponseTime,
+          },
+        }),
+      });
+    } finally {
+      setSavingBoard(false);
+    }
+  }
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
@@ -361,6 +456,105 @@ export default function MonitorPage() {
         </div>
       )}
 
+      {/* Status Board config */}
+      <div className="rounded-lg border border-dashed">
+        <button
+          onClick={() => setBoardOpen((o) => !o)}
+          className="flex w-full items-center justify-between px-4 py-3 text-left"
+        >
+          <div className="flex items-center gap-2">
+            <Tv2 className="size-3.5 text-muted-foreground/60" />
+            <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+              status board discord
+            </span>
+            {boardForm.enabled && (
+              <span className="rounded border border-green-500/30 bg-green-500/10 px-1.5 py-0.5 font-mono text-[8px] text-green-500">
+                actif
+              </span>
+            )}
+          </div>
+          {boardOpen ? (
+            <ChevronUp className="size-3.5 text-muted-foreground/40" />
+          ) : (
+            <ChevronDown className="size-3.5 text-muted-foreground/40" />
+          )}
+        </button>
+
+        {boardOpen && (
+          <div className="border-t border-dashed px-4 py-4 space-y-4">
+            <p className="font-mono text-[9px] text-muted-foreground/50">
+              Un message épinglé dans un salon Discord, mis à jour automatiquement à chaque changement de statut.
+            </p>
+
+            {/* Toggle enabled */}
+            <div className="flex items-center justify-between">
+              <span className="font-mono text-[10px] text-muted-foreground">Activer le status board</span>
+              <button
+                type="button"
+                onClick={() => setBoardForm((f) => ({ ...f, enabled: !f.enabled }))}
+                className={`relative h-5 w-9 rounded-full transition-colors ${boardForm.enabled ? "bg-green-500/80" : "bg-muted-foreground/20"}`}
+              >
+                <span className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow transition-transform ${boardForm.enabled ? "left-4" : "left-0.5"}`} />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {/* Channel */}
+              <div className="space-y-1">
+                <label className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
+                  salon Discord (ID)
+                </label>
+                <input
+                  value={boardForm.channelId}
+                  onChange={(e) => setBoardForm((f) => ({ ...f, channelId: e.target.value }))}
+                  placeholder="123456789012345678"
+                  className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                />
+              </div>
+              {/* Title */}
+              <div className="space-y-1">
+                <label className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
+                  titre
+                </label>
+                <input
+                  value={boardForm.title}
+                  onChange={(e) => setBoardForm((f) => ({ ...f, title: e.target.value }))}
+                  placeholder="📡 Status Board"
+                  className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                />
+              </div>
+            </div>
+
+            {/* Options */}
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setBoardForm((f) => ({ ...f, useEmbed: !f.useEmbed }))}
+                className={`rounded border px-3 py-1.5 font-mono text-[9px] uppercase tracking-widest transition ${boardForm.useEmbed ? "border-blue-500/40 bg-blue-500/10 text-blue-400" : "border-dashed text-muted-foreground hover:text-foreground"}`}
+              >
+                {boardForm.useEmbed ? "embed ✓" : "texte brut"}
+              </button>
+              <button
+                type="button"
+                onClick={() => setBoardForm((f) => ({ ...f, showResponseTime: !f.showResponseTime }))}
+                className={`rounded border px-3 py-1.5 font-mono text-[9px] uppercase tracking-widest transition ${boardForm.showResponseTime ? "border-blue-500/40 bg-blue-500/10 text-blue-400" : "border-dashed text-muted-foreground hover:text-foreground"}`}
+              >
+                {boardForm.showResponseTime ? "temps rép. ✓" : "temps rép. ✗"}
+              </button>
+            </div>
+
+            <button
+              onClick={saveBoard}
+              disabled={savingBoard}
+              className="flex items-center gap-1.5 rounded border border-dashed px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-blue-400 transition hover:border-blue-500/40 hover:bg-blue-500/10 disabled:opacity-40"
+            >
+              <Save className="size-3" />
+              {savingBoard ? "sauvegarde..." : "sauvegarder"}
+            </button>
+          </div>
+        )}
+      </div>
+
       {/* Monitor cards */}
       <div className="space-y-3">
         {monitors.length === 0 && !showForm && (
@@ -470,25 +664,16 @@ export default function MonitorPage() {
 
               {/* Uptime grid — last 30 checks */}
               {monitor.checks.length > 0 && (
-                <div className="flex items-center gap-0.5 border-t border-dashed px-3 py-2">
-                  <span className="mr-2 font-mono text-[8px] text-muted-foreground/40">
-                    30 derniers checks
+                <div className="flex items-end gap-0.5 border-t border-dashed px-3 py-2">
+                  <span className="mr-2 font-mono text-[8px] text-muted-foreground/40 self-center">
+                    30 derniers
                   </span>
                   {last30.map((check, i) => (
-                    <div
-                      key={`${check.id}-${i}`}
-                      title={`${check.status} — ${new Date(check.checkedAt).toLocaleString("fr-FR")}${
-                        check.responseTime !== null ? ` — ${check.responseTime}ms` : ""
-                      }`}
-                      className={`h-4 w-1.5 rounded-sm ${getStatusColor(check.status)} opacity-80`}
-                    />
+                    <UptimeBar key={`${check.id}-${i}`} check={check} />
                   ))}
                   {last30.length < 30 &&
                     Array.from({ length: 30 - last30.length }).map((_, i) => (
-                      <div
-                        key={`empty-${i}`}
-                        className="h-4 w-1.5 rounded-sm bg-muted-foreground/10"
-                      />
+                      <div key={`empty-${i}`} className="h-6 w-1.5 flex-shrink-0 rounded-sm bg-muted-foreground/10" />
                     ))}
                 </div>
               )}
