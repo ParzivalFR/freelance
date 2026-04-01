@@ -93,7 +93,20 @@ export async function POST(
     }
   }
 
-  // Mark refund as approved first (before deleting the bot, which would cascade-delete the request)
+  // Stop the bot on VPS + clear plan — keep the bot in DB so the client can reconfigure later
+  await prisma.discordBot.update({
+    where: { id: bot.id },
+    data: {
+      plan: null,
+      paidAt: null,
+      planEndsAt: null,
+      stripeSubscriptionId: null,
+      stripeSessionId: null,
+      status: "OFFLINE",
+      workerCommand: bot.plan === "MANAGED" ? "STOP" : null,
+    },
+  });
+
   await prisma.refundRequest.update({
     where: { id },
     data: {
@@ -103,28 +116,6 @@ export async function POST(
       processedAt: new Date(),
     },
   });
-
-  if (bot.plan === "MANAGED") {
-    // Signal the worker to stop the process, then delete the bot entirely (cascade)
-    await prisma.discordBot.update({
-      where: { id: bot.id },
-      data: { workerCommand: "STOP" },
-    });
-    // Short delay so the worker has a chance to pick up the STOP command
-    await new Promise((r) => setTimeout(r, 3000));
-    await prisma.discordBot.delete({ where: { id: bot.id } });
-  } else {
-    // RAR: no VPS process — just clear the plan
-    await prisma.discordBot.update({
-      where: { id: bot.id },
-      data: {
-        plan: null,
-        paidAt: null,
-        planEndsAt: null,
-        stripeSessionId: null,
-      },
-    });
-  }
 
   return NextResponse.json({ ok: true, stripeRefundId, stripeSkipped: skipStripe });
 }
