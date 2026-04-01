@@ -51,14 +51,11 @@ export async function POST(
       const subscription = await stripe.subscriptions.retrieve(bot.stripeSubscriptionId, {
         expand: ["latest_invoice.payment_intent"],
       });
-      const invoice = subscription.latest_invoice as Stripe.Invoice | null;
-      if (invoice && typeof invoice !== "string") {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const invoice = subscription.latest_invoice as any;
+      if (invoice && typeof invoice === "object") {
         const pi = invoice.payment_intent;
-        if (pi && typeof pi !== "string") {
-          paymentIntentId = pi.id;
-        } else if (typeof pi === "string") {
-          paymentIntentId = pi;
-        }
+        paymentIntentId = typeof pi === "string" ? pi : (pi?.id ?? null);
       }
     } else if (bot.stripeSessionId) {
       // RAR plan: refund checkout session payment
