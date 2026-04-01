@@ -4,29 +4,10 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { FaDiscord } from "react-icons/fa";
-import { AlertTriangle, Terminal } from "lucide-react";
+import { CreditCard, ExternalLink, Terminal } from "lucide-react";
 import { StatCard, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import type { BotConfig } from "@/components/dashboard/bot-types";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
-
-interface RefundRequest {
-  id: string;
-  status: string;
-  reason: string;
-  createdAt: string;
-  processedAt: string | null;
-  adminNote: string | null;
-}
 
 export default function BotOverviewPage() {
   const params = useParams();
@@ -34,10 +15,7 @@ export default function BotOverviewPage() {
   const { toast } = useToast();
 
   const [config, setConfig] = useState<BotConfig | null>(null);
-  const [refundRequest, setRefundRequest] = useState<RefundRequest | null | undefined>(undefined);
-  const [refundOpen, setRefundOpen] = useState(false);
-  const [refundReason, setRefundReason] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [portalLoading, setPortalLoading] = useState(false);
   const [logs, setLogs] = useState<string[]>([
     "> SYSTEM_BOOT..................OK",
     "> LOADING_ENGINE..............OK",
@@ -56,11 +34,6 @@ export default function BotOverviewPage() {
         setConfig({ ...data, config: data.config ?? {} });
         addLog(`BOT_LOADED: ${data.name}`);
       });
-
-    fetch(`/api/bot/${botId}/refund-request`)
-      .then((r) => r.json())
-      .then((data) => setRefundRequest(data))
-      .catch(() => setRefundRequest(null));
 
     const params = new URLSearchParams(window.location.search);
     if (params.get("success")) {
@@ -91,26 +64,18 @@ export default function BotOverviewPage() {
     return () => clearInterval(interval);
   }, [botId]);
 
-  const submitRefund = async () => {
-    if (refundReason.trim().length < 10) return;
-    setSubmitting(true);
+  const openCustomerPortal = async () => {
+    setPortalLoading(true);
     try {
-      const res = await fetch(`/api/bot/${botId}/refund-request`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ reason: refundReason }),
-      });
+      const res = await fetch(`/api/bot/${botId}/customer-portal`, { method: "POST" });
       const data = await res.json();
       if (!res.ok) {
         toast({ title: "Erreur", description: data.error, variant: "destructive" });
         return;
       }
-      setRefundRequest(data);
-      setRefundOpen(false);
-      setRefundReason("");
-      toast({ title: "Demande envoyée", description: "Nous traitons ta demande de remboursement." });
+      window.location.href = data.url;
     } finally {
-      setSubmitting(false);
+      setPortalLoading(false);
     }
   };
 
@@ -163,7 +128,7 @@ export default function BotOverviewPage() {
         />
       </div>
 
-      {/* Plan badge */}
+      {/* Plan badge + customer portal */}
       <div className="flex items-center gap-3 rounded-xl border border-dashed bg-card px-4 py-3">
         <div className="flex-1">
           <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">plan_actif</p>
@@ -184,39 +149,18 @@ export default function BotOverviewPage() {
         >
           {config.plan ?? "FREE"}
         </div>
+        {config.plan && (
+          <button
+            onClick={openCustomerPortal}
+            disabled={portalLoading}
+            className="flex shrink-0 items-center gap-1.5 rounded-lg border border-dashed border-blue-500/30 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-blue-400 transition hover:bg-blue-500/10 disabled:opacity-50"
+          >
+            <CreditCard className="size-3" />
+            {portalLoading ? "Chargement…" : "Gérer mon abonnement"}
+            <ExternalLink className="size-3" />
+          </button>
+        )}
       </div>
-
-      {/* Refund section — only shown if bot has a paid plan */}
-      {config.plan && refundRequest !== undefined && (
-        <div className="rounded-xl border border-dashed bg-card px-4 py-3">
-          <div className="flex items-center justify-between gap-3">
-            <div>
-              <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">rétractation</p>
-              {refundRequest === null ? (
-                <p className="mt-1 font-mono text-xs text-muted-foreground/60">
-                  Insatisfait ? Tu peux demander un remboursement.
-                </p>
-              ) : refundRequest.status === "PENDING" ? (
-                <p className="mt-1 font-mono text-xs text-yellow-500">Demande en cours d'examen…</p>
-              ) : refundRequest.status === "APPROVED" ? (
-                <p className="mt-1 font-mono text-xs text-green-500">Remboursement approuvé ✓</p>
-              ) : (
-                <p className="mt-1 font-mono text-xs text-red-400">
-                  Demande refusée{refundRequest.adminNote ? ` — ${refundRequest.adminNote}` : ""}
-                </p>
-              )}
-            </div>
-            {refundRequest === null && (
-              <button
-                onClick={() => setRefundOpen(true)}
-                className="shrink-0 rounded-lg border border-dashed border-red-500/30 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-red-400 transition hover:bg-red-500/10"
-              >
-                Demander un remboursement
-              </button>
-            )}
-          </div>
-        </div>
-      )}
 
       {/* Terminal logs */}
       <div className="rounded-xl border border-dashed bg-card">
@@ -253,40 +197,6 @@ export default function BotOverviewPage() {
       <p className="pb-2 text-center font-mono text-[9px] uppercase tracking-widest text-muted-foreground/30">
         bot-engine v1.0.0 — moteur propriétaire — connexion chiffrée
       </p>
-
-      <Dialog open={refundOpen} onOpenChange={setRefundOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <AlertTriangle className="size-4 text-red-400" />
-              Demande de remboursement
-            </DialogTitle>
-            <DialogDescription>
-              Explique pourquoi tu souhaites te rétracter. Ta demande sera examinée manuellement.
-              Le bot sera désactivé et ton paiement remboursé si la demande est approuvée.
-            </DialogDescription>
-          </DialogHeader>
-          <Textarea
-            placeholder="Raison de la demande de remboursement (min. 10 caractères)…"
-            value={refundReason}
-            onChange={(e) => setRefundReason(e.target.value)}
-            rows={4}
-            className="font-mono text-sm"
-          />
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setRefundOpen(false)} disabled={submitting}>
-              Annuler
-            </Button>
-            <Button
-              variant="destructive"
-              onClick={submitRefund}
-              disabled={submitting || refundReason.trim().length < 10}
-            >
-              {submitting ? "Envoi…" : "Envoyer la demande"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }
