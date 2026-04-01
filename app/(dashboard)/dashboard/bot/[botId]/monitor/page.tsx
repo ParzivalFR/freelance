@@ -225,6 +225,9 @@ export default function MonitorPage() {
     title: "",
     useEmbed: true,
     showResponseTime: true,
+    emojiUp: "",
+    emojiDown: "",
+    emojiPending: "",
   });
   const [boardLoaded, setBoardLoaded] = useState(false);
   const [savingBoard, setSavingBoard] = useState(false);
@@ -273,6 +276,9 @@ export default function MonitorPage() {
             title: c.statusBoardTitle ?? "",
             useEmbed: c.statusBoardUseEmbed !== false,
             showResponseTime: c.statusBoardShowResponseTime !== false,
+            emojiUp: c.statusBoardEmojiUp ?? "",
+            emojiDown: c.statusBoardEmojiDown ?? "",
+            emojiPending: c.statusBoardEmojiPending ?? "",
           });
         }
         setBoardLoaded(true);
@@ -298,6 +304,9 @@ export default function MonitorPage() {
             statusBoardTitle: boardForm.title,
             statusBoardUseEmbed: boardForm.useEmbed,
             statusBoardShowResponseTime: boardForm.showResponseTime,
+            ...(boardForm.emojiUp && { statusBoardEmojiUp: boardForm.emojiUp }),
+            ...(boardForm.emojiDown && { statusBoardEmojiDown: boardForm.emojiDown }),
+            ...(boardForm.emojiPending && { statusBoardEmojiPending: boardForm.emojiPending }),
           },
         }),
       });
@@ -538,6 +547,30 @@ export default function MonitorPage() {
                   placeholder="📡 Status Board"
                   className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
                 />
+              </div>
+            </div>
+
+            {/* Emojis personnalisés */}
+            <div className="space-y-1">
+              <label className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
+                emojis personnalisés <span className="normal-case">(format <code>&lt;a:nom:id&gt;</code> — vide = 🟢 🔴 🟡)</span>
+              </label>
+              <div className="grid grid-cols-3 gap-2">
+                {([
+                  { key: "emojiUp", label: "en ligne" },
+                  { key: "emojiDown", label: "hors ligne" },
+                  { key: "emojiPending", label: "en attente" },
+                ] as const).map(({ key, label }) => (
+                  <div key={key} className="space-y-1">
+                    <label className="font-mono text-[8px] text-muted-foreground/40">{label}</label>
+                    <input
+                      value={boardForm[key]}
+                      onChange={(e) => setBoardForm((f) => ({ ...f, [key]: e.target.value }))}
+                      placeholder="<a:nom:id>"
+                      className="w-full rounded border border-dashed bg-background px-2 py-1.5 font-mono text-[10px] text-foreground outline-none focus:border-blue-500/50"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
 

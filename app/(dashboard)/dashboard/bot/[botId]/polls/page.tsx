@@ -384,14 +384,22 @@ const defaultForm: CreateForm = {
 
 function CreatePollForm({
   botId,
+  defaultGuildId,
+  defaultChannelId,
   onCreated,
   onCancel,
 }: {
   botId: string;
+  defaultGuildId: string;
+  defaultChannelId: string;
   onCreated: () => void;
   onCancel: () => void;
 }) {
-  const [form, setForm] = useState<CreateForm>(defaultForm);
+  const [form, setForm] = useState<CreateForm>({
+    ...defaultForm,
+    guildId: defaultGuildId,
+    channelId: defaultChannelId,
+  });
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
 
@@ -843,7 +851,22 @@ export default function BotPollsPage() {
   const [page, setPage] = useState(1);
   const [showCreate, setShowCreate] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [defaultGuildId, setDefaultGuildId] = useState("");
+  const [defaultChannelId, setDefaultChannelId] = useState("");
   const limit = 15;
+
+  useEffect(() => {
+    if (!botId) return;
+    fetch(`/api/bot/config?botId=${botId}`)
+      .then((r) => r.json())
+      .then((data) => {
+        if (data?.config) {
+          setDefaultGuildId(data.config.guildId ?? "");
+          setDefaultChannelId(data.config.pollChannelId ?? "");
+        }
+      })
+      .catch(() => {});
+  }, [botId]);
 
   const load = useCallback(() => {
     if (!botId) return;
@@ -932,6 +955,8 @@ export default function BotPollsPage() {
       ) : (
         <CreatePollForm
           botId={botId}
+          defaultGuildId={defaultGuildId}
+          defaultChannelId={defaultChannelId}
           onCreated={() => { setShowCreate(false); setPage(1); load(); }}
           onCancel={() => setShowCreate(false)}
         />

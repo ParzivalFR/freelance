@@ -93,6 +93,11 @@ export interface ModuleConfig {
   statusBoardTitle?: string;
   statusBoardUseEmbed?: boolean;
   statusBoardShowResponseTime?: boolean;
+  statusBoardEmojiUp?: string;
+  statusBoardEmojiDown?: string;
+  statusBoardEmojiPending?: string;
+  // Général
+  guildId?: string;
 }
 
 export interface BotConfig {
