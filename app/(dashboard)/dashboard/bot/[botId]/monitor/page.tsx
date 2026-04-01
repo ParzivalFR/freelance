@@ -145,6 +145,7 @@ export default function MonitorPage() {
   const [showForm, setShowForm] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [dbInputMode, setDbInputMode] = useState<"fields" | "string">("fields");
 
   const [form, setForm] = useState<NewMonitorForm>({
     name: "",
@@ -178,10 +179,12 @@ export default function MonitorPage() {
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
     const target = isDbType
-      ? buildConnectionString(form.type, form.dbFields)
+      ? dbInputMode === "fields"
+        ? buildConnectionString(form.type, form.dbFields)
+        : form.target
       : form.target;
     if (!form.name.trim() || !target.trim()) return;
-    if (isDbType && (!form.dbFields.host || !form.dbFields.user || !form.dbFields.dbName)) return;
+    if (isDbType && dbInputMode === "fields" && (!form.dbFields.host || !form.dbFields.user || !form.dbFields.dbName)) return;
     setSubmitting(true);
     try {
       const res = await fetch("/api/bot/monitors", {
@@ -526,60 +529,93 @@ export default function MonitorPage() {
             {/* Target — plain field for HTTP/TCP/PING, structured fields for DB types */}
             {isDbType ? (
               <div className="space-y-2">
-                <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
-                  connexion — chiffrée AES-256 avant stockage
-                </p>
-                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-                  <div className="space-y-1">
-                    <label className="font-mono text-[9px] text-muted-foreground/60">hôte</label>
-                    <input
-                      value={form.dbFields.host}
-                      onChange={(e) => setForm((f) => ({ ...f, dbFields: { ...f.dbFields, host: e.target.value } }))}
-                      placeholder="db.example.com"
-                      required
-                      className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
-                    />
+                <div className="flex items-center justify-between">
+                  <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+                    connexion — chiffrée AES-256 avant stockage
+                  </p>
+                  <div className="flex rounded border border-dashed overflow-hidden">
+                    {(["fields", "string"] as const).map((mode) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        onClick={() => setDbInputMode(mode)}
+                        className={`px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition ${
+                          dbInputMode === mode
+                            ? "bg-blue-500/10 text-blue-400"
+                            : "text-muted-foreground hover:text-foreground"
+                        }`}
+                      >
+                        {mode === "fields" ? "champs" : "string"}
+                      </button>
+                    ))}
                   </div>
+                </div>
+                {dbInputMode === "fields" ? (
+                  <>
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                      <div className="space-y-1">
+                        <label className="font-mono text-[9px] text-muted-foreground/60">hôte</label>
+                        <input
+                          value={form.dbFields.host}
+                          onChange={(e) => setForm((f) => ({ ...f, dbFields: { ...f.dbFields, host: e.target.value } }))}
+                          placeholder="db.example.com"
+                          required
+                          className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="font-mono text-[9px] text-muted-foreground/60">port</label>
+                        <input
+                          value={form.dbFields.port}
+                          onChange={(e) => setForm((f) => ({ ...f, dbFields: { ...f.dbFields, port: e.target.value } }))}
+                          placeholder={defaultPort(form.type)}
+                          className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="font-mono text-[9px] text-muted-foreground/60">utilisateur</label>
+                        <input
+                          value={form.dbFields.user}
+                          onChange={(e) => setForm((f) => ({ ...f, dbFields: { ...f.dbFields, user: e.target.value } }))}
+                          placeholder="postgres"
+                          required
+                          className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="font-mono text-[9px] text-muted-foreground/60">mot de passe</label>
+                        <input
+                          value={form.dbFields.password}
+                          onChange={(e) => setForm((f) => ({ ...f, dbFields: { ...f.dbFields, password: e.target.value } }))}
+                          type="password"
+                          placeholder="••••••••"
+                          className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="font-mono text-[9px] text-muted-foreground/60">base de données</label>
+                      <input
+                        value={form.dbFields.dbName}
+                        onChange={(e) => setForm((f) => ({ ...f, dbFields: { ...f.dbFields, dbName: e.target.value } }))}
+                        placeholder="mydb"
+                        required
+                        className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                      />
+                    </div>
+                  </>
+                ) : (
                   <div className="space-y-1">
-                    <label className="font-mono text-[9px] text-muted-foreground/60">port</label>
                     <input
-                      value={form.dbFields.port}
-                      onChange={(e) => setForm((f) => ({ ...f, dbFields: { ...f.dbFields, port: e.target.value } }))}
-                      placeholder={defaultPort(form.type)}
-                      className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="font-mono text-[9px] text-muted-foreground/60">utilisateur</label>
-                    <input
-                      value={form.dbFields.user}
-                      onChange={(e) => setForm((f) => ({ ...f, dbFields: { ...f.dbFields, user: e.target.value } }))}
-                      placeholder="postgres"
-                      required
-                      className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
-                    />
-                  </div>
-                  <div className="space-y-1">
-                    <label className="font-mono text-[9px] text-muted-foreground/60">mot de passe</label>
-                    <input
-                      value={form.dbFields.password}
-                      onChange={(e) => setForm((f) => ({ ...f, dbFields: { ...f.dbFields, password: e.target.value } }))}
+                      value={form.target}
+                      onChange={(e) => setForm((f) => ({ ...f, target: e.target.value }))}
+                      placeholder={form.type === "POSTGRES" ? "postgresql://user:pass@host:5432/db" : "mysql://user:pass@host:3306/db"}
                       type="password"
-                      placeholder="••••••••"
+                      required
                       className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
                     />
                   </div>
-                </div>
-                <div className="space-y-1">
-                  <label className="font-mono text-[9px] text-muted-foreground/60">base de données</label>
-                  <input
-                    value={form.dbFields.dbName}
-                    onChange={(e) => setForm((f) => ({ ...f, dbFields: { ...f.dbFields, dbName: e.target.value } }))}
-                    placeholder="mydb"
-                    required
-                    className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
-                  />
-                </div>
+                )}
               </div>
             ) : (
               <div className="space-y-1">
