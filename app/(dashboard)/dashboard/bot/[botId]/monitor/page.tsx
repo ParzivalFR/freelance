@@ -48,7 +48,7 @@ interface Monitor {
 
 interface NewMonitorForm {
   name: string;
-  type: "HTTP" | "TCP" | "PING" | "POSTGRES" | "MYSQL";
+  type: "HTTP" | "TCP" | "PING" | "POSTGRES" | "MYSQL" | "MARIADB";
   target: string;
   interval: number;
   alertChannelId: string;
@@ -88,11 +88,12 @@ function formatDuration(startedAt: string, resolvedAt: string | null): string {
   return `${hours}h ${minutes % 60}min`;
 }
 
-function getTypeHint(type: "HTTP" | "TCP" | "PING" | "POSTGRES" | "MYSQL"): string {
+function getTypeHint(type: "HTTP" | "TCP" | "PING" | "POSTGRES" | "MYSQL" | "MARIADB"): string {
   if (type === "HTTP") return "https://example.com";
   if (type === "TCP") return "example.com:25565";
   if (type === "POSTGRES") return "postgresql://user:password@host:5432/db";
   if (type === "MYSQL") return "mysql://user:password@host:3306/db";
+  if (type === "MARIADB") return "mysql://user:password@host:3306/db";
   return "192.168.1.1 ou example.com";
 }
 
@@ -134,7 +135,7 @@ export default function MonitorPage() {
     alertRoleId: "",
   });
 
-  const isDbType = form.type === "POSTGRES" || form.type === "MYSQL";
+  const isDbType = ["POSTGRES", "MYSQL", "MARIADB"].includes(form.type);
 
   const fetchMonitors = useCallback(async () => {
     if (!botId) return;
@@ -480,7 +481,7 @@ export default function MonitorPage() {
                 type
               </p>
               <div className="flex flex-wrap gap-2">
-                {(["HTTP", "TCP", "PING", "POSTGRES", "MYSQL"] as const).map((t) => (
+                {(["HTTP", "TCP", "PING", "POSTGRES", "MYSQL", "MARIADB"] as const).map((t) => (
                   <button
                     key={t}
                     type="button"
@@ -516,6 +517,7 @@ export default function MonitorPage() {
                 {form.type === "PING" && "Adresse IP ou nom de domaine"}
                 {form.type === "POSTGRES" && "Chiffrée AES-256 avant stockage — ex: postgresql://user:pass@host:5432/db"}
                 {form.type === "MYSQL" && "Chiffrée AES-256 avant stockage — ex: mysql://user:pass@host:3306/db"}
+                {form.type === "MARIADB" && "Chiffrée AES-256 avant stockage — ex: mysql://user:pass@host:3306/db"}
               </p>
             </div>
 

@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { encrypt } from "@/lib/monitor-crypto";
 import { NextResponse } from "next/server";
 
-const DB_TYPES = ["POSTGRES", "MYSQL"];
+const DB_TYPES = ["POSTGRES", "MYSQL", "MARIADB"];
 
 function sanitizeTarget(type: string): string {
   if (DB_TYPES.includes(type)) return `[${type} — connexion chiffrée]`;
