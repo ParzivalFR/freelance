@@ -46,10 +46,19 @@ interface Monitor {
   incidents: MonitorIncident[];
 }
 
+interface DbFields {
+  host: string;
+  port: string;
+  user: string;
+  password: string;
+  dbName: string;
+}
+
 interface NewMonitorForm {
   name: string;
   type: "HTTP" | "TCP" | "PING" | "POSTGRES" | "MYSQL" | "MARIADB";
   target: string;
+  dbFields: DbFields;
   interval: number;
   alertChannelId: string;
   alertRoleId: string;
@@ -88,13 +97,22 @@ function formatDuration(startedAt: string, resolvedAt: string | null): string {
   return `${hours}h ${minutes % 60}min`;
 }
 
-function getTypeHint(type: "HTTP" | "TCP" | "PING" | "POSTGRES" | "MYSQL" | "MARIADB"): string {
+function getTypeHint(type: "HTTP" | "TCP" | "PING"): string {
   if (type === "HTTP") return "https://example.com";
   if (type === "TCP") return "example.com:25565";
-  if (type === "POSTGRES") return "postgresql://user:password@host:5432/db";
-  if (type === "MYSQL") return "mysql://user:password@host:3306/db";
-  if (type === "MARIADB") return "mysql://user:password@host:3306/db";
   return "192.168.1.1 ou example.com";
+}
+
+function buildConnectionString(type: string, db: DbFields): string {
+  const scheme = type === "POSTGRES" ? "postgresql" : "mysql";
+  const port = db.port || (type === "POSTGRES" ? "5432" : "3306");
+  const user = encodeURIComponent(db.user);
+  const pass = encodeURIComponent(db.password);
+  return `${scheme}://${user}:${pass}@${db.host}:${port}/${db.dbName}`;
+}
+
+function defaultPort(type: string): string {
+  return type === "POSTGRES" ? "5432" : "3306";
 }
 
 // ─── StatusDot component ──────────────────────────────────────────────────────
@@ -114,6 +132,8 @@ function StatusDot({ status }: { status: string }) {
   return <span className="inline-flex size-2.5 rounded-full bg-muted-foreground/30" />;
 }
 
+const EMPTY_DB_FIELDS: DbFields = { host: "", port: "", user: "", password: "", dbName: "" };
+
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function MonitorPage() {
@@ -130,6 +150,7 @@ export default function MonitorPage() {
     name: "",
     type: "HTTP",
     target: "",
+    dbFields: EMPTY_DB_FIELDS,
     interval: 5,
     alertChannelId: "",
     alertRoleId: "",
@@ -156,16 +177,20 @@ export default function MonitorPage() {
 
   async function handleCreate(e: React.FormEvent) {
     e.preventDefault();
-    if (!form.name.trim() || !form.target.trim()) return;
+    const target = isDbType
+      ? buildConnectionString(form.type, form.dbFields)
+      : form.target;
+    if (!form.name.trim() || !target.trim()) return;
+    if (isDbType && (!form.dbFields.host || !form.dbFields.user || !form.dbFields.dbName)) return;
     setSubmitting(true);
     try {
       const res = await fetch("/api/bot/monitors", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ botId, ...form }),
+        body: JSON.stringify({ botId, name: form.name, type: form.type, target, interval: form.interval, alertChannelId: form.alertChannelId, alertRoleId: form.alertRoleId }),
       });
       if (res.ok) {
-        setForm({ name: "", type: "HTTP", target: "", interval: 5, alertChannelId: "", alertRoleId: "" });
+        setForm({ name: "", type: "HTTP", target: "", dbFields: EMPTY_DB_FIELDS, interval: 5, alertChannelId: "", alertRoleId: "" });
         setShowForm(false);
         await fetchMonitors();
       }
@@ -485,7 +510,7 @@ export default function MonitorPage() {
                   <button
                     key={t}
                     type="button"
-                    onClick={() => setForm((f) => ({ ...f, type: t, target: "" }))}
+                    onClick={() => setForm((f) => ({ ...f, type: t, target: "", dbFields: EMPTY_DB_FIELDS }))}
                     className={`rounded-lg border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition ${
                       form.type === t
                         ? "border-blue-500/40 bg-blue-500/10 text-blue-400"
@@ -498,28 +523,83 @@ export default function MonitorPage() {
               </div>
             </div>
 
-            {/* Target */}
-            <div className="space-y-1">
-              <label className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
-                {isDbType ? "chaîne de connexion" : "cible"}
-              </label>
-              <input
-                value={form.target}
-                onChange={(e) => setForm((f) => ({ ...f, target: e.target.value }))}
-                placeholder={getTypeHint(form.type)}
-                type={isDbType ? "password" : "text"}
-                required
-                className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
-              />
-              <p className="font-mono text-[9px] text-muted-foreground/40">
-                {form.type === "HTTP" && "URL complète avec protocole (https://)"}
-                {form.type === "TCP" && "Format : hôte:port — ex: play.example.com:25565"}
-                {form.type === "PING" && "Adresse IP ou nom de domaine"}
-                {form.type === "POSTGRES" && "Chiffrée AES-256 avant stockage — ex: postgresql://user:pass@host:5432/db"}
-                {form.type === "MYSQL" && "Chiffrée AES-256 avant stockage — ex: mysql://user:pass@host:3306/db"}
-                {form.type === "MARIADB" && "Chiffrée AES-256 avant stockage — ex: mysql://user:pass@host:3306/db"}
-              </p>
-            </div>
+            {/* Target — plain field for HTTP/TCP/PING, structured fields for DB types */}
+            {isDbType ? (
+              <div className="space-y-2">
+                <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+                  connexion — chiffrée AES-256 avant stockage
+                </p>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  <div className="space-y-1">
+                    <label className="font-mono text-[9px] text-muted-foreground/60">hôte</label>
+                    <input
+                      value={form.dbFields.host}
+                      onChange={(e) => setForm((f) => ({ ...f, dbFields: { ...f.dbFields, host: e.target.value } }))}
+                      placeholder="db.example.com"
+                      required
+                      className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="font-mono text-[9px] text-muted-foreground/60">port</label>
+                    <input
+                      value={form.dbFields.port}
+                      onChange={(e) => setForm((f) => ({ ...f, dbFields: { ...f.dbFields, port: e.target.value } }))}
+                      placeholder={defaultPort(form.type)}
+                      className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="font-mono text-[9px] text-muted-foreground/60">utilisateur</label>
+                    <input
+                      value={form.dbFields.user}
+                      onChange={(e) => setForm((f) => ({ ...f, dbFields: { ...f.dbFields, user: e.target.value } }))}
+                      placeholder="postgres"
+                      required
+                      className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="font-mono text-[9px] text-muted-foreground/60">mot de passe</label>
+                    <input
+                      value={form.dbFields.password}
+                      onChange={(e) => setForm((f) => ({ ...f, dbFields: { ...f.dbFields, password: e.target.value } }))}
+                      type="password"
+                      placeholder="••••••••"
+                      className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                    />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <label className="font-mono text-[9px] text-muted-foreground/60">base de données</label>
+                  <input
+                    value={form.dbFields.dbName}
+                    onChange={(e) => setForm((f) => ({ ...f, dbFields: { ...f.dbFields, dbName: e.target.value } }))}
+                    placeholder="mydb"
+                    required
+                    className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="space-y-1">
+                <label className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+                  cible
+                </label>
+                <input
+                  value={form.target}
+                  onChange={(e) => setForm((f) => ({ ...f, target: e.target.value }))}
+                  placeholder={getTypeHint(form.type as "HTTP" | "TCP" | "PING")}
+                  required
+                  className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                />
+                <p className="font-mono text-[9px] text-muted-foreground/40">
+                  {form.type === "HTTP" && "URL complète avec protocole (https://)"}
+                  {form.type === "TCP" && "Format : hôte:port — ex: play.example.com:25565"}
+                  {form.type === "PING" && "Adresse IP ou nom de domaine"}
+                </p>
+              </div>
+            )}
 
             {/* Interval */}
             <div className="space-y-1">
