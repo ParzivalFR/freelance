@@ -33,10 +33,11 @@ export async function GET(request: Request) {
     },
   });
 
-  // Mask DB passwords before sending to client
   const sanitized = monitors.map((m) => ({
     ...m,
     target: DB_TYPES.includes(m.type) ? sanitizeTarget(m.type) : m.target,
+    // Never expose SSH credentials — replace with a boolean flag
+    sshConfig: m.sshConfig ? true : null,
   }));
 
   return NextResponse.json({ monitors: sanitized });
@@ -48,15 +49,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Non authentifié" }, { status: 401 });
 
   const body = await request.json();
-  const { botId, name, type, target, interval, alertChannelId, alertRoleId } = body;
+  const { botId, name, type, target, sshConfig, interval, alertChannelId, alertRoleId } = body;
 
   const bot = await prisma.discordBot.findFirst({
     where: { id: botId, userId: session.user.id },
   });
   if (!bot) return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
 
-  // Encrypt connection strings for DB types
   const storedTarget = DB_TYPES.includes(type) ? encrypt(target) : target;
+  const storedSsh = sshConfig ? encrypt(JSON.stringify(sshConfig)) : null;
 
   const monitor = await prisma.monitor.create({
     data: {
@@ -64,6 +65,7 @@ export async function POST(request: Request) {
       name,
       type,
       target: storedTarget,
+      sshConfig: storedSsh,
       interval: interval ?? 5,
       alertChannelId: alertChannelId || null,
       alertRoleId: alertRoleId || null,
@@ -71,6 +73,10 @@ export async function POST(request: Request) {
   });
 
   return NextResponse.json({
-    monitor: { ...monitor, target: DB_TYPES.includes(type) ? sanitizeTarget(type) : target },
+    monitor: {
+      ...monitor,
+      target: DB_TYPES.includes(type) ? sanitizeTarget(type) : target,
+      sshConfig: storedSsh ? true : null,
+    },
   });
 }

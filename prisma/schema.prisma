@@ -434,6 +434,7 @@ model Monitor {
   responseTime   Int?      @map("response_time") // ms
   alertChannelId String?   @map("alert_channel_id")
   alertRoleId    String?   @map("alert_role_id")
+  sshConfig      String?   @map("ssh_config") // encrypted JSON
   active         Boolean   @default(true)
   createdAt      DateTime  @default(now()) @map("created_at")
   updatedAt      DateTime  @updatedAt      @map("updated_at")

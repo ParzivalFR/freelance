@@ -34,6 +34,7 @@ interface Monitor {
   name: string;
   type: string;
   target: string;
+  sshConfig: true | null;
   interval: number;
   status: string;
   lastCheckedAt: string | null;
@@ -54,11 +55,22 @@ interface DbFields {
   dbName: string;
 }
 
+interface SshFields {
+  enabled: boolean;
+  host: string;
+  port: string;
+  user: string;
+  authMethod: "password" | "key";
+  password: string;
+  privateKey: string;
+}
+
 interface NewMonitorForm {
   name: string;
   type: "HTTP" | "TCP" | "PING" | "POSTGRES" | "MYSQL" | "MARIADB";
   target: string;
   dbFields: DbFields;
+  ssh: SshFields;
   interval: number;
   alertChannelId: string;
   alertRoleId: string;
@@ -133,6 +145,7 @@ function StatusDot({ status }: { status: string }) {
 }
 
 const EMPTY_DB_FIELDS: DbFields = { host: "", port: "", user: "", password: "", dbName: "" };
+const EMPTY_SSH: SshFields = { enabled: false, host: "", port: "22", user: "", authMethod: "password", password: "", privateKey: "" };
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
@@ -152,6 +165,7 @@ export default function MonitorPage() {
     type: "HTTP",
     target: "",
     dbFields: EMPTY_DB_FIELDS,
+    ssh: EMPTY_SSH,
     interval: 5,
     alertChannelId: "",
     alertRoleId: "",
@@ -187,13 +201,23 @@ export default function MonitorPage() {
     if (isDbType && dbInputMode === "fields" && (!form.dbFields.host || !form.dbFields.user || !form.dbFields.dbName)) return;
     setSubmitting(true);
     try {
+      const sshConfig = isDbType && form.ssh.enabled
+        ? {
+            host: form.ssh.host,
+            port: parseInt(form.ssh.port || "22", 10),
+            user: form.ssh.user,
+            authMethod: form.ssh.authMethod,
+            ...(form.ssh.authMethod === "password" ? { password: form.ssh.password } : { privateKey: form.ssh.privateKey }),
+          }
+        : null;
+
       const res = await fetch("/api/bot/monitors", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ botId, name: form.name, type: form.type, target, interval: form.interval, alertChannelId: form.alertChannelId, alertRoleId: form.alertRoleId }),
+        body: JSON.stringify({ botId, name: form.name, type: form.type, target, sshConfig, interval: form.interval, alertChannelId: form.alertChannelId, alertRoleId: form.alertRoleId }),
       });
       if (res.ok) {
-        setForm({ name: "", type: "HTTP", target: "", dbFields: EMPTY_DB_FIELDS, interval: 5, alertChannelId: "", alertRoleId: "" });
+        setForm({ name: "", type: "HTTP", target: "", dbFields: EMPTY_DB_FIELDS, ssh: EMPTY_SSH, interval: 5, alertChannelId: "", alertRoleId: "" });
         setShowForm(false);
         await fetchMonitors();
       }
@@ -311,6 +335,11 @@ export default function MonitorPage() {
                     <span className="rounded border border-dashed px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
                       {monitor.type}
                     </span>
+                    {monitor.sshConfig && (
+                      <span className="rounded border border-yellow-500/30 bg-yellow-500/10 px-1.5 py-0.5 font-mono text-[9px] text-yellow-500">
+                        SSH
+                      </span>
+                    )}
                     {openIncidents.length > 0 && (
                       <span className="rounded border border-red-500/30 bg-red-500/10 px-1.5 py-0.5 font-mono text-[9px] text-red-500">
                         incident en cours
@@ -513,7 +542,7 @@ export default function MonitorPage() {
                   <button
                     key={t}
                     type="button"
-                    onClick={() => setForm((f) => ({ ...f, type: t, target: "", dbFields: EMPTY_DB_FIELDS }))}
+                    onClick={() => setForm((f) => ({ ...f, type: t, target: "", dbFields: EMPTY_DB_FIELDS, ssh: EMPTY_SSH }))}
                     className={`rounded-lg border px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest transition ${
                       form.type === t
                         ? "border-blue-500/40 bg-blue-500/10 text-blue-400"
@@ -634,6 +663,106 @@ export default function MonitorPage() {
                   {form.type === "TCP" && "Format : hôte:port — ex: play.example.com:25565"}
                   {form.type === "PING" && "Adresse IP ou nom de domaine"}
                 </p>
+              </div>
+            )}
+
+            {/* SSH Tunnel — only for DB types */}
+            {isDbType && (
+              <div className="space-y-2 rounded border border-dashed p-3">
+                <div className="flex items-center justify-between">
+                  <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+                    tunnel SSH
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setForm((f) => ({ ...f, ssh: { ...f.ssh, enabled: !f.ssh.enabled } }))}
+                    className={`rounded border px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition ${
+                      form.ssh.enabled
+                        ? "border-yellow-500/40 bg-yellow-500/10 text-yellow-400"
+                        : "border-dashed text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {form.ssh.enabled ? "activé" : "désactivé"}
+                  </button>
+                </div>
+
+                {form.ssh.enabled && (
+                  <div className="space-y-2">
+                    <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                      <div className="space-y-1 sm:col-span-2">
+                        <label className="font-mono text-[9px] text-muted-foreground/60">hôte SSH</label>
+                        <input
+                          value={form.ssh.host}
+                          onChange={(e) => setForm((f) => ({ ...f, ssh: { ...f.ssh, host: e.target.value } }))}
+                          placeholder="vps.example.com"
+                          required
+                          className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-yellow-500/50"
+                        />
+                      </div>
+                      <div className="space-y-1">
+                        <label className="font-mono text-[9px] text-muted-foreground/60">port SSH</label>
+                        <input
+                          value={form.ssh.port}
+                          onChange={(e) => setForm((f) => ({ ...f, ssh: { ...f.ssh, port: e.target.value } }))}
+                          placeholder="22"
+                          className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-yellow-500/50"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="font-mono text-[9px] text-muted-foreground/60">utilisateur SSH</label>
+                      <input
+                        value={form.ssh.user}
+                        onChange={(e) => setForm((f) => ({ ...f, ssh: { ...f.ssh, user: e.target.value } }))}
+                        placeholder="ubuntu"
+                        required
+                        className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-yellow-500/50"
+                      />
+                    </div>
+                    <div className="flex gap-2">
+                      {(["password", "key"] as const).map((m) => (
+                        <button
+                          key={m}
+                          type="button"
+                          onClick={() => setForm((f) => ({ ...f, ssh: { ...f.ssh, authMethod: m } }))}
+                          className={`rounded border px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition ${
+                            form.ssh.authMethod === m
+                              ? "border-yellow-500/40 bg-yellow-500/10 text-yellow-400"
+                              : "border-dashed text-muted-foreground hover:text-foreground"
+                          }`}
+                        >
+                          {m === "password" ? "mot de passe" : "clé privée"}
+                        </button>
+                      ))}
+                    </div>
+                    {form.ssh.authMethod === "password" ? (
+                      <div className="space-y-1">
+                        <label className="font-mono text-[9px] text-muted-foreground/60">mot de passe SSH</label>
+                        <input
+                          value={form.ssh.password}
+                          onChange={(e) => setForm((f) => ({ ...f, ssh: { ...f.ssh, password: e.target.value } }))}
+                          type="password"
+                          placeholder="••••••••"
+                          className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-yellow-500/50"
+                        />
+                      </div>
+                    ) : (
+                      <div className="space-y-1">
+                        <label className="font-mono text-[9px] text-muted-foreground/60">clé privée (contenu du fichier .pem / id_rsa)</label>
+                        <textarea
+                          value={form.ssh.privateKey}
+                          onChange={(e) => setForm((f) => ({ ...f, ssh: { ...f.ssh, privateKey: e.target.value } }))}
+                          placeholder={"-----BEGIN OPENSSH PRIVATE KEY-----\n...\n-----END OPENSSH PRIVATE KEY-----"}
+                          rows={5}
+                          className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-[10px] text-foreground outline-none focus:border-yellow-500/50"
+                        />
+                      </div>
+                    )}
+                    <p className="font-mono text-[9px] text-muted-foreground/40">
+                      Chiffrée AES-256 avant stockage — le tunnel est ouvert uniquement pendant le check
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 
