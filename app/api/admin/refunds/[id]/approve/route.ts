@@ -26,6 +26,7 @@ export async function POST(
   const { id } = await params;
   const body = await request.json().catch(() => ({}));
   const adminNote = (body.adminNote as string | undefined)?.trim() || null;
+  const skipStripe = body.skipStripe === true;
 
   const refundRequest = await prisma.refundRequest.findUnique({
     where: { id },
@@ -41,47 +42,55 @@ export async function POST(
 
   const bot = refundRequest.bot;
   let stripeRefundId: string | null = null;
+  let stripeError: string | null = null;
 
-  // Attempt Stripe refund
-  try {
-    let paymentIntentId: string | null = null;
+  if (!skipStripe) {
+    try {
+      let paymentIntentId: string | null = null;
 
-    if (bot.stripeSubscriptionId) {
-      // MANAGED plan: refund latest invoice
-      const subscription = await stripe.subscriptions.retrieve(bot.stripeSubscriptionId, {
-        expand: ["latest_invoice.payment_intent"],
-      });
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const invoice = subscription.latest_invoice as any;
-      if (invoice && typeof invoice === "object") {
-        const pi = invoice.payment_intent;
-        paymentIntentId = typeof pi === "string" ? pi : (pi?.id ?? null);
+      if (bot.stripeSubscriptionId) {
+        const subscription = await stripe.subscriptions.retrieve(bot.stripeSubscriptionId, {
+          expand: ["latest_invoice.payment_intent"],
+        });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const invoice = subscription.latest_invoice as any;
+        if (invoice && typeof invoice === "object") {
+          const pi = invoice.payment_intent;
+          paymentIntentId = typeof pi === "string" ? pi : (pi?.id ?? null);
+        }
+      } else if (bot.stripeSessionId) {
+        const checkoutSession = await stripe.checkout.sessions.retrieve(bot.stripeSessionId, {
+          expand: ["payment_intent"],
+        });
+        const pi = checkoutSession.payment_intent;
+        if (pi && typeof pi !== "string") {
+          paymentIntentId = pi.id;
+        } else if (typeof pi === "string") {
+          paymentIntentId = pi;
+        }
       }
-    } else if (bot.stripeSessionId) {
-      // RAR plan: refund checkout session payment
-      const checkoutSession = await stripe.checkout.sessions.retrieve(bot.stripeSessionId, {
-        expand: ["payment_intent"],
-      });
-      const pi = checkoutSession.payment_intent;
-      if (pi && typeof pi !== "string") {
-        paymentIntentId = pi.id;
-      } else if (typeof pi === "string") {
-        paymentIntentId = pi;
-      }
-    }
 
-    if (paymentIntentId) {
+      if (!paymentIntentId) {
+        return NextResponse.json(
+          { error: "Impossible de trouver le paiement Stripe associé à ce bot. Vérifie manuellement ou utilise skipStripe." },
+          { status: 422 }
+        );
+      }
+
       const refund = await stripe.refunds.create({ payment_intent: paymentIntentId });
       stripeRefundId = refund.id;
-    }
 
-    // Cancel subscription if applicable
-    if (bot.stripeSubscriptionId) {
-      await stripe.subscriptions.cancel(bot.stripeSubscriptionId);
+      if (bot.stripeSubscriptionId) {
+        await stripe.subscriptions.cancel(bot.stripeSubscriptionId).catch(() => {});
+      }
+    } catch (e) {
+      stripeError = e instanceof Error ? e.message : String(e);
+      console.error("[refund] Stripe error:", stripeError);
+      return NextResponse.json(
+        { error: `Stripe : ${stripeError}` },
+        { status: 502 }
+      );
     }
-  } catch (e) {
-    console.error("[refund] Stripe error:", e);
-    // Don't block — mark as approved even if Stripe fails (manual handling)
   }
 
   // Deactivate bot
@@ -106,5 +115,5 @@ export async function POST(
     },
   });
 
-  return NextResponse.json({ ok: true, stripeRefundId });
+  return NextResponse.json({ ok: true, stripeRefundId, stripeSkipped: skipStripe });
 }

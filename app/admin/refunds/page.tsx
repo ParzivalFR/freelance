@@ -63,6 +63,7 @@ export default function AdminRefundsPage() {
 
   const [actionTarget, setActionTarget] = useState<{ id: string; action: "approve" | "deny" } | null>(null);
   const [adminNote, setAdminNote] = useState("");
+  const [skipStripe, setSkipStripe] = useState(false);
 
   const fetchRequests = useCallback(async () => {
     setLoading(true);
@@ -78,6 +79,7 @@ export default function AdminRefundsPage() {
 
   const openAction = (id: string, action: "approve" | "deny") => {
     setAdminNote("");
+    setSkipStripe(false);
     setActionTarget({ id, action });
   };
 
@@ -88,11 +90,14 @@ export default function AdminRefundsPage() {
       const res = await fetch(`/api/admin/refunds/${actionTarget.id}/${actionTarget.action}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ adminNote: adminNote || undefined }),
+        body: JSON.stringify({
+          adminNote: adminNote || undefined,
+          ...(actionTarget.action === "approve" && { skipStripe }),
+        }),
       });
       const data = await res.json();
       if (!res.ok) {
-        toast({ title: "Erreur", description: data.error, variant: "destructive" });
+        toast({ title: "Erreur Stripe", description: data.error, variant: "destructive" });
         return;
       }
       if (actionTarget.action === "approve") {
@@ -247,14 +252,27 @@ export default function AdminRefundsPage() {
                 : "Le client conserve son accès et aucun remboursement ne sera effectué."}
             </DialogDescription>
           </DialogHeader>
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Note admin (optionnel)</label>
-            <Textarea
-              placeholder="Message visible par le client…"
-              value={adminNote}
-              onChange={(e) => setAdminNote(e.target.value)}
-              rows={3}
-            />
+          <div className="space-y-3">
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Note admin (optionnel)</label>
+              <Textarea
+                placeholder="Message visible par le client…"
+                value={adminNote}
+                onChange={(e) => setAdminNote(e.target.value)}
+                rows={3}
+              />
+            </div>
+            {actionTarget?.action === "approve" && (
+              <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={skipStripe}
+                  onChange={(e) => setSkipStripe(e.target.checked)}
+                  className="rounded"
+                />
+                Approuver sans déclencher le remboursement Stripe (remboursement manuel)
+              </label>
+            )}
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setActionTarget(null)} disabled={!!processing}>
