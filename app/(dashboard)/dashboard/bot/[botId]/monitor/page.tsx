@@ -88,6 +88,22 @@ function computeUptime(checks: MonitorCheck[]): number {
   return Math.round((up / checks.length) * 100);
 }
 
+function computeUptimeFromIncidents(incidents: MonitorIncident[], days: number): number | null {
+  const now = Date.now();
+  const periodStart = now - days * 24 * 60 * 60 * 1000;
+  const periodDuration = now - periodStart;
+
+  let downtime = 0;
+  for (const incident of incidents) {
+    const start = Math.max(new Date(incident.startedAt).getTime(), periodStart);
+    const end = incident.resolvedAt ? new Date(incident.resolvedAt).getTime() : now;
+    if (end > periodStart) downtime += Math.max(0, end - start);
+  }
+
+  const pct = ((periodDuration - downtime) / periodDuration) * 100;
+  return Math.round(pct * 10) / 10;
+}
+
 function getStatusColor(status: string) {
   if (status === "UP") return "bg-green-500";
   if (status === "DOWN") return "bg-red-500";
@@ -568,6 +584,8 @@ export default function MonitorPage() {
         {monitors.map((monitor) => {
           const last30 = monitor.checks.slice(0, 30).reverse();
           const uptime = computeUptime(monitor.checks);
+          const uptime7d = computeUptimeFromIncidents(monitor.incidents, 7);
+          const uptime30d = computeUptimeFromIncidents(monitor.incidents, 30);
           const isExpanded = expandedId === monitor.id;
           const openIncidents = monitor.incidents.filter((i) => !i.resolvedAt);
 
@@ -613,13 +631,15 @@ export default function MonitorPage() {
                   </p>
                 </div>
 
-                {/* Response time */}
-                <div className="hidden shrink-0 text-right sm:block">
+                {/* Response time + uptime */}
+                <div className="hidden shrink-0 text-right sm:block space-y-0.5">
                   <p className="font-mono text-[10px] text-foreground">
                     {monitor.responseTime !== null ? `${monitor.responseTime}ms` : "—"}
                   </p>
                   <p className="font-mono text-[9px] text-muted-foreground/50">
-                    {uptime}% uptime
+                    <span title="7 derniers jours">{uptime7d !== null ? `${uptime7d}%` : "—"} 7j</span>
+                    <span className="mx-1 opacity-30">·</span>
+                    <span title="30 derniers jours">{uptime30d !== null ? `${uptime30d}%` : "—"} 30j</span>
                   </p>
                 </div>
 
@@ -849,7 +869,8 @@ export default function MonitorPage() {
                     </p>
                     <div className="flex gap-3 font-mono text-[9px] text-muted-foreground/50 sm:hidden">
                       <span>{monitor.responseTime !== null ? `${monitor.responseTime}ms` : "—"}</span>
-                      <span>{uptime}% uptime</span>
+                      <span>{uptime7d !== null ? `${uptime7d}%` : "—"} 7j</span>
+                      <span>{uptime30d !== null ? `${uptime30d}%` : "—"} 30j</span>
                     </div>
                   </div>
 

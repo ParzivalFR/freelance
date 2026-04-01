@@ -24,12 +24,22 @@ export async function GET(request: Request) {
   });
   if (!bot) return NextResponse.json({ monitors: [] });
 
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+
   const monitors = await prisma.monitor.findMany({
     where: { botId: bot.id },
     orderBy: { createdAt: "asc" },
     include: {
       checks: { orderBy: { checkedAt: "desc" }, take: 90 },
-      incidents: { where: { resolvedAt: null } },
+      incidents: {
+        where: {
+          OR: [
+            { startedAt: { gte: thirtyDaysAgo } },
+            { resolvedAt: null },
+          ],
+        },
+        orderBy: { startedAt: "desc" },
+      },
     },
   });
 
