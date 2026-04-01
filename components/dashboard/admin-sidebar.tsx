@@ -21,6 +21,7 @@ import {
   LayoutDashboard,
   Mail,
   MessageSquare,
+  RefreshCcw,
   Search,
   Settings,
   Users,
@@ -76,6 +77,11 @@ const data = {
           title: "Bots Discord",
           url: "/admin/bots",
           icon: Bot,
+        },
+        {
+          title: "Remboursements",
+          url: "/admin/refunds",
+          icon: RefreshCcw,
         },
         {
           title: "Analytics",

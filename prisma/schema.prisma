@@ -22,9 +22,10 @@ model User {
   role          String          @default("CLIENT") // ADMIN | CLIENT
   accounts      Account[]
   sessions      Session[]
-  discordBots   DiscordBot[]
+  discordBots    DiscordBot[]
+  refundRequests RefundRequest[]
   // Optional for WebAuthn support
-  Authenticator Authenticator[]
+  Authenticator  Authenticator[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -62,11 +63,12 @@ model DiscordBot {
 
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @updatedAt @map("updated_at")
-  infractions  Infraction[]
-  userLevels   UserLevel[]
-  levelRewards LevelReward[]
-  polls        Poll[]
-  monitors     Monitor[]
+  infractions     Infraction[]
+  userLevels      UserLevel[]
+  levelRewards    LevelReward[]
+  polls           Poll[]
+  monitors        Monitor[]
+  refundRequests  RefundRequest[]
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -467,6 +469,23 @@ model MonitorIncident {
   monitor Monitor @relation(fields: [monitorId], references: [id], onDelete: Cascade)
 
   @@map("monitor_incidents")
+}
+
+model RefundRequest {
+  id             String    @id @default(cuid())
+  botId          String    @map("bot_id")
+  userId         String    @map("user_id")
+  reason         String    @db.Text
+  status         String    @default("PENDING") // PENDING | APPROVED | DENIED
+  stripeRefundId String?   @map("stripe_refund_id")
+  adminNote      String?   @map("admin_note") @db.Text
+  createdAt      DateTime  @default(now()) @map("created_at")
+  processedAt    DateTime? @map("processed_at")
+
+  bot  DiscordBot @relation(fields: [botId], references: [id], onDelete: Cascade)
+  user User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("refund_requests")
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
