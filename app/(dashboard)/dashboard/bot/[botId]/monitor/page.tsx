@@ -11,6 +11,8 @@ import {
   ChevronUp,
   Power,
   PowerOff,
+  Pencil,
+  Check,
 } from "lucide-react";
 import { PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 
@@ -159,6 +161,9 @@ export default function MonitorPage() {
   const [submitting, setSubmitting] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [dbInputMode, setDbInputMode] = useState<"fields" | "string">("fields");
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState<{ name: string; interval: number; alertChannelId: string; alertRoleId: string; target: string; dbFields: DbFields; ssh: SshFields; dbInputMode: "fields" | "string" } | null>(null);
+  const [editSubmitting, setEditSubmitting] = useState(false);
 
   const [form, setForm] = useState<NewMonitorForm>({
     name: "",
@@ -223,6 +228,69 @@ export default function MonitorPage() {
       }
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  function openEdit(monitor: Monitor) {
+    setEditingId(monitor.id);
+    setEditForm({
+      name: monitor.name,
+      interval: monitor.interval,
+      alertChannelId: monitor.alertChannelId ?? "",
+      alertRoleId: monitor.alertRoleId ?? "",
+      target: "",
+      dbFields: EMPTY_DB_FIELDS,
+      ssh: EMPTY_SSH,
+      dbInputMode: "fields",
+    });
+  }
+
+  async function handleEdit(e: React.FormEvent, monitor: Monitor) {
+    e.preventDefault();
+    if (!editForm) return;
+    setEditSubmitting(true);
+    try {
+      const isDb = ["POSTGRES", "MYSQL", "MARIADB"].includes(monitor.type);
+      let target = "";
+      if (isDb && editForm.dbInputMode === "fields" && editForm.dbFields.host) {
+        target = buildConnectionString(monitor.type, editForm.dbFields);
+      } else if (editForm.target) {
+        target = editForm.target;
+      }
+
+      const sshConfig = isDb && editForm.ssh.enabled && editForm.ssh.host
+        ? {
+            host: editForm.ssh.host,
+            port: parseInt(editForm.ssh.port || "22", 10),
+            user: editForm.ssh.user,
+            authMethod: editForm.ssh.authMethod,
+            ...(editForm.ssh.authMethod === "password" ? { password: editForm.ssh.password } : { privateKey: editForm.ssh.privateKey }),
+          }
+        : editForm.ssh.enabled === false && monitor.sshConfig
+          ? null  // explicitly remove SSH
+          : undefined; // keep existing
+
+      const body: Record<string, unknown> = {
+        name: editForm.name,
+        interval: editForm.interval,
+        alertChannelId: editForm.alertChannelId,
+        alertRoleId: editForm.alertRoleId,
+      };
+      if (target) body.target = target;
+      if (sshConfig !== undefined) body.sshConfig = sshConfig;
+
+      const res = await fetch(`/api/bot/monitors/${monitor.id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (res.ok) {
+        setEditingId(null);
+        setEditForm(null);
+        await fetchMonitors();
+      }
+    } finally {
+      setEditSubmitting(false);
     }
   }
 
@@ -364,6 +432,13 @@ export default function MonitorPage() {
                 {/* Actions */}
                 <div className="flex shrink-0 items-center gap-1">
                   <button
+                    onClick={() => editingId === monitor.id ? (setEditingId(null), setEditForm(null)) : openEdit(monitor)}
+                    title="Modifier"
+                    className={`rounded p-1.5 transition ${editingId === monitor.id ? "text-blue-400" : "text-muted-foreground/50 hover:text-foreground"}`}
+                  >
+                    <Pencil className="size-3.5" />
+                  </button>
+                  <button
                     onClick={() => handleToggleActive(monitor)}
                     title={monitor.active ? "Mettre en pause" : "Activer"}
                     className="rounded p-1.5 text-muted-foreground/50 transition hover:text-foreground"
@@ -416,6 +491,168 @@ export default function MonitorPage() {
                       />
                     ))}
                 </div>
+              )}
+
+              {/* Edit form */}
+              {editingId === monitor.id && editForm && (
+                <form
+                  onSubmit={(e) => handleEdit(e, monitor)}
+                  className="border-t border-dashed px-3 py-3 space-y-3"
+                >
+                  <p className="font-mono text-[9px] uppercase tracking-widest text-blue-400">modifier le monitor</p>
+
+                  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                    <div className="space-y-1">
+                      <label className="font-mono text-[9px] text-muted-foreground/60">nom</label>
+                      <input
+                        value={editForm.name}
+                        onChange={(e) => setEditForm((f) => f && ({ ...f, name: e.target.value }))}
+                        required
+                        className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="font-mono text-[9px] text-muted-foreground/60">intervalle</label>
+                      <select
+                        value={editForm.interval}
+                        onChange={(e) => setEditForm((f) => f && ({ ...f, interval: Number(e.target.value) }))}
+                        className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                      >
+                        {[1, 5, 15, 30, 60].map((v) => (
+                          <option key={v} value={v}>{v} minute{v > 1 ? "s" : ""}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="space-y-1">
+                      <label className="font-mono text-[9px] text-muted-foreground/60">salon alerte</label>
+                      <input
+                        value={editForm.alertChannelId}
+                        onChange={(e) => setEditForm((f) => f && ({ ...f, alertChannelId: e.target.value }))}
+                        placeholder="ID Discord"
+                        className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="font-mono text-[9px] text-muted-foreground/60">rôle alerte</label>
+                      <input
+                        value={editForm.alertRoleId}
+                        onChange={(e) => setEditForm((f) => f && ({ ...f, alertRoleId: e.target.value }))}
+                        placeholder="ID Discord"
+                        className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Credentials update — only for DB types */}
+                  {["POSTGRES", "MYSQL", "MARIADB"].includes(monitor.type) && (
+                    <div className="space-y-2 rounded border border-dashed p-3">
+                      <div className="flex items-center justify-between">
+                        <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+                          connexion — laisser vide pour conserver
+                        </p>
+                        <div className="flex rounded border border-dashed overflow-hidden">
+                          {(["fields", "string"] as const).map((m) => (
+                            <button key={m} type="button"
+                              onClick={() => setEditForm((f) => f && ({ ...f, dbInputMode: m }))}
+                              className={`px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition ${editForm.dbInputMode === m ? "bg-blue-500/10 text-blue-400" : "text-muted-foreground hover:text-foreground"}`}
+                            >
+                              {m === "fields" ? "champs" : "string"}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      {editForm.dbInputMode === "fields" ? (
+                        <div className="grid grid-cols-2 gap-2">
+                          {[
+                            { key: "host", label: "hôte", placeholder: "127.0.0.1" },
+                            { key: "port", label: "port", placeholder: defaultPort(monitor.type) },
+                            { key: "user", label: "utilisateur", placeholder: "root" },
+                            { key: "dbName", label: "base de données", placeholder: "mydb" },
+                          ].map(({ key, label, placeholder }) => (
+                            <div key={key} className="space-y-1">
+                              <label className="font-mono text-[9px] text-muted-foreground/60">{label}</label>
+                              <input
+                                value={editForm.dbFields[key as keyof DbFields]}
+                                onChange={(e) => setEditForm((f) => f && ({ ...f, dbFields: { ...f.dbFields, [key]: e.target.value } }))}
+                                placeholder={placeholder}
+                                className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                              />
+                            </div>
+                          ))}
+                          <div className="space-y-1 col-span-2">
+                            <label className="font-mono text-[9px] text-muted-foreground/60">mot de passe</label>
+                            <input
+                              value={editForm.dbFields.password}
+                              onChange={(e) => setEditForm((f) => f && ({ ...f, dbFields: { ...f.dbFields, password: e.target.value } }))}
+                              type="password" placeholder="••••••••"
+                              className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                            />
+                          </div>
+                        </div>
+                      ) : (
+                        <input
+                          value={editForm.target}
+                          onChange={(e) => setEditForm((f) => f && ({ ...f, target: e.target.value }))}
+                          type="password"
+                          placeholder={monitor.type === "POSTGRES" ? "postgresql://user:pass@host:5432/db" : "mysql://user:pass@host:3306/db"}
+                          className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-blue-500/50"
+                        />
+                      )}
+
+                      {/* SSH */}
+                      <div className="flex items-center justify-between pt-1">
+                        <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">tunnel SSH {monitor.sshConfig ? "(actif)" : ""}</p>
+                        <button type="button"
+                          onClick={() => setEditForm((f) => f && ({ ...f, ssh: { ...f.ssh, enabled: !f.ssh.enabled } }))}
+                          className={`rounded border px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition ${editForm.ssh.enabled ? "border-yellow-500/40 bg-yellow-500/10 text-yellow-400" : "border-dashed text-muted-foreground hover:text-foreground"}`}
+                        >
+                          {editForm.ssh.enabled ? "modifier SSH" : monitor.sshConfig ? "conserver SSH" : "ajouter SSH"}
+                        </button>
+                      </div>
+                      {editForm.ssh.enabled && (
+                        <div className="space-y-2">
+                          <div className="grid grid-cols-3 gap-2">
+                            <div className="space-y-1 col-span-2">
+                              <label className="font-mono text-[9px] text-muted-foreground/60">hôte SSH</label>
+                              <input value={editForm.ssh.host} onChange={(e) => setEditForm((f) => f && ({ ...f, ssh: { ...f.ssh, host: e.target.value } }))} placeholder="vps.example.com" className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-yellow-500/50" />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="font-mono text-[9px] text-muted-foreground/60">port</label>
+                              <input value={editForm.ssh.port} onChange={(e) => setEditForm((f) => f && ({ ...f, ssh: { ...f.ssh, port: e.target.value } }))} placeholder="22" className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-yellow-500/50" />
+                            </div>
+                          </div>
+                          <input value={editForm.ssh.user} onChange={(e) => setEditForm((f) => f && ({ ...f, ssh: { ...f.ssh, user: e.target.value } }))} placeholder="utilisateur SSH" className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-yellow-500/50" />
+                          <div className="flex gap-2">
+                            {(["password", "key"] as const).map((m) => (
+                              <button key={m} type="button" onClick={() => setEditForm((f) => f && ({ ...f, ssh: { ...f.ssh, authMethod: m } }))}
+                                className={`rounded border px-2.5 py-1 font-mono text-[9px] uppercase tracking-widest transition ${editForm.ssh.authMethod === m ? "border-yellow-500/40 bg-yellow-500/10 text-yellow-400" : "border-dashed text-muted-foreground"}`}>
+                                {m === "password" ? "mot de passe" : "clé privée"}
+                              </button>
+                            ))}
+                          </div>
+                          {editForm.ssh.authMethod === "password"
+                            ? <input value={editForm.ssh.password} onChange={(e) => setEditForm((f) => f && ({ ...f, ssh: { ...f.ssh, password: e.target.value } }))} type="password" placeholder="mot de passe SSH" className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-yellow-500/50" />
+                            : <textarea value={editForm.ssh.privateKey} onChange={(e) => setEditForm((f) => f && ({ ...f, ssh: { ...f.ssh, privateKey: e.target.value } }))} placeholder={"-----BEGIN OPENSSH PRIVATE KEY-----\n..."} rows={4} className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-[10px] text-foreground outline-none focus:border-yellow-500/50" />
+                          }
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <div className="flex gap-2">
+                    <button type="submit" disabled={editSubmitting}
+                      className="flex items-center gap-1.5 rounded border border-dashed px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-blue-400 transition hover:border-blue-500/40 hover:bg-blue-500/10 disabled:opacity-40"
+                    >
+                      <Check className="size-3" />
+                      {editSubmitting ? "sauvegarde..." : "sauvegarder"}
+                    </button>
+                    <button type="button" onClick={() => { setEditingId(null); setEditForm(null); }}
+                      className="rounded border border-dashed px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition hover:text-foreground"
+                    >
+                      annuler
+                    </button>
+                  </div>
+                </form>
               )}
 
               {/* Expanded — incidents */}
