@@ -58,6 +58,19 @@ export async function POST(
           const pi = invoice.payment_intent;
           paymentIntentId = typeof pi === "string" ? pi : (pi?.id ?? null);
         }
+        // Fallback: list paid invoices for this subscription
+        if (!paymentIntentId) {
+          const invoices = await stripe.invoices.list({
+            subscription: bot.stripeSubscriptionId,
+            status: "paid",
+            limit: 1,
+          });
+          const latestInvoice = invoices.data[0];
+          if (latestInvoice?.payment_intent) {
+            const pi = latestInvoice.payment_intent;
+            paymentIntentId = typeof pi === "string" ? pi : (pi as any)?.id ?? null;
+          }
+        }
       } else if (bot.stripeSessionId) {
         const checkoutSession = await stripe.checkout.sessions.retrieve(bot.stripeSessionId, {
           expand: ["payment_intent"],
