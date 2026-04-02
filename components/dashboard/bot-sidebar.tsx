@@ -1,26 +1,6 @@
 "use client";
 
 import {
-  Sidebar,
-  SidebarContent,
-  SidebarFooter,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
-} from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -30,6 +10,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -38,67 +20,150 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarFooter,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar";
 import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Activity,
   BarChart2,
-  Bot,
   BookOpen,
+  Bot,
   CreditCard,
   LayoutDashboard,
   LogOut,
   MessageSquare,
   MoreVertical,
   Puzzle,
-  RotateCcw,
   Rocket,
+  RotateCcw,
   ScrollText,
   Shield,
   Star,
   Ticket,
   Trash2,
 } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { signOut, useSession } from "next-auth/react";
-import { FaDiscord } from "react-icons/fa";
 import { useEffect, useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
+import { FaDiscord } from "react-icons/fa";
 
 function buildNav(botId: string) {
   return [
     {
       label: "Système",
       items: [
-        { title: "Vue d'ensemble", url: `/dashboard/bot/${botId}`, icon: LayoutDashboard, exact: true },
-        { title: "Guide de configuration", url: `/dashboard/bot/${botId}/guide`, icon: BookOpen, exact: false },
+        {
+          title: "Vue d'ensemble",
+          url: `/dashboard/bot/${botId}`,
+          icon: LayoutDashboard,
+          exact: true,
+        },
+        {
+          title: "Guide de configuration",
+          url: `/dashboard/bot/${botId}/guide`,
+          icon: BookOpen,
+          exact: false,
+        },
       ],
     },
     {
       label: "Configuration",
       items: [
-        { title: "Identité & Token", url: `/dashboard/bot/${botId}/config`, icon: Bot, exact: false },
-        { title: "Modules", url: `/dashboard/bot/${botId}/modules`, icon: Puzzle, exact: false },
-        { title: "Déploiement", url: `/dashboard/bot/${botId}/deploy`, icon: Rocket, exact: false },
+        {
+          title: "Identité & Token",
+          url: `/dashboard/bot/${botId}/config`,
+          icon: Bot,
+          exact: false,
+        },
+        {
+          title: "Modules",
+          url: `/dashboard/bot/${botId}/modules`,
+          icon: Puzzle,
+          exact: false,
+        },
+        {
+          title: "Déploiement",
+          url: `/dashboard/bot/${botId}/deploy`,
+          icon: Rocket,
+          exact: false,
+        },
       ],
     },
     {
       label: "Monitoring",
       items: [
-        { title: "Activité", url: `/dashboard/bot/${botId}/activity`, icon: Activity, exact: false },
+        {
+          title: "Activité",
+          url: `/dashboard/bot/${botId}/activity`,
+          icon: Activity,
+          exact: false,
+        },
       ],
     },
     {
       label: "Modules",
       items: [
-        { title: "Monitor", url: `/dashboard/bot/${botId}/monitor`, icon: Activity, exact: false },
-        { title: "Welcome", url: `/dashboard/bot/${botId}/welcome`, icon: MessageSquare, exact: false },
-        { title: "Modération", url: `/dashboard/bot/${botId}/moderation`, icon: Shield, exact: false },
-        { title: "Tickets", url: `/dashboard/bot/${botId}/tickets`, icon: Ticket, exact: false },
-        { title: "Niveaux & XP", url: `/dashboard/bot/${botId}/levels`, icon: Star, exact: false },
-        { title: "Logs", url: `/dashboard/bot/${botId}/logs`, icon: ScrollText, exact: false },
-        { title: "Sondages", url: `/dashboard/bot/${botId}/polls`, icon: BarChart2, exact: false },
+        {
+          title: "Monitor",
+          url: `/dashboard/bot/${botId}/monitor`,
+          icon: Activity,
+          exact: false,
+        },
+        {
+          title: "Welcome",
+          url: `/dashboard/bot/${botId}/welcome`,
+          icon: MessageSquare,
+          exact: false,
+        },
+        {
+          title: "Modération",
+          url: `/dashboard/bot/${botId}/moderation`,
+          icon: Shield,
+          exact: false,
+        },
+        {
+          title: "Tickets",
+          url: `/dashboard/bot/${botId}/tickets`,
+          icon: Ticket,
+          exact: false,
+        },
+        {
+          title: "Niveaux & XP",
+          url: `/dashboard/bot/${botId}/levels`,
+          icon: Star,
+          exact: false,
+        },
+        {
+          title: "Logs",
+          url: `/dashboard/bot/${botId}/logs`,
+          icon: ScrollText,
+          exact: false,
+        },
+        {
+          title: "Sondages",
+          url: `/dashboard/bot/${botId}/polls`,
+          icon: BarChart2,
+          exact: false,
+        },
       ],
     },
   ];
@@ -115,6 +180,7 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [portalLoading, setPortalLoading] = useState(false);
   const [refundOpen, setRefundOpen] = useState(false);
   const [refundReason, setRefundReason] = useState("");
+  const [refundError, setRefundError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [deleteAccountOpen, setDeleteAccountOpen] = useState(false);
   const [deletingAccount, setDeletingAccount] = useState(false);
@@ -133,10 +199,16 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     if (!botId) return;
     setPortalLoading(true);
     try {
-      const res = await fetch(`/api/bot/${botId}/customer-portal`, { method: "POST" });
+      const res = await fetch(`/api/bot/${botId}/customer-portal`, {
+        method: "POST",
+      });
       const data = await res.json();
       if (!res.ok) {
-        toast({ title: "Erreur", description: data.error, variant: "destructive" });
+        toast({
+          title: "Erreur",
+          description: data.error,
+          variant: "destructive",
+        });
         return;
       }
       window.location.href = data.url;
@@ -147,6 +219,7 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   const submitRefund = async () => {
     if (!botId || refundReason.trim().length < 10) return;
+    setRefundError(null);
     setSubmitting(true);
     try {
       const res = await fetch(`/api/bot/${botId}/refund-request`, {
@@ -156,11 +229,12 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       });
       const data = await res.json();
       if (!res.ok) {
-        toast({ title: "Erreur", description: data.error, variant: "destructive" });
+        setRefundError(data.error ?? "Une erreur est survenue.");
         return;
       }
       setRefundOpen(false);
       setRefundReason("");
+      setRefundError(null);
       toast({
         title: "Demande envoyée",
         description: "Ta demande de remboursement a bien été transmise.",
@@ -176,7 +250,11 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       const res = await fetch("/api/user/account", { method: "DELETE" });
       if (!res.ok) {
         const data = await res.json();
-        toast({ title: "Erreur", description: data.error, variant: "destructive" });
+        toast({
+          title: "Erreur",
+          description: data.error,
+          variant: "destructive",
+        });
         return;
       }
       await signOut({ callbackUrl: "/signin" });
@@ -199,7 +277,9 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <div className="flex size-5 items-center justify-center rounded bg-blue-500/20 text-blue-400">
                     <FaDiscord className="size-3.5" />
                   </div>
-                  <span className="font-mono text-sm font-bold">← Mes bots</span>
+                  <span className="font-mono text-sm font-bold">
+                    ← Mes bots
+                  </span>
                 </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
@@ -217,7 +297,8 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   {section.items.map((item) => {
                     const isActive = item.exact
                       ? pathname === item.url
-                      : pathname === item.url || pathname.startsWith(item.url + "/");
+                      : pathname === item.url ||
+                        pathname.startsWith(item.url + "/");
                     return (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
@@ -250,7 +331,10 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                   >
                     <Avatar className="h-8 w-8 rounded-lg">
-                      <AvatarImage src={session?.user?.image ?? ""} alt="Avatar" />
+                      <AvatarImage
+                        src={session?.user?.image ?? ""}
+                        alt="Avatar"
+                      />
                       <AvatarFallback className="rounded-lg text-xs">
                         {session?.user?.name?.charAt(0)?.toUpperCase() ?? "?"}
                       </AvatarFallback>
@@ -294,14 +378,14 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={() => setDeleteAccountOpen(true)}
-                    className="text-red-500 focus:text-red-500"
+                    className="gap-2 text-red-500 focus:text-red-500"
                   >
                     <Trash2 className="size-4" />
                     Supprimer mon compte
                   </DropdownMenuItem>
                   <DropdownMenuItem
                     onClick={() => signOut({ callbackUrl: "/signin" })}
-                    className="text-red-500 focus:text-red-500"
+                    className="gap-2 text-red-500 focus:text-red-500"
                   >
                     <LogOut className="size-4" />
                     Se déconnecter
@@ -319,20 +403,28 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <DialogHeader>
             <DialogTitle>Demande de remboursement</DialogTitle>
             <DialogDescription>
-              Explique-nous pourquoi tu souhaites être remboursé. Ta demande sera examinée
-              et le remboursement du mois en cours sera effectué si elle est acceptée.
-              Ton abonnement sera également annulé.
+              Explique-nous pourquoi tu souhaites être remboursé. Ta demande
+              sera examinée et le remboursement du mois en cours sera effectué
+              si elle est acceptée. Ton abonnement sera également annulé.
             </DialogDescription>
           </DialogHeader>
           <Textarea
             placeholder="Raison de ta demande (min. 10 caractères)…"
             value={refundReason}
-            onChange={(e) => setRefundReason(e.target.value)}
+            onChange={(e) => {
+              setRefundReason(e.target.value);
+              setRefundError(null);
+            }}
             rows={4}
             className="font-mono text-sm"
           />
+          {refundError && <p className="text-sm text-red-500">{refundError}</p>}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setRefundOpen(false)} disabled={submitting}>
+            <Button
+              variant="outline"
+              onClick={() => setRefundOpen(false)}
+              disabled={submitting}
+            >
               Annuler
             </Button>
             <Button
@@ -350,13 +442,19 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <AlertDialogHeader>
             <AlertDialogTitle>Supprimer mon compte ?</AlertDialogTitle>
             <AlertDialogDescription>
-              Cette action est <span className="font-semibold text-foreground">irréversible</span>.
-              Tous tes bots, leur configuration, et toutes les données associées seront définitivement supprimés.
-              Les abonnements actifs seront annulés automatiquement.
+              Cette action est{" "}
+              <span className="font-semibold text-foreground">
+                irréversible
+              </span>
+              . Tous tes bots, leur configuration, et toutes les données
+              associées seront définitivement supprimés. Les abonnements actifs
+              seront annulés automatiquement.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={deletingAccount}>Annuler</AlertDialogCancel>
+            <AlertDialogCancel disabled={deletingAccount}>
+              Annuler
+            </AlertDialogCancel>
             <AlertDialogAction
               onClick={deleteAccount}
               disabled={deletingAccount}
