@@ -46,8 +46,8 @@ export async function POST(
     return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
   }
 
-  if (!bot.plan || !bot.paidAt) {
-    return NextResponse.json({ error: "Aucun achat associé à ce bot" }, { status: 400 });
+  if (!bot.plan) {
+    return NextResponse.json({ error: "Aucun plan actif sur ce bot" }, { status: 400 });
   }
 
   // Check for existing pending/approved request

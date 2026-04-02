@@ -289,7 +289,6 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                         <RotateCcw className="size-4" />
                         Demander un remboursement
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator />
                     </>
                   )}
                   <DropdownMenuSeparator />
