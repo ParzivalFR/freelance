@@ -52,7 +52,7 @@ export async function POST(
 
   // Check for existing pending/approved request
   const existing = await prisma.refundRequest.findFirst({
-    where: { botId, status: { in: ["PENDING", "APPROVED"] } },
+    where: { botId, status: "PENDING" },
   });
   if (existing) {
     return NextResponse.json({ error: "Une demande de remboursement est déjà en cours" }, { status: 400 });
