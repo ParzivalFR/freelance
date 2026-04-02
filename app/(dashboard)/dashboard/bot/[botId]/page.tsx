@@ -4,18 +4,15 @@ import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { FaDiscord } from "react-icons/fa";
-import { CreditCard, ExternalLink, Terminal } from "lucide-react";
+import { Terminal } from "lucide-react";
 import { StatCard, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import type { BotConfig } from "@/components/dashboard/bot-types";
-import { useToast } from "@/components/ui/use-toast";
 
 export default function BotOverviewPage() {
   const params = useParams();
   const botId = params?.botId as string;
-  const { toast } = useToast();
 
   const [config, setConfig] = useState<BotConfig | null>(null);
-  const [portalLoading, setPortalLoading] = useState(false);
   const [logs, setLogs] = useState<string[]>([
     "> SYSTEM_BOOT..................OK",
     "> LOADING_ENGINE..............OK",
@@ -63,21 +60,6 @@ export default function BotOverviewPage() {
 
     return () => clearInterval(interval);
   }, [botId]);
-
-  const openCustomerPortal = async () => {
-    setPortalLoading(true);
-    try {
-      const res = await fetch(`/api/bot/${botId}/customer-portal`, { method: "POST" });
-      const data = await res.json();
-      if (!res.ok) {
-        toast({ title: "Erreur", description: data.error, variant: "destructive" });
-        return;
-      }
-      window.location.href = data.url;
-    } finally {
-      setPortalLoading(false);
-    }
-  };
 
   if (!config) return <LoadingScreen />;
 
@@ -128,7 +110,7 @@ export default function BotOverviewPage() {
         />
       </div>
 
-      {/* Plan badge + customer portal */}
+      {/* Plan badge */}
       <div className="flex items-center gap-3 rounded-xl border border-dashed bg-card px-4 py-3">
         <div className="flex-1">
           <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">plan_actif</p>
@@ -149,17 +131,6 @@ export default function BotOverviewPage() {
         >
           {config.plan ?? "FREE"}
         </div>
-        {config.plan && (
-          <button
-            onClick={openCustomerPortal}
-            disabled={portalLoading}
-            className="flex shrink-0 items-center gap-1.5 rounded-lg border border-dashed border-blue-500/30 px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-blue-400 transition hover:bg-blue-500/10 disabled:opacity-50"
-          >
-            <CreditCard className="size-3" />
-            {portalLoading ? "Chargement…" : "Gérer mon abonnement"}
-            <ExternalLink className="size-3" />
-          </button>
-        )}
       </div>
 
       {/* Terminal logs */}
