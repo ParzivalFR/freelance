@@ -21,6 +21,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -47,6 +57,7 @@ import {
   Shield,
   Star,
   Ticket,
+  Trash2,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -105,6 +116,8 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [refundOpen, setRefundOpen] = useState(false);
   const [refundReason, setRefundReason] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [deleteAccountOpen, setDeleteAccountOpen] = useState(false);
+  const [deletingAccount, setDeletingAccount] = useState(false);
 
   const nav = botId ? buildNav(botId) : [];
 
@@ -154,6 +167,21 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       });
     } finally {
       setSubmitting(false);
+    }
+  };
+
+  const deleteAccount = async () => {
+    setDeletingAccount(true);
+    try {
+      const res = await fetch("/api/user/account", { method: "DELETE" });
+      if (!res.ok) {
+        const data = await res.json();
+        toast({ title: "Erreur", description: data.error, variant: "destructive" });
+        return;
+      }
+      await signOut({ callbackUrl: "/signin" });
+    } finally {
+      setDeletingAccount(false);
     }
   };
 
@@ -266,6 +294,13 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
+                    onClick={() => setDeleteAccountOpen(true)}
+                    className="text-red-500 focus:text-red-500"
+                  >
+                    <Trash2 className="size-4" />
+                    Supprimer mon compte
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
                     onClick={() => signOut({ callbackUrl: "/signin" })}
                     className="text-red-500 focus:text-red-500"
                   >
@@ -311,6 +346,28 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <AlertDialog open={deleteAccountOpen} onOpenChange={setDeleteAccountOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer mon compte ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Cette action est <span className="font-semibold text-foreground">irréversible</span>.
+              Tous tes bots, leur configuration, et toutes les données associées seront définitivement supprimés.
+              Les abonnements actifs seront annulés automatiquement.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deletingAccount}>Annuler</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={deleteAccount}
+              disabled={deletingAccount}
+              className="bg-red-600 hover:bg-red-700 focus:ring-red-600"
+            >
+              {deletingAccount ? "Suppression…" : "Supprimer définitivement"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </>
   );
 }
