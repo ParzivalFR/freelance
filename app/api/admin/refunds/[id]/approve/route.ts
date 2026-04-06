@@ -71,7 +71,10 @@ export async function POST(
             paymentIntentId = typeof pi === "string" ? pi : (pi as any)?.id ?? null;
           }
         }
-      } else if (bot.stripeSessionId) {
+      }
+
+      // Fallback: checkout session (couvre les abonnements créés via Checkout)
+      if (!paymentIntentId && bot.stripeSessionId) {
         const checkoutSession = await stripe.checkout.sessions.retrieve(bot.stripeSessionId, {
           expand: ["payment_intent"],
         });
