@@ -65,10 +65,11 @@ export async function POST(
             status: "paid",
             limit: 1,
           });
-          const latestInvoice = invoices.data[0];
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const latestInvoice = invoices.data[0] as any;
           if (latestInvoice?.payment_intent) {
             const pi = latestInvoice.payment_intent;
-            paymentIntentId = typeof pi === "string" ? pi : (pi as any)?.id ?? null;
+            paymentIntentId = typeof pi === "string" ? pi : pi?.id ?? null;
           }
         }
       }
