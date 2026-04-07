@@ -49,45 +49,45 @@ export async function POST(
       let paymentIntentId: string | null = null;
       let chargeId: string | null = null;
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let invoiceCustomerId: string | null = null;
+
       if (bot.stripeSubscriptionId) {
-        // Récupère la subscription avec invoice + payment_intent + charge expandés
         const subscription = await stripe.subscriptions.retrieve(bot.stripeSubscriptionId, {
-          expand: ["latest_invoice.payment_intent", "latest_invoice.charge"],
+          expand: ["latest_invoice.payment_intent"],
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const invoice = subscription.latest_invoice as any;
         if (invoice && typeof invoice === "object") {
           const pi = invoice.payment_intent;
           paymentIntentId = typeof pi === "string" ? pi : (pi?.id ?? null);
-          if (!paymentIntentId) {
-            const ch = invoice.charge;
-            chargeId = typeof ch === "string" ? ch : (ch?.id ?? null);
-          }
+          // Garde le customer ID pour le fallback charges
+          const cust = invoice.customer;
+          invoiceCustomerId = typeof cust === "string" ? cust : (cust?.id ?? null);
         }
 
-        // Fallback: liste les invoices payées avec payment_intent + charge expandés
-        if (!paymentIntentId && !chargeId) {
+        if (!paymentIntentId) {
           const invoices = await stripe.invoices.list({
             subscription: bot.stripeSubscriptionId,
             status: "paid",
             limit: 1,
-            expand: ["data.payment_intent", "data.charge"],
+            expand: ["data.payment_intent"],
           });
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const inv = invoices.data[0] as any;
           if (inv) {
             const pi = inv.payment_intent;
             paymentIntentId = typeof pi === "string" ? pi : (pi?.id ?? null);
-            if (!paymentIntentId) {
-              const ch = inv.charge;
-              chargeId = typeof ch === "string" ? ch : (ch?.id ?? null);
+            if (!invoiceCustomerId) {
+              const cust = inv.customer;
+              invoiceCustomerId = typeof cust === "string" ? cust : (cust?.id ?? null);
             }
           }
         }
       }
 
       // Fallback: checkout session
-      if (!paymentIntentId && !chargeId && bot.stripeSessionId) {
+      if (!paymentIntentId && bot.stripeSessionId) {
         const checkoutSession = await stripe.checkout.sessions.retrieve(bot.stripeSessionId, {
           expand: ["payment_intent"],
         });
@@ -96,6 +96,24 @@ export async function POST(
           paymentIntentId = pi.id;
         } else if (typeof pi === "string") {
           paymentIntentId = pi;
+        }
+        if (!invoiceCustomerId && checkoutSession.customer) {
+          const cust = checkoutSession.customer;
+          invoiceCustomerId = typeof cust === "string" ? cust : (cust as any)?.id ?? null;
+        }
+      }
+
+      // Fallback final: lister les charges du customer (Stripe API 2025 ne met plus payment_intent sur l'invoice pour les subscriptions Checkout)
+      if (!paymentIntentId && !chargeId && invoiceCustomerId) {
+        const charges = await stripe.charges.list({
+          customer: invoiceCustomerId,
+          limit: 10,
+        });
+        const successfulCharge = charges.data.find(
+          (c) => c.status === "succeeded" && !c.refunded
+        );
+        if (successfulCharge) {
+          chargeId = successfulCharge.id;
         }
       }
 
