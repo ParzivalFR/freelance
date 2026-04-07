@@ -42,47 +42,55 @@ export async function POST(
 
   const bot = refundRequest.bot;
   let stripeRefundId: string | null = null;
-  let stripeError: string | null = null;
 
   if (!skipStripe) {
     try {
+      // On cherche soit un payment_intent, soit un charge pour rembourser
       let paymentIntentId: string | null = null;
+      let chargeId: string | null = null;
 
       if (bot.stripeSubscriptionId) {
+        // Récupère la subscription avec invoice + payment_intent + charge expandés
         const subscription = await stripe.subscriptions.retrieve(bot.stripeSubscriptionId, {
-          expand: ["latest_invoice.payment_intent"],
+          expand: ["latest_invoice.payment_intent", "latest_invoice.charge"],
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const invoice = subscription.latest_invoice as any;
-        console.log("[refund] latest_invoice:", JSON.stringify(invoice));
         if (invoice && typeof invoice === "object") {
           const pi = invoice.payment_intent;
           paymentIntentId = typeof pi === "string" ? pi : (pi?.id ?? null);
+          if (!paymentIntentId) {
+            const ch = invoice.charge;
+            chargeId = typeof ch === "string" ? ch : (ch?.id ?? null);
+          }
         }
-        // Fallback: list paid invoices for this subscription (expand requis pour payment_intent)
-        if (!paymentIntentId) {
+
+        // Fallback: liste les invoices payées avec payment_intent + charge expandés
+        if (!paymentIntentId && !chargeId) {
           const invoices = await stripe.invoices.list({
             subscription: bot.stripeSubscriptionId,
             status: "paid",
             limit: 1,
-            expand: ["data.payment_intent"],
+            expand: ["data.payment_intent", "data.charge"],
           });
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          const latestInvoice = invoices.data[0] as any;
-          console.log("[refund] invoices.list[0]:", JSON.stringify(latestInvoice));
-          if (latestInvoice?.payment_intent) {
-            const pi = latestInvoice.payment_intent;
-            paymentIntentId = typeof pi === "string" ? pi : pi?.id ?? null;
+          const inv = invoices.data[0] as any;
+          if (inv) {
+            const pi = inv.payment_intent;
+            paymentIntentId = typeof pi === "string" ? pi : (pi?.id ?? null);
+            if (!paymentIntentId) {
+              const ch = inv.charge;
+              chargeId = typeof ch === "string" ? ch : (ch?.id ?? null);
+            }
           }
         }
       }
 
-      // Fallback: checkout session (couvre les abonnements créés via Checkout)
-      if (!paymentIntentId && bot.stripeSessionId) {
+      // Fallback: checkout session
+      if (!paymentIntentId && !chargeId && bot.stripeSessionId) {
         const checkoutSession = await stripe.checkout.sessions.retrieve(bot.stripeSessionId, {
           expand: ["payment_intent"],
         });
-        console.log("[refund] checkout session payment_intent:", JSON.stringify(checkoutSession.payment_intent));
         const pi = checkoutSession.payment_intent;
         if (pi && typeof pi !== "string") {
           paymentIntentId = pi.id;
@@ -91,22 +99,25 @@ export async function POST(
         }
       }
 
-      console.log("[refund] final paymentIntentId:", paymentIntentId);
-      if (!paymentIntentId) {
+      if (!paymentIntentId && !chargeId) {
         return NextResponse.json(
           { error: "Impossible de trouver le paiement Stripe associé à ce bot. Vérifie manuellement ou utilise skipStripe." },
           { status: 422 }
         );
       }
 
-      const refund = await stripe.refunds.create({ payment_intent: paymentIntentId });
+      const refundParams = paymentIntentId
+        ? { payment_intent: paymentIntentId }
+        : { charge: chargeId! };
+
+      const refund = await stripe.refunds.create(refundParams);
       stripeRefundId = refund.id;
 
       if (bot.stripeSubscriptionId) {
         await stripe.subscriptions.cancel(bot.stripeSubscriptionId).catch(() => {});
       }
     } catch (e) {
-      stripeError = e instanceof Error ? e.message : String(e);
+      const stripeError = e instanceof Error ? e.message : String(e);
       console.error("[refund] Stripe error:", stripeError);
       return NextResponse.json(
         { error: `Stripe : ${stripeError}` },
