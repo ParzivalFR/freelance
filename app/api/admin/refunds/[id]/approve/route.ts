@@ -54,6 +54,7 @@ export async function POST(
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const invoice = subscription.latest_invoice as any;
+        console.log("[refund] latest_invoice:", JSON.stringify(invoice));
         if (invoice && typeof invoice === "object") {
           const pi = invoice.payment_intent;
           paymentIntentId = typeof pi === "string" ? pi : (pi?.id ?? null);
@@ -68,6 +69,7 @@ export async function POST(
           });
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const latestInvoice = invoices.data[0] as any;
+          console.log("[refund] invoices.list[0]:", JSON.stringify(latestInvoice));
           if (latestInvoice?.payment_intent) {
             const pi = latestInvoice.payment_intent;
             paymentIntentId = typeof pi === "string" ? pi : pi?.id ?? null;
@@ -80,6 +82,7 @@ export async function POST(
         const checkoutSession = await stripe.checkout.sessions.retrieve(bot.stripeSessionId, {
           expand: ["payment_intent"],
         });
+        console.log("[refund] checkout session payment_intent:", JSON.stringify(checkoutSession.payment_intent));
         const pi = checkoutSession.payment_intent;
         if (pi && typeof pi !== "string") {
           paymentIntentId = pi.id;
@@ -88,6 +91,7 @@ export async function POST(
         }
       }
 
+      console.log("[refund] final paymentIntentId:", paymentIntentId);
       if (!paymentIntentId) {
         return NextResponse.json(
           { error: "Impossible de trouver le paiement Stripe associé à ce bot. Vérifie manuellement ou utilise skipStripe." },
