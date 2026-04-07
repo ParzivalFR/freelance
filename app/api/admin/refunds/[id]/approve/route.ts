@@ -58,12 +58,13 @@ export async function POST(
           const pi = invoice.payment_intent;
           paymentIntentId = typeof pi === "string" ? pi : (pi?.id ?? null);
         }
-        // Fallback: list paid invoices for this subscription
+        // Fallback: list paid invoices for this subscription (expand requis pour payment_intent)
         if (!paymentIntentId) {
           const invoices = await stripe.invoices.list({
             subscription: bot.stripeSubscriptionId,
             status: "paid",
             limit: 1,
+            expand: ["data.payment_intent"],
           });
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const latestInvoice = invoices.data[0] as any;
