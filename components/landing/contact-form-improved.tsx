@@ -2,21 +2,11 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion } from "framer-motion";
-import {
-  CheckCircle,
-  Loader2,
-  Mail,
-  MessageCircle,
-  Send,
-  User,
-} from "lucide-react";
+import { CheckCircle, Clock, Loader2, Lock, Send } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import useSWRMutation from "swr/mutation";
 import { z } from "zod";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import {
   Form,
   FormControl,
@@ -33,7 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Separator } from "../ui/separator";
 import { Textarea } from "../ui/textarea";
 
 const formSchema = z.object({
@@ -72,16 +61,10 @@ async function sendContactRequest(
 ) {
   const response = await fetch(url, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(arg),
   });
-
-  if (!response.ok) {
-    throw new Error("Failed to send message");
-  }
-
+  if (!response.ok) throw new Error("Failed to send message");
   return response.json();
 }
 
@@ -100,6 +83,12 @@ const budgetRanges = [
   { value: "3000-5000", label: "3 000€ - 5 000€" },
   { value: "5000+", label: "5 000€ +" },
   { value: "a-discuter", label: "À discuter" },
+];
+
+const perks = [
+  { icon: Clock, text: "Réponse sous 24h garantie" },
+  { icon: CheckCircle, text: "Devis gratuit et sans engagement" },
+  { icon: Lock, text: "Vos données restent confidentielles" },
 ];
 
 export default function ContactFormImproved() {
@@ -125,9 +114,7 @@ export default function ContactFormImproved() {
   async function onSubmit(data: z.infer<typeof formSchema>) {
     try {
       await trigger(data);
-      toast.success(
-        "Message envoyé avec succès ! Je vous recontacte rapidement."
-      );
+      toast.success("Message envoyé avec succès ! Je vous recontacte rapidement.");
       form.reset();
     } catch (error) {
       toast.error("Erreur lors de l'envoi. Veuillez réessayer.");
@@ -137,258 +124,229 @@ export default function ContactFormImproved() {
   return (
     <section id="contact" className="py-16">
       <div className="container mx-auto px-4">
+
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
-          className="mx-auto mb-12 max-w-3xl text-center"
+          className="mx-auto mb-16 max-w-3xl text-center"
         >
-          <Badge variant="outline" className="mb-4">
-            <Mail className="mr-2 size-4" />
+          <p className="font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
             Contact
-          </Badge>
-          <h2 className="mb-4 bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-4xl font-bold tracking-tight text-transparent sm:text-5xl">
+          </p>
+          <h2 className="mt-1 font-[family-name:var(--font-display)] text-[clamp(2rem,5vw,3.5rem)] uppercase leading-none text-foreground">
             Parlons de votre projet
           </h2>
-          <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
-            Décrivez-moi votre vision et vos objectifs. Je vous répondrai sous
-            24h avec une proposition personnalisée.
+          <p className="mt-4 text-lg text-muted-foreground">
+            Décrivez-moi votre vision. Je vous réponds sous 24h avec une proposition claire.
           </p>
         </motion.div>
 
-        {/* Form */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          viewport={{ once: true }}
-          className="mx-auto max-w-2xl"
-        >
-          <Card className="shadow-lg">
-            <CardHeader className="pb-8 text-center">
-              <CardTitle className="flex items-center justify-center gap-2 text-xl">
-                <MessageCircle className="size-5 text-primary" />
-                Formulaire de contact
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <Form {...form}>
-                <form
-                  onSubmit={form.handleSubmit(onSubmit)}
-                  className="space-y-6"
-                >
-                  {/* Informations personnelles */}
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                      <User className="size-4" />
-                      Informations personnelles
-                    </div>
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <FormField
-                        control={form.control}
-                        name="firstName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Prénom *</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Jean"
-                                {...field}
-                                className="transition-all duration-200 focus:scale-[1.02]"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="lastName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Nom *</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Dupont"
-                                {...field}
-                                className="transition-all duration-200 focus:scale-[1.02]"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+        {/* 2-col layout */}
+        <div className="mx-auto max-w-5xl grid grid-cols-1 gap-12 lg:grid-cols-5">
 
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email *</FormLabel>
-                            <FormControl>
-                              <Input
-                                type="email"
-                                placeholder="jean.dupont@exemple.fr"
-                                {...field}
-                                className="transition-all duration-200 focus:scale-[1.02]"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={form.control}
-                        name="company"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Entreprise</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Mon Entreprise (optionnel)"
-                                {...field}
-                                className="transition-all duration-200 focus:scale-[1.02]"
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+          {/* Left — infos */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            viewport={{ once: true }}
+            className="flex flex-col gap-8 lg:col-span-2"
+          >
+            <div>
+              <p className="font-[family-name:var(--font-display)] text-2xl uppercase leading-none text-foreground">
+                Une idee ?<br />
+                <span className="text-[#7158ff]">Ecrivons-la.</span>
+              </p>
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                Que ce soit une landing page, une appli web ou une refonte complète — dis-moi ce que tu as en tête. Pas de jargon, pas de prise de tête.
+              </p>
+            </div>
+
+            <div className="flex flex-col gap-4">
+              {perks.map(({ icon: Icon, text }) => (
+                <div key={text} className="flex items-center gap-3">
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-[#7158ff]/10">
+                    <Icon className="size-4 text-[#7158ff]" />
                   </div>
+                  <span className="text-sm text-muted-foreground">{text}</span>
+                </div>
+              ))}
+            </div>
+          </motion.div>
 
-                  <Separator />
-
-                  {/* Détails du projet */}
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                      <MessageCircle className="size-4" />
-                      Détails du projet
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                      <FormField
-                        control={form.control}
-                        name="projectType"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Type de projet *</FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Sélectionnez un type" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {projectTypes.map((type) => (
-                                  <SelectItem
-                                    key={type.value}
-                                    value={type.value}
-                                  >
-                                    {type.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-
-                      <FormField
-                        control={form.control}
-                        name="budget"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Budget envisagé *</FormLabel>
-                            <Select
-                              onValueChange={field.onChange}
-                              defaultValue={field.value}
-                            >
-                              <FormControl>
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Sélectionnez un budget" />
-                                </SelectTrigger>
-                              </FormControl>
-                              <SelectContent>
-                                {budgetRanges.map((range) => (
-                                  <SelectItem
-                                    key={range.value}
-                                    value={range.value}
-                                  >
-                                    {range.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Message */}
+          {/* Right — form */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="lg:col-span-3"
+          >
+            <Form {...form}>
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-5 rounded-2xl border p-8"
+              >
+                {/* Nom + Prénom */}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <FormField
                     control={form.control}
-                    name="message"
+                    name="firstName"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Décrivez votre projet *</FormLabel>
+                        <FormLabel>Prénom *</FormLabel>
                         <FormControl>
-                          <Textarea
-                            placeholder="Parlez-moi de votre vision, vos objectifs, vos contraintes techniques, délais souhaités..."
-                            className="min-h-[120px] transition-all duration-200 focus:scale-[1.01]"
-                            {...field}
-                          />
+                          <Input placeholder="Jean" {...field} className="focus-visible:ring-[#7158ff]" />
                         </FormControl>
-                        <div className="flex justify-between text-xs text-muted-foreground">
-                          <FormMessage />
-                          <span>{field.value?.length || 0}/1000</span>
-                        </div>
+                        <FormMessage />
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="lastName"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Nom *</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Dupont" {...field} className="focus-visible:ring-[#7158ff]" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-                  {/* Submit Button */}
-                  <div className="pt-4">
-                    <Button
-                      type="submit"
-                      disabled={isMutating}
-                      className="h-12 w-full text-base font-semibold transition-all duration-200 hover:scale-[1.02] disabled:scale-100"
-                    >
-                      {isMutating ? (
-                        <>
-                          <Loader2 className="mr-2 size-4 animate-spin" />
-                          Envoi en cours...
-                        </>
-                      ) : (
-                        <>
-                          <Send className="mr-2 size-4" />
-                          Envoyer ma demande
-                        </>
-                      )}
-                    </Button>
-                  </div>
+                {/* Email + Entreprise */}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email *</FormLabel>
+                        <FormControl>
+                          <Input type="email" placeholder="jean@exemple.fr" {...field} className="focus-visible:ring-[#7158ff]" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="company"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Entreprise <span className="text-muted-foreground">(optionnel)</span></FormLabel>
+                        <FormControl>
+                          <Input placeholder="Mon Entreprise" {...field} className="focus-visible:ring-[#7158ff]" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
 
-                  {/* Footer note */}
-                  <div className="border-t pt-4 text-center text-xs text-muted-foreground">
-                    <CheckCircle className="mr-1 inline size-3 text-green-500" />
-                    Réponse garantie sous 24h • Vos données restent
-                    confidentielles
-                  </div>
-                </form>
-              </Form>
-            </CardContent>
-          </Card>
-        </motion.div>
+                {/* Type + Budget */}
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <FormField
+                    control={form.control}
+                    name="projectType"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Type de projet *</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="focus:ring-[#7158ff]">
+                              <SelectValue placeholder="Sélectionnez" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {projectTypes.map((type) => (
+                              <SelectItem key={type.value} value={type.value}>
+                                {type.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="budget"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Budget envisagé *</FormLabel>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger className="focus:ring-[#7158ff]">
+                              <SelectValue placeholder="Sélectionnez" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {budgetRanges.map((range) => (
+                              <SelectItem key={range.value} value={range.value}>
+                                {range.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Message */}
+                <FormField
+                  control={form.control}
+                  name="message"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Décrivez votre projet *</FormLabel>
+                      <FormControl>
+                        <Textarea
+                          placeholder="Parlez-moi de votre vision, vos objectifs, vos contraintes techniques, délais souhaités..."
+                          className="min-h-[120px] focus-visible:ring-[#7158ff]"
+                          {...field}
+                        />
+                      </FormControl>
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <FormMessage />
+                        <span>{field.value?.length || 0}/1000</span>
+                      </div>
+                    </FormItem>
+                  )}
+                />
+
+                {/* Submit */}
+                <button
+                  type="submit"
+                  disabled={isMutating}
+                  className="flex h-12 w-full items-center justify-center gap-2 rounded-xl bg-[#7158ff] text-base font-semibold text-white transition-opacity hover:opacity-85 disabled:opacity-50"
+                >
+                  {isMutating ? (
+                    <>
+                      <Loader2 className="size-4 animate-spin" />
+                      Envoi en cours...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="size-4" />
+                      Envoyer ma demande
+                    </>
+                  )}
+                </button>
+              </form>
+            </Form>
+          </motion.div>
+        </div>
+
       </div>
     </section>
   );
