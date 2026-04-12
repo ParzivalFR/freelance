@@ -92,12 +92,11 @@ export default function FreelanceServicesSection() {
     <section id="pricing">
       <div className="mx-auto flex max-w-(--breakpoint-xl) flex-col gap-8 px-4 py-14 md:px-8">
         <div className="mx-auto max-w-5xl text-center">
-          <h4 className="text-lg font-bold tracking-tight text-black dark:text-white sm:text-xl">
+          <p className="font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
             Services
-          </h4>
-
-          <h2 className="text-4xl font-bold tracking-tight text-black dark:text-white sm:text-6xl">
-            Tarifs adaptés à vos besoins
+          </p>
+          <h2 className="mt-1 font-[family-name:var(--font-display)] text-[clamp(2rem,5vw,3.5rem)] uppercase leading-none text-foreground">
+            Tarifs adaptes a vos besoins
           </h2>
 
           <p className="mt-6 text-lg leading-8 text-black/80 dark:text-white sm:text-xl">
@@ -122,8 +121,8 @@ export default function FreelanceServicesSection() {
           <span>
             {interval === "day" ? "Taux Journalier" : "Forfait Projet"}
           </span>
-          <span className="inline-block whitespace-nowrap rounded-xl bg-green-500 px-2.5 py-1 text-[11px] font-semibold uppercase leading-5 tracking-wide text-white">
-            Forfaits actifs ✨
+          <span className="inline-block whitespace-nowrap rounded-full bg-[#7158ff]/10 border border-[#7158ff]/30 px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-[#7158ff]">
+            Forfaits actifs
           </span>
         </div>
 
@@ -132,21 +131,21 @@ export default function FreelanceServicesSection() {
             <div
               key={service.id}
               className={cn(
-                "relative flex max-w-[400px] flex-col gap-8 rounded-2xl border p-4 text-black dark:text-white overflow-hidden",
+                "relative flex max-w-[400px] flex-col gap-6 rounded-2xl border p-6 overflow-hidden transition-all duration-300",
                 {
-                  "border-2 border-foreground scale-[1.05]":
+                  "border-2 border-[#7158ff] scale-[1.03] shadow-lg shadow-[#7158ff]/10":
                     service.isMostPopular,
-                  "border-2 border-green-500 bg-green-50/50 dark:bg-green-950/20":
+                  "border-2 border-[#7158ff]/50 bg-[#7158ff]/5":
                     service.isSpecial,
                 }
               )}
             >
               <div className="flex items-center">
                 <div className="ml-4">
-                  <h2 className="text-base font-semibold leading-7">
+                  <h2 className="font-[family-name:var(--font-display)] text-lg uppercase leading-none text-foreground">
                     {service.name}
                   </h2>
-                  <p className="h-12 text-sm leading-5 text-black/70 dark:text-white/70">
+                  <p className="mt-1 text-xs leading-relaxed text-muted-foreground">
                     {service.description}
                   </p>
                 </div>
@@ -176,7 +175,7 @@ export default function FreelanceServicesSection() {
                 <span className="text-4xl font-bold text-black dark:text-white">
                   {service.isSpecial ? (
                     <>
-                      <span className="text-green-600 dark:text-green-400">
+                      <span className="text-[#7158ff]">
                         Gratuit
                       </span>
                       <span className="text-xs"> / projet</span>
@@ -197,17 +196,16 @@ export default function FreelanceServicesSection() {
 
               <Button
                 className={cn(
-                  "group relative w-full gap-2 overflow-hidden text-lg font-semibold tracking-tighter",
-                  "transform-gpu ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-primary hover:ring-offset-2",
-                  {
-                    "bg-green-600 hover:bg-green-700 text-white":
-                      service.isSpecial,
-                  }
+                  "w-full rounded-xl font-semibold transition-opacity hover:opacity-85",
+                  service.isSpecial
+                    ? "bg-[#7158ff] text-white"
+                    : service.isMostPopular
+                    ? "bg-[#7158ff] text-white"
+                    : ""
                 )}
                 disabled={isLoading}
                 onClick={() => void onHireClick(service.id)}
               >
-                <span className="absolute right-0 -mt-12 h-32 w-8 translate-x-12 rotate-12 transform-gpu bg-white opacity-10 transition-all duration-1000 ease-out group-hover:-translate-x-96 dark:bg-black" />
                 {(!isLoading || (isLoading && id !== service.id)) && (
                   <p>{service.isSpecial ? "Postuler" : "Me contacter"}</p>
                 )}
@@ -222,9 +220,9 @@ export default function FreelanceServicesSection() {
                   {service.features.map((feature: any, idx: any) => (
                     <li
                       key={idx}
-                      className="flex items-center gap-3 text-xs font-medium text-black dark:text-white"
+                      className="flex items-center gap-3 text-xs text-foreground"
                     >
-                      <CheckIcon className="size-5 shrink-0 rounded-lg bg-green-400 p-[2px] text-black dark:text-white " />
+                      <CheckIcon className="size-5 shrink-0 rounded-lg bg-[#7158ff] p-[2px] text-white" />
                       <span className="flex">{feature}</span>
                     </li>
                   ))}
@@ -240,12 +238,12 @@ export default function FreelanceServicesSection() {
 
 const AlerteNote = () => {
   return (
-    <div className="mx-auto mb-6 max-w-(--breakpoint-md) rounded-xl border-l-4 border-green-500 bg-green-50 p-4 text-green-800 dark:bg-green-950/30 dark:text-green-400">
-      <p className="flex items-center gap-2 font-bold">
-        <CheckIcon className="size-5" />
-        Nouveau :
+    <div className="mx-auto mb-6 max-w-(--breakpoint-md) rounded-xl border-l-4 border-[#7158ff] bg-[#7158ff]/5 p-4">
+      <p className="flex items-center gap-2 font-mono text-xs font-semibold uppercase tracking-widest text-[#7158ff]">
+        <CheckIcon className="size-4" />
+        Nouveau
       </p>
-      <p className="text-sm">
+      <p className="mt-1 text-sm text-muted-foreground">
         Les forfaits projets sont désormais actifs ! Paiement possible en 3 fois
         sans frais pour les projets {">"}1000€. Devis détaillé gratuit sous 24h.
       </p>
