@@ -47,6 +47,7 @@ import {
   BookOpen,
   Bot,
   CreditCard,
+  Crown,
   LayoutDashboard,
   LogOut,
   MessageSquare,
@@ -127,42 +128,49 @@ function buildNav(botId: string) {
           url: `/dashboard/bot/${botId}/monitor`,
           icon: Activity,
           exact: false,
+          pro: true,
         },
         {
           title: "Welcome",
           url: `/dashboard/bot/${botId}/welcome`,
           icon: MessageSquare,
           exact: false,
+          pro: false,
         },
         {
           title: "Modération",
           url: `/dashboard/bot/${botId}/moderation`,
           icon: Shield,
           exact: false,
+          pro: true,
         },
         {
           title: "Tickets",
           url: `/dashboard/bot/${botId}/tickets`,
           icon: Ticket,
           exact: false,
+          pro: true,
         },
         {
           title: "Niveaux & XP",
           url: `/dashboard/bot/${botId}/levels`,
           icon: Star,
           exact: false,
+          pro: true,
         },
         {
           title: "Logs",
           url: `/dashboard/bot/${botId}/logs`,
           icon: ScrollText,
           exact: false,
+          pro: false,
         },
         {
           title: "Sondages",
           url: `/dashboard/bot/${botId}/polls`,
           icon: BarChart2,
           exact: false,
+          pro: true,
         },
       ],
     },
@@ -299,17 +307,19 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       ? pathname === item.url
                       : pathname === item.url ||
                         pathname.startsWith(item.url + "/");
+                    const isLocked = "pro" in item && item.pro && !plan;
                     return (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton
                           asChild
                           isActive={isActive}
                           tooltip={item.title}
-                          className="font-mono text-xs data-[active=true]:border data-[active=true]:border-blue-500/30 data-[active=true]:bg-blue-500/10 data-[active=true]:text-blue-500"
+                          className={`font-mono text-xs data-[active=true]:border data-[active=true]:border-blue-500/30 data-[active=true]:bg-blue-500/10 data-[active=true]:text-blue-500 ${isLocked ? "opacity-50" : ""}`}
                         >
                           <Link href={item.url}>
                             <item.icon size={14} />
-                            <span>{item.title}</span>
+                            <span className="flex-1">{item.title}</span>
+                            {isLocked && <Crown size={10} className="text-yellow-500/60" />}
                           </Link>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
@@ -356,7 +366,7 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   align="end"
                   sideOffset={4}
                 >
-                  {plan === "MANAGED" && (
+                  {(plan === "MANAGED" || plan === "PRO") && (
                     <>
                       <DropdownMenuItem
                         onClick={openCustomerPortal}

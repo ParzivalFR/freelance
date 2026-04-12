@@ -2,8 +2,9 @@
 
 import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, ChevronUp, Eye, EyeOff } from "lucide-react";
+import { ChevronDown, ChevronUp, Crown, Eye, EyeOff, Settings } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
+import Link from "next/link";
 
 // ─── CyberLabel ───────────────────────────────────────────────────────────────
 
@@ -181,6 +182,9 @@ export function ModuleToggle({
   enabled,
   onToggle,
   children,
+  configHref,
+  alwaysOpen,
+  locked,
 }: {
   icon: React.ReactNode;
   label: string;
@@ -188,42 +192,75 @@ export function ModuleToggle({
   enabled: boolean;
   onToggle: () => void;
   children?: React.ReactNode;
+  configHref?: string;
+  alwaysOpen?: boolean;
+  locked?: boolean;
 }) {
   const [open, setOpen] = useState(false);
 
   return (
     <div
       className={`rounded-xl border transition-all duration-300 ${
-        enabled ? "border-blue-500/20 bg-blue-500/5" : "border-dashed bg-card"
+        locked
+          ? "border-dashed bg-card opacity-60"
+          : enabled ? "border-blue-500/20 bg-blue-500/5" : "border-dashed bg-card"
       }`}
     >
       <div className="flex items-center gap-3 p-3.5">
         <div
           className={`flex size-8 shrink-0 items-center justify-center rounded-lg transition-colors ${
-            enabled ? "bg-blue-500/15 text-blue-500" : "bg-muted text-muted-foreground"
+            locked
+              ? "bg-muted text-muted-foreground"
+              : enabled ? "bg-blue-500/15 text-blue-500" : "bg-muted text-muted-foreground"
           }`}
         >
           {icon}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="font-mono text-xs font-semibold text-foreground">{label}</p>
+          <div className="flex items-center gap-1.5">
+            <p className="font-mono text-xs font-semibold text-foreground">{label}</p>
+            {locked && <Crown className="size-3 text-yellow-500/70" />}
+          </div>
           <p className="font-mono text-[10px] text-muted-foreground">{description}</p>
         </div>
         <div className="flex items-center gap-2">
-          <Switch checked={enabled} onCheckedChange={onToggle} className="scale-90" />
-          {enabled && children && (
-            <button
-              onClick={() => setOpen(!open)}
-              className="text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+          {!locked && configHref && enabled && (
+            <Link
+              href={configHref}
+              className="flex items-center gap-1.5 rounded-lg border border-blue-500/30 bg-blue-500/10 px-2.5 py-1 font-mono text-[10px] text-blue-400 transition hover:bg-blue-500/20"
             >
-              {open ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
-            </button>
+              <Settings className="size-3" />
+              Configurer
+            </Link>
+          )}
+          {locked ? (
+            <span className="rounded border border-yellow-500/30 bg-yellow-500/5 px-2 py-0.5 font-mono text-[9px] uppercase tracking-wider text-yellow-500/70">
+              Pro
+            </span>
+          ) : (
+            <>
+              <Switch checked={enabled} onCheckedChange={onToggle} className="scale-90" />
+              {!configHref && !alwaysOpen && enabled && children && (
+                <button
+                  onClick={() => setOpen(!open)}
+                  className="text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+                >
+                  {open ? <ChevronUp className="size-3.5" /> : <ChevronDown className="size-3.5" />}
+                </button>
+              )}
+            </>
           )}
         </div>
       </div>
 
+      {alwaysOpen && children && (
+        <div className="border-t border-blue-500/10">
+          <div className="space-y-3 p-3.5 pt-3">{children}</div>
+        </div>
+      )}
+
       <AnimatePresence>
-        {enabled && open && children && (
+        {!configHref && !alwaysOpen && enabled && open && children && (
           <motion.div
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
