@@ -37,10 +37,8 @@ const ReviewCard = ({
   return (
     <figure
       className={cn(
-        "relative w-96 flex flex-col justify-between cursor-pointer overflow-hidden rounded-xl border p-4 transition-all duration-500 ease-in-out",
-        // styles par défaut
-        "border-gray-950/10 bg-gray-950/1 hover:bg-gray-950/5",
-        "dark:border-gray-50/10 dark:bg-gray-50/10 dark:hover:bg-gray-50/15",
+        "relative w-80 flex flex-col justify-between cursor-pointer overflow-hidden rounded-2xl border p-5 transition-all duration-300",
+        "border-border bg-card hover:border-[#7158ff]/30 hover:shadow-md hover:shadow-[#7158ff]/5",
         className
       )}
       {...props}
@@ -67,26 +65,26 @@ const ReviewCard = ({
             />
           )
         ) : (
-          <div className="flex size-8 items-center justify-center rounded-full bg-primary">
-            <UserIcon className="size-6 text-background" />
+          <div className="flex size-8 items-center justify-center rounded-full bg-[#7158ff]/20">
+            <UserIcon className="size-4 text-[#7158ff]" />
           </div>
         )}
         <div className="flex flex-col">
-          <figcaption className="text-sm font-medium dark:text-white">
+          <figcaption className="text-sm font-semibold text-foreground">
             {name}
           </figcaption>
-          <p className="text-xs font-medium dark:text-white/40">{role}</p>
+          <p className="text-xs text-muted-foreground">{role}</p>
         </div>
       </div>
 
       {/* Review text with animation */}
-      <blockquote className="mt-2 max-h-24 overflow-hidden text-sm transition-all duration-500 ease-in-out hover:max-h-64">
+      <blockquote className="mt-3 text-sm leading-relaxed text-muted-foreground">
         {review}
       </blockquote>
 
       {createdAt && (
-        <p className="mt-4 text-xs text-gray-500 dark:text-gray-400">
-          Créé le {formattedDate}
+        <p className="mt-4 font-mono text-[11px] text-muted-foreground/50">
+          {formattedDate}
         </p>
       )}
     </figure>
@@ -122,11 +120,11 @@ export function Testimonials() {
     <section id="testimonials">
       <div className="py-14">
         <div className="container mx-auto px-4 md:px-8">
-          <h3 className="text-center text-xl font-semibold uppercase text-foreground">
+          <p className="text-center font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
             Témoignages
-          </h3>
-          <h2 className="mt-2 text-center text-4xl font-bold text-neutral-900 dark:text-neutral-100">
-            Des projets réussis, des clients satisfaits
+          </p>
+          <h2 className="mt-1 text-center font-[family-name:var(--font-display)] text-[clamp(2rem,5vw,3.5rem)] uppercase leading-none text-foreground">
+            Des clients satisfaits
           </h2>
           <p className="mt-4 text-center text-lg text-neutral-500 dark:text-neutral-400">
             En tant que développeur freelance passionné, je m'efforce de fournir
