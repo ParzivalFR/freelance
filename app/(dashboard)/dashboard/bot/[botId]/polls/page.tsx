@@ -4,9 +4,10 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import {
   BarChart2, Plus, X, ChevronDown, ChevronUp,
-  Trash2, StopCircle, RefreshCw, Eye, EyeOff,
+  Trash2, StopCircle, RefreshCw, Eye, EyeOff, Save,
 } from "lucide-react";
-import { PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
+import { PageHeader, LoadingScreen, CyberInput } from "@/components/dashboard/cyber-ui";
+import { useBotConfig } from "@/hooks/use-bot-config";
 import { Switch } from "@/components/ui/switch";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -845,6 +846,8 @@ function CreatePollForm({
 export default function BotPollsPage() {
   const params = useParams();
   const botId = params?.botId as string;
+  const { config, saving, saved, updateModuleConfig, save } = useBotConfig();
+  const [configOpen, setConfigOpen] = useState(false);
 
   const [polls, setPolls] = useState<Poll[] | null>(null);
   const [total, setTotal] = useState(0);
@@ -923,7 +926,55 @@ export default function BotPollsPage() {
         icon={<BarChart2 className="size-4" />}
         title="Sondages"
         subtitle="Gestion et analytics des sondages Discord"
+        status={config?.status}
       />
+
+      {/* ── Config section ── */}
+      {config && (
+        <div className="rounded-xl border border-dashed bg-card">
+          <button
+            onClick={() => setConfigOpen((o) => !o)}
+            className="flex w-full items-center justify-between px-4 py-3"
+          >
+            <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+              ⚙ configuration
+            </span>
+            {configOpen ? <ChevronUp className="size-3.5 text-muted-foreground/50" /> : <ChevronDown className="size-3.5 text-muted-foreground/50" />}
+          </button>
+          {configOpen && (
+            <div className="space-y-3 border-t border-dashed px-4 pb-4 pt-3">
+              <CyberInput
+                label="salon_par_défaut"
+                value={config.config.pollChannelId ?? ""}
+                onChange={(v) => updateModuleConfig("pollChannelId", v)}
+                placeholder="ID salon où poster les sondages"
+              />
+              <CyberInput
+                label="manager_role_id"
+                value={config.config.pollManagerRoleId ?? ""}
+                onChange={(v) => updateModuleConfig("pollManagerRoleId", v)}
+                placeholder="ID rôle autorisé à créer des sondages (vide = @everyone)"
+              />
+              <CyberInput
+                label="couleur_embed (hex sans #)"
+                value={config.config.pollColor ?? ""}
+                onChange={(v) => updateModuleConfig("pollColor", v)}
+                placeholder="5865f2"
+              />
+              <div className="flex justify-end">
+                <button
+                  onClick={save}
+                  disabled={saving}
+                  className="flex items-center gap-2 rounded-lg border border-dashed px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground transition hover:bg-muted hover:text-foreground disabled:opacity-40"
+                >
+                  <Save className="size-3.5" />
+                  {saved ? "✓ saved" : saving ? "saving..." : "save_config"}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-3">

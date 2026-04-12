@@ -2,8 +2,10 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
-import { Shield, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
-import { PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
+import { Shield, Trash2, ChevronLeft, ChevronRight, Save, ChevronDown, ChevronUp as ChevronUpIcon } from "lucide-react";
+import { PageHeader, LoadingScreen, CyberInput, CyberLabel } from "@/components/dashboard/cyber-ui";
+import { Switch } from "@/components/ui/switch";
+import { useBotConfig } from "@/hooks/use-bot-config";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -19,6 +21,8 @@ interface Infraction {
 }
 
 // ─── Constants ────────────────────────────────────────────────────────────────
+
+const AUTOMOD_ACTIONS = ["warn", "timeout", "kick", "ban"] as const;
 
 const TYPE_STYLES: Record<string, string> = {
   BAN:     "border-red-500/30 bg-red-500/10 text-red-400",
@@ -46,6 +50,8 @@ const PAGE_SIZE = 15;
 export default function ModerationPage() {
   const params = useParams();
   const botId = params?.botId as string;
+  const { config, saving, saved, updateModuleConfig, save } = useBotConfig();
+  const [configOpen, setConfigOpen] = useState(false);
 
   const [infractions, setInfractions] = useState<Infraction[]>([]);
   const [total, setTotal] = useState(0);
@@ -91,15 +97,141 @@ export default function ModerationPage() {
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
-  if (loading && infractions.length === 0) return <LoadingScreen />;
+  if (!config || (loading && infractions.length === 0)) return <LoadingScreen />;
 
   return (
     <div className="space-y-6 px-5 py-6 md:px-7 lg:px-8">
       <PageHeader
         icon={<Shield className="size-4" />}
         title="Modération"
-        subtitle="Historique des infractions"
+        subtitle="/ban /kick /warn /timeout + AutoMod"
+        status={config.status}
       />
+
+      {/* ── Config section ── */}
+      <div className="rounded-xl border border-dashed bg-card">
+        <button
+          onClick={() => setConfigOpen((o) => !o)}
+          className="flex w-full items-center justify-between px-4 py-3"
+        >
+          <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+            ⚙ configuration
+          </span>
+          {configOpen ? <ChevronUpIcon className="size-3.5 text-muted-foreground/50" /> : <ChevronDown className="size-3.5 text-muted-foreground/50" />}
+        </button>
+        {configOpen && (
+          <div className="space-y-3 border-t border-dashed px-4 pb-4 pt-3">
+            <CyberInput
+              label="log_channel_id"
+              value={config.config.logChannelId ?? ""}
+              onChange={(v) => updateModuleConfig("logChannelId", v)}
+              placeholder="ID salon de logs des sanctions"
+            />
+            <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
+              — seuils automatiques (warns) —
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              <CyberInput
+                label="timeout à N warns"
+                value={String(config.config.warnThresholdTimeout ?? "")}
+                onChange={(v) => updateModuleConfig("warnThresholdTimeout", v ? Number(v) : undefined)}
+                placeholder="3"
+              />
+              <CyberInput
+                label="durée timeout (min)"
+                value={String(config.config.warnThresholdTimeoutDuration ?? "")}
+                onChange={(v) => updateModuleConfig("warnThresholdTimeoutDuration", v ? Number(v) : undefined)}
+                placeholder="60"
+              />
+              <CyberInput
+                label="kick à N warns"
+                value={String(config.config.warnThresholdKick ?? "")}
+                onChange={(v) => updateModuleConfig("warnThresholdKick", v ? Number(v) : undefined)}
+                placeholder="5"
+              />
+              <CyberInput
+                label="ban à N warns"
+                value={String(config.config.warnThresholdBan ?? "")}
+                onChange={(v) => updateModuleConfig("warnThresholdBan", v ? Number(v) : undefined)}
+                placeholder="7"
+              />
+            </div>
+            <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
+              — automod —
+            </p>
+            <div className="rounded-lg border border-dashed p-3 space-y-3">
+              {[
+                { key: "automodAntiSpam",       label: "anti-spam",         desc: "Messages répétés rapidement" },
+                { key: "automodAntiDuplicate",   label: "anti-duplicate",    desc: "Messages identiques consécutifs" },
+                { key: "automodAntiLinks",       label: "anti-liens",        desc: "Bloque les URLs non autorisées" },
+                { key: "automodAntiMentionSpam", label: "anti-mention spam", desc: "Trop de mentions dans un message" },
+                { key: "automodAntiCaps",        label: "anti-caps",         desc: "Messages en majuscules excessives" },
+              ].map(({ key, label, desc }) => (
+                <div key={key} className="flex items-center justify-between">
+                  <div>
+                    <p className="font-mono text-[10px] text-foreground">{label}</p>
+                    <p className="font-mono text-[9px] text-muted-foreground/60">{desc}</p>
+                  </div>
+                  <Switch
+                    checked={(config.config[key as keyof typeof config.config] as boolean) ?? false}
+                    onCheckedChange={(v) => updateModuleConfig(key as never, v)}
+                    className="scale-75"
+                  />
+                </div>
+              ))}
+              <CyberInput
+                label="mots_interdits (virgule-séparés)"
+                value={config.config.automodBadWords ?? ""}
+                onChange={(v) => updateModuleConfig("automodBadWords", v)}
+                placeholder="mot1, mot2, mot3"
+              />
+              <CyberInput
+                label="domaines_autorisés (virgule-séparés)"
+                value={config.config.automodAllowedDomains ?? ""}
+                onChange={(v) => updateModuleConfig("automodAllowedDomains", v)}
+                placeholder="discord.com, youtube.com"
+              />
+              <div className="space-y-1.5">
+                <CyberLabel>action_automod</CyberLabel>
+                <div className="flex gap-1.5">
+                  {AUTOMOD_ACTIONS.map((action) => (
+                    <button
+                      key={action}
+                      type="button"
+                      onClick={() => updateModuleConfig("automodAction", action)}
+                      className={`rounded border px-2.5 py-1 font-mono text-[9px] transition ${
+                        (config.config.automodAction ?? "warn") === action
+                          ? "border-blue-500/40 bg-blue-500/10 text-blue-400"
+                          : "border-dashed text-muted-foreground/40 hover:border-blue-500/20"
+                      }`}
+                    >
+                      {action}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {config.config.automodAction === "timeout" && (
+                <CyberInput
+                  label="durée_timeout_automod (min)"
+                  value={String(config.config.automodActionDuration ?? "")}
+                  onChange={(v) => updateModuleConfig("automodActionDuration", v ? Number(v) : undefined)}
+                  placeholder="10"
+                />
+              )}
+            </div>
+            <div className="flex justify-end pt-1">
+              <button
+                onClick={save}
+                disabled={saving}
+                className="flex items-center gap-2 rounded-lg border border-dashed px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground transition hover:bg-muted hover:text-foreground disabled:opacity-40"
+              >
+                <Save className="size-3.5" />
+                {saved ? "✓ saved" : saving ? "saving..." : "save_config"}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
 
       {/* ── Stats ── */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">

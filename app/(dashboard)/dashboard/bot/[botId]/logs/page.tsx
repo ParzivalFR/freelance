@@ -3,7 +3,6 @@
 import { ScrollText, Save } from "lucide-react";
 import {
   CyberInput,
-  ModuleToggle,
   PageHeader,
   LoadingScreen,
 } from "@/components/dashboard/cyber-ui";
@@ -66,7 +65,7 @@ const COLOR_FIELDS = [
 type ColorField = (typeof COLOR_FIELDS)[number][0];
 
 export default function LogsPage() {
-  const { config, saving, saved, update, updateModuleConfig, save } = useBotConfig();
+  const { config, saving, saved, updateModuleConfig, save } = useBotConfig();
 
   if (!config) return <LoadingScreen />;
 
@@ -86,13 +85,7 @@ export default function LogsPage() {
         status={config.status}
       />
 
-      <ModuleToggle
-        icon={<ScrollText className="size-3.5" />}
-        label="logs"
-        description="Logs centralisés et configurables de tous les événements"
-        enabled={config.moduleLog}
-        onToggle={() => update("moduleLog", !config.moduleLog)}
-      >
+      <div className="space-y-3">
         {/* Salons */}
         <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
           — salons —
@@ -228,7 +221,7 @@ export default function LogsPage() {
             );
           })}
         </div>
-      </ModuleToggle>
+      </div>
 
       <div className="flex justify-end">
         <button

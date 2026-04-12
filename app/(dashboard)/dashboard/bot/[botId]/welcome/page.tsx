@@ -4,7 +4,6 @@ import { MessageSquare, Save } from "lucide-react";
 import {
   CyberInput,
   CyberTextarea,
-  ModuleToggle,
   PageHeader,
   PlaceholderRef,
   LoadingScreen,
@@ -13,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { useBotConfig } from "@/hooks/use-bot-config";
 
 export default function WelcomePage() {
-  const { config, saving, saved, update, updateModuleConfig, save } = useBotConfig();
+  const { config, saving, saved, updateModuleConfig, save } = useBotConfig();
 
   if (!config) return <LoadingScreen />;
 
@@ -26,13 +25,7 @@ export default function WelcomePage() {
         status={config.status}
       />
 
-      <ModuleToggle
-        icon={<MessageSquare className="size-3.5" />}
-        label="welcome"
-        description="Envoyer un message quand un membre rejoint le serveur"
-        enabled={config.moduleWelcome}
-        onToggle={() => update("moduleWelcome", !config.moduleWelcome)}
-      >
+      <div className="space-y-3">
         <CyberInput
           label="channel_id"
           value={config.config.channelId ?? ""}
@@ -108,17 +101,14 @@ export default function WelcomePage() {
             </div>
           </div>
         ) : (
-          <div className="space-y-2">
-            <CyberInput
-              label="message"
-              value={config.config.message ?? ""}
-              onChange={(v) => updateModuleConfig("message", v)}
-              placeholder="Bienvenue {username} sur {server} !"
-            />
-          </div>
+          <CyberInput
+            label="message"
+            value={config.config.message ?? ""}
+            onChange={(v) => updateModuleConfig("message", v)}
+            placeholder="Bienvenue {username} sur {server} !"
+          />
         )}
 
-        {/* Preview */}
         <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-3">
           <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500">
             ▶ aperçu des placeholders
@@ -139,7 +129,7 @@ export default function WelcomePage() {
             ))}
           </div>
         </div>
-      </ModuleToggle>
+      </div>
 
       <div className="flex justify-end">
         <button

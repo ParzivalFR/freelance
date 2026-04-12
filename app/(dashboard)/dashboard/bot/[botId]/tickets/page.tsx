@@ -5,7 +5,6 @@ import type { TicketCategory } from "@/components/dashboard/bot-types";
 import {
   CyberInput,
   CyberTextarea,
-  ModuleToggle,
   PageHeader,
   LoadingScreen,
 } from "@/components/dashboard/cyber-ui";
@@ -13,7 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { useBotConfig } from "@/hooks/use-bot-config";
 
 export default function TicketsPage() {
-  const { config, saving, saved, update, updateModuleConfig, save } = useBotConfig();
+  const { config, saving, saved, updateModuleConfig, save } = useBotConfig();
 
   if (!config) return <LoadingScreen />;
 
@@ -31,13 +30,7 @@ export default function TicketsPage() {
         status={config.status}
       />
 
-      <ModuleToggle
-        icon={<Ticket className="size-3.5" />}
-        label="tickets"
-        description="Tickets avec catégories, claim, rating et transcripts"
-        enabled={config.moduleTickets}
-        onToggle={() => update("moduleTickets", !config.moduleTickets)}
-      >
+      <div className="space-y-3">
         {/* Salons */}
         <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
           — salons —
@@ -208,7 +201,7 @@ export default function TicketsPage() {
             /ticket panel
           </p>
         </div>
-      </ModuleToggle>
+      </div>
 
       <div className="flex justify-end">
         <button
