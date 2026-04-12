@@ -1,144 +1,131 @@
 "use client";
 
-import TextShimmer from "@/components/magicui/text-shimmer";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { ArrowRightIcon } from "@radix-ui/react-icons";
-import { Sparkles, UserIcon } from "lucide-react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { RoughNotation, RoughNotationGroup } from "react-rough-notation";
-import useSWR from "swr";
-import SafariTerminal from "./safari-terminal";
+import { motion } from "framer-motion";
+import Link from "next/link";
 
-interface RecentTestimonial {
-  id: string;
-  name: string;
-  imgUrl: string;
-  createdAt: string;
-}
+const fade = (delay = 0) => ({
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] },
+});
+
+const tags = ["Next.js", "React", "TypeScript", "Tailwind CSS", "Prisma", "Supabase"];
 
 export default function HeroSection() {
-  const router = useRouter();
-  const [imageErrors, setImageErrors] = useState<{ [key: number]: boolean }>(
-    {}
-  );
-
-  const fetcher = (url: string) => fetch(url).then((res) => res.json());
-  const { data: recentTestimonials } = useSWR<RecentTestimonial[]>(
-    "/api/testimonials/recent",
-    fetcher
-  );
-  const { data: allTestimonials } = useSWR("/api/testimonials", fetcher);
-
-  const handleImageError = (index: number) => {
-    setImageErrors((prev) => ({ ...prev, [index]: true }));
-  };
-
-  function handleRedirect() {
-    router.push("#contact");
-  }
-
   return (
-    <RoughNotationGroup show={true}>
-      <section
-        id="hero"
-        className="relative mx-auto mt-20 max-w-7xl px-6 text-center md:px-8"
-      >
-        <Badge
-          variant="outline"
-          className="group animate-fade-in cursor-pointer rounded-xl px-4 py-2 transition-all duration-300 [--animation-delay:0ms] hover:bg-primary/10"
-        >
-          <TextShimmer className="inline-flex items-center justify-center">
-            <Sparkles className="mr-1 size-4 animate-pulse text-yellow-400" />
-            <span>Votre satisfaction est mon principal objectif</span>
-            <ArrowRightIcon className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
-          </TextShimmer>
-        </Badge>
-        <h1 className="animate-fade-in text-balance bg-linear-to-br from-black from-30% to-black/40 bg-clip-text py-6 text-5xl font-medium leading-none tracking-tighter text-transparent [--animation-delay:200ms] dark:from-white dark:to-white/40 sm:text-6xl md:text-7xl lg:text-8xl">
-          <RoughNotation
-            order={1}
-            type="circle"
-            color="gray"
-            animationDelay={1000}
-          >
-            Propulsez
-          </RoughNotation>{" "}
-          votre présence sur le web.
-        </h1>
-        <p className="mb-12 animate-fade-in text-balance text-lg tracking-tight text-gray-400 [--animation-delay:400ms] md:text-xl">
-          Des solutions sur mesure pour vos projets web,
-          <br className="hidden md:block" /> développées avec{" "}
-          <RoughNotation type="underline" order={2} animationDelay={1000}>
-            passion
-          </RoughNotation>{" "}
-          et{" "}
-          <RoughNotation type="underline" order={3}>
-            expertise
-          </RoughNotation>{" "}
-          avec une attention particulière pour l'
-          <RoughNotation type="underline" order={4}>
-            expérience utilisateur
-          </RoughNotation>
-          .
-        </p>
-        <Button
-          className="animate-fade-in gap-1 text-white ring-4 ring-primary/20 duration-300 ease-in-out [--animation-delay:600ms] hover:bg-foreground/70 dark:text-black"
-          onClick={handleRedirect}
-        >
-          Lancer votre projet
-          <ArrowRightIcon className="ml-1 size-4 transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
-        </Button>
+    <section
+      id="hero"
+      className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-background"
+    >
+      {/* Glow d'ambiance subtil */}
+      <div className="pointer-events-none absolute -left-40 top-1/3 h-96 w-96 rounded-full bg-[#7158ff]/8 blur-[120px]" />
 
-        {/* Avatars des derniers témoignages */}
-        {recentTestimonials && recentTestimonials.length > 0 && (
-          <div className="mt-8 animate-fade-in [--animation-delay:700ms]">
-            <div className="flex items-center justify-center gap-4">
-              <div className="flex -space-x-3">
-                {recentTestimonials.slice(0, 5).map((testimonial, index) =>
-                  testimonial.imgUrl && !imageErrors[index] ? (
-                    testimonial.imgUrl.includes("dicebear.com") ? (
-                      <Image
-                        key={testimonial.id}
-                        className="shadow-md size-10 rounded-full border-2 border-white dark:border-gray-800"
-                        src={testimonial.imgUrl}
-                        alt={`Avatar de ${testimonial.name}`}
-                        width={40}
-                        height={40}
-                        onError={() => handleImageError(index)}
-                      />
-                    ) : (
-                      <Image
-                        key={testimonial.id}
-                        className="shadow-md size-10 rounded-full border-2 border-white dark:border-gray-800"
-                        src={testimonial.imgUrl}
-                        alt={`Avatar de ${testimonial.name}`}
-                        width={40}
-                        height={40}
-                        onError={() => handleImageError(index)}
-                      />
-                    )
-                  ) : (
-                    <div
-                      key={testimonial.id}
-                      className="shadow-md flex size-10 items-center justify-center rounded-full border-2 border-white bg-primary dark:border-gray-800"
-                    >
-                      <UserIcon className="size-5 text-background" />
-                    </div>
-                  )
-                )}
-              </div>
-              <p className="text-sm text-muted-foreground">
-                Rejoint par {allTestimonials?.length || 0} clients satisfaits
-              </p>
-            </div>
+      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl grid-cols-1 items-center px-6 py-16 md:px-10 lg:grid-cols-2">
+
+        {/* ── Colonne gauche ────────────────────────── */}
+        <div>
+          {/* Badge disponibilité */}
+          <motion.div
+            {...fade(0.05)}
+            className="mb-6 inline-flex items-center gap-2 rounded-full border border-green-500/30 bg-green-500/10 px-4 py-2"
+          >
+            <span className="size-2 animate-pulse rounded-full bg-green-500" />
+            <span className="font-mono text-xs font-semibold uppercase tracking-widest text-green-600 dark:text-green-400">
+              Disponible pour une mission
+            </span>
+          </motion.div>
+
+          {/* Handwriting */}
+          <motion.p
+            {...fade(0.12)}
+            className="mb-2 font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]"
+          >
+            Bonjour, je suis
+          </motion.p>
+
+          {/* Nom en Black Han Sans */}
+          <div className="font-[family-name:var(--font-display)] uppercase leading-[0.92] text-foreground">
+            <motion.span {...fade(0.18)} className="block text-[clamp(3rem,13vw,9.5rem)]">
+              Gael
+            </motion.span>
+            <motion.span {...fade(0.26)} className="block text-[clamp(3rem,13vw,9.5rem)]">
+              Richard<span className="text-[#7158ff]">!</span>
+            </motion.span>
           </div>
-        )}
-        <div className="relative mt-20 animate-fade-up px-4 [--animation-delay:900ms] hidden md:block">
-          <SafariTerminal />
+
+          {/* Description */}
+          <motion.p
+            {...fade(0.4)}
+            className="mt-7 max-w-md text-sm leading-relaxed text-muted-foreground md:text-base"
+          >
+            Développeur web freelance basé en France. Je crée des sites et
+            applications web sur-mesure — rapides, propres, et pensés
+            pour vous démarquer.
+          </motion.p>
+
+          {/* Tech tags */}
+          <motion.div {...fade(0.5)} className="mt-5 flex flex-wrap gap-2">
+            {tags.map((tag) => (
+              <span
+                key={tag}
+                className="rounded-full border bg-muted/50 px-3 py-1 font-mono text-[11px] text-muted-foreground"
+              >
+                {tag}
+              </span>
+            ))}
+          </motion.div>
+
+          {/* CTAs */}
+          <motion.div {...fade(0.62)} className="mt-8 flex flex-wrap items-center gap-4">
+            <Link
+              href="#contact"
+              className="rounded-xl bg-[#7158ff] px-6 py-3 font-semibold text-white transition-opacity hover:opacity-85"
+            >
+              Démarrer un projet
+            </Link>
+            <Link
+              href="#pricing"
+              className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground"
+            >
+              Voir les tarifs →
+            </Link>
+          </motion.div>
         </div>
-      </section>
-    </RoughNotationGroup>
+
+        {/* ── Colonne droite : texte décoratif ────────── */}
+        <div
+          aria-hidden
+          className="pointer-events-none hidden select-none items-center justify-end overflow-hidden lg:flex"
+        >
+          <p className="font-[family-name:var(--font-display)] uppercase leading-[0.85] text-foreground/[0.05] text-[clamp(5rem,12vw,11rem)] text-right -ml-16">
+            Deve
+            <br />
+            lopp
+            <br />
+            eur
+            <br />
+            web
+          </p>
+        </div>
+
+      </div>
+
+      {/* Scroll indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.2 }}
+        className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2"
+      >
+        <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/40">
+          Scroll
+        </span>
+        <motion.div
+          animate={{ y: [0, 6, 0] }}
+          transition={{ repeat: Infinity, duration: 1.5 }}
+          className="h-6 w-px bg-gradient-to-b from-muted-foreground/30 to-transparent"
+        />
+      </motion.div>
+    </section>
   );
 }
