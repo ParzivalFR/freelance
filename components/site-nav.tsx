@@ -6,6 +6,7 @@ import { Menu, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { ThemeToggle } from "./theme-toggle";
 
 const links = [
   { label: "Témoignages", href: "/#testimonials" },
@@ -60,6 +61,7 @@ export default function SiteNav() {
 
           {/* Auth + CTA */}
           <div className="flex items-center gap-2">
+            <ThemeToggle />
             {session ? (
               <Link
                 href="/dashboard"
@@ -100,12 +102,15 @@ export default function SiteNav() {
             GR<span className="text-[#7158ff]">.</span>
           </Link>
 
-          <button
-            onClick={() => setOpen((p) => !p)}
-            className="rounded-full p-1.5 text-foreground transition-colors hover:bg-muted"
-          >
-            {open ? <X className="size-5" /> : <Menu className="size-5" />}
-          </button>
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            <button
+              onClick={() => setOpen((p) => !p)}
+              className="rounded-full p-1.5 text-foreground transition-colors hover:bg-muted"
+            >
+              {open ? <X className="size-5" /> : <Menu className="size-5" />}
+            </button>
+          </div>
         </div>
       </header>
 
