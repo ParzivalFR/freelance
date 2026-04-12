@@ -5,11 +5,10 @@ import {
   LinkedInLogoIcon,
   TwitterLogoIcon,
 } from "@radix-ui/react-icons";
+import { FaGithub } from "react-icons/fa";
+import { SiMalt } from "react-icons/si";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { SiMalt } from "react-icons/si";
-import { FaGithub } from "react-icons/fa";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 
 interface Settings {
   fullName?: string;
@@ -20,64 +19,14 @@ interface Settings {
   twitterUrl?: string;
 }
 
-const footerNavs = [
-  {
-    label: "Produits",
-    items: [
-      {
-        href: "/#testimonials",
-        name: "Témoignages",
-      },
-      {
-        href: "/#pricing",
-        name: "Tarifs",
-      },
-      {
-        href: "/#faq",
-        name: "FAQ",
-      },
-    ],
-  },
-
-  {
-    label: "Contact",
-    items: [
-      {
-        href: "https://discord.com/users/1017721923259613234",
-        name: "Discord",
-      },
-      {
-        href: "https://twitter.com/gaelprodev",
-        name: "Twitter",
-      },
-      {
-        href: "/#contact",
-        name: "Formulaire",
-      },
-      {
-        href: "https://www.linkedin.com/in/ga%C3%ABl-richard-680b8a263/",
-        name: "LinkedIn",
-      },
-      {
-        href: "https://www.malt.fr/profile/gaelrichard44",
-        name: "Malt",
-      },
-    ],
-  },
-  {
-    label: "Légal",
-    items: [
-      {
-        href: "/terms",
-        name: "Conditions d'utilisation",
-      },
-
-      {
-        href: "/privacy",
-        name: "Mentions légales",
-      },
-    ],
-  },
+const footerLinks = [
+  { href: "/#about", label: "A propos" },
+  { href: "/#pricing", label: "Tarifs" },
+  { href: "/#testimonials", label: "Temoignages" },
+  { href: "/#faq", label: "FAQ" },
+  { href: "/#contact", label: "Contact" },
+  { href: "/terms", label: "CGU" },
+  { href: "/privacy", label: "Mentions legales" },
 ];
 
 const footerSocials = [
@@ -99,7 +48,12 @@ const footerSocials = [
   {
     href: "https://www.malt.fr/profile/gaelrichard44",
     name: "Malt",
-    icon: <SiMalt className="text-4xl" />,
+    icon: <SiMalt className="size-4" />,
+  },
+  {
+    href: "https://github.com/ParzivalFR",
+    name: "GitHub",
+    icon: <FaGithub className="size-4" />,
   },
 ];
 
@@ -109,110 +63,87 @@ export function SiteFooter() {
 
   useEffect(() => {
     setCurrentYear(new Date().getFullYear().toString());
-
-    // Charger les paramètres
-    const loadSettings = async () => {
+    const load = async () => {
       try {
-        const response = await fetch("/api/admin/settings");
-        if (response.ok) {
-          const data = await response.json();
-          setSettings(data);
-        }
-      } catch (error) {
-        console.error("Error loading settings:", error);
-      }
+        const res = await fetch("/api/admin/settings");
+        if (res.ok) setSettings(await res.json());
+      } catch {}
     };
-
-    loadSettings();
+    load();
   }, []);
 
-  // Construire dynamiquement les liens sociaux basés sur les paramètres
   const dynamicSocials = [
-    settings.twitterUrl && {
-      href: settings.twitterUrl,
-      name: "Twitter",
-      icon: <TwitterLogoIcon className="size-4" />,
-    },
-    settings.linkedinUrl && {
-      href: settings.linkedinUrl,
-      name: "LinkedIn",
-      icon: <LinkedInLogoIcon className="size-4" />,
-    },
-    settings.githubUrl && {
-      href: settings.githubUrl,
-      name: "GitHub",
-      icon: <FaGithub className="size-4" />,
-    },
-  ].filter(Boolean);
+    settings.twitterUrl && { href: settings.twitterUrl, name: "Twitter", icon: <TwitterLogoIcon className="size-4" /> },
+    settings.linkedinUrl && { href: settings.linkedinUrl, name: "LinkedIn", icon: <LinkedInLogoIcon className="size-4" /> },
+    settings.githubUrl && { href: settings.githubUrl, name: "GitHub", icon: <FaGithub className="size-4" /> },
+  ].filter(Boolean) as typeof footerSocials;
 
-  const socialsToDisplay = dynamicSocials.length > 0 ? dynamicSocials : footerSocials;
+  const socials = dynamicSocials.length > 0 ? dynamicSocials : footerSocials;
 
   return (
-    <footer className="footer-border">
-      <div className="mx-auto w-full max-w-(--breakpoint-xl) xl:pb-2">
-        <div className="gap-4 p-4 px-8 py-16 sm:pb-16 md:flex md:justify-between">
-          <div className="mb-12 flex flex-col items-center gap-4">
-            <Link href="/" className="flex items-center justify-center">
-              <Avatar className="size-20">
-                <AvatarImage src={settings.profileImage || "/photo-de-profil.jpg"} />
-                <AvatarFallback>
-                  {settings.fullName
-                    ? settings.fullName.split(" ").map(n => n[0]).join("")
-                    : "GR"}
-                </AvatarFallback>
-              </Avatar>
+    <footer className="border-t">
+      <div className="mx-auto max-w-5xl px-6 py-12 md:px-8">
+
+        {/* Top */}
+        <div className="flex flex-col items-center gap-6 md:flex-row md:items-start md:justify-between">
+
+          {/* Logo + tagline */}
+          <div className="flex flex-col items-center gap-2 md:items-start">
+            <Link
+              href="/"
+              className="font-[family-name:var(--font-display)] text-2xl uppercase leading-none"
+            >
+              GR<span className="text-[#7158ff]">.</span>
             </Link>
-            <p className="w-full max-w-xs self-center text-center text-primary/70">
-              {settings.bio || "Partenaire de votre satisfaction."}
+            <p className="max-w-[200px] text-center text-sm text-muted-foreground md:text-left">
+              {settings.bio || "Développeur freelance — web, desktop & mobile."}
             </p>
           </div>
-          <div className="grid grid-cols-2 place-items-start gap-10 sm:grid-cols-3 sm:place-items-start">
-            {footerNavs.map((nav) => (
-              <div
-                key={nav.label}
-                className="flex w-full flex-col items-center gap-1"
+
+          {/* Nav links */}
+          <nav className="flex flex-wrap justify-center gap-x-6 gap-y-2 md:justify-end">
+            {footerLinks.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
               >
-                <h2 className="mb-4 text-center text-sm font-medium uppercase tracking-tighter text-primary/80 dark:text-primary">
-                  {nav.label}
-                </h2>
-                <ul className="flex flex-col items-center gap-1 text-center ">
-                  {nav.items.map((item) => (
-                    <li key={item.name}>
-                      <Link
-                        href={item.href}
-                        className="text-sm font-[450] text-primary/50 duration-200 hover:text-primary"
-                      >
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+                {l.label}
+              </Link>
             ))}
-          </div>
+          </nav>
         </div>
 
-        <div className="flex flex-col gap-2 rounded-md border-neutral-700/20 p-4 sm:flex sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <div className="flex items-center justify-center space-x-5 sm:mt-0 sm:justify-start">
-            {socialsToDisplay.map((social: any) => (
+        {/* Divider */}
+        <div className="my-8 h-px bg-border" />
+
+        {/* Bottom */}
+        <div className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+          <p className="text-xs text-muted-foreground">
+            © {currentYear}{" "}
+            <span className="font-semibold text-foreground">
+              {settings.fullName || "Gael Richard"}
+            </span>
+            . Tous droits réservés.
+          </p>
+
+          {/* Socials */}
+          <div className="flex items-center gap-4">
+            {socials.map((s) => (
               <Link
-                key={social.name}
-                href={social.href}
-                className="fill-gray-500 text-gray-500 hover:fill-gray-900 hover:text-gray-900 dark:hover:fill-gray-600 dark:hover:text-gray-600"
+                key={s.name}
+                href={s.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground transition-colors hover:text-[#7158ff]"
               >
-                {social.icon}
-                <span className="sr-only">{social.name}</span>
+                {s.icon}
+                <span className="sr-only">{s.name}</span>
               </Link>
             ))}
           </div>
-          <div className="text-center text-xs text-gray-500 dark:text-gray-400 sm:text-sm">
-            Copyright © {currentYear}{" "}
-            <Link href="#" className="font-extrabold">
-              {settings.fullName || "Gael RICHARD"}.
-            </Link>{" "}
-            Tous droits réservés.
-          </div>
         </div>
+
       </div>
     </footer>
   );
