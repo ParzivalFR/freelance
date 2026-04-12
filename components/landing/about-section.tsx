@@ -1,129 +1,117 @@
 "use client";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ArrowRightIcon, CodeIcon, HeartIcon } from "@radix-ui/react-icons";
+import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { motion } from "framer-motion";
-import Image from "next/image";
+import { Code2, MessageCircle, Target, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const techStack = [
-  "React",
-  "Next.js",
-  "TypeScript",
-  "Tailwind CSS",
-  "Node.js",
-  "Prisma",
-  "Supabase",
+  "React", "Next.js", "TypeScript", "Tailwind CSS",
+  "Node.js", "Prisma", "Supabase", "PostgreSQL",
+];
+
+const values = [
+  { icon: Zap, label: "Livraison rapide" },
+  { icon: Target, label: "Sur-mesure" },
+  { icon: Code2, label: "Code propre" },
+  { icon: MessageCircle, label: "Dispo & réactif" },
 ];
 
 export default function AboutSection() {
   const router = useRouter();
 
   return (
-    <section id="about" className="py-14">
-      <div className="container mx-auto px-4 md:px-8">
-        <div className="mx-auto max-w-7xl">
-          {/* Header */}
-          <div className="mx-auto mb-16 max-w-3xl text-center">
-            <h4 className="text-xl font-bold tracking-tight text-black dark:text-white">
-              À propos
-            </h4>
-            <h2 className="text-4xl font-bold tracking-tight text-black dark:text-white sm:text-6xl">
-              Une reconversion, une passion
-            </h2>
-          </div>
+    <section id="about" className="py-20">
+      <div className="mx-auto max-w-7xl px-6 md:px-8">
 
-          {/* Content */}
-          <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
-            {/* Photo */}
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6 }}
-              viewport={{ once: true }}
-              className="relative"
-            >
-              <div className="relative mx-auto size-80 overflow-hidden rounded-2xl bg-linear-to-br from-purple-100 to-blue-100 dark:from-purple-900/20 dark:to-blue-900/20">
-                <Image
-                  src="/photo-de-profil.jpg"
-                  alt="Gael Richard - Développeur Freelance"
-                  fill
-                  className="object-cover"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-black/20 to-transparent" />
-              </div>
-            </motion.div>
+        {/* Header */}
+        <div className="mb-14 text-center">
+          <p className="font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
+            À propos de moi
+          </p>
+          <h2 className="mt-1 font-[family-name:var(--font-display)] text-[clamp(2rem,5vw,3.5rem)] uppercase leading-none text-foreground">
+            Un dev freelance,{" "}
+            <span className="text-[#7158ff]">pas une agence.</span>
+          </h2>
+        </div>
 
-            {/* Text Content */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="space-y-6"
-            >
-              <div className="flex items-center gap-2 text-primary">
-                <HeartIcon className="size-5" />
-                <span className="font-semibold">Une histoire de passion</span>
-              </div>
+        <div className="grid grid-cols-1 gap-14 lg:grid-cols-2 lg:items-start">
 
-              <div className="space-y-4 text-lg leading-relaxed text-gray-600 dark:text-gray-300">
-                <p>
-                  Après <strong>10 années passionnées</strong> dans la
-                  boulangerie, une allergie aux farines m'a contraint à repenser
-                  ma carrière. Mais cette épreuve s'est transformée en
-                  opportunité !
-                </p>
+          {/* Texte */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true }}
+            className="space-y-5 text-lg leading-relaxed text-muted-foreground"
+          >
+            <p>
+              Passionné d'informatique depuis toujours, je me suis lancé dans
+              le développement web il y a{" "}
+              <strong className="text-foreground">3 ans</strong>.
+              Depuis, j'ai travaillé sur des dizaines de projets — sites vitrines,
+              applications web, outils internes — toujours avec la même exigence.
+            </p>
+            <p>
+              Mon approche :{" "}
+              <strong className="text-foreground">comprendre votre métier</strong>{" "}
+              avant d'écrire la moindre ligne de code. Parce qu'un bon site,
+              c'est d'abord un site qui répond à un vrai besoin.
+            </p>
+            <p>
+              Je travaille en direct avec vous, sans intermédiaire.
+              Une question à 18h ? Je réponds. Le projet évolue ?
+              On s'adapte.
+            </p>
 
-                <p>
-                  Passionné d'informatique depuis toujours, j'ai saisi cette
-                  chance pour me reconvertir dans le{" "}
-                  <strong>développement web</strong>. Cette transition m'a
-                  apporté une approche unique : la même rigueur et le même souci
-                  du détail qu'en boulangerie, appliqués au code.
-                </p>
+            <div className="pt-2">
+              <Button
+                onClick={() => router.push("#contact")}
+                className="group inline-flex items-center gap-2 ring-4 ring-[#7158ff]/20"
+              >
+                Parlons de votre projet
+                <ArrowRightIcon className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
+              </Button>
+            </div>
+          </motion.div>
 
-                <p>
-                  Je me spécialise dans la création de{" "}
-                  <strong>sites vitrines</strong> et d'
-                  <strong>applications web simples</strong> avec React et
-                  Next.js. L'IA m'accompagne quotidiennement pour optimiser mon
-                  travail et rester à la pointe des dernières technologies.
-                </p>
-              </div>
-
-              {/* Tech Stack */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-primary">
-                  <CodeIcon className="size-5" />
-                  <span className="font-semibold">Technologies favorites</span>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {techStack.map((tech) => (
-                    <Badge
-                      key={tech}
-                      variant="secondary"
-                      className="border-primary/20 bg-primary/10 px-3 py-1 text-primary"
-                    >
-                      {tech}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              {/* CTA */}
-              <div className="pt-4">
-                <Button
-                  onClick={() => router.push("#contact")}
-                  className="group inline-flex items-center gap-2 px-6 py-3 ring-4 ring-primary/20 transition-all duration-300 hover:bg-foreground/70"
+          {/* Valeurs + stack */}
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            viewport={{ once: true }}
+            className="space-y-8"
+          >
+            <div className="grid grid-cols-2 gap-3">
+              {values.map(({ icon: Icon, label }) => (
+                <div
+                  key={label}
+                  className="flex items-center gap-3 rounded-xl border bg-muted/40 px-4 py-3"
                 >
-                  <span>Parlons de votre projet</span>
-                  <ArrowRightIcon className="size-4 transition-transform duration-300 group-hover:translate-x-1" />
-                </Button>
+                  <Icon className="size-4 shrink-0 text-[#7158ff]" />
+                  <span className="text-sm font-semibold text-foreground">{label}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-sm font-semibold uppercase tracking-wider text-[#7158ff]">
+                Stack technique
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {techStack.map((tech) => (
+                  <span
+                    key={tech}
+                    className="rounded-full border border-[#7158ff]/25 bg-[#7158ff]/10 px-3 py-1 font-mono text-xs text-[#7158ff]"
+                  >
+                    {tech}
+                  </span>
+                ))}
               </div>
-            </motion.div>
-          </div>
+            </div>
+          </motion.div>
         </div>
       </div>
     </section>
