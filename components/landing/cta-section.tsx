@@ -18,11 +18,8 @@ const ReviewCard = ({ imgUrl, name, review }: Review) => {
   return (
     <figure
       className={cn(
-        "relative w-64 cursor-pointer overflow-hidden rounded-4xl border p-4",
-        // light styles
-        "border-gray-950/10 bg-gray-950/1 hover:bg-gray-950/5",
-        // dark styles
-        "dark:border-gray-50/10 dark:bg-gray-50/10 dark:hover:bg-gray-50/15"
+        "relative w-64 cursor-pointer overflow-hidden rounded-2xl border p-4 transition-all duration-300",
+        "border-border bg-card hover:border-[#7158ff]/30"
       )}
     >
       <div className="flex flex-row items-center gap-2">
@@ -35,15 +32,12 @@ const ReviewCard = ({ imgUrl, name, review }: Review) => {
             src={imgUrl}
           />
         ) : (
-          <div className="flex size-8 items-center justify-center rounded-full bg-primary">
-            <UserIcon className="size-6 text-background" />
+          <div className="flex size-8 items-center justify-center rounded-full bg-[#7158ff]/20">
+            <UserIcon className="size-4 text-[#7158ff]" />
           </div>
         )}
-
         <div className="flex flex-col">
-          <figcaption className="text-sm font-medium dark:text-white">
-            {name}
-          </figcaption>
+          <figcaption className="text-sm font-semibold text-foreground">{name}</figcaption>
         </div>
       </div>
       <blockquote className="mt-2 line-clamp-2 text-sm">{review}</blockquote>
@@ -125,24 +119,27 @@ export default function CallToActionSection() {
                   ))}
               </Marquee>
             </div>
-            <div className="shadow-2xl z-10 mx-auto size-24 rounded-4xl border bg-white/10 p-3 backdrop-blur-md dark:bg-black/10 lg:size-32">
-              <HeartHandshake className="mx-auto size-16 text-black dark:text-white lg:size-24" />
+            <div className="z-10 mx-auto size-20 rounded-2xl border border-[#7158ff]/30 bg-[#7158ff]/10 p-3 lg:size-28">
+              <HeartHandshake className="mx-auto size-full text-[#7158ff]" />
             </div>
-            <div className="z-10 mt-4 flex flex-col items-center text-center text-black dark:text-white">
-              <h1 className="text-3xl font-bold lg:text-4xl">
-                Confiez moi votre projet !
-              </h1>
-              <p className="mt-2">
-                Je vais vous aider à concrétiser vos idées avec des solutions
-                sur mesure adaptées à vos besoins.
+            <div className="z-10 mt-5 flex flex-col items-center text-center">
+              <p className="font-[family-name:var(--font-handwriting)] text-xl text-[#7158ff]">
+                Travaillons ensemble
               </p>
-              <Button
-                className="group mt-6 flex items-center rounded-4xl px-6 ring-4 ring-primary/20"
+              <h2 className="mt-1 font-[family-name:var(--font-display)] text-[clamp(2rem,4vw,3rem)] uppercase leading-none text-foreground">
+                Un projet en tete ?
+              </h2>
+              <p className="mt-3 max-w-sm text-sm text-muted-foreground">
+                Décris-moi ton idée — je te réponds sous 24h avec un retour
+                honnête et une estimation claire.
+              </p>
+              <button
                 onClick={() => handleRedirect()}
+                className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#7158ff] px-6 py-3 font-semibold text-white transition-opacity hover:opacity-85"
               >
-                Allons-y
-                <ArrowRight className="ml-1 size-4 transition-all duration-300 ease-out group-hover:translate-x-3" />
-              </Button>
+                Prendre contact
+                <ArrowRight className="size-4" />
+              </button>
             </div>
             <div className="absolute inset-x-0 bottom-0 h-full bg-linear-to-b from-transparent to-white to-90% dark:to-black" />
           </div>
