@@ -19,8 +19,11 @@
   --shadow-pxl: rgba(100, 100, 100, 0.1) 0px 5px 15px 0px;
 
   --font-sans:
-    var(--font-sans), ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    var(--font-body), ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+  --font-mono:
+    var(--font-geist-mono), ui-monospace, 'Cascadia Code', 'Source Code Pro', Menlo, Consolas, 'DejaVu Sans Mono', monospace;
 
   --color-border: hsl(var(--border));
   --color-input: hsl(var(--input));

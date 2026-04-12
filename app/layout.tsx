@@ -5,13 +5,26 @@ import { cn } from "@/lib/utils";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import { SessionProvider } from "next-auth/react";
-import { Inter } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
+import { Black_Han_Sans, Caveat, DM_Sans } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
-const inter = Inter({
+const blackHanSans = Black_Han_Sans({
+  weight: "400",
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-display",
+});
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: "--font-handwriting",
+});
+
+const dmSans = DM_Sans({
+  subsets: ["latin"],
+  variable: "--font-body",
 });
 
 export const viewport: Viewport = {
@@ -70,7 +83,11 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-dvh bg-background font-sans antialiased flex flex-col",
-          inter.variable
+          GeistSans.variable,
+          GeistMono.variable,
+          blackHanSans.variable,
+          caveat.variable,
+          dmSans.variable
         )}
       >
         <SessionProvider>
