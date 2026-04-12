@@ -1,175 +1,158 @@
 // components/site-nav.tsx
 "use client";
 
-import { MenuItemTypes } from "@/types/MenuItemsTypes";
-import { AvatarImage } from "@radix-ui/react-avatar";
-import { AvatarIcon } from "@radix-ui/react-icons";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  CircleHelp,
-  Fingerprint,
-  Home,
-  Mailbox,
-  Menu,
-  PiggyBank,
-  Settings,
-  Star,
-  XIcon,
-} from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Menu, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useState } from "react";
-import { ThemeToggle } from "./theme-toggle";
-import { Avatar, AvatarFallback } from "./ui/avatar";
-import { Button } from "./ui/button";
+import { useEffect, useState } from "react";
 
-const menuItem: MenuItemTypes[] = [
-  {
-    label: "Accueil",
-    href: "/",
-    icon: () => <Home className="size-5" />,
-  },
-  {
-    label: "Témoignages",
-    href: "/#testimonials",
-    icon: () => <Star className="size-5" />,
-  },
-  {
-    label: "Tarifs",
-    href: "/#pricing",
-    icon: () => <PiggyBank className="size-5" />,
-  },
-  {
-    label: "FAQs",
-    href: "/#faq",
-    icon: () => <CircleHelp className="size-5" />,
-  },
-  {
-    label: "Contact",
-    href: "/#contact",
-    icon: () => <Mailbox className="size-5" />,
-  },
+const links = [
+  { label: "Témoignages", href: "/#testimonials" },
+  { label: "Tarifs", href: "/#pricing" },
+  { label: "FAQ", href: "/#faq" },
 ];
 
 export default function SiteNav() {
+  const { data: session } = useSession();
+  const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
   return (
     <>
-      <NavMobile />
-      <NavDesktop />
+      <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4">
+
+        {/* ── Desktop : pill flottante ── */}
+        <div
+          className={cn(
+            "hidden w-full max-w-2xl items-center justify-between rounded-full border px-5 py-2.5 transition-all duration-300 md:flex",
+            scrolled
+              ? "border-border bg-background/90 shadow-md backdrop-blur-md"
+              : "border-border/50 bg-background/70 backdrop-blur-sm"
+          )}
+        >
+          {/* Logo */}
+          <Link
+            href="/"
+            className="font-[family-name:var(--font-display)] text-xl uppercase leading-none"
+          >
+            GR<span className="text-[#7158ff]">.</span>
+          </Link>
+
+          {/* Liens */}
+          <nav className="flex items-center gap-6">
+            {links.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+
+          {/* Auth + CTA */}
+          <div className="flex items-center gap-2">
+            {session ? (
+              <Link
+                href="/dashboard"
+                className="rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <Link
+                href="/signin"
+                className="rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+              >
+                Connexion
+              </Link>
+            )}
+            <Link
+              href="/#contact"
+              className="rounded-full bg-[#7158ff] px-4 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-85"
+            >
+              Contact
+            </Link>
+          </div>
+        </div>
+
+        {/* ── Mobile : pill compacte ── */}
+        <div
+          className={cn(
+            "flex w-full items-center justify-between rounded-full border px-4 py-2.5 transition-all duration-300 md:hidden",
+            scrolled
+              ? "border-border bg-background/90 shadow-md backdrop-blur-md"
+              : "border-border/50 bg-background/70 backdrop-blur-sm"
+          )}
+        >
+          <Link
+            href="/"
+            className="font-[family-name:var(--font-display)] text-xl uppercase leading-none"
+          >
+            GR<span className="text-[#7158ff]">.</span>
+          </Link>
+
+          <button
+            onClick={() => setOpen((p) => !p)}
+            className="rounded-full p-1.5 text-foreground transition-colors hover:bg-muted"
+          >
+            {open ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </div>
+      </header>
+
+      {/* Menu mobile déroulant */}
+      {open && (
+        <div className="fixed inset-x-0 top-16 z-40 border-b bg-background/95 px-4 py-4 backdrop-blur-md md:hidden">
+          <nav className="flex flex-col gap-1">
+            {links.map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className="rounded-xl px-4 py-3 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                {l.label}
+              </Link>
+            ))}
+            {session ? (
+              <Link
+                href="/dashboard"
+                onClick={() => setOpen(false)}
+                className="rounded-xl px-4 py-3 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                Dashboard
+              </Link>
+            ) : (
+              <Link
+                href="/signin"
+                onClick={() => setOpen(false)}
+                className="rounded-xl px-4 py-3 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              >
+                Connexion
+              </Link>
+            )}
+            <Link
+              href="/#contact"
+              onClick={() => setOpen(false)}
+              className="mt-2 rounded-xl bg-[#7158ff] px-4 py-3 text-center text-sm font-semibold text-white"
+            >
+              Me contacter
+            </Link>
+          </nav>
+        </div>
+      )}
+
+      {/* Spacer */}
+      <div className="h-16" />
     </>
   );
 }
-
-const NavMobile = () => {
-  const [openMenu, setOpenMenu] = useState<boolean>(false);
-  const toggleMenu = () => setOpenMenu((prev) => !prev);
-  const { data: session } = useSession();
-
-  return (
-    <header className="fixed right-4 top-4 z-[500] flex items-center justify-between space-x-2 rounded-2xl bg-primary px-1.5 py-1 md:hidden">
-      <Avatar>
-        <AvatarImage className="w-full" src="/photo-de-profil.jpg" />
-        <AvatarFallback>
-          <AvatarIcon className="size-full text-white" />
-        </AvatarFallback>
-      </Avatar>
-      <Button
-        size={"icon"}
-        variant={"ghost"}
-        className="text-background hover:bg-secondary/20 hover:text-background"
-        onClick={toggleMenu}
-      >
-        <Menu />
-      </Button>
-
-      <AnimatePresence>
-        {openMenu && (
-          <motion.nav
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-            className="fixed inset-0 z-40 bg-primary/10 backdrop-blur-md"
-          >
-            <motion.div
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "tween", duration: 0.3 }}
-              className="shadow-lg fixed inset-y-0 right-0 z-40 h-full w-4/5 bg-background p-5 shadow-black/25"
-            >
-              <div className="mb-5 flex items-center justify-between">
-                <ThemeToggle />
-                <Button size="icon" variant="ghost" onClick={toggleMenu}>
-                  <XIcon />
-                </Button>
-              </div>
-              <div className="mt-10 flex flex-col items-start gap-4">
-                {menuItem.map((item, index) => (
-                  <Link href={item.href} key={index} className="w-full">
-                    <Button
-                      variant="ghost"
-                      className="flex w-full items-center justify-start space-x-2 transition-colors duration-300 ease-in-out hover:bg-secondary hover:text-primary"
-                      onClick={toggleMenu}
-                    >
-                      <span>{item.icon()}</span>
-                      <span>{item.label}</span>
-                    </Button>
-                  </Link>
-                ))}
-                <div className="mt-16 flex w-full items-center justify-between gap-4">
-                  {session ? (
-                    <Link href="/admin" className="w-full">
-                      <Button className="w-full" onClick={toggleMenu}>
-                        <Settings className="mr-2" />
-                        Dashboard
-                      </Button>
-                    </Link>
-                  ) : (
-                    <Link href="/signin" className="w-full">
-                      <Button className="w-full" onClick={toggleMenu}>
-                        <Fingerprint className="mr-2" />
-                        Connexion
-                      </Button>
-                    </Link>
-                  )}
-                </div>
-              </div>
-            </motion.div>
-          </motion.nav>
-        )}
-      </AnimatePresence>
-    </header>
-  );
-};
-
-const NavDesktop = () => {
-  const { data: session } = useSession();
-
-  return (
-    <header className="mx-auto mt-4 hidden w-8/12 rounded-xl bg-foreground p-1 shadow-pxl shadow-primary/20 md:flex">
-      <nav className="flex w-full items-center justify-between">
-        <Link href={"/"}>
-          <Avatar className="m-0 p-0">
-            <AvatarImage className="w-full" src="/photo-de-profil.jpg" />
-            <AvatarFallback>
-              <AvatarIcon className="size-full text-white" />
-            </AvatarFallback>
-          </Avatar>
-        </Link>
-        <div className="mr-2 hidden h-full items-center gap-2 md:flex">
-          {session ? (
-            <Link href="/admin">
-              <Button variant="secondary">Dashboard</Button>
-            </Link>
-          ) : (
-            <Link href="/signin">
-              <Button variant="secondary">Connexion</Button>
-            </Link>
-          )}
-          <ThemeToggle className="text-background hover:bg-secondary/20 hover:text-background" />
-        </div>
-      </nav>
-    </header>
-  );
-};
