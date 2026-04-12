@@ -15,6 +15,7 @@ export default async function Page() {
   return (
     <>
       <HeroSection />
+      <AboutSection />
       <Testimonials />
       <FeatureSectionDB />
       <PricingSection />
@@ -23,7 +24,6 @@ export default async function Page() {
       <CircleLight />
       <CallToActionSection />
       <FAQ />
-      <AboutSection />
       <CircleLight />
       <ContactFormImproved />
       <Particles
