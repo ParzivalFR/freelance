@@ -4,12 +4,50 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { CheckIcon } from "@radix-ui/react-icons";
 import { motion } from "framer-motion";
-import { ServerIcon, CloudIcon } from "lucide-react";
+import { ServerIcon, CloudIcon, BotIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const botPlans = [
   {
-    id: "rar",
+    id: "free",
+    name: "Free",
+    description: "Lance ton bot gratuitement et découvre la plateforme.",
+    price: "0€",
+    priceNote: "pour toujours",
+    icon: BotIcon,
+    isMostPopular: false,
+    cta: "Commencer gratuitement",
+    features: [
+      "1 bot hébergé",
+      "Module Welcome",
+      "Module Logs",
+      "Dashboard de configuration",
+      "Démarrage en 1 clic",
+    ],
+  },
+  {
+    id: "pro",
+    name: "Pro",
+    description: "Tous les modules, bots illimités, support prioritaire.",
+    price: "5€",
+    priceNote: "/ mois",
+    icon: CloudIcon,
+    isMostPopular: true,
+    cta: "Passer Pro",
+    features: [
+      "Tout du plan Free",
+      "Bots illimités",
+      "Module Modération",
+      "Module Tickets",
+      "Module XP / Niveaux",
+      "Module Survey",
+      "Module Monitor",
+      "Support prioritaire Discord",
+      "Mises à jour automatiques",
+    ],
+  },
+  {
+    id: "zip",
     name: "Livraison .zip",
     description: "Reçois les fichiers de ton bot configuré, tu héberges toi-même.",
     price: "49€",
@@ -19,33 +57,10 @@ const botPlans = [
     cta: "Acheter",
     features: [
       "Fichiers source complets",
+      "Tous les modules inclus",
       "Configuration pré-remplie",
-      "Module Welcome",
-      "Module Modération",
-      "Module Tickets",
-      "Module XP / Niveaux",
       "README & .env.example inclus",
       "Support par email",
-    ],
-  },
-  {
-    id: "managed",
-    name: "Managed",
-    description: "On héberge et gère ton bot pour toi, sans prise de tête.",
-    price: "19€",
-    priceNote: "/ mois",
-    icon: CloudIcon,
-    isMostPopular: true,
-    cta: "Commencer",
-    features: [
-      "Tout du plan Livraison",
-      "Hébergement sur VPS dédié",
-      "Dashboard de configuration",
-      "Démarrage en 1 clic",
-      "Redémarrage automatique",
-      "Monitoring 24/7",
-      "Mises à jour automatiques",
-      "Support prioritaire Discord",
     ],
   },
 ];
@@ -57,19 +72,19 @@ export default function BotPricingSection() {
     <section id="bot-pricing" className="relative">
       <div className="mx-auto flex max-w-(--breakpoint-xl) flex-col gap-8 px-4 py-14 md:px-8">
         <div className="mx-auto max-w-5xl text-center">
-          <h4 className="text-lg font-bold tracking-tight text-black dark:text-white sm:text-xl">
+          <p className="font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
             Bot Discord
-          </h4>
-          <h2 className="text-4xl font-bold tracking-tight text-black dark:text-white sm:text-6xl">
+          </p>
+          <h2 className="mt-1 font-[family-name:var(--font-display)] text-[clamp(2rem,5vw,3.5rem)] uppercase leading-none text-foreground">
             Un bot puissant,{" "}
-            <span className="text-primary">deux façons de l'utiliser</span>
+            <span className="text-[#7158ff]">au prix que tu veux</span>
           </h2>
           <p className="mt-6 text-lg leading-8 text-black/80 dark:text-white sm:text-xl">
-            Que tu sois développeur ou non, il y a une option faite pour toi.
+            Commence gratuitement, passe Pro quand tu es prêt.
           </p>
         </div>
 
-        <div className="mx-auto grid w-full max-w-3xl gap-6 py-4 sm:grid-cols-2">
+        <div className="mx-auto grid w-full max-w-5xl gap-6 py-4 sm:grid-cols-3">
           {botPlans.map((plan, idx) => {
             const Icon = plan.icon;
             return (
@@ -82,47 +97,47 @@ export default function BotPricingSection() {
                 className={cn(
                   "relative flex flex-col gap-6 rounded-2xl border p-6 text-black dark:text-white",
                   {
-                    "border-2 border-foreground sm:scale-[1.03]":
+                    "border-2 border-[#7158ff] sm:scale-[1.03] shadow-lg shadow-[#7158ff]/10":
                       plan.isMostPopular,
                   }
                 )}
               >
                 {plan.isMostPopular && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-foreground px-3 py-1 text-xs font-semibold text-background">
-                    Recommandé ✨
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-[#7158ff] px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-white">
+                    Recommandé
                   </span>
                 )}
 
-                <div className="flex items-center gap-3">
-                  <div className="flex size-10 items-center justify-center rounded-lg bg-primary/10">
-                    <Icon className="size-5 text-primary" />
+                <div className="flex flex-col gap-2">
+                  <div className="flex size-10 items-center justify-center rounded-lg bg-[#7158ff]/10">
+                    <Icon className="size-5 text-[#7158ff]" />
                   </div>
                   <div>
-                    <h2 className="text-base font-semibold">{plan.name}</h2>
-                    <p className="text-sm text-black/60 dark:text-white/60">
+                    <h2 className="font-[family-name:var(--font-display)] text-base uppercase leading-none text-foreground">{plan.name}</h2>
+                    <p className="mt-1 text-xs text-muted-foreground">
                       {plan.description}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-baseline gap-1">
-                  <span className="text-4xl font-bold">{plan.price}</span>
-                  <span className="text-sm text-black/60 dark:text-white/60">
+                  <span className="font-[family-name:var(--font-display)] text-4xl uppercase leading-none text-foreground">{plan.price}</span>
+                  <span className="text-xs text-muted-foreground">
                     {plan.priceNote}
                   </span>
                 </div>
 
-                <Button
+                <button
                   className={cn(
-                    "group relative w-full gap-2 overflow-hidden text-lg font-semibold tracking-tighter",
-                    "transform-gpu ring-offset-current transition-all duration-300 ease-out hover:ring-2 hover:ring-primary hover:ring-offset-2"
+                    "w-full rounded-xl py-2.5 font-semibold transition-opacity hover:opacity-85",
+                    plan.isMostPopular
+                      ? "bg-[#7158ff] text-white"
+                      : "border border-border text-foreground hover:bg-muted"
                   )}
-                  variant={plan.isMostPopular ? "default" : "outline"}
                   onClick={() => router.push("/signin")}
                 >
-                  <span className="absolute right-0 -mt-12 h-32 w-8 translate-x-12 rotate-12 transform-gpu bg-white opacity-10 transition-all duration-1000 ease-out group-hover:-translate-x-96 dark:bg-black" />
                   {plan.cta}
-                </Button>
+                </button>
 
                 <hr className="m-0 h-px w-full border-none bg-linear-to-r from-neutral-200/0 via-neutral-500/30 to-neutral-200/0" />
 
@@ -132,8 +147,8 @@ export default function BotPricingSection() {
                       key={i}
                       className="flex items-center gap-3 text-xs font-medium"
                     >
-                      <CheckIcon className="size-5 shrink-0 rounded-lg bg-green-400 p-[2px] text-black" />
-                      <span>{feature}</span>
+                      <CheckIcon className="size-5 shrink-0 rounded-lg bg-[#7158ff] p-[2px] text-white" />
+                      <span className="text-xs text-foreground">{feature}</span>
                     </li>
                   ))}
                 </ul>
