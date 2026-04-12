@@ -7,8 +7,17 @@ import { Code2, MessageCircle, Target, Zap } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const techStack = [
-  "React", "Next.js", "TypeScript", "Tailwind CSS",
-  "Node.js", "Prisma", "Supabase", "PostgreSQL",
+  { label: "Next.js", category: "web" },
+  { label: "React", category: "web" },
+  { label: "TypeScript", category: "web" },
+  { label: "Tailwind CSS", category: "web" },
+  { label: "Node.js", category: "web" },
+  { label: "Prisma", category: "web" },
+  { label: "Supabase", category: "web" },
+  { label: "PostgreSQL", category: "web" },
+  { label: "Electron", category: "desktop" },
+  { label: "Expo", category: "mobile" },
+  { label: "React Native", category: "mobile" },
 ];
 
 const values = [
@@ -51,18 +60,18 @@ export default function AboutSection() {
               le développement web il y a{" "}
               <strong className="text-foreground">3 ans</strong>.
               Depuis, j'ai travaillé sur des dizaines de projets — sites vitrines,
-              applications web, outils internes — toujours avec la même exigence.
+              applications web, outils internes, logiciels desktop et apps mobiles.
             </p>
             <p>
-              Mon approche :{" "}
-              <strong className="text-foreground">comprendre votre métier</strong>{" "}
-              avant d'écrire la moindre ligne de code. Parce qu'un bon site,
-              c'est d'abord un site qui répond à un vrai besoin.
+              Ma stack principale c'est{" "}
+              <strong className="text-foreground">Next.js + Tailwind CSS</strong>,
+              mais je peux aussi livrer un logiciel desktop avec{" "}
+              <strong className="text-foreground">Electron</strong> ou une app mobile avec{" "}
+              <strong className="text-foreground">Expo</strong> selon ton besoin.
             </p>
             <p>
-              Je travaille en direct avec vous, sans intermédiaire.
-              Une question à 18h ? Je réponds. Le projet évolue ?
-              On s'adapte.
+              Ce que je ne fais pas :{" "}
+              <strong className="text-foreground">le design</strong>. Je code ce que tu imagines — si tu n'as pas de maquette, on peut trouver un designer ensemble.
             </p>
 
             <div className="pt-2">
@@ -96,20 +105,29 @@ export default function AboutSection() {
               ))}
             </div>
 
-            <div className="space-y-3">
-              <p className="text-sm font-semibold uppercase tracking-wider text-[#7158ff]">
+            <div className="space-y-4">
+              <p className="font-mono text-xs uppercase tracking-widest text-[#7158ff]">
                 Stack technique
               </p>
-              <div className="flex flex-wrap gap-2">
-                {techStack.map((tech) => (
-                  <span
-                    key={tech}
-                    className="rounded-full border border-[#7158ff]/25 bg-[#7158ff]/10 px-3 py-1 font-mono text-xs text-[#7158ff]"
-                  >
-                    {tech}
+              {[
+                { cat: "web", label: "Web" },
+                { cat: "desktop", label: "Desktop" },
+                { cat: "mobile", label: "Mobile" },
+              ].map(({ cat, label }) => (
+                <div key={cat} className="flex flex-wrap items-center gap-2">
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60 w-14 shrink-0">
+                    {label}
                   </span>
-                ))}
-              </div>
+                  {techStack.filter(t => t.category === cat).map((tech) => (
+                    <span
+                      key={tech.label}
+                      className="rounded-full border border-[#7158ff]/25 bg-[#7158ff]/10 px-3 py-1 font-mono text-xs text-[#7158ff]"
+                    >
+                      {tech.label}
+                    </span>
+                  ))}
+                </div>
+              ))}
             </div>
           </motion.div>
         </div>

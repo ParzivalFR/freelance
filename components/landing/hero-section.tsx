@@ -9,7 +9,7 @@ const fade = (delay = 0) => ({
   transition: { duration: 0.4, delay: delay * 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
 });
 
-const tags = ["Next.js", "React", "TypeScript", "Tailwind CSS", "Prisma", "Supabase"];
+const tags = ["Next.js", "Tailwind CSS", "TypeScript", "Electron", "Expo", "Supabase"];
 
 export default function HeroSection() {
   return (
