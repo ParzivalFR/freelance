@@ -42,7 +42,7 @@ export default function AboutSection() {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.35 }}
             viewport={{ once: true }}
             className="space-y-5 text-lg leading-relaxed text-muted-foreground"
           >
@@ -80,7 +80,7 @@ export default function AboutSection() {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
+            transition={{ duration: 0.35, delay: 0.15 }}
             viewport={{ once: true }}
             className="space-y-8"
           >

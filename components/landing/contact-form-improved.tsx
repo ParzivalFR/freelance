@@ -129,7 +129,7 @@ export default function ContactFormImproved() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: 0.35 }}
           viewport={{ once: true }}
           className="mx-auto mb-16 max-w-3xl text-center"
         >
@@ -151,7 +151,7 @@ export default function ContactFormImproved() {
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ duration: 0.35, delay: 0.1 }}
             viewport={{ once: true }}
             className="flex flex-col gap-8 lg:col-span-2"
           >
@@ -181,7 +181,7 @@ export default function ContactFormImproved() {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
+            transition={{ duration: 0.35, delay: 0.2 }}
             viewport={{ once: true }}
             className="lg:col-span-3"
           >

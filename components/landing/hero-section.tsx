@@ -4,9 +4,9 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 
 const fade = (delay = 0) => ({
-  initial: { opacity: 0, y: 20 },
+  initial: { opacity: 0, y: 16 },
   animate: { opacity: 1, y: 0 },
-  transition: { duration: 0.6, delay, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
+  transition: { duration: 0.4, delay: delay * 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
 });
 
 const tags = ["Next.js", "React", "TypeScript", "Tailwind CSS", "Prisma", "Supabase"];
@@ -20,10 +20,10 @@ export default function HeroSection() {
       {/* Glow d'ambiance subtil */}
       <div className="pointer-events-none absolute -left-40 top-1/3 h-96 w-96 rounded-full bg-[#7158ff]/8 blur-[120px]" />
 
-      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl grid-cols-1 items-center px-6 py-16 md:px-10 lg:grid-cols-2">
+      <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl grid-cols-1 items-center px-6 pt-6 pb-16 md:px-10 md:py-16 lg:grid-cols-2">
 
         {/* ── Colonne gauche ────────────────────────── */}
-        <div>
+        <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
           {/* Badge disponibilité */}
           <motion.div
             {...fade(0.05)}
@@ -64,7 +64,7 @@ export default function HeroSection() {
           </motion.p>
 
           {/* Tech tags */}
-          <motion.div {...fade(0.5)} className="mt-5 flex flex-wrap gap-2">
+          <motion.div {...fade(0.5)} className="mt-5 flex flex-wrap justify-center gap-2 lg:justify-start">
             {tags.map((tag) => (
               <span
                 key={tag}
@@ -76,7 +76,7 @@ export default function HeroSection() {
           </motion.div>
 
           {/* CTAs */}
-          <motion.div {...fade(0.62)} className="mt-8 flex flex-wrap items-center gap-4">
+          <motion.div {...fade(0.62)} className="mt-8 flex flex-wrap items-center justify-center gap-4 lg:justify-start">
             <Link
               href="#contact"
               className="rounded-xl bg-[#7158ff] px-6 py-3 font-semibold text-white transition-opacity hover:opacity-85"
@@ -114,7 +114,7 @@ export default function HeroSection() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.2 }}
+        transition={{ delay: 0.7 }}
         className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2"
       >
         <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/40">
