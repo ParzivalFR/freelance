@@ -10,7 +10,7 @@ import { RoughNotation } from "react-rough-notation";
 
 const features = [
   {
-    title: "Moteur Propriétaire",
+    title: "Moteur Proprietaire",
     description: "La puissance d'un moteur de bot de nouvelle génération, ultra-stable et performant.",
     icon: <Cpu className="size-5 text-[#7158ff]" />,
   },
@@ -20,7 +20,7 @@ const features = [
     icon: <Zap className="size-5 text-[#7158ff]" />,
   },
   {
-    title: "Déploiement en 1 clic",
+    title: "Deploiement en 1 clic",
     description: "Hébergement inclus sur infrastructure sécurisée 24/7.",
     icon: <CheckCircle2 className="size-5 text-[#7158ff]" />,
   },

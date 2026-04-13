@@ -96,17 +96,19 @@ export default function FreelanceServicesSection() {
         </div>
 
         {/* Toggle */}
-        <div className="flex w-full items-center justify-center gap-3">
-          <span className={cn("text-sm font-medium transition-colors", interval === "day" ? "text-foreground" : "text-muted-foreground")}>
-            Taux journalier
-          </span>
-          <Switch
-            checked={interval === "project"}
-            onCheckedChange={(checked) => setInterval(checked ? "project" : "day")}
-          />
-          <span className={cn("text-sm font-medium transition-colors", interval === "project" ? "text-foreground" : "text-muted-foreground")}>
-            Forfait projet
-          </span>
+        <div className="flex w-full flex-col items-center gap-3">
+          <div className="flex items-center gap-3">
+            <span className={cn("text-sm font-medium transition-colors", interval === "day" ? "text-foreground" : "text-muted-foreground")}>
+              Taux journalier
+            </span>
+            <Switch
+              checked={interval === "project"}
+              onCheckedChange={(checked) => setInterval(checked ? "project" : "day")}
+            />
+            <span className={cn("text-sm font-medium transition-colors", interval === "project" ? "text-foreground" : "text-muted-foreground")}>
+              Forfait projet
+            </span>
+          </div>
           <span className="rounded-full bg-[#7158ff]/10 border border-[#7158ff]/30 px-3 py-1 font-mono text-[11px] uppercase tracking-widest text-[#7158ff]">
             Paiement 3x dispo
           </span>
