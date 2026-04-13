@@ -2,6 +2,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
@@ -38,49 +39,30 @@ export default function SiteNav() {
               : "border-[#7158ff]/40 shadow-md shadow-[#7158ff]/10"
           )}
         >
-          {/* Logo */}
-          <Link
-            href="/"
-            className="font-[family-name:var(--font-display)] text-xl uppercase leading-none"
-          >
+          <Link href="/" className="font-[family-name:var(--font-display)] text-xl uppercase leading-none">
             GR<span className="text-[#7158ff]">.</span>
           </Link>
 
-          {/* Liens */}
           <nav className="flex items-center gap-6">
             {links.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-              >
+              <Link key={l.href} href={l.href} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
                 {l.label}
               </Link>
             ))}
           </nav>
 
-          {/* Auth + CTA */}
           <div className="flex items-center gap-2">
             <ThemeToggle />
             {session ? (
-              <Link
-                href="/dashboard"
-                className="rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
-              >
+              <Link href="/dashboard" className="rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted">
                 Dashboard
               </Link>
             ) : (
-              <Link
-                href="/signin"
-                className="rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
-              >
+              <Link href="/signin" className="rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted">
                 Connexion
               </Link>
             )}
-            <Link
-              href="/#contact"
-              className="rounded-full bg-[#7158ff] px-4 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-85"
-            >
+            <Link href="/#contact" className="rounded-full bg-[#7158ff] px-4 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-85">
               Contact
             </Link>
           </div>
@@ -95,10 +77,7 @@ export default function SiteNav() {
               : "border-[#7158ff]/40 shadow-md shadow-[#7158ff]/10"
           )}
         >
-          <Link
-            href="/"
-            className="font-[family-name:var(--font-display)] text-xl uppercase leading-none"
-          >
+          <Link href="/" className="font-[family-name:var(--font-display)] text-xl uppercase leading-none">
             GR<span className="text-[#7158ff]">.</span>
           </Link>
 
@@ -108,56 +87,84 @@ export default function SiteNav() {
               onClick={() => setOpen((p) => !p)}
               className="rounded-full p-1.5 text-foreground transition-colors hover:bg-muted"
             >
-              {open ? <X className="size-5" /> : <Menu className="size-5" />}
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.div
+                  key={open ? "close" : "open"}
+                  initial={{ opacity: 0, rotate: -90, scale: 0.8 }}
+                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
+                  exit={{ opacity: 0, rotate: 90, scale: 0.8 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  {open ? <X className="size-5" /> : <Menu className="size-5" />}
+                </motion.div>
+              </AnimatePresence>
             </button>
           </div>
         </div>
       </header>
 
-      {/* Menu mobile déroulant */}
-      {open && (
-        <div className="fixed inset-x-0 top-16 z-40 border-b bg-background/95 px-4 py-4 backdrop-blur-md md:hidden">
-          <nav className="flex flex-col gap-1">
-            {links.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className="rounded-xl px-4 py-3 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      {/* Menu mobile animé */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: "easeOut" }}
+            className="fixed inset-x-4 top-[4.5rem] z-40 rounded-2xl border border-[#7158ff]/20 bg-background/95 px-3 py-3 shadow-lg shadow-[#7158ff]/5 backdrop-blur-lg md:hidden"
+          >
+            <nav className="flex flex-col gap-1">
+              {links.map((l, i) => (
+                <motion.div
+                  key={l.href}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.05, duration: 0.2 }}
+                >
+                  <Link
+                    href={l.href}
+                    onClick={() => setOpen(false)}
+                    className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  >
+                    {l.label}
+                  </Link>
+                </motion.div>
+              ))}
+              <motion.div
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: links.length * 0.05, duration: 0.2 }}
               >
-                {l.label}
-              </Link>
-            ))}
-            {session ? (
-              <Link
-                href="/dashboard"
-                onClick={() => setOpen(false)}
-                className="rounded-xl px-4 py-3 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                {session ? (
+                  <Link href="/dashboard" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                    Dashboard
+                  </Link>
+                ) : (
+                  <Link href="/signin" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                    Connexion
+                  </Link>
+                )}
+              </motion.div>
+              <motion.div
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: (links.length + 1) * 0.05, duration: 0.2 }}
               >
-                Dashboard
-              </Link>
-            ) : (
-              <Link
-                href="/signin"
-                onClick={() => setOpen(false)}
-                className="rounded-xl px-4 py-3 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-              >
-                Connexion
-              </Link>
-            )}
-            <Link
-              href="/#contact"
-              onClick={() => setOpen(false)}
-              className="mt-2 rounded-xl bg-[#7158ff] px-4 py-3 text-center text-sm font-semibold text-white"
-            >
-              Me contacter
-            </Link>
-          </nav>
-        </div>
-      )}
+                <Link
+                  href="/#contact"
+                  onClick={() => setOpen(false)}
+                  className="mt-1 block rounded-xl bg-[#7158ff] px-4 py-2.5 text-center text-sm font-semibold text-white transition-opacity hover:opacity-85"
+                >
+                  Me contacter
+                </Link>
+              </motion.div>
+            </nav>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      {/* Spacer */}
-      <div className="h-16" />
+      {/* Spacer réduit sur mobile */}
+      <div className="h-14 md:h-16" />
     </>
   );
 }
