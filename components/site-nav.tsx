@@ -32,10 +32,10 @@ export default function SiteNav() {
         {/* ── Desktop : pill flottante ── */}
         <div
           className={cn(
-            "hidden w-full max-w-2xl items-center justify-between rounded-full border px-5 py-2.5 transition-all duration-300 md:flex",
+            "hidden w-full max-w-2xl items-center justify-between rounded-full border px-5 py-2.5 transition-all duration-300 md:flex bg-background/95 backdrop-blur-lg",
             scrolled
-              ? "border-border bg-background/90 shadow-md backdrop-blur-md"
-              : "border-border/50 bg-background/70 backdrop-blur-sm"
+              ? "border-border shadow-lg"
+              : "border-[#7158ff]/40 shadow-md shadow-[#7158ff]/10"
           )}
         >
           {/* Logo */}
@@ -89,10 +89,10 @@ export default function SiteNav() {
         {/* ── Mobile : pill compacte ── */}
         <div
           className={cn(
-            "flex w-full items-center justify-between rounded-full border px-4 py-2.5 transition-all duration-300 md:hidden",
+            "flex w-full items-center justify-between rounded-full border px-4 py-2.5 transition-all duration-300 md:hidden bg-background/95 backdrop-blur-lg",
             scrolled
-              ? "border-border bg-background/90 shadow-md backdrop-blur-md"
-              : "border-border/50 bg-background/70 backdrop-blur-sm"
+              ? "border-border shadow-lg"
+              : "border-[#7158ff]/40 shadow-md shadow-[#7158ff]/10"
           )}
         >
           <Link
