@@ -54,7 +54,7 @@ export default function SiteNav() {
           <div className="flex items-center gap-2">
             <ThemeToggle />
             {session ? (
-              <Link href="/dashboard" className="rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted">
+              <Link href="/dashboard/bot" className="rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted">
                 Dashboard
               </Link>
             ) : (
@@ -125,7 +125,7 @@ export default function SiteNav() {
                 </Link>
               ))}
               {session ? (
-                <Link href="/dashboard" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                <Link href="/dashboard/bot" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
                   Dashboard
                 </Link>
               ) : (
