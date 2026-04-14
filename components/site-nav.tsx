@@ -107,57 +107,39 @@ export default function SiteNav() {
       <AnimatePresence>
         {open && (
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="fixed inset-x-4 top-[4.5rem] z-40 rounded-2xl border border-[#7158ff]/20 bg-background/95 px-3 py-3 shadow-lg shadow-[#7158ff]/5 backdrop-blur-lg md:hidden"
+            initial={{ opacity: 0, scale: 0.95, y: -8 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -8 }}
+            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed inset-x-4 top-[5.25rem] z-40 origin-top rounded-2xl border border-[#7158ff]/20 bg-background/95 px-3 py-3 shadow-lg shadow-[#7158ff]/5 backdrop-blur-lg md:hidden"
           >
             <nav className="flex flex-col gap-1">
-              {links.map((l, i) => (
-                <motion.div
-                  key={l.href}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05, duration: 0.2 }}
-                >
-                  <Link
-                    href={l.href}
-                    onClick={() => setOpen(false)}
-                    className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                  >
-                    {l.label}
-                  </Link>
-                </motion.div>
-              ))}
-              <motion.div
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: links.length * 0.05, duration: 0.2 }}
-              >
-                {session ? (
-                  <Link href="/dashboard" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-                    Dashboard
-                  </Link>
-                ) : (
-                  <Link href="/signin" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-                    Connexion
-                  </Link>
-                )}
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0, x: -8 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: (links.length + 1) * 0.05, duration: 0.2 }}
-              >
+              {links.map((l) => (
                 <Link
-                  href="/#contact"
+                  key={l.href}
+                  href={l.href}
                   onClick={() => setOpen(false)}
-                  className="mt-1 block rounded-xl bg-[#7158ff] px-4 py-2.5 text-center text-sm font-semibold text-white transition-opacity hover:opacity-85"
+                  className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
                 >
-                  Me contacter
+                  {l.label}
                 </Link>
-              </motion.div>
+              ))}
+              {session ? (
+                <Link href="/dashboard" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                  Dashboard
+                </Link>
+              ) : (
+                <Link href="/signin" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                  Connexion
+                </Link>
+              )}
+              <Link
+                href="/#contact"
+                onClick={() => setOpen(false)}
+                className="mt-1 block rounded-xl bg-[#7158ff] px-4 py-2.5 text-center text-sm font-semibold text-white transition-opacity hover:opacity-85"
+              >
+                Me contacter
+              </Link>
             </nav>
           </motion.div>
         )}

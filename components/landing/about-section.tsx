@@ -52,7 +52,7 @@ export default function AboutSection() {
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.35 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-10% 0px" }}
             className="space-y-5 text-lg leading-relaxed text-muted-foreground"
           >
             <p>
@@ -90,7 +90,7 @@ export default function AboutSection() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.35, delay: 0.15 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "-10% 0px" }}
             className="space-y-8"
           >
             <div className="grid grid-cols-2 gap-3">
@@ -114,18 +114,20 @@ export default function AboutSection() {
                 { cat: "desktop", label: "Desktop" },
                 { cat: "mobile", label: "Mobile" },
               ].map(({ cat, label }) => (
-                <div key={cat} className="flex flex-wrap items-center gap-2">
-                  <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/60 w-14 shrink-0">
+                <div key={cat} className="space-y-1.5">
+                  <span className="font-mono text-[10px] uppercase tracking-widest text-[#7158ff] font-bold">
                     {label}
                   </span>
-                  {techStack.filter(t => t.category === cat).map((tech) => (
-                    <span
-                      key={tech.label}
-                      className="rounded-full border border-[#7158ff]/25 bg-[#7158ff]/10 px-3 py-1 font-mono text-xs text-[#7158ff]"
-                    >
-                      {tech.label}
-                    </span>
-                  ))}
+                  <div className="flex flex-wrap gap-2">
+                    {techStack.filter(t => t.category === cat).map((tech) => (
+                      <span
+                        key={tech.label}
+                        className="rounded-full border border-border bg-muted/60 px-3 py-1 font-mono text-xs text-foreground"
+                      >
+                        {tech.label}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               ))}
             </div>

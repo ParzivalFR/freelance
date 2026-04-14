@@ -1,170 +1,154 @@
 "use client";
 
-import { Marquee } from "@/components/magicui/marquee";
 import { cn } from "@/lib/utils";
 import { ReviewCardProps } from "@/types/ReviewCardTypes";
+import { AnimatePresence, motion } from "framer-motion";
 import { UserIcon } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
-import { Skeleton } from "../ui/skeleton";
 
-const ReviewCard = ({
-  name,
-  role,
-  imgUrl,
-  review,
-  className,
-  createdAt,
-  ...props
-}: ReviewCardProps) => {
-  const [formattedDate, setFormattedDate] = useState("");
-  const [imageError, setImageError] = useState(false);
+const DELAY = 5000;
 
-  useEffect(() => {
-    if (createdAt) {
-      const date = new Date(createdAt);
-      setFormattedDate(
-        `${date.toLocaleDateString("fr-FR", {
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })}`
-      );
-    }
-  }, [createdAt]);
-
+const Avatar = ({ imgUrl, name }: { imgUrl?: string; name: string }) => {
+  const [err, setErr] = useState(false);
   return (
-    <figure
-      className={cn(
-        "relative w-80 flex flex-col justify-between cursor-pointer overflow-hidden rounded-2xl border p-5 transition-all duration-300",
-        "border-border bg-card hover:border-[#7158ff]/30 hover:shadow-md hover:shadow-[#7158ff]/5",
-        className
+    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#7158ff]/15 overflow-hidden">
+      {imgUrl && !err ? (
+        <Image
+          className="size-full object-cover"
+          src={imgUrl}
+          alt={name}
+          width={40}
+          height={40}
+          onError={() => setErr(true)}
+        />
+      ) : (
+        <UserIcon className="size-4 text-[#7158ff]" />
       )}
-      {...props}
-    >
-      <div className="flex flex-row items-center gap-2">
-        {imgUrl && !imageError ? (
-          imgUrl.includes("dicebear.com") ? (
-            <Image
-              className="aspect-square size-8 rounded-full"
-              alt=""
-              src={imgUrl}
-              width="32"
-              height="32"
-              onError={() => setImageError(true)}
-            />
-          ) : (
-            <Image
-              className="aspect-square rounded-full"
-              width="32"
-              height="32"
-              alt=""
-              src={imgUrl}
-              onError={() => setImageError(true)}
-            />
-          )
-        ) : (
-          <div className="flex size-8 items-center justify-center rounded-full bg-[#7158ff]/20">
-            <UserIcon className="size-4 text-[#7158ff]" />
-          </div>
-        )}
-        <div className="flex flex-col">
-          <figcaption className="text-sm font-semibold text-foreground">
-            {name}
-          </figcaption>
-          <p className="text-xs text-muted-foreground">{role}</p>
-        </div>
-      </div>
-
-      {/* Review text with animation */}
-      <blockquote className="mt-3 text-sm leading-relaxed text-muted-foreground">
-        {review}
-      </blockquote>
-
-      {createdAt && (
-        <p className="mt-4 font-mono text-[11px] text-muted-foreground/50">
-          {formattedDate}
-        </p>
-      )}
-    </figure>
+    </div>
   );
 };
 
-const SkeletonTestimonialCard = () => (
-  <div className="mb-4 flex h-auto min-h-[200px] w-full min-w-96 flex-col items-center justify-between gap-6 rounded-xl border border-neutral-200 bg-white p-4 dark:bg-black dark:[border:1px_solid_rgba(255,255,255,.1)]">
-    <div className="w-full">
-      <Skeleton className="mb-2 h-4 w-full" />
-      <Skeleton className="mb-2 h-4 w-3/4" />
-      <Skeleton className="h-4 w-1/2" />
-    </div>
-    <div className="flex w-full items-center justify-start gap-5">
-      <Skeleton className="size-10 rounded-full" />
-      <div>
-        <Skeleton className="mb-2 h-4 w-24" />
-        <Skeleton className="h-3 w-16" />
-      </div>
-    </div>
-  </div>
-);
-
 export function Testimonials() {
-  const fetcher = (url: string) => fetch(url).then((res) => res.json());
-  const {
-    data: reviews,
-    isLoading,
-    error,
-  } = useSWR("/api/testimonials", fetcher);
+  const fetcher = (url: string) => fetch(url).then((r) => r.json());
+  const { data } = useSWR("/api/testimonials", fetcher);
+  const reviews: ReviewCardProps[] = data && Array.isArray(data) ? data : [];
+
+  const [idx, setIdx] = useState(0);
+  const [paused, setPaused] = useState(false);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  const goTo = (i: number) => {
+    setIdx(i);
+    if (intervalRef.current) clearInterval(intervalRef.current);
+    intervalRef.current = setInterval(() => {
+      setIdx((prev) => (prev + 1) % reviews.length);
+    }, DELAY);
+  };
+
+  useEffect(() => {
+    if (reviews.length === 0) return;
+    if (paused) return;
+    intervalRef.current = setInterval(() => {
+      setIdx((prev) => (prev + 1) % reviews.length);
+    }, DELAY);
+    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+  }, [reviews.length, paused]);
+
+  const current = reviews[idx];
 
   return (
-    <section id="testimonials">
-      <div className="py-14">
-        <div className="container mx-auto px-4 md:px-8">
-          <p className="text-center font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
-            Témoignages
+    <section id="testimonials" className="py-20">
+      <div className="mx-auto max-w-4xl px-6 md:px-8">
+
+        <div className="mb-16 text-center">
+          <p className="font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
+            Temoignages
           </p>
-          <h2 className="mt-1 text-center font-[family-name:var(--font-display)] text-[clamp(2rem,5vw,3.5rem)] uppercase leading-none text-foreground">
-            Des clients satisfaits
+          <h2 className="mt-1 font-[family-name:var(--font-display)] text-[clamp(2rem,5vw,3.5rem)] uppercase leading-none text-foreground">
+            Ils m'ont fait confiance
           </h2>
-          <p className="mt-4 text-center text-lg text-neutral-500 dark:text-neutral-400">
-            En tant que développeur freelance passionné, je m'efforce de fournir
-            un travail de qualité et une expérience client exceptionnelle. Voici
-            quelques retours de mes clients récents.
-          </p>
-          <div className="relative mt-4 flex h-auto min-h-[300px] w-full flex-col items-center justify-center overflow-hidden">
-            <Marquee
-              pauseOnHover
-              className="flex items-stretch [--duration:30s] sm:[--duration:50s]"
-            >
-              {reviews &&
-                Array.isArray(reviews) &&
-                reviews.map((review: ReviewCardProps) => (
-                  <ReviewCard key={review.id} {...review} />
-                ))}
-              {isLoading &&
-                [...Array(5)].map((_, i) => (
-                  <SkeletonTestimonialCard key={i} />
-                ))}
-            </Marquee>
-            <Marquee
-              reverse
-              pauseOnHover
-              className="flex items-stretch [--duration:20s] sm:[--duration:30s]"
-            >
-              {reviews &&
-                Array.isArray(reviews) &&
-                reviews.map((review: ReviewCardProps) => (
-                  <ReviewCard key={review.id} {...review} />
-                ))}
-              {isLoading &&
-                [...Array(5)].map((_, i) => (
-                  <SkeletonTestimonialCard key={i} />
-                ))}
-            </Marquee>
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-1/3 bg-linear-to-r from-white dark:from-background"></div>
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-1/3 bg-linear-to-l from-white dark:from-background"></div>
-          </div>
         </div>
+
+        {current && (
+          <div
+            className="relative flex flex-col items-center text-center"
+            onMouseEnter={() => setPaused(true)}
+            onMouseLeave={() => setPaused(false)}
+          >
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={idx}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                className="relative max-w-2xl px-10"
+              >
+                {/* Guillemet ouverture */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none select-none absolute -top-8 -left-4 font-[family-name:var(--font-display)] text-[9rem] leading-none text-[#7158ff]/25"
+                >
+                  "
+                </span>
+
+                <blockquote className="relative z-10 text-xl leading-relaxed text-foreground md:text-2xl font-[family-name:var(--font-serif)]">
+                  {current.review}
+                </blockquote>
+
+                {/* Guillemet fermeture */}
+                <span
+                  aria-hidden
+                  className="pointer-events-none select-none absolute -bottom-14 -right-4 font-[family-name:var(--font-display)] text-[9rem] leading-none text-[#7158ff]/25 rotate-180"
+                >
+                  "
+                </span>
+              </motion.div>
+            </AnimatePresence>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={`author-${idx}`}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3, delay: 0.15 }}
+                className="mt-16 flex flex-col items-center gap-2"
+              >
+                <Avatar imgUrl={current.imgUrl} name={current.name} />
+                <p className="text-sm font-semibold text-foreground">{current.name}</p>
+                <p className="text-xs text-[#7158ff]/80">{current.role}</p>
+              </motion.div>
+            </AnimatePresence>
+
+            {reviews.length > 1 && (
+              <div className="mt-8 flex items-center gap-2">
+                {reviews.map((_, i) => (
+                  <button
+                    key={i}
+                    onClick={() => goTo(i)}
+                    className={cn(
+                      "rounded-full transition-all duration-300",
+                      i === idx
+                        ? "bg-[#7158ff] w-5 h-1.5"
+                        : "bg-muted-foreground/25 hover:bg-muted-foreground/50 size-1.5"
+                    )}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {reviews.length === 0 && (
+          <div className="flex flex-col items-center gap-4">
+            <div className="size-10 rounded-full bg-muted animate-pulse" />
+            <div className="h-4 w-64 rounded bg-muted animate-pulse" />
+            <div className="h-4 w-48 rounded bg-muted animate-pulse" />
+          </div>
+        )}
       </div>
     </section>
   );

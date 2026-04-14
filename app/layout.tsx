@@ -7,7 +7,7 @@ import type { Metadata, Viewport } from "next";
 import { SessionProvider } from "next-auth/react";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
-import { Black_Han_Sans, Caveat, DM_Sans } from "next/font/google";
+import { Black_Han_Sans, Caveat, DM_Sans, Playfair_Display } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
@@ -25,6 +25,11 @@ const caveat = Caveat({
 const dmSans = DM_Sans({
   subsets: ["latin"],
   variable: "--font-body",
+});
+
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  variable: "--font-serif",
 });
 
 export const viewport: Viewport = {
@@ -87,7 +92,8 @@ export default function RootLayout({
           GeistMono.variable,
           blackHanSans.variable,
           caveat.variable,
-          dmSans.variable
+          dmSans.variable,
+          playfair.variable
         )}
       >
         <SessionProvider>
