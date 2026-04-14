@@ -24,8 +24,8 @@ export async function POST(
     return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
   }
 
-  if (bot.plan !== "MANAGED") {
-    return NextResponse.json({ error: "Ce bot n'a pas de plan MANAGED" }, { status: 400 });
+  if (bot.plan !== "PRO" && bot.plan !== "MANAGED") {
+    return NextResponse.json({ error: "Ce bot n'a pas de plan Pro" }, { status: 400 });
   }
 
   if (!bot.stripeSubscriptionId) {

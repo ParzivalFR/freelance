@@ -115,11 +115,11 @@ export default function BotOverviewPage() {
         <div className="flex-1">
           <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">plan_actif</p>
           <p className="mt-1 font-mono text-sm font-bold text-foreground">
-            {config.plan === "RAR"
+            {config.plan === "ZIP" || config.plan === "RAR"
               ? "Livraison .zip"
-              : config.plan === "MANAGED"
-                ? "Bot Géré 24/7"
-                : "Aucun plan"}
+              : config.plan === "PRO" || config.plan === "MANAGED"
+                ? "Pro — Hébergé 24/7"
+                : "Plan Free"}
           </p>
         </div>
         <div

@@ -41,7 +41,7 @@ export async function POST(request: Request) {
         paidAt: new Date(),
         planEndsAt: null,
         // Sauvegarder l'ID de l'abonnement pour pouvoir l'annuler plus tard
-        ...(plan === "MANAGED" && session.subscription && {
+        ...(plan === "PRO" && session.subscription && {
           stripeSubscriptionId: session.subscription as string,
           status: "STARTING",
           workerCommand: "START",

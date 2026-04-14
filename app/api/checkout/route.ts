@@ -6,8 +6,8 @@ import Stripe from "stripe";
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 const PRICES = {
-  RAR:     process.env.STRIPE_PRICE_RAR!,
-  MANAGED: process.env.STRIPE_PRICE_MANAGED!,
+  ZIP: process.env.STRIPE_PRICE_ZIP!,
+  PRO: process.env.STRIPE_PRICE_PRO!,
 };
 
 export async function POST(request: Request) {
@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   }
 
   const checkoutSession = await stripe.checkout.sessions.create({
-    mode: plan === "MANAGED" ? "subscription" : "payment",
+    mode: plan === "PRO" ? "subscription" : "payment",
     line_items: [{ price: PRICES[plan as keyof typeof PRICES], quantity: 1 }],
     allow_promotion_codes: true,
     success_url: `${process.env.NEXTAUTH_URL}/dashboard/bot/${botId}?success=1&plan=${plan}`,

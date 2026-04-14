@@ -73,7 +73,9 @@ const statusConfig: Record<string, { label: string; classes: string }> = {
 };
 
 const planConfig: Record<string, { label: string; classes: string }> = {
+  PRO:     { label: "Pro",       classes: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300" },
   MANAGED: { label: "Géré",      classes: "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300" },
+  ZIP:     { label: "Livraison", classes: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300" },
   RAR:     { label: "Livraison", classes: "bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300" },
 };
 
@@ -143,8 +145,8 @@ export default function AdminBotsPage() {
 
   const stats = {
     total:   bots.length,
-    managed: bots.filter((b) => b.plan === "MANAGED").length,
-    rar:     bots.filter((b) => b.plan === "RAR").length,
+    managed: bots.filter((b) => b.plan === "PRO" || b.plan === "MANAGED").length,
+    rar:     bots.filter((b) => b.plan === "ZIP" || b.plan === "RAR").length,
     online:  bots.filter((b) => b.status === "ONLINE").length,
   };
 
@@ -238,7 +240,7 @@ export default function AdminBotsPage() {
                   const status = statusConfig[bot.status] ?? statusConfig.OFFLINE;
                   const plan = bot.plan ? planConfig[bot.plan] : null;
                   const modules = activeModules(bot);
-                  const isManaged = bot.plan === "MANAGED";
+                  const isManaged = bot.plan === "PRO" || bot.plan === "MANAGED";
 
                   return (
                     <TableRow key={bot.id}>
@@ -314,7 +316,7 @@ export default function AdminBotsPage() {
                             )}
                             {!isManaged && (
                               <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-                                Contrôles réservés au plan MANAGED
+                                Contrôles réservés au plan Pro/Géré
                               </DropdownMenuItem>
                             )}
                             <DropdownMenuItem

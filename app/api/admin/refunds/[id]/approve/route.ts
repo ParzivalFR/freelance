@@ -154,7 +154,7 @@ export async function POST(
       stripeSubscriptionId: null,
       stripeSessionId: null,
       status: "OFFLINE",
-      workerCommand: bot.plan === "MANAGED" ? "STOP" : null,
+      workerCommand: (bot.plan === "PRO" || bot.plan === "MANAGED") ? "STOP" : null,
     },
   });
 
