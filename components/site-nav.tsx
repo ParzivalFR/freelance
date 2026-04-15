@@ -3,12 +3,20 @@
 
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { LayoutDashboard, LogOut, Menu, Shield, UserIcon, X } from "lucide-react";
+import {
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Shield,
+  UserIcon,
+  X,
+} from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
+
 
 const links = [
   { label: "Témoignages", href: "/#testimonials" },
@@ -16,13 +24,22 @@ const links = [
   { label: "FAQ", href: "/#faq" },
 ];
 
-function UserMenu({ image, name, isAdmin }: { image?: string | null; name?: string | null; isAdmin: boolean }) {
+function UserMenu({
+  image,
+  name,
+  isAdmin,
+}: {
+  image?: string | null;
+  name?: string | null;
+  isAdmin: boolean;
+}) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+      if (ref.current && !ref.current.contains(e.target as Node))
+        setOpen(false);
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
@@ -31,11 +48,17 @@ function UserMenu({ image, name, isAdmin }: { image?: string | null; name?: stri
   return (
     <div ref={ref} className="relative">
       <button
-        onClick={() => setOpen(v => !v)}
+        onClick={() => setOpen((v) => !v)}
         className="flex size-8 items-center justify-center overflow-hidden rounded-full border border-border transition-all hover:border-[#7158ff]/50 hover:ring-2 hover:ring-[#7158ff]/20"
       >
         {image ? (
-          <Image src={image} alt={name ?? "avatar"} width={32} height={32} className="size-full object-cover" />
+          <Image
+            src={image}
+            alt={name ?? "avatar"}
+            width={32}
+            height={32}
+            className="size-full object-cover"
+          />
         ) : (
           <div className="flex size-full items-center justify-center bg-[#7158ff]/15">
             <UserIcon className="size-3.5 text-[#7158ff]" />
@@ -53,7 +76,9 @@ function UserMenu({ image, name, isAdmin }: { image?: string | null; name?: stri
             className="absolute right-0 top-10 z-50 min-w-[160px] rounded-xl border border-border bg-background/95 p-1 shadow-lg shadow-black/10 backdrop-blur-lg"
           >
             {name && (
-              <p className="truncate px-3 py-1.5 font-mono text-[10px] text-muted-foreground">{name}</p>
+              <p className="truncate px-3 py-1.5 font-mono text-[10px] text-muted-foreground">
+                {name}
+              </p>
             )}
             <Link
               href="/dashboard/bot"
@@ -102,23 +127,27 @@ export default function SiteNav() {
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4">
-
         {/* ── Desktop : pill flottante ── */}
         <div
           className={cn(
             "hidden w-full max-w-2xl items-center justify-between rounded-full border px-5 py-2.5 transition-all duration-300 md:flex bg-background/95 backdrop-blur-lg",
-            scrolled
-              ? "border-border shadow-lg"
-              : "border-[#7158ff]/40 shadow-md shadow-[#7158ff]/10"
+            scrolled ? "border-border shadow-lg" : "border-[#7158ff]/40 shadow-md shadow-[#7158ff]/10",
           )}
         >
-          <Link href="/" className="font-[family-name:var(--font-display)] text-xl uppercase leading-none">
+          <Link
+            href="/"
+            className="font-(family-name:--font-display) text-xl uppercase leading-none"
+          >
             GR<span className="text-[#7158ff]">.</span>
           </Link>
 
           <nav className="flex items-center gap-6">
             {links.map((l) => (
-              <Link key={l.href} href={l.href} className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+              <Link
+                key={l.href}
+                href={l.href}
+                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+              >
                 {l.label}
               </Link>
             ))}
@@ -133,11 +162,17 @@ export default function SiteNav() {
                 isAdmin={session.user?.role === "ADMIN"}
               />
             ) : (
-              <Link href="/signin" className="rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted">
+              <Link
+                href="/signin"
+                className="rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+              >
                 Connexion
               </Link>
             )}
-            <Link href="/#contact" className="rounded-full bg-[#7158ff] px-4 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-85">
+            <Link
+              href="/#contact"
+              className="rounded-full bg-[#7158ff] px-4 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-85"
+            >
               Contact
             </Link>
           </div>
@@ -147,12 +182,13 @@ export default function SiteNav() {
         <div
           className={cn(
             "flex w-full items-center justify-between rounded-full border px-4 py-2.5 transition-all duration-300 md:hidden bg-background/95 backdrop-blur-lg",
-            scrolled
-              ? "border-border shadow-lg"
-              : "border-[#7158ff]/40 shadow-md shadow-[#7158ff]/10"
+            scrolled ? "border-border shadow-lg" : "border-[#7158ff]/40 shadow-md shadow-[#7158ff]/10",
           )}
         >
-          <Link href="/" className="font-[family-name:var(--font-display)] text-xl uppercase leading-none">
+          <Link
+            href="/"
+            className="font-[family-name:var(--font-display)] text-xl uppercase leading-none"
+          >
             GR<span className="text-[#7158ff]">.</span>
           </Link>
 
@@ -170,7 +206,11 @@ export default function SiteNav() {
                   exit={{ opacity: 0, rotate: 90, scale: 0.8 }}
                   transition={{ duration: 0.15 }}
                 >
-                  {open ? <X className="size-5" /> : <Menu className="size-5" />}
+                  {open ? (
+                    <X className="size-5" />
+                  ) : (
+                    <Menu className="size-5" />
+                  )}
                 </motion.div>
               </AnimatePresence>
             </button>
@@ -201,12 +241,20 @@ export default function SiteNav() {
               ))}
               {session ? (
                 <>
-                  <Link href="/dashboard/bot" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                  <Link
+                    href="/dashboard/bot"
+                    onClick={() => setOpen(false)}
+                    className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  >
                     <LayoutDashboard className="size-3.5" />
                     Dashboard
                   </Link>
                   {session.user?.role === "ADMIN" && (
-                    <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                    <Link
+                      href="/admin"
+                      onClick={() => setOpen(false)}
+                      className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    >
                       <Shield className="size-3.5 text-[#7158ff]" />
                       Admin
                     </Link>
@@ -220,7 +268,11 @@ export default function SiteNav() {
                   </button>
                 </>
               ) : (
-                <Link href="/signin" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                <Link
+                  href="/signin"
+                  onClick={() => setOpen(false)}
+                  className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                >
                   Connexion
                 </Link>
               )}
