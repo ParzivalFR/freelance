@@ -47,6 +47,7 @@ model DiscordBot {
   moduleLog        Boolean @default(false) @map("module_log")
   moduleSurvey     Boolean @default(false) @map("module_survey")
   moduleMonitor    Boolean @default(false) @map("module_monitor")
+  moduleGiveaway   Boolean @default(false) @map("module_giveaway")
 
   // Paramètres spécifiques aux modules (JSON pour plus de flexibilité)
   config Json? @default("{}") // ex: { welcomeChannel: "123", ticketCategory: "456" }
@@ -64,6 +65,7 @@ model DiscordBot {
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @updatedAt @map("updated_at")
   infractions     Infraction[]
+  giveaways       Giveaway[]
   userLevels      UserLevel[]
   levelRewards    LevelReward[]
   polls           Poll[]
@@ -198,6 +200,53 @@ model PollVote {
 
   @@unique([pollId, userId])
   @@map("poll_votes")
+}
+
+// ─── Giveaways ────────────────────────────────────────────────────────────────
+
+model Giveaway {
+  id          String  @id @default(cuid())
+  botId       String  @map("bot_id")
+  guildId     String  @map("guild_id")
+  channelId   String  @map("channel_id")
+  messageId   String? @map("message_id")
+
+  title       String
+  prize       String
+  description String? @db.Text
+
+  // RANDOM | WEIGHTED | FIRST
+  mode        String @default("RANDOM")
+
+  winnerCount Int @default(1) @map("winner_count")
+
+  // Conditions d'entrée
+  requiredRoleIds Json?    @map("required_role_ids") // String[]
+  minLevel        Int?     @map("min_level")
+  mustBeBooster   Boolean  @default(false) @map("must_be_booster")
+  minDaysOnServer Int?     @map("min_days_on_server")
+
+  // PENDING | ACTIVE | ENDED | CANCELLED
+  status String @default("PENDING")
+
+  startAt DateTime? @map("start_at")
+  endAt   DateTime  @map("end_at")
+
+  winnerIds        Json? @map("winner_ids")         // String[] Discord user IDs
+  participants     Json? @map("participants")        // String[] Discord user IDs
+  participantCount Int   @default(0) @map("participant_count")
+
+  // Embed options
+  useEmbed    Boolean @default(true)  @map("use_embed")
+  embedColor  String? @map("embed_color")  // hex sans #, ex: "7158ff"
+  embedImage  String? @map("embed_image")  // URL image
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt      @map("updated_at")
+
+  bot DiscordBot @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  @@map("giveaways")
 }
 
 // ──────────────────────────────────────────────────────────────────────────────

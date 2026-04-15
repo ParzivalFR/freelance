@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, BarChart2, MessageSquare, Puzzle, Save, ScrollText, Shield, Star, Ticket } from "lucide-react";
+import { Activity, BarChart2, Gift, MessageSquare, Puzzle, Save, ScrollText, Shield, Star, Ticket } from "lucide-react";
 import { ModuleToggle, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 
@@ -88,6 +88,16 @@ export default function BotModulesPage() {
           enabled={config.moduleSurvey}
           onToggle={() => update("moduleSurvey", !config.moduleSurvey)}
           configHref={`${base}/polls`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<Gift className="size-3.5" />}
+          label="giveaway"
+          description="Concours avec conditions d'entrée, modes de tirage et re-roll"
+          enabled={config.moduleGiveaway}
+          onToggle={() => update("moduleGiveaway", !config.moduleGiveaway)}
+          configHref={`${base}/giveaway`}
           locked={!isPro}
         />
 

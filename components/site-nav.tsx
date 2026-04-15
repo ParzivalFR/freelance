@@ -3,10 +3,11 @@
 
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
-import { useSession } from "next-auth/react";
+import { LayoutDashboard, LogOut, Menu, Shield, UserIcon, X } from "lucide-react";
+import { signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ThemeToggle } from "./theme-toggle";
 
 const links = [
@@ -14,6 +15,78 @@ const links = [
   { label: "Tarifs", href: "/#pricing" },
   { label: "FAQ", href: "/#faq" },
 ];
+
+function UserMenu({ image, name, isAdmin }: { image?: string | null; name?: string | null; isAdmin: boolean }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(v => !v)}
+        className="flex size-8 items-center justify-center overflow-hidden rounded-full border border-border transition-all hover:border-[#7158ff]/50 hover:ring-2 hover:ring-[#7158ff]/20"
+      >
+        {image ? (
+          <Image src={image} alt={name ?? "avatar"} width={32} height={32} className="size-full object-cover" />
+        ) : (
+          <div className="flex size-full items-center justify-center bg-[#7158ff]/15">
+            <UserIcon className="size-3.5 text-[#7158ff]" />
+          </div>
+        )}
+      </button>
+
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95, y: -4 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: -4 }}
+            transition={{ duration: 0.12 }}
+            className="absolute right-0 top-10 z-50 min-w-[160px] rounded-xl border border-border bg-background/95 p-1 shadow-lg shadow-black/10 backdrop-blur-lg"
+          >
+            {name && (
+              <p className="truncate px-3 py-1.5 font-mono text-[10px] text-muted-foreground">{name}</p>
+            )}
+            <Link
+              href="/dashboard/bot"
+              onClick={() => setOpen(false)}
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted"
+            >
+              <LayoutDashboard className="size-3.5 text-muted-foreground" />
+              Dashboard
+            </Link>
+            {isAdmin && (
+              <Link
+                href="/admin"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted"
+              >
+                <Shield className="size-3.5 text-[#7158ff]" />
+                Admin
+              </Link>
+            )}
+            <div className="my-1 border-t border-border" />
+            <button
+              onClick={() => signOut({ callbackUrl: "/" })}
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-500 transition-colors hover:bg-red-500/10"
+            >
+              <LogOut className="size-3.5" />
+              Déconnexion
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  );
+}
 
 export default function SiteNav() {
   const { data: session } = useSession();
@@ -54,9 +127,11 @@ export default function SiteNav() {
           <div className="flex items-center gap-2">
             <ThemeToggle />
             {session ? (
-              <Link href="/dashboard/bot" className="rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted">
-                Dashboard
-              </Link>
+              <UserMenu
+                image={session.user?.image}
+                name={session.user?.name}
+                isAdmin={session.user?.role === "ADMIN"}
+              />
             ) : (
               <Link href="/signin" className="rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted">
                 Connexion
@@ -125,9 +200,25 @@ export default function SiteNav() {
                 </Link>
               ))}
               {session ? (
-                <Link href="/dashboard/bot" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
-                  Dashboard
-                </Link>
+                <>
+                  <Link href="/dashboard/bot" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                    <LayoutDashboard className="size-3.5" />
+                    Dashboard
+                  </Link>
+                  {session.user?.role === "ADMIN" && (
+                    <Link href="/admin" onClick={() => setOpen(false)} className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
+                      <Shield className="size-3.5 text-[#7158ff]" />
+                      Admin
+                    </Link>
+                  )}
+                  <button
+                    onClick={() => signOut({ callbackUrl: "/" })}
+                    className="flex w-full items-center gap-2 rounded-xl px-4 py-2.5 text-sm text-red-500 transition-colors hover:bg-red-500/10"
+                  >
+                    <LogOut className="size-3.5" />
+                    Déconnexion
+                  </button>
+                </>
               ) : (
                 <Link href="/signin" onClick={() => setOpen(false)} className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground">
                   Connexion

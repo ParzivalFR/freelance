@@ -86,6 +86,11 @@ export interface ModuleConfig {
   // Monitor
   monitorAlertChannelId?: string;
   monitorAlertRoleId?: string;
+  // Giveaway
+  giveawayGuildId?: string;
+  giveawayDefaultChannelId?: string;
+  giveawayManagerRoleId?: string;
+  giveawayDmWinners?: boolean;
   // Monitor — Status Board
   statusBoardEnabled?: boolean;
   statusBoardChannelId?: string;
@@ -117,6 +122,7 @@ export interface BotConfig {
   moduleLog: boolean;
   moduleSurvey: boolean;
   moduleMonitor: boolean;
+  moduleGiveaway: boolean;
   config: ModuleConfig;
   workerCommand: string | null;
 }
