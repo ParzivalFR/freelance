@@ -15,12 +15,12 @@ export default function HeroSection() {
   return (
     <section
       id="hero"
-      className="relative min-h-[calc(100svh-3.5rem)] overflow-hidden bg-background lg:min-h-[calc(100svh-4rem)]"
+      className="relative min-h-[calc(100dvh-3.5rem)] overflow-hidden bg-background lg:min-h-[calc(100dvh-4rem)]"
     >
       {/* Glow d'ambiance subtil */}
       <div className="pointer-events-none absolute -left-40 top-1/3 h-96 w-96 rounded-full bg-[#7158ff]/8 blur-[120px]" />
 
-      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start px-6 pt-10 pb-24 md:px-10 lg:min-h-[calc(100svh-4rem)] lg:grid-cols-2 lg:items-center lg:py-16">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 items-start px-6 pt-10 pb-24 md:px-10 lg:min-h-[calc(100dvh-4rem)] lg:grid-cols-2 lg:items-center lg:py-16">
 
         {/* ── Colonne gauche ────────────────────────── */}
         <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
