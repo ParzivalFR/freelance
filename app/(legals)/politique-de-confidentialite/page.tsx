@@ -5,7 +5,7 @@ export default function PolitiqueConfidentialite() {
     <section className="container mx-auto bg-background px-4 py-12 md:px-8">
       <div className="shadow-md mx-auto max-w-3xl rounded-lg bg-background p-8 shadow-pxl border border-border/50">
         <h1 className="mb-8 text-center text-4xl font-bold tracking-tight md:text-5xl uppercase font-[family-name:var(--font-display)]">
-          Politique de Confidentialité
+          Politique de Confidentialite
         </h1>
 
         <p className="mb-8 text-foreground/80 leading-relaxed">
