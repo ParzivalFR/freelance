@@ -81,7 +81,7 @@ export default function RootLayout({
     <html lang="fr" suppressHydrationWarning>
       <Script
         defer
-        data-domain="freelance.gael-dev.fr"
+        data-domain="gael-dev.fr"
         src="https://plausible.gael-dev.fr/js/script.js"
       />
       <SpeedInsights />

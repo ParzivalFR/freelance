@@ -20,7 +20,7 @@ interface PlausibleResponse {
 }
 
 const PLAUSIBLE_API_URL = "https://plausible.gael-dev.fr/api/v1";
-const PLAUSIBLE_SITE_ID = "freelance.gael-dev.fr";
+const PLAUSIBLE_SITE_ID = "gael-dev.fr";
 
 /**
  * Récupère les statistiques depuis Plausible

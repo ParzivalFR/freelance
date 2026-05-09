@@ -79,7 +79,7 @@ export async function POST(request: Request) {
           clientName: tokenRecord.clientName,
           projectName: tokenRecord.projectName || undefined,
           testimonialUrl,
-          siteUrl: process.env.SITE_URL || 'https://freelance.gael-dev.fr',
+          siteUrl: process.env.SITE_URL || 'https://gael-dev.fr',
         });
 
         const subject = createTestimonialEmailSubject(

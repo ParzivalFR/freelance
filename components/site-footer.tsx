@@ -24,7 +24,8 @@ const footerLinks = [
   { href: "/#pricing", label: "Tarifs" },
   { href: "/#faq", label: "FAQ" },
   { href: "/#contact", label: "Contact" },
-  { href: "/privacy", label: "Mentions legales" },
+  { href: "/mentions-legales", label: "Mentions légales" },
+  { href: "/politique-de-confidentialite", label: "Confidentialité" },
 ];
 
 const footerSocials = [

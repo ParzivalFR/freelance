@@ -59,7 +59,7 @@ export async function POST(request: Request) {
 
     // Préparer les données pour le template
     const testimonialUrl = `${process.env.SITE_URL}/testimonial/${tokenData.token}`;
-    const siteUrl = process.env.SITE_URL || "https://freelance.gael-dev.fr";
+    const siteUrl = process.env.SITE_URL || "https://gael-dev.fr";
 
     const htmlContent = createTestimonialEmailTemplate({
       clientName: tokenData.clientName,
