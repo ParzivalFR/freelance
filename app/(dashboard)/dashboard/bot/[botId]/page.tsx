@@ -7,6 +7,7 @@ import { FaDiscord } from "react-icons/fa";
 import { Terminal } from "lucide-react";
 import { StatCard, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import type { BotConfig } from "@/components/dashboard/bot-types";
+import { useBotSocket } from "@/hooks/use-bot-socket";
 
 export default function BotOverviewPage() {
   const params = useParams();
@@ -22,6 +23,18 @@ export default function BotOverviewPage() {
   const addLog = (msg: string) =>
     setLogs((prev) => [...prev.slice(-6), `> ${msg}`]);
 
+  // Temps réel via socket
+  const { connected } = useBotSocket({
+    botId,
+    onStatus: ({ status }) => {
+      setConfig((prev) => prev ? { ...prev, status } : prev);
+      addLog(`BOT_STATUS: ${status}`);
+    },
+    onLog: ({ message }) => addLog(message),
+    onLevelUp: ({ username, level }) => addLog(`LEVEL_UP: ${username} → lvl ${level}`),
+    onModeration: ({ type, targetId }) => addLog(`MODERATION: ${type} → ${targetId}`),
+  });
+
   useEffect(() => {
     if (!botId) return;
 
@@ -32,33 +45,16 @@ export default function BotOverviewPage() {
         addLog(`BOT_LOADED: ${data.name}`);
       });
 
-    const params = new URLSearchParams(window.location.search);
-    if (params.get("success")) {
-      const plan = params.get("plan");
+    const searchParams = new URLSearchParams(window.location.search);
+    if (searchParams.get("success")) {
+      const plan = searchParams.get("plan");
       addLog(`PAYMENT_SUCCESS: ${plan}.....OK`);
       window.history.replaceState({}, "", `/dashboard/bot/${botId}`);
     }
-    if (params.get("cancelled")) {
+    if (searchParams.get("cancelled")) {
       addLog("PAYMENT_CANCELLED.........");
       window.history.replaceState({}, "", `/dashboard/bot/${botId}`);
     }
-
-    const interval = setInterval(() => {
-      fetch(`/api/bot/config?botId=${botId}`)
-        .then((r) => r.json())
-        .then((data) => {
-          setConfig((prev) => {
-            if (!prev) return prev;
-            if (prev.status !== data.status) {
-              addLog(`BOT_STATUS: ${data.status}`);
-            }
-            return { ...prev, status: data.status };
-          });
-        })
-        .catch(() => {});
-    }, 5000);
-
-    return () => clearInterval(interval);
   }, [botId]);
 
   if (!config) return <LoadingScreen />;
@@ -141,8 +137,8 @@ export default function BotOverviewPage() {
             system_log
           </span>
           <div className="ml-auto flex items-center gap-1.5">
-            <div className="size-1.5 animate-pulse rounded-full bg-green-500" />
-            <span className="font-mono text-[9px] uppercase text-muted-foreground/50">live</span>
+            <div className={`size-1.5 rounded-full ${connected ? "animate-pulse bg-green-500" : "bg-muted-foreground/30"}`} />
+            <span className="font-mono text-[9px] uppercase text-muted-foreground/50">{connected ? "live" : "polling"}</span>
           </div>
         </div>
         <div className="p-4">
