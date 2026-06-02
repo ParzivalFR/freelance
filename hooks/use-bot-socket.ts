@@ -58,8 +58,10 @@ export function useBotSocket({
 
     if (!url || !secret || !botId) return;
 
+    // On passe le botId en query pour rejoindre la bonne room côté worker
     const socket = io(url, {
       auth: { token: secret },
+      query: { botId },
       transports: ["websocket"],
       reconnectionAttempts: 5,
       reconnectionDelay: 2000,
@@ -70,25 +72,10 @@ export function useBotSocket({
     socket.on("connect", () => setConnected(true));
     socket.on("disconnect", () => setConnected(false));
 
-    socket.on("bot:status", (event: BotStatusEvent) => {
-      if (event.botId !== botId) return;
-      onStatus?.(event);
-    });
-
-    socket.on("bot:log", (event: BotLogEvent) => {
-      if (event.botId !== botId) return;
-      onLog?.(event);
-    });
-
-    socket.on("bot:levelup", (event: BotLevelUpEvent) => {
-      if (event.botId !== botId) return;
-      onLevelUp?.(event);
-    });
-
-    socket.on("bot:moderation", (event: BotModerationEvent) => {
-      if (event.botId !== botId) return;
-      onModeration?.(event);
-    });
+    socket.on("bot:status", (event: BotStatusEvent) => onStatus?.(event));
+    socket.on("bot:log", (event: BotLogEvent) => onLog?.(event));
+    socket.on("bot:levelup", (event: BotLevelUpEvent) => onLevelUp?.(event));
+    socket.on("bot:moderation", (event: BotModerationEvent) => onModeration?.(event));
 
     return () => {
       socket.disconnect();
