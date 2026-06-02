@@ -8,12 +8,16 @@ import { Terminal } from "lucide-react";
 import { StatCard, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import type { BotConfig } from "@/components/dashboard/bot-types";
 import { useBotSocket } from "@/hooks/use-bot-socket";
+import { useToast } from "@/components/ui/use-toast";
+import { Power, Square, RotateCw } from "lucide-react";
 
 export default function BotOverviewPage() {
   const params = useParams();
   const botId = params?.botId as string;
 
+  const { toast } = useToast();
   const [config, setConfig] = useState<BotConfig | null>(null);
+  const [workerLoading, setWorkerLoading] = useState<"START" | "STOP" | "RESTART" | null>(null);
   const [logs, setLogs] = useState<string[]>([
     "> SYSTEM_BOOT..................OK",
     "> LOADING_ENGINE..............OK",
@@ -22,6 +26,25 @@ export default function BotOverviewPage() {
 
   const addLog = (msg: string) =>
     setLogs((prev) => [...prev.slice(-6), `> ${msg}`]);
+
+  const sendWorkerCommand = async (cmd: "START" | "STOP" | "RESTART") => {
+    if (!config) return;
+    setWorkerLoading(cmd);
+    try {
+      const res = await fetch("/api/bot/config", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: config.id, workerCommand: cmd }),
+      });
+      if (!res.ok) {
+        toast({ title: "Erreur", description: "Impossible d'envoyer la commande.", variant: "destructive" });
+        return;
+      }
+      addLog(`WORKER_CMD: ${cmd}...`);
+    } finally {
+      setWorkerLoading(null);
+    }
+  };
 
   // Temps réel via socket
   const { connected } = useBotSocket({
@@ -127,6 +150,37 @@ export default function BotOverviewPage() {
         >
           {config.plan ?? "FREE"}
         </div>
+      </div>
+
+      {/* Contrôles */}
+      <div className="flex gap-2">
+        {config.status === "OFFLINE" || config.status === "ERROR" ? (
+          <button
+            onClick={() => sendWorkerCommand("START")}
+            disabled={!!workerLoading}
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-green-600/20 px-3 py-2.5 font-mono text-[11px] font-bold text-green-400 transition hover:bg-green-600/30 disabled:opacity-50"
+          >
+            <Power className="size-3.5" />
+            {workerLoading === "START" ? "démarrage..." : "Démarrer"}
+          </button>
+        ) : (
+          <button
+            onClick={() => sendWorkerCommand("STOP")}
+            disabled={!!workerLoading}
+            className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-red-600/20 px-3 py-2.5 font-mono text-[11px] font-bold text-red-400 transition hover:bg-red-600/30 disabled:opacity-50"
+          >
+            <Square className="size-3.5" />
+            {workerLoading === "STOP" ? "arrêt..." : "Arrêter"}
+          </button>
+        )}
+        <button
+          onClick={() => sendWorkerCommand("RESTART")}
+          disabled={!!workerLoading}
+          className="flex flex-1 items-center justify-center gap-2 rounded-xl bg-blue-600/20 px-3 py-2.5 font-mono text-[11px] font-bold text-blue-400 transition hover:bg-blue-600/30 disabled:opacity-50"
+        >
+          <RotateCw className={`size-3.5 ${workerLoading === "RESTART" ? "animate-spin" : ""}`} />
+          {workerLoading === "RESTART" ? "redémarrage..." : "Redémarrer"}
+        </button>
       </div>
 
       {/* Terminal logs */}
