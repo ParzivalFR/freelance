@@ -11,7 +11,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useParams } from "next/navigation";
-import { ChannelSelect } from "@/components/dashboard/discord-select";
+import { ChannelSelect, RoleSelect } from "@/components/dashboard/discord-select";
 
 export default function WelcomePage() {
   const params = useParams();
@@ -133,6 +133,52 @@ export default function WelcomePage() {
               </div>
             ))}
           </div>
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
+          <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">auto_role</p>
+          {(config.config.autoRoleIds ?? []).map((roleId: string, i: number) => (
+            <div key={i} className="flex items-center gap-2">
+              <span className="font-mono text-xs text-foreground flex-1">@{roleId}</span>
+              <button onClick={() => {
+                const ids = [...(config.config.autoRoleIds ?? [])];
+                ids.splice(i, 1);
+                updateModuleConfig("autoRoleIds", ids);
+              }} className="font-mono text-[10px] text-red-400 hover:text-red-300">×</button>
+            </div>
+          ))}
+          <div className="flex gap-2">
+            <div className="flex-1">
+              <RoleSelect
+                botId={botId}
+                value=""
+                onChange={(v) => {
+                  if (!v) return;
+                  const ids = [...(config.config.autoRoleIds ?? [])];
+                  if (!ids.includes(v)) updateModuleConfig("autoRoleIds", [...ids, v]);
+                }}
+                label="Ajouter un rôle"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
+          <div className="flex items-center justify-between">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">message_de_depart</p>
+            <Switch
+              checked={config.config.goodbyeEnabled ?? false}
+              onCheckedChange={(v) => updateModuleConfig("goodbyeEnabled", v)}
+            />
+          </div>
+          {config.config.goodbyeEnabled && (
+            <>
+              <ChannelSelect botId={botId} value={config.config.goodbyeChannelId ?? ""} onChange={(v) => updateModuleConfig("goodbyeChannelId", v)} label="salon_de_depart" filter="text" />
+              <CyberInput label="message_de_depart" value={config.config.goodbyeMessage ?? ""} onChange={(v) => updateModuleConfig("goodbyeMessage", v)} placeholder="Au revoir {username} ! Placeholders: {username} {server} {memberCount}" />
+            </>
+          )}
         </div>
       </div>
 

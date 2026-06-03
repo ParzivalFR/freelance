@@ -21,6 +21,10 @@ export interface ModuleConfig {
   embedThumbnail?: boolean;
   embedFooter?: string;
   embedImage?: string;
+  goodbyeEnabled?: boolean;
+  goodbyeChannelId?: string;
+  goodbyeMessage?: string;
+  autoRoleIds?: string[];
   // Moderation
   logChannelId?: string;
   // Seuils warn
