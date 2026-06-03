@@ -134,6 +134,84 @@ export default function WelcomePage() {
             ))}
           </div>
         </div>
+
+        {/* Live preview */}
+        {(() => {
+          const replacePlaceholders = (text: string) =>
+            text
+              .replace(/\{username\}/g, "NouvelUtilisateur")
+              .replace(/\{server\}/g, "Votre Serveur")
+              .replace(/\{mention\}/g, "@NouvelUtilisateur")
+              .replace(/\{memberCount\}/g, "1,234")
+              .replace(/\{joinDate\}/g, new Date().toLocaleDateString("fr-FR"))
+              .replace(/\{accountAge\}/g, "2 ans");
+
+          const moduleConfig = config.config;
+          const color = moduleConfig.embedColor;
+
+          if (moduleConfig.useEmbed) {
+            const resolvedTitle = moduleConfig.embedTitle
+              ? replacePlaceholders(moduleConfig.embedTitle)
+              : null;
+            const resolvedDesc = moduleConfig.embedDescription
+              ? replacePlaceholders(moduleConfig.embedDescription)
+              : null;
+            const resolvedFooter = moduleConfig.embedFooter
+              ? replacePlaceholders(moduleConfig.embedFooter)
+              : null;
+
+            return (
+              <div className="rounded-xl border border-dashed bg-card p-4">
+                <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground mb-3">
+                  aperçu_discord
+                </p>
+                <div
+                  className="rounded-lg overflow-hidden"
+                  style={{ borderLeft: `4px solid #${color || "5865F2"}` }}
+                >
+                  <div className="bg-[#2b2d31] p-3 space-y-2">
+                    {moduleConfig.embedThumbnail && (
+                      <div className="flex justify-end">
+                        <div className="size-16 rounded-full bg-muted" />
+                      </div>
+                    )}
+                    {resolvedTitle && (
+                      <p className="font-semibold text-white text-sm">{resolvedTitle}</p>
+                    )}
+                    {resolvedDesc && (
+                      <p className="text-[#dcddde] text-xs whitespace-pre-line">{resolvedDesc}</p>
+                    )}
+                    {resolvedFooter && (
+                      <p className="text-[#a3a6aa] text-[10px] mt-2">{resolvedFooter}</p>
+                    )}
+                    {!resolvedTitle && !resolvedDesc && !resolvedFooter && (
+                      <p className="text-[#a3a6aa] text-[10px] italic">Aucun contenu configuré</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          } else {
+            const resolvedMessage = moduleConfig.message
+              ? replacePlaceholders(moduleConfig.message)
+              : null;
+
+            return (
+              <div className="rounded-xl border border-dashed bg-card p-4">
+                <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground mb-3">
+                  aperçu_discord
+                </p>
+                <div className="rounded-lg bg-[#2b2d31] p-3">
+                  {resolvedMessage ? (
+                    <p className="text-[#dcddde] text-xs">{resolvedMessage}</p>
+                  ) : (
+                    <p className="text-[#a3a6aa] text-[10px] italic">Aucun message configuré</p>
+                  )}
+                </div>
+              </div>
+            );
+          }
+        })()}
       </div>
 
       <div className="space-y-3">

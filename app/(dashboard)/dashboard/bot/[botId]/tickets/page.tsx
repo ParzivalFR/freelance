@@ -1,6 +1,7 @@
 "use client";
 
-import { Ticket, Save } from "lucide-react";
+import { Ticket, Save, Hash, User, Clock } from "lucide-react";
+import { useEffect, useState } from "react";
 import type { TicketCategory } from "@/components/dashboard/bot-types";
 import {
   CyberInput,
@@ -13,10 +14,42 @@ import { useBotConfig } from "@/hooks/use-bot-config";
 import { useParams } from "next/navigation";
 import { ChannelSelect, RoleSelect } from "@/components/dashboard/discord-select";
 
+interface TicketItem {
+  id: string;
+  subject?: string;
+  category?: string;
+  userId: string;
+  status: string;
+  createdAt: string;
+}
+
+interface TicketStats {
+  open: number;
+  closed: number;
+  avgResponseTime: number | null;
+}
+
 export default function TicketsPage() {
   const params = useParams();
   const botId = params?.botId as string;
   const { config, saving, saved, updateModuleConfig, save } = useBotConfig();
+
+  const [tickets, setTickets] = useState<TicketItem[]>([]);
+  const [stats, setStats] = useState<TicketStats>({ open: 0, closed: 0, avgResponseTime: null });
+  const [ticketsLoading, setTicketsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!botId) return;
+    setTicketsLoading(true);
+    fetch(`/api/bot/tickets?botId=${botId}&limit=10`)
+      .then((r) => r.json())
+      .then((data) => {
+        setTickets(data.tickets ?? []);
+        setStats(data.stats ?? { open: 0, closed: 0, avgResponseTime: null });
+      })
+      .catch(() => {})
+      .finally(() => setTicketsLoading(false));
+  }, [botId]);
 
   if (!config) return <LoadingScreen />;
 
@@ -33,6 +66,95 @@ export default function TicketsPage() {
         subtitle="Système de support avancé"
         status={config.status}
       />
+
+      {/* ── Stats ── */}
+      <div>
+        <p className="mb-2 font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
+          — statistiques —
+        </p>
+        <div className="grid grid-cols-3 gap-2">
+          <div className="rounded-lg border border-dashed p-3 space-y-0.5">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/50">
+              tickets ouverts
+            </p>
+            <p className="font-mono text-lg font-bold tabular-nums">
+              {ticketsLoading ? "—" : stats.open}
+            </p>
+          </div>
+          <div className="rounded-lg border border-dashed p-3 space-y-0.5">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/50">
+              fermés ce mois
+            </p>
+            <p className="font-mono text-lg font-bold tabular-nums">
+              {ticketsLoading ? "—" : stats.closed}
+            </p>
+          </div>
+          <div className="rounded-lg border border-dashed p-3 space-y-0.5">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/50">
+              note moyenne
+            </p>
+            <p className="font-mono text-lg font-bold tabular-nums">
+              {ticketsLoading ? "—" : stats.avgResponseTime != null ? `${stats.avgResponseTime}` : "—"}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Liste des tickets récents ── */}
+      <div>
+        <p className="mb-2 font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
+          — tickets récents —
+        </p>
+        {ticketsLoading ? (
+          <div className="rounded-lg border border-dashed p-4 text-center font-mono text-[10px] text-muted-foreground/50">
+            chargement...
+          </div>
+        ) : tickets.length === 0 ? (
+          <div className="rounded-lg border border-dashed p-4 text-center font-mono text-[10px] text-muted-foreground/40">
+            aucun ticket enregistré
+          </div>
+        ) : (
+          <div className="rounded-lg border border-dashed divide-y divide-dashed">
+            {tickets.map((t) => (
+              <div key={t.id} className="flex items-center gap-3 px-3 py-2">
+                <div className="flex-1 min-w-0 space-y-0.5">
+                  <div className="flex items-center gap-1.5">
+                    <Hash className="size-2.5 shrink-0 text-muted-foreground/40" />
+                    <p className="font-mono text-[11px] truncate text-foreground">
+                      {t.subject ?? t.category ?? t.id}
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <User className="size-2.5 shrink-0 text-muted-foreground/40" />
+                    <p className="font-mono text-[10px] text-muted-foreground/60 truncate">{t.userId}</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span
+                    className={`rounded border border-dashed px-1.5 py-0.5 font-mono text-[9px] uppercase tracking-wider ${
+                      t.status === "OPEN" || t.status === "open"
+                        ? "border-green-500/30 text-green-400"
+                        : "border-muted-foreground/20 text-muted-foreground/50"
+                    }`}
+                  >
+                    {t.status === "OPEN" || t.status === "open" ? "ouvert" : "fermé"}
+                  </span>
+                  <div className="flex items-center gap-1 text-muted-foreground/40">
+                    <Clock className="size-2.5" />
+                    <p className="font-mono text-[9px]">
+                      {new Date(t.createdAt).toLocaleDateString("fr-FR", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "2-digit",
+                      })}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       <div className="space-y-3">
         {/* Salons */}

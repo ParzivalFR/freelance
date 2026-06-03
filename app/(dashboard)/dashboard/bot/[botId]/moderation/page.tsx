@@ -22,6 +22,11 @@ interface Infraction {
   createdAt: string;
 }
 
+interface StatEntry {
+  type: string;
+  _count: { type: number };
+}
+
 // ─── Constants ────────────────────────────────────────────────────────────────
 
 const AUTOMOD_ACTIONS = ["warn", "timeout", "kick", "ban"] as const;
@@ -57,8 +62,11 @@ export default function ModerationPage() {
 
   const [infractions, setInfractions] = useState<Infraction[]>([]);
   const [total, setTotal] = useState(0);
+  const [stats, setStats] = useState<StatEntry[]>([]);
+  const [last7daysRaw, setLast7daysRaw] = useState<{ createdAt: string }[]>([]);
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState<Filter>("ALL");
+  const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
 
@@ -75,6 +83,8 @@ export default function ModerationPage() {
       const data = await res.json();
       setInfractions(data.infractions ?? []);
       setTotal(data.total ?? 0);
+      setStats(data.stats ?? []);
+      setLast7daysRaw(data.last7daysRaw ?? []);
     } finally {
       setLoading(false);
     }
@@ -95,10 +105,26 @@ export default function ModerationPage() {
     }
   };
 
-  const filtered =
-    filter === "ALL"
-      ? infractions
-      : infractions.filter((inf) => inf.type === filter);
+  const last7days = Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() - (6 - i));
+    return d.toISOString().slice(0, 10);
+  });
+
+  const volumeByDay = last7days.map((day) => ({
+    day,
+    label: new Date(day + "T12:00:00").toLocaleDateString("fr-FR", { weekday: "short" }),
+    count: last7daysRaw.filter((r) => r.createdAt.slice(0, 10) === day).length,
+  }));
+
+  const maxVolume = Math.max(1, ...volumeByDay.map((d) => d.count));
+
+  const getStatCount = (type: string) =>
+    stats.find((s) => s.type === type)?._count.type ?? 0;
+
+  const filtered = infractions
+    .filter((inf) => filter === "ALL" || inf.type === filter)
+    .filter((inf) => !search || inf.userId.includes(search) || (discordUsers[inf.userId]?.displayName ?? "").toLowerCase().includes(search.toLowerCase()));
 
   const totalPages = Math.max(1, Math.ceil(total / PAGE_SIZE));
 
@@ -242,28 +268,43 @@ export default function ModerationPage() {
 
       {/* ── Stats ── */}
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-        {(["BAN", "KICK", "WARN", "TIMEOUT"] as const).map((type) => {
-          const count = infractions.filter((i) => i.type === type).length;
-          return (
-            <button
-              key={type}
-              onClick={() => setFilter(filter === type ? "ALL" : type)}
-              className={`rounded-lg border px-4 py-3 text-left transition ${
-                filter === type
-                  ? (TYPE_STYLES[type] ?? "border-blue-500/30 bg-blue-500/10 text-blue-400")
-                  : "border-dashed hover:bg-muted/50"
-              }`}
-            >
-              <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
-                {TYPE_ICONS[type]} {type}
-              </p>
-              <p className="mt-1 font-mono text-2xl font-bold">{count}</p>
-              <p className="font-mono text-[9px] text-muted-foreground/60">
-                sur cette page
-              </p>
-            </button>
-          );
-        })}
+        {(["BAN", "KICK", "WARN", "TIMEOUT"] as const).map((type) => (
+          <button
+            key={type}
+            onClick={() => setFilter(filter === type ? "ALL" : type)}
+            className={`rounded-lg border px-4 py-3 text-left transition ${
+              filter === type
+                ? (TYPE_STYLES[type] ?? "border-blue-500/30 bg-blue-500/10 text-blue-400")
+                : "border-dashed hover:bg-muted/50"
+            }`}
+          >
+            <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+              {TYPE_ICONS[type]} {type}
+            </p>
+            <p className="mt-1 font-mono text-2xl font-bold">{getStatCount(type)}</p>
+            <p className="font-mono text-[9px] text-muted-foreground/60">total en base</p>
+          </button>
+        ))}
+      </div>
+
+      {/* ── Volume 7 jours ── */}
+      <div className="rounded-xl border border-dashed p-4">
+        <p className="mb-3 font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
+          volume d&apos;infractions (7j)
+        </p>
+        <div className="flex items-end gap-1.5 h-16">
+          {volumeByDay.map(({ day, label, count }) => (
+            <div key={day} className="flex flex-1 flex-col items-center gap-1">
+              <span className="font-mono text-[8px] text-muted-foreground/50">{count > 0 ? count : ""}</span>
+              <div
+                className="w-full rounded-sm bg-blue-500/40 transition-all"
+                style={{ height: `${Math.max(2, Math.round((count / maxVolume) * 48))}px` }}
+                title={`${day}: ${count} infraction(s)`}
+              />
+              <span className="font-mono text-[8px] text-muted-foreground/50">{label}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* ── Filter tabs ── */}
@@ -288,6 +329,14 @@ export default function ModerationPage() {
           {total} total
         </span>
       </div>
+
+      {/* ── Search ── */}
+      <CyberInput
+        label="rechercher par utilisateur"
+        value={search}
+        onChange={setSearch}
+        placeholder="ID ou nom d'utilisateur..."
+      />
 
       {/* ── Infractions list ── */}
       <div className="space-y-2">

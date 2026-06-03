@@ -28,7 +28,11 @@ export async function GET(request: Request) {
       return NextResponse.json({ infractions: [], total: 0 });
     }
 
-    const [infractions, total] = await Promise.all([
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+    sevenDaysAgo.setHours(0, 0, 0, 0);
+
+    const [infractions, total, stats, last7daysRaw] = await Promise.all([
       prisma.infraction.findMany({
         where: { botId: bot.id },
         orderBy: { createdAt: "desc" },
@@ -36,9 +40,18 @@ export async function GET(request: Request) {
         take: limit,
       }),
       prisma.infraction.count({ where: { botId: bot.id } }),
+      prisma.infraction.groupBy({
+        by: ["type"],
+        where: { botId: bot.id },
+        _count: { type: true },
+      }),
+      prisma.infraction.findMany({
+        where: { botId: bot.id, createdAt: { gte: sevenDaysAgo } },
+        select: { createdAt: true },
+      }),
     ]);
 
-    return NextResponse.json({ infractions, total, page, limit });
+    return NextResponse.json({ infractions, total, page, limit, stats, last7daysRaw });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
