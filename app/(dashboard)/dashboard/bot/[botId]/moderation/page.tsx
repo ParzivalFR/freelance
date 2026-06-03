@@ -2,12 +2,13 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
-import { Shield, Trash2, ChevronLeft, ChevronRight, Save, ChevronDown, ChevronUp as ChevronUpIcon } from "lucide-react";
+import { Shield, Trash2, ChevronLeft, ChevronRight, Save, ChevronDown, ChevronUp as ChevronUpIcon, Plus, X } from "lucide-react";
 import { PageHeader, LoadingScreen, CyberInput, CyberLabel } from "@/components/dashboard/cyber-ui";
 import { ChannelSelect } from "@/components/dashboard/discord-select";
 import { Switch } from "@/components/ui/switch";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useDiscordUsers } from "@/hooks/use-discord-users";
+import type { WarnThresholdEntry } from "@/components/dashboard/bot-types";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -251,7 +252,104 @@ export default function ModerationPage() {
                   placeholder="10"
                 />
               )}
+              <div className="grid grid-cols-3 gap-2 pt-1">
+                <CyberInput
+                  label="spam_max_messages"
+                  value={String(config.config.spamMaxMessages ?? "")}
+                  onChange={(v) => updateModuleConfig("spamMaxMessages", v ? Number(v) : undefined)}
+                  placeholder="5"
+                />
+                <CyberInput
+                  label="spam_window_secondes"
+                  value={String(config.config.spamWindowSeconds ?? "")}
+                  onChange={(v) => updateModuleConfig("spamWindowSeconds", v ? Number(v) : undefined)}
+                  placeholder="5"
+                />
+                <CyberInput
+                  label="duplicate_min_length"
+                  value={String(config.config.duplicateMinLength ?? "")}
+                  onChange={(v) => updateModuleConfig("duplicateMinLength", v ? Number(v) : undefined)}
+                  placeholder="10"
+                />
+              </div>
             </div>
+
+            <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
+              — seuils de sanctions progressifs —
+            </p>
+            <div className="rounded-lg border border-dashed p-3 space-y-2">
+              {(config.config.warnThresholdsList ?? []).map((entry: WarnThresholdEntry, i: number) => (
+                <div key={i} className="flex items-center gap-2">
+                  <CyberInput
+                    label="warns"
+                    value={String(entry.count)}
+                    onChange={(v) => {
+                      const list = [...(config.config.warnThresholdsList ?? [])];
+                      list[i] = { ...list[i], count: Number(v) || 0 };
+                      updateModuleConfig("warnThresholdsList", list);
+                    }}
+                    placeholder="3"
+                  />
+                  <div className="space-y-1 shrink-0">
+                    <CyberLabel>action</CyberLabel>
+                    <div className="flex gap-1">
+                      {(["timeout", "kick", "ban"] as const).map((a) => (
+                        <button
+                          key={a}
+                          type="button"
+                          onClick={() => {
+                            const list = [...(config.config.warnThresholdsList ?? [])];
+                            list[i] = { ...list[i], action: a };
+                            updateModuleConfig("warnThresholdsList", list);
+                          }}
+                          className={`rounded border px-2 py-0.5 font-mono text-[9px] transition ${
+                            entry.action === a
+                              ? "border-blue-500/40 bg-blue-500/10 text-blue-400"
+                              : "border-dashed text-muted-foreground/40 hover:border-blue-500/20"
+                          }`}
+                        >
+                          {a}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  {entry.action === "timeout" && (
+                    <CyberInput
+                      label="durée (min)"
+                      value={String(entry.duration ?? "")}
+                      onChange={(v) => {
+                        const list = [...(config.config.warnThresholdsList ?? [])];
+                        list[i] = { ...list[i], duration: v ? Number(v) : undefined };
+                        updateModuleConfig("warnThresholdsList", list);
+                      }}
+                      placeholder="60"
+                    />
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const list = (config.config.warnThresholdsList ?? []).filter((_: WarnThresholdEntry, j: number) => j !== i);
+                      updateModuleConfig("warnThresholdsList", list);
+                    }}
+                    className="shrink-0 rounded p-1 text-muted-foreground/40 hover:text-red-500 transition"
+                  >
+                    <X className="size-3.5" />
+                  </button>
+                </div>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  const list = [...(config.config.warnThresholdsList ?? []), { count: 3, action: "timeout" as const, duration: 60 }];
+                  updateModuleConfig("warnThresholdsList", list);
+                }}
+                className="flex items-center gap-1.5 rounded border border-dashed px-3 py-1.5 font-mono text-[9px] text-muted-foreground/50 hover:text-muted-foreground transition"
+              >
+                <Plus className="size-3" />
+                ajouter un seuil
+              </button>
+            </div>
+
             <div className="flex justify-end pt-1">
               <button
                 onClick={save}
