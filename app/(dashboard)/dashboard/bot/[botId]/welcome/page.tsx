@@ -268,6 +268,55 @@ export default function WelcomePage() {
 
         <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
           <div className="flex items-center justify-between">
+            <div>
+              <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">anti_raid</p>
+              <p className="font-mono text-[9px] text-muted-foreground/60">
+                Kick/ban/mute les comptes trop récents, lockdown si trop de joins
+              </p>
+            </div>
+            <Switch
+              checked={config.config.antiRaidEnabled ?? false}
+              onCheckedChange={(v) => updateModuleConfig("antiRaidEnabled", v)}
+              className="scale-75"
+            />
+          </div>
+          {config.config.antiRaidEnabled && (
+            <div className="space-y-2.5">
+              <div className="grid grid-cols-2 gap-2">
+                <CyberInput
+                  label="age_minimum (jours)"
+                  value={String(config.config.antiRaidMinAccountAgeDays ?? 7)}
+                  onChange={(v) => updateModuleConfig("antiRaidMinAccountAgeDays", parseInt(v) || 7)}
+                  placeholder="7"
+                />
+                <div className="space-y-1">
+                  <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">action</p>
+                  <select
+                    value={config.config.antiRaidAction ?? "kick"}
+                    onChange={(e) => updateModuleConfig("antiRaidAction", e.target.value)}
+                    className="w-full rounded-md border border-dashed bg-background px-2 py-1.5 font-mono text-xs text-foreground"
+                  >
+                    <option value="kick">kick</option>
+                    <option value="ban">ban</option>
+                    <option value="mute">mute (1h)</option>
+                  </select>
+                </div>
+              </div>
+              <CyberInput
+                label="join_rate_limit (max joins / 10s, vide = désactivé)"
+                value={config.config.antiRaidJoinRateLimit ? String(config.config.antiRaidJoinRateLimit) : ""}
+                onChange={(v) => updateModuleConfig("antiRaidJoinRateLimit", v ? parseInt(v) || undefined : undefined)}
+                placeholder="ex: 5"
+              />
+              <p className="font-mono text-[9px] text-muted-foreground/50">
+                Si le rate limit est dépassé, le niveau de vérification du serveur passe en VERY_HIGH pendant 5 min.
+              </p>
+            </div>
+          )}
+        </div>
+
+        <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
+          <div className="flex items-center justify-between">
             <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">message_de_depart</p>
             <Switch
               checked={config.config.goodbyeEnabled ?? false}

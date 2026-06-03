@@ -10,6 +10,13 @@ export interface TicketCategory {
   description?: string;
 }
 
+export interface WarnThresholdEntry {
+  count: number;
+  action: "timeout" | "kick" | "ban";
+  duration?: number;
+  reason?: string;
+}
+
 export interface ModuleConfig {
   // Welcome
   channelId?: string;
@@ -43,6 +50,10 @@ export interface ModuleConfig {
   automodAntiCaps?: boolean;
   automodAction?: string;
   automodActionDuration?: number;
+  spamMaxMessages?: number;
+  spamWindowSeconds?: number;
+  duplicateMinLength?: number;
+  warnThresholdsList?: WarnThresholdEntry[];
   // Levels
   xpPerMessage?: number;
   xpCooldown?: number;
@@ -80,6 +91,11 @@ export interface ModuleConfig {
   // Welcome — image dynamique
   useWelcomeImage?: boolean;
   welcomeImageBackground?: string;
+  // Welcome — anti-raid
+  antiRaidEnabled?: boolean;
+  antiRaidMinAccountAgeDays?: number;
+  antiRaidAction?: "kick" | "ban" | "mute";
+  antiRaidJoinRateLimit?: number;
   // Tickets
   categoryId?: string;
   staffRoleId?: string;
