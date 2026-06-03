@@ -47,6 +47,7 @@ export interface ModuleConfig {
   xpPerMessage?: number;
   xpCooldown?: number;
   xpMultiplier?: number;
+  xpPerMinuteVoice?: number;
   levelAnnounceChannel?: string;
   levelAnnounceMessage?: string;
   levelStackRoles?: boolean;

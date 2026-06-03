@@ -103,12 +103,18 @@ export default function LevelsPage() {
         {configOpen && (
           <div className="space-y-3 border-t border-dashed px-4 pb-4 pt-3">
             <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— xp —</p>
-            <div className="grid grid-cols-3 gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
               <CyberInput
                 label="xp_par_message"
                 value={String(config.config.xpPerMessage ?? "")}
                 onChange={(v) => updateModuleConfig("xpPerMessage", v ? Number(v) : undefined)}
-                placeholder="15"
+                placeholder="20"
+              />
+              <CyberInput
+                label="xp_par_min_vocal"
+                value={String(config.config.xpPerMinuteVoice ?? "")}
+                onChange={(v) => updateModuleConfig("xpPerMinuteVoice", v ? Number(v) : undefined)}
+                placeholder="5"
               />
               <CyberInput
                 label="cooldown (sec)"
