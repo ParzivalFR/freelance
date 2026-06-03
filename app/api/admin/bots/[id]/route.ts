@@ -23,6 +23,11 @@ export async function PATCH(
   const { id } = await params;
   const { workerCommand } = await request.json();
 
+  const VALID_COMMANDS = ["START", "STOP", "RESTART", null];
+  if (!VALID_COMMANDS.includes(workerCommand)) {
+    return NextResponse.json({ error: "Commande invalide" }, { status: 400 });
+  }
+
   const bot = await prisma.discordBot.findUnique({ where: { id } });
   if (!bot) return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
 
