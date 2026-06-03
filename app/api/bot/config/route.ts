@@ -38,7 +38,8 @@ export async function GET(request: Request) {
     // Statut calculé à partir du heartbeat
     const realStatus = computeStatus(bot);
 
-    return NextResponse.json({ ...bot, status: realStatus });
+    const { token: _token, ...botWithoutToken } = bot;
+    return NextResponse.json({ ...botWithoutToken, status: realStatus });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
@@ -55,6 +56,11 @@ export async function PATCH(request: Request) {
   try {
     const body = await request.json();
     const { id, name, token, prefix, moduleWelcome, moduleModeration, moduleTickets, moduleLevel, moduleLog, moduleSurvey, moduleMonitor, moduleGiveaway, config, status, workerCommand } = body;
+
+    const VALID_COMMANDS = ["START", "STOP", "RESTART", null];
+    if (workerCommand !== undefined && !VALID_COMMANDS.includes(workerCommand)) {
+      return NextResponse.json({ error: "Commande invalide" }, { status: 400 });
+    }
 
     if (!id) {
       return NextResponse.json({ error: "ID manquant" }, { status: 400 });
@@ -89,7 +95,8 @@ export async function PATCH(request: Request) {
       },
     });
 
-    return NextResponse.json(updated);
+    const { token: _t, ...updatedWithoutToken } = updated;
+    return NextResponse.json(updatedWithoutToken);
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
