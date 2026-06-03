@@ -10,8 +10,12 @@ import {
 } from "@/components/dashboard/cyber-ui";
 import { Switch } from "@/components/ui/switch";
 import { useBotConfig } from "@/hooks/use-bot-config";
+import { useParams } from "next/navigation";
+import { ChannelSelect } from "@/components/dashboard/discord-select";
 
 export default function WelcomePage() {
+  const params = useParams();
+  const botId = params?.botId as string;
   const { config, saving, saved, updateModuleConfig, save } = useBotConfig();
 
   if (!config) return <LoadingScreen />;
@@ -26,11 +30,12 @@ export default function WelcomePage() {
       />
 
       <div className="space-y-3">
-        <CyberInput
+        <ChannelSelect
+          botId={botId}
           label="channel_id"
           value={config.config.channelId ?? ""}
           onChange={(v) => updateModuleConfig("channelId", v)}
-          placeholder="123456789012345678"
+          filter="text"
         />
 
         <PlaceholderRef />

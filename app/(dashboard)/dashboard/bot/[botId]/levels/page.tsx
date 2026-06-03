@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { Star, ChevronLeft, ChevronRight, Save, ChevronDown, ChevronUp as ChevronUpIcon, Plus, Trash2 } from "lucide-react";
 import { PageHeader, LoadingScreen, CyberInput } from "@/components/dashboard/cyber-ui";
+import { ChannelSelect, RoleSelect } from "@/components/dashboard/discord-select";
 import { Switch } from "@/components/ui/switch";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useDiscordUsers } from "@/hooks/use-discord-users";
@@ -123,11 +124,13 @@ export default function LevelsPage() {
               />
             </div>
             <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— annonces —</p>
-            <CyberInput
+            <ChannelSelect
+              botId={botId}
               label="announce_channel_id"
               value={config.config.levelAnnounceChannel ?? ""}
               onChange={(v) => updateModuleConfig("levelAnnounceChannel", v)}
-              placeholder="ID salon (vide = même salon)"
+              placeholder="Salon d'annonces (vide = même salon)"
+              filter="text"
             />
             <CyberInput
               label="message_level_up"
@@ -173,7 +176,8 @@ export default function LevelsPage() {
                     }}
                     placeholder="5"
                   />
-                  <CyberInput
+                  <RoleSelect
+                    botId={botId}
                     label="role_id"
                     value={r.roleId}
                     onChange={(v) => {
@@ -181,7 +185,6 @@ export default function LevelsPage() {
                       next[i] = { ...next[i], roleId: v };
                       updateModuleConfig("levelRewards", next);
                     }}
-                    placeholder="123456789012345678"
                   />
                   <button
                     type="button"

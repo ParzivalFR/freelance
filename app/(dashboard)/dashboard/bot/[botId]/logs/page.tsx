@@ -8,6 +8,8 @@ import {
 } from "@/components/dashboard/cyber-ui";
 import { Switch } from "@/components/ui/switch";
 import { useBotConfig } from "@/hooks/use-bot-config";
+import { useParams } from "next/navigation";
+import { ChannelSelect, RoleSelect } from "@/components/dashboard/discord-select";
 
 const LOG_EVENTS = [
   ["member.join",             "📥 member.join"],
@@ -65,6 +67,8 @@ const COLOR_FIELDS = [
 type ColorField = (typeof COLOR_FIELDS)[number][0];
 
 export default function LogsPage() {
+  const params = useParams();
+  const botId = params?.botId as string;
   const { config, saving, saved, updateModuleConfig, save } = useBotConfig();
 
   if (!config) return <LoadingScreen />;
@@ -90,42 +94,48 @@ export default function LogsPage() {
         <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
           — salons —
         </p>
-        <CyberInput
+        <ChannelSelect
+          botId={botId}
           label="salon_par_défaut (fallback)"
           value={config.config.logsChannelId ?? ""}
           onChange={(v) => updateModuleConfig("logsChannelId", v)}
-          placeholder="ID salon utilisé si aucun salon spécifique"
+          filter="text"
         />
         <div className="grid grid-cols-2 gap-2">
-          <CyberInput
+          <ChannelSelect
+            botId={botId}
             label="salon_membres"
             value={config.config.logsChannelMembers ?? ""}
             onChange={(v) => updateModuleConfig("logsChannelMembers", v)}
-            placeholder="join / leave"
+            filter="text"
           />
-          <CyberInput
+          <ChannelSelect
+            botId={botId}
             label="salon_modération"
             value={config.config.logsChannelModeration ?? ""}
             onChange={(v) => updateModuleConfig("logsChannelModeration", v)}
-            placeholder="ban / kick / warn..."
+            filter="text"
           />
-          <CyberInput
+          <ChannelSelect
+            botId={botId}
             label="salon_tickets"
             value={config.config.logsChannelTickets ?? ""}
             onChange={(v) => updateModuleConfig("logsChannelTickets", v)}
-            placeholder="ouverture / fermeture"
+            filter="text"
           />
-          <CyberInput
+          <ChannelSelect
+            botId={botId}
             label="salon_niveaux"
             value={config.config.logsChannelLevels ?? ""}
             onChange={(v) => updateModuleConfig("logsChannelLevels", v)}
-            placeholder="level up"
+            filter="text"
           />
-          <CyberInput
+          <ChannelSelect
+            botId={botId}
             label="salon_discord_natif"
             value={config.config.logsChannelDiscord ?? ""}
             onChange={(v) => updateModuleConfig("logsChannelDiscord", v)}
-            placeholder="msgs, vocal, rôles, salons..."
+            filter="text"
           />
         </div>
 
@@ -157,11 +167,11 @@ export default function LogsPage() {
         <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
           — mentions staff —
         </p>
-        <CyberInput
+        <RoleSelect
+          botId={botId}
           label="mention_role_id"
           value={config.config.logsMentionRoleId ?? ""}
           onChange={(v) => updateModuleConfig("logsMentionRoleId", v)}
-          placeholder="ID du rôle à mentionner (staff, admin...)"
         />
         <p className="font-mono text-[9px] text-muted-foreground/50">
           Déclenche une mention sur les événements sélectionnés :

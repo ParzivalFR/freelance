@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { Shield, Trash2, ChevronLeft, ChevronRight, Save, ChevronDown, ChevronUp as ChevronUpIcon } from "lucide-react";
 import { PageHeader, LoadingScreen, CyberInput, CyberLabel } from "@/components/dashboard/cyber-ui";
+import { ChannelSelect } from "@/components/dashboard/discord-select";
 import { Switch } from "@/components/ui/switch";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useDiscordUsers } from "@/hooks/use-discord-users";
@@ -125,11 +126,13 @@ export default function ModerationPage() {
         </button>
         {configOpen && (
           <div className="space-y-3 border-t border-dashed px-4 pb-4 pt-3">
-            <CyberInput
+            <ChannelSelect
+              botId={botId}
               label="log_channel_id"
               value={config.config.logChannelId ?? ""}
               onChange={(v) => updateModuleConfig("logChannelId", v)}
-              placeholder="ID salon de logs des sanctions"
+              placeholder="Salon de logs des sanctions"
+              filter="text"
             />
             <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
               — seuils automatiques (warns) —

@@ -10,8 +10,12 @@ import {
 } from "@/components/dashboard/cyber-ui";
 import { Switch } from "@/components/ui/switch";
 import { useBotConfig } from "@/hooks/use-bot-config";
+import { useParams } from "next/navigation";
+import { ChannelSelect, RoleSelect } from "@/components/dashboard/discord-select";
 
 export default function TicketsPage() {
+  const params = useParams();
+  const botId = params?.botId as string;
   const { config, saving, saved, updateModuleConfig, save } = useBotConfig();
 
   if (!config) return <LoadingScreen />;
@@ -41,17 +45,18 @@ export default function TicketsPage() {
           onChange={(v) => updateModuleConfig("categoryId", v)}
           placeholder="ID catégorie Discord (où créer les salons)"
         />
-        <CyberInput
+        <ChannelSelect
+          botId={botId}
           label="log_channel_id"
           value={config.config.logChannelId ?? ""}
           onChange={(v) => updateModuleConfig("logChannelId", v)}
-          placeholder="ID salon de logs (transcripts, fermetures)"
+          filter="text"
         />
-        <CyberInput
+        <RoleSelect
+          botId={botId}
           label="staff_role_id"
           value={config.config.staffRoleId ?? ""}
           onChange={(v) => updateModuleConfig("staffRoleId", v)}
-          placeholder="ID rôle staff"
         />
 
         {/* Panel */}
