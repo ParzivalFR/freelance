@@ -6,6 +6,7 @@ import { Shield, Trash2, ChevronLeft, ChevronRight, Save, ChevronDown, ChevronUp
 import { PageHeader, LoadingScreen, CyberInput, CyberLabel } from "@/components/dashboard/cyber-ui";
 import { Switch } from "@/components/ui/switch";
 import { useBotConfig } from "@/hooks/use-bot-config";
+import { useDiscordUsers } from "@/hooks/use-discord-users";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -59,6 +60,9 @@ export default function ModerationPage() {
   const [filter, setFilter] = useState<Filter>("ALL");
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
+
+  const allUserIds = infractions.flatMap((inf) => [inf.userId, inf.moderatorId]);
+  const { users: discordUsers } = useDiscordUsers(botId, allUserIds);
 
   const fetchInfractions = useCallback(async () => {
     if (!botId) return;
@@ -310,10 +314,12 @@ export default function ModerationPage() {
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-0.5">
                   <span className="font-mono text-xs text-foreground">
                     user:{" "}
-                    <span className="text-blue-400">{inf.userId}</span>
+                    <span className="text-blue-400" title={inf.userId}>
+                      {discordUsers[inf.userId]?.displayName ?? inf.userId}
+                    </span>
                   </span>
-                  <span className="font-mono text-[10px] text-muted-foreground/50">
-                    mod: {inf.moderatorId}
+                  <span className="font-mono text-[10px] text-muted-foreground/50" title={inf.moderatorId}>
+                    mod: {discordUsers[inf.moderatorId]?.displayName ?? inf.moderatorId}
                   </span>
                   {inf.duration && (
                     <span className="font-mono text-[10px] text-muted-foreground/50">

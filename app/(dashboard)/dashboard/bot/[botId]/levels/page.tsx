@@ -6,6 +6,7 @@ import { Star, ChevronLeft, ChevronRight, Save, ChevronDown, ChevronUp as Chevro
 import { PageHeader, LoadingScreen, CyberInput } from "@/components/dashboard/cyber-ui";
 import { Switch } from "@/components/ui/switch";
 import { useBotConfig } from "@/hooks/use-bot-config";
+import { useDiscordUsers } from "@/hooks/use-discord-users";
 import type { LevelReward } from "@/components/dashboard/bot-types";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -48,6 +49,9 @@ export default function LevelsPage() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+
+  const levelUserIds = levels.map((u) => u.userId);
+  const { users: discordUsers } = useDiscordUsers(botId, levelUserIds);
 
   const fetchLevels = useCallback(async () => {
     if (!botId) return;
@@ -278,10 +282,10 @@ export default function LevelsPage() {
                   {rank <= 3 ? ["🥇", "🥈", "🥉"][rank - 1] : `#${rank}`}
                 </span>
 
-                {/* User ID + progress */}
+                {/* User + progress */}
                 <div className="min-w-0">
-                  <p className="truncate font-mono text-xs text-foreground">
-                    {user.userId}
+                  <p className="truncate font-mono text-xs text-foreground" title={user.userId}>
+                    {discordUsers[user.userId]?.displayName ?? user.userId}
                   </p>
                   <div className="mt-1 h-1 w-full overflow-hidden rounded-full bg-muted">
                     <div
