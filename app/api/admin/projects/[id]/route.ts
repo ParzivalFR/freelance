@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { requireAdmin, unauthorizedResponse } from "@/lib/require-admin";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(
@@ -7,10 +7,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!await requireAdmin()) return unauthorizedResponse();
 
     const { id } = await params;
     const project = await prisma.project.findUnique({
@@ -36,10 +33,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!await requireAdmin()) return unauthorizedResponse();
 
     const { id } = await params;
     const body = await request.json();
@@ -83,10 +77,7 @@ export async function PATCH(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!await requireAdmin()) return unauthorizedResponse();
 
     const { id } = await params;
     const body = await request.json();
@@ -111,10 +102,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!await requireAdmin()) return unauthorizedResponse();
 
     const { id } = await params;
     await prisma.project.delete({

@@ -1,13 +1,10 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { requireAdmin, unauthorizedResponse } from "@/lib/require-admin";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!await requireAdmin()) return unauthorizedResponse();
 
     const projects = await prisma.project.findMany({
       orderBy: [
@@ -28,10 +25,7 @@ export async function GET() {
 
 export async function POST(request: Request) {
   try {
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!await requireAdmin()) return unauthorizedResponse();
 
     const body = await request.json();
     const {

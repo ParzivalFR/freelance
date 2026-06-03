@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin, unauthorizedResponse } from "@/lib/require-admin";
 
 // Types pour l'API Sirene
 interface SireneEtablissement {
@@ -183,6 +184,8 @@ async function checkWebsite(
 
 export async function POST(request: NextRequest) {
   try {
+    if (!await requireAdmin()) return unauthorizedResponse();
+
     const body = await request.json();
     const { location, radius, sector, createdSince, companySize } = body;
 

@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin, unauthorizedResponse } from "@/lib/require-admin";
 
 // API pour l'autocomplétion des villes françaises
 export async function GET(request: NextRequest) {
+  if (!await requireAdmin()) return unauthorizedResponse();
   try {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get('q');

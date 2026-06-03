@@ -1,4 +1,4 @@
-import { auth } from "@/lib/auth";
+import { requireAdmin, unauthorizedResponse } from "@/lib/require-admin";
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -8,10 +8,7 @@ export async function GET(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-    }
+    if (!await requireAdmin()) return unauthorizedResponse();
 
     const resolvedParams = await params;
     const client = await prisma.client.findUnique({
@@ -41,10 +38,7 @@ export async function PUT(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-    }
+    if (!await requireAdmin()) return unauthorizedResponse();
 
     const resolvedParams = await params;
     const body = await request.json();
@@ -122,10 +116,7 @@ export async function DELETE(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-    }
+    if (!await requireAdmin()) return unauthorizedResponse();
 
     const resolvedParams = await params;
     // Vérifier si le client existe

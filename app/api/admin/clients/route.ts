@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { requireAdmin, unauthorizedResponse } from "@/lib/require-admin";
 
 // GET - Récupérer tous les clients
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-    }
+    if (!await requireAdmin()) return unauthorizedResponse();
 
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
@@ -19,7 +16,7 @@ export async function GET(request: NextRequest) {
 
     // Construire les filtres
     const where: any = {};
-    
+
     if (search) {
       where.OR = [
         { firstName: { contains: search, mode: "insensitive" } },
@@ -65,10 +62,7 @@ export async function GET(request: NextRequest) {
 // POST - Créer un nouveau client
 export async function POST(request: NextRequest) {
   try {
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
-    }
+    if (!await requireAdmin()) return unauthorizedResponse();
 
     const body = await request.json();
     const {

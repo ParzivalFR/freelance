@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { auth } from "@/lib/auth";
+import { requireAdmin, unauthorizedResponse } from "@/lib/require-admin";
 
 // POST - Créer des données de test
 export async function POST() {
   try {
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    if (process.env.NODE_ENV !== "development") {
+      return NextResponse.json({ error: "Non disponible" }, { status: 404 });
     }
+
+    if (!await requireAdmin()) return unauthorizedResponse();
 
     const testClients = [
       {

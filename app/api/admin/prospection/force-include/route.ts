@@ -1,8 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin, unauthorizedResponse } from "@/lib/require-admin";
 
 // Route spéciale qui FORCE l'inclusion de votre entreprise
 export async function POST(request: NextRequest) {
   try {
+    if (!await requireAdmin()) return unauthorizedResponse();
+
     const body = await request.json();
     const { location, radius, sector, createdSince, companySize } = body;
 
@@ -22,7 +25,7 @@ export async function POST(request: NextRequest) {
       const myCompanyData = await myCompanyResponse.json();
       myCompany = {
         siren: "930448600",
-        siret: "93044860000013", 
+        siret: "93044860000013",
         name: "GAEL RICHARD - Développeur Freelance",
         address: "Adresse Montoir-de-Bretagne",
         city: "MONTOIR-DE-BRETAGNE",
@@ -56,7 +59,7 @@ export async function POST(request: NextRequest) {
         siret: "98765432109876",
         name: `Garage Auto ${location.split(' ')[0]} (Test)`,
         address: "45 avenue de Champagne",
-        city: "MONTOIR-DE-BRETAGNE", 
+        city: "MONTOIR-DE-BRETAGNE",
         postalCode: "44550",
         activity: "4520A - Entretien automobile",
         creationDate: "2024-02-20",

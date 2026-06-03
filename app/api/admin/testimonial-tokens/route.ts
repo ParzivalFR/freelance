@@ -1,15 +1,12 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import { requireAdmin, unauthorizedResponse } from "@/lib/require-admin";
 import { prisma } from "@/lib/prisma";
 import nodemailer from "nodemailer";
 import { createTestimonialEmailTemplate, createTestimonialEmailSubject } from "@/lib/email-templates/testimonial-request";
 
 export async function POST(request: Request) {
   try {
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!await requireAdmin()) return unauthorizedResponse();
 
     const body = await request.json();
     const { clientEmail, clientName, projectName, sendEmail = false } = body;
@@ -57,7 +54,7 @@ export async function POST(request: Request) {
     const testimonialUrl = `${process.env.SITE_URL}/testimonial/${tokenRecord.token}`;
 
     let emailResult = null;
-    
+
     // Envoyer l'email automatiquement si demandé
     if (sendEmail) {
       try {
@@ -120,7 +117,7 @@ Gael Richard
 
         emailResult = { messageId: info.messageId };
         console.log("Auto email sent: %s", info.messageId);
-        
+
       } catch (emailError) {
         console.error('Error sending email:', emailError);
         // On continue même si l'email échoue
@@ -131,8 +128,8 @@ Gael Richard
       token: tokenRecord.token,
       url: testimonialUrl,
       expiresAt: tokenRecord.expiresAt,
-      message: sendEmail && emailResult 
-        ? "Lien généré et email envoyé avec succès" 
+      message: sendEmail && emailResult
+        ? "Lien généré et email envoyé avec succès"
         : "Lien de testimonial généré avec succès",
       emailSent: !!emailResult
     });
@@ -148,10 +145,7 @@ Gael Richard
 
 export async function GET() {
   try {
-    const session = await auth();
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    if (!await requireAdmin()) return unauthorizedResponse();
 
     const tokens = await prisma.testimonialToken.findMany({
       orderBy: {

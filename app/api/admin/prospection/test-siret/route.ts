@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
+import { requireAdmin, unauthorizedResponse } from "@/lib/require-admin";
 
 // Route de test pour rechercher directement un SIRET/SIREN
 export async function GET(request: NextRequest) {
   try {
+    if (!await requireAdmin()) return unauthorizedResponse();
+
     const { searchParams } = new URL(request.url);
     const siren = searchParams.get('siren');
     const siret = searchParams.get('siret');
-    
+
     if (!siren && !siret) {
       return NextResponse.json({ error: "Fournissez un SIREN ou SIRET" });
     }
@@ -29,9 +32,9 @@ export async function GET(request: NextRequest) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      return NextResponse.json({ 
-        error: `Erreur ${response.status}`, 
-        details: errorText 
+      return NextResponse.json({
+        error: `Erreur ${response.status}`,
+        details: errorText
       });
     }
 
