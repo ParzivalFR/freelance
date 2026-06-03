@@ -49,7 +49,6 @@ export async function POST(request: Request) {
       },
     });
 
-    console.log(`✅ Paiement confirmé — Bot ${botId} — Plan ${plan}`);
   }
 
   // Abonnement supprimé (fin de période après annulation)
@@ -70,7 +69,6 @@ export async function POST(request: Request) {
           workerCommand: "STOP",
         },
       });
-      console.log(`🛑 Abonnement expiré — Bot ${bot.id} arrêté`);
     }
   }
 

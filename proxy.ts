@@ -3,7 +3,7 @@ import NextAuth from "next-auth";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const ADMIN_EMAIL = "parzivaleu@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "parzivaleu@gmail.com";
 
 const { auth } = NextAuth(authConfig);
 

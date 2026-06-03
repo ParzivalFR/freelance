@@ -95,6 +95,11 @@ export default function BotDeployPage() {
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ plan, botId: config.id }),
         });
+        if (!res.ok) {
+          const { error } = await res.json().catch(() => ({}));
+          toast({ title: "Erreur paiement", description: error ?? "Impossible d'initier le paiement.", variant: "destructive" });
+          return;
+        }
         const { url } = await res.json();
         if (url) window.location.href = url;
       } finally {

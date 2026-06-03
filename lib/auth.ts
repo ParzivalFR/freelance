@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import NextAuth from "next-auth";
 
-const ADMIN_EMAIL = "parzivaleu@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? "parzivaleu@gmail.com";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
@@ -15,12 +15,18 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     async jwt({ token, user }) {
       if (user) {
-        // Premier sign-in : on encode l'id, l'email et le rôle dans le JWT
         token.id = user.id;
         token.email = user.email;
         token.name = user.name;
         token.picture = user.image;
-        token.role = user.email === ADMIN_EMAIL ? "ADMIN" : "CLIENT";
+      }
+      // Toujours relire le rôle en DB pour refléter les changements post-login
+      if (token.id) {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: token.id as string },
+          select: { role: true },
+        });
+        token.role = dbUser?.role ?? "CLIENT";
       }
       return token;
     },

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { io, Socket } from "socket.io-client";
 
 // Types miroir de bot-engine/src/lib/socket-server.ts
@@ -51,6 +51,15 @@ export function useBotSocket({
 }: UseBotSocketOptions) {
   const [connected, setConnected] = useState(false);
   const socketRef = useRef<Socket | null>(null);
+  const onStatusRef = useRef(onStatus);
+  const onLogRef = useRef(onLog);
+  const onLevelUpRef = useRef(onLevelUp);
+  const onModerationRef = useRef(onModeration);
+
+  useEffect(() => { onStatusRef.current = onStatus; }, [onStatus]);
+  useEffect(() => { onLogRef.current = onLog; }, [onLog]);
+  useEffect(() => { onLevelUpRef.current = onLevelUp; }, [onLevelUp]);
+  useEffect(() => { onModerationRef.current = onModeration; }, [onModeration]);
 
   useEffect(() => {
     const url = process.env.NEXT_PUBLIC_SOCKET_URL;
@@ -72,10 +81,10 @@ export function useBotSocket({
     socket.on("connect", () => setConnected(true));
     socket.on("disconnect", () => setConnected(false));
 
-    socket.on("bot:status", (event: BotStatusEvent) => onStatus?.(event));
-    socket.on("bot:log", (event: BotLogEvent) => onLog?.(event));
-    socket.on("bot:levelup", (event: BotLevelUpEvent) => onLevelUp?.(event));
-    socket.on("bot:moderation", (event: BotModerationEvent) => onModeration?.(event));
+    socket.on("bot:status", (event: BotStatusEvent) => onStatusRef.current?.(event));
+    socket.on("bot:log", (event: BotLogEvent) => onLogRef.current?.(event));
+    socket.on("bot:levelup", (event: BotLevelUpEvent) => onLevelUpRef.current?.(event));
+    socket.on("bot:moderation", (event: BotModerationEvent) => onModerationRef.current?.(event));
 
     return () => {
       socket.disconnect();
