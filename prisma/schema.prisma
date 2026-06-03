@@ -584,6 +584,20 @@ model Settings {
 }
 
 
+// ─── Bot Logs ─────────────────────────────────────────────────────────────────
+
+model BotLog {
+  id        BigInt   @id @default(autoincrement())
+  botId     String   @map("bot_id")
+  message   String
+  level     String   @default("info")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([botId])
+  @@index([createdAt(sort: Desc)])
+  @@map("bot_logs")
+}
+
 model Ticket {
   id        String    @id @default(cuid())
   botId     String    @map("bot_id")

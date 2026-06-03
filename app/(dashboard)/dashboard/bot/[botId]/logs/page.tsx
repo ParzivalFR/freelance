@@ -137,6 +137,13 @@ export default function LogsPage() {
             onChange={(v) => updateModuleConfig("logsChannelDiscord", v)}
             filter="text"
           />
+          <ChannelSelect
+            botId={botId}
+            label="salon_sondages"
+            value={config.config.logsChannelSurveys ?? ""}
+            onChange={(v) => updateModuleConfig("logsChannelSurveys", v)}
+            filter="text"
+          />
         </div>
 
         {/* Couleurs */}

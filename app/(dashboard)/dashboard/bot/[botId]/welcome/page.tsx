@@ -245,6 +245,29 @@ export default function WelcomePage() {
 
         <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
           <div className="flex items-center justify-between">
+            <div>
+              <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">image_de_bienvenue</p>
+              <p className="font-mono text-[9px] text-muted-foreground/60">
+                Image générée via api.popcat.xyz avec avatar + nom du serveur
+              </p>
+            </div>
+            <Switch
+              checked={config.config.useWelcomeImage ?? false}
+              onCheckedChange={(v) => updateModuleConfig("useWelcomeImage", v)}
+            />
+          </div>
+          {config.config.useWelcomeImage && (
+            <CyberInput
+              label="image_de_fond (url)"
+              value={config.config.welcomeImageBackground ?? ""}
+              onChange={(v) => updateModuleConfig("welcomeImageBackground", v)}
+              placeholder="https://i.imgur.com/9Bi2OzJ.jpeg"
+            />
+          )}
+        </div>
+
+        <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
+          <div className="flex items-center justify-between">
             <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">message_de_depart</p>
             <Switch
               checked={config.config.goodbyeEnabled ?? false}

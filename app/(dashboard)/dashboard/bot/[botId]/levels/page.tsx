@@ -50,6 +50,10 @@ export default function LevelsPage() {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
+  const [newChanId, setNewChanId] = useState("");
+  const [newChanMult, setNewChanMult] = useState("1");
+  const [newRoleId, setNewRoleId] = useState("");
+  const [newRoleMult, setNewRoleMult] = useState("1");
 
   const levelUserIds = levels.map((u) => u.userId);
   const { users: discordUsers } = useDiscordUsers(botId, levelUserIds);
@@ -79,6 +83,8 @@ export default function LevelsPage() {
   if (!config || (loading && levels.length === 0)) return <LoadingScreen />;
 
   const rewards: LevelReward[] = (config.config.levelRewards as LevelReward[]) ?? [];
+  const channelMultipliers: Record<string, number> = (config.config.channelMultipliers as Record<string, number>) ?? {};
+  const roleMultipliers: Record<string, number> = (config.config.roleMultipliers as Record<string, number>) ?? {};
 
   return (
     <div className="space-y-6 px-5 py-6 md:px-7 lg:px-8">
@@ -208,6 +214,142 @@ export default function LevelsPage() {
               >
                 <Plus className="size-3" /> ajouter un rôle
               </button>
+            </div>
+            <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— multiplicateurs par salon —</p>
+            <div className="space-y-2">
+              {Object.entries(channelMultipliers).map(([chanId, mult]) => (
+                <div key={chanId} className="flex items-center gap-2">
+                  <ChannelSelect
+                    botId={botId}
+                    label="salon"
+                    value={chanId}
+                    onChange={(v) => {
+                      const next = { ...channelMultipliers };
+                      delete next[chanId];
+                      if (v) next[v] = mult;
+                      updateModuleConfig("channelMultipliers", next);
+                    }}
+                    filter="text"
+                  />
+                  <CyberInput
+                    label="multiplicateur"
+                    value={String(mult)}
+                    onChange={(v) => {
+                      const parsed = parseFloat(v);
+                      if (!isNaN(parsed)) {
+                        updateModuleConfig("channelMultipliers", { ...channelMultipliers, [chanId]: parsed });
+                      }
+                    }}
+                    placeholder="1.5"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = { ...channelMultipliers };
+                      delete next[chanId];
+                      updateModuleConfig("channelMultipliers", next);
+                    }}
+                    className="mt-5 shrink-0 text-muted-foreground/40 transition hover:text-red-500"
+                  >
+                    <Trash2 className="size-3.5" />
+                  </button>
+                </div>
+              ))}
+              <div className="flex items-center gap-2">
+                <ChannelSelect
+                  botId={botId}
+                  label="nouveau salon"
+                  value={newChanId}
+                  onChange={setNewChanId}
+                  filter="text"
+                />
+                <CyberInput
+                  label="multiplicateur"
+                  value={newChanMult}
+                  onChange={setNewChanMult}
+                  placeholder="1.5"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const parsed = parseFloat(newChanMult);
+                    if (!newChanId || isNaN(parsed)) return;
+                    updateModuleConfig("channelMultipliers", { ...channelMultipliers, [newChanId]: parsed });
+                    setNewChanId("");
+                    setNewChanMult("1");
+                  }}
+                  className="mt-5 shrink-0 flex items-center gap-1 font-mono text-[9px] text-muted-foreground/40 transition hover:text-blue-400"
+                >
+                  <Plus className="size-3" /> ajouter
+                </button>
+              </div>
+            </div>
+            <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— multiplicateurs par rôle —</p>
+            <div className="space-y-2">
+              {Object.entries(roleMultipliers).map(([roleId, mult]) => (
+                <div key={roleId} className="flex items-center gap-2">
+                  <RoleSelect
+                    botId={botId}
+                    label="rôle"
+                    value={roleId}
+                    onChange={(v) => {
+                      const next = { ...roleMultipliers };
+                      delete next[roleId];
+                      if (v) next[v] = mult;
+                      updateModuleConfig("roleMultipliers", next);
+                    }}
+                  />
+                  <CyberInput
+                    label="multiplicateur"
+                    value={String(mult)}
+                    onChange={(v) => {
+                      const parsed = parseFloat(v);
+                      if (!isNaN(parsed)) {
+                        updateModuleConfig("roleMultipliers", { ...roleMultipliers, [roleId]: parsed });
+                      }
+                    }}
+                    placeholder="1.5"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const next = { ...roleMultipliers };
+                      delete next[roleId];
+                      updateModuleConfig("roleMultipliers", next);
+                    }}
+                    className="mt-5 shrink-0 text-muted-foreground/40 transition hover:text-red-500"
+                  >
+                    <Trash2 className="size-3.5" />
+                  </button>
+                </div>
+              ))}
+              <div className="flex items-center gap-2">
+                <RoleSelect
+                  botId={botId}
+                  label="nouveau rôle"
+                  value={newRoleId}
+                  onChange={setNewRoleId}
+                />
+                <CyberInput
+                  label="multiplicateur"
+                  value={newRoleMult}
+                  onChange={setNewRoleMult}
+                  placeholder="1.5"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const parsed = parseFloat(newRoleMult);
+                    if (!newRoleId || isNaN(parsed)) return;
+                    updateModuleConfig("roleMultipliers", { ...roleMultipliers, [newRoleId]: parsed });
+                    setNewRoleId("");
+                    setNewRoleMult("1");
+                  }}
+                  className="mt-5 shrink-0 flex items-center gap-1 font-mono text-[9px] text-muted-foreground/40 transition hover:text-blue-400"
+                >
+                  <Plus className="size-3" /> ajouter
+                </button>
+              </div>
             </div>
             <div className="flex justify-end pt-1">
               <button

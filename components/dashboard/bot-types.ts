@@ -54,6 +54,8 @@ export interface ModuleConfig {
   levelNoXpRoles?: string;      // virgule-séparés
   levelNoXpChannels?: string;   // virgule-séparés
   levelRewards?: LevelReward[];
+  channelMultipliers?: Record<string, number>;
+  roleMultipliers?: Record<string, number>;
   // Logs — salons
   logsChannelId?: string;
   logsChannelMembers?: string;
@@ -73,6 +75,11 @@ export interface ModuleConfig {
   logsColorDiscord?: string;
   // Logs — salon discord natif
   logsChannelDiscord?: string;
+  // Logs — salon sondages
+  logsChannelSurveys?: string;
+  // Welcome — image dynamique
+  useWelcomeImage?: boolean;
+  welcomeImageBackground?: string;
   // Tickets
   categoryId?: string;
   staffRoleId?: string;
