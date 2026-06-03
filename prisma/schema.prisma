@@ -582,3 +582,24 @@ model Settings {
 
   @@map("settings")
 }
+
+
+model Ticket {
+  id        String    @id @default(cuid())
+  botId     String    @map("bot_id")
+  guildId   String    @map("guild_id")
+  channelId String    @map("channel_id")
+  userId    String    @map("user_id")
+  subject   String?
+  category  String?
+  status    String    @default("open")
+  claimedBy String?   @map("claimed_by")
+  rating    Int?
+  closedAt  DateTime? @map("closed_at")
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+
+  @@index([botId])
+  @@index([guildId, status])
+  @@map("tickets")
+}

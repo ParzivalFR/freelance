@@ -1,10 +1,17 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
-import { Activity } from "lucide-react";
+import { Activity, Terminal } from "lucide-react";
 import { PageHeader, StatCard, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import type { BotConfig } from "@/components/dashboard/bot-types";
+import { useBotSocket, type BotLogEvent } from "@/hooks/use-bot-socket";
+
+type LogEntry = {
+  time: string;
+  message: string;
+  level?: "info" | "warn" | "error";
+};
 
 export default function BotActivityPage() {
   const params = useParams();
@@ -12,6 +19,8 @@ export default function BotActivityPage() {
 
   const [config, setConfig] = useState<BotConfig | null>(null);
   const [infractionCount, setInfractionCount] = useState<number | null>(null);
+  const [logs, setLogs] = useState<LogEntry[]>([]);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!botId) return;
@@ -23,7 +32,36 @@ export default function BotActivityPage() {
     fetch(`/api/bot/infractions?botId=${botId}&limit=1`)
       .then((r) => r.json())
       .then((data) => setInfractionCount(data.total ?? 0));
+
+    fetch(`/api/bot/logs?botId=${botId}`)
+      .then((r) => r.json())
+      .then((data: { logs: LogEntry[] }) => {
+        if (Array.isArray(data.logs) && data.logs.length > 0) {
+          setLogs(data.logs);
+        }
+      })
+      .catch(() => {});
   }, [botId]);
+
+  const handleLog = useCallback((event: BotLogEvent) => {
+    const entry: LogEntry = {
+      time: new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", second: "2-digit" }),
+      message: event.message,
+      level: event.level,
+    };
+    setLogs((prev) => {
+      const next = [...prev, entry];
+      return next.length > 100 ? next.slice(next.length - 100) : next;
+    });
+  }, []);
+
+  const { connected } = useBotSocket({ botId: botId ?? "", onLog: handleLog });
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [logs]);
 
   if (!config) return <LoadingScreen />;
 
@@ -102,6 +140,36 @@ export default function BotActivityPage() {
               </span>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Terminal live */}
+      <div className="rounded-xl border border-dashed bg-card">
+        <div className="flex items-center gap-2 border-b border-dashed px-4 py-3">
+          <Terminal className="size-3.5 text-muted-foreground/50" />
+          <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+            logs_live
+          </span>
+          <div className="ml-auto flex items-center gap-2">
+            <div className={`size-1.5 rounded-full ${connected ? "animate-pulse bg-green-500" : "bg-muted-foreground/30"}`} />
+            <span className="font-mono text-[9px] text-muted-foreground/50">{connected ? "connecté" : "hors ligne"}</span>
+            <button onClick={() => setLogs([])} className="ml-2 font-mono text-[9px] text-muted-foreground/40 hover:text-muted-foreground">effacer</button>
+          </div>
+        </div>
+        <div ref={scrollRef} className="h-64 overflow-y-auto p-4 space-y-0.5">
+          {logs.length === 0 ? (
+            <p className="font-mono text-[10px] text-muted-foreground/30">En attente de logs...</p>
+          ) : (
+            logs.map((log, i) => (
+              <p key={i} className={`font-mono text-[10px] ${
+                log.level === "error" ? "text-red-400" :
+                log.level === "warn" ? "text-yellow-400" :
+                "text-muted-foreground/60"
+              }`}>
+                <span className="text-muted-foreground/30">[{log.time}]</span> {log.message}
+              </p>
+            ))
+          )}
         </div>
       </div>
 
