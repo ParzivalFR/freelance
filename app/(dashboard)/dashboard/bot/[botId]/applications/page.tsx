@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { ClipboardList, Plus, Trash2, Power, Copy, Check } from "lucide-react";
+import { ClipboardList, Plus, Trash2, Power, Send, Check, X, Eye, ChevronDown, ChevronUp } from "lucide-react";
 import { PageHeader, LoadingScreen, CyberInput } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { ChannelSelect, RoleSelect } from "@/components/dashboard/discord-select";
@@ -53,7 +53,10 @@ export default function ApplicationsPage() {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreate, setShowCreate] = useState(false);
-  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [postingForm, setPostingForm] = useState<string | null>(null);
+  const [postChannelId, setPostChannelId] = useState("");
+  const [postMessage, setPostMessage] = useState<string | null>(null);
+  const [expandedSubmission, setExpandedSubmission] = useState<string | null>(null);
 
   // Form state
   const [title, setTitle] = useState("");
@@ -156,11 +159,32 @@ export default function ApplicationsPage() {
     await fetchData();
   };
 
-  const copyId = (id: string) => {
-    const shortId = id.slice(0, 8);
-    navigator.clipboard.writeText(shortId);
-    setCopiedId(shortId);
-    setTimeout(() => setCopiedId(null), 2000);
+  const postForm = async (formId: string) => {
+    if (!postChannelId) return;
+    setPostMessage(null);
+    const res = await fetch("/api/bot/applications/post", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ formId, channelId: postChannelId }),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      setPostMessage("✅ " + data.message);
+      setPostingForm(null);
+      setPostChannelId("");
+      setTimeout(() => setPostMessage(null), 5000);
+    } else {
+      setPostMessage("❌ " + (data.error ?? "Erreur"));
+    }
+  };
+
+  const reviewSubmission = async (submissionId: string, action: "accept" | "reject") => {
+    await fetch("/api/bot/applications/review", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ submissionId, action }),
+    });
+    await fetchData();
   };
 
   if (!config) return <LoadingScreen />;
@@ -284,6 +308,13 @@ export default function ApplicationsPage() {
         </div>
       )}
 
+      {/* Message après post */}
+      {postMessage && (
+        <div className="rounded-lg border border-dashed bg-card p-3">
+          <p className="font-mono text-[11px] text-foreground">{postMessage}</p>
+        </div>
+      )}
+
       {/* Liste des formulaires */}
       <div className="space-y-3">
         <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">formulaires existants</p>
@@ -293,73 +324,147 @@ export default function ApplicationsPage() {
           <p className="font-mono text-[10px] text-muted-foreground/60">Aucun formulaire pour le moment.</p>
         ) : (
           forms.map((form) => {
-            const shortId = form.id.slice(0, 8);
             const submissionsForForm = submissions.filter((s) => s.formId === form.id);
+            const isPosting = postingForm === form.id;
             return (
-              <div key={form.id} className="rounded-xl border border-dashed bg-card p-4 space-y-2">
+              <div key={form.id} className="rounded-xl border border-dashed bg-card p-4 space-y-3">
                 <div className="flex items-center gap-3">
                   <div className="size-2 rounded-full" style={{ background: form.enabled ? "#22c55e" : "#71717a" }} />
-                  <p className="font-mono text-xs font-bold text-foreground flex-1 truncate">{form.title}</p>
+                  <div className="min-w-0 flex-1">
+                    <p className="font-mono text-xs font-bold text-foreground truncate">{form.title}</p>
+                    <div className="flex gap-3 mt-1 font-mono text-[10px] text-muted-foreground/70">
+                      <span>{form.questions.length} question(s)</span>
+                      <span>{submissionsForForm.length} candidature(s)</span>
+                      <span className={form.enabled ? "text-green-500" : "text-muted-foreground/50"}>
+                        {form.enabled ? "actif" : "désactivé"}
+                      </span>
+                    </div>
+                  </div>
                   <button
-                    onClick={() => copyId(form.id)}
-                    className="flex items-center gap-1 rounded border border-dashed bg-background px-2 py-1 font-mono text-[9px] text-muted-foreground hover:text-foreground"
+                    onClick={() => {
+                      setPostingForm(isPosting ? null : form.id);
+                      setPostChannelId("");
+                    }}
+                    className="flex items-center gap-1.5 rounded border border-dashed bg-blue-500/10 px-3 py-1.5 font-mono text-[10px] text-blue-400 hover:bg-blue-500/20"
                   >
-                    {copiedId === shortId ? <Check className="size-3 text-green-500" /> : <Copy className="size-3" />}
-                    {shortId}
+                    <Send className="size-3" />
+                    Poster
                   </button>
-                  <button onClick={() => toggleEnabled(form)} className="text-muted-foreground hover:text-foreground">
+                  <button onClick={() => toggleEnabled(form)} className="text-muted-foreground hover:text-foreground" title="Activer/désactiver">
                     <Power className="size-3.5" />
                   </button>
-                  <button onClick={() => deleteForm(form.id)} className="text-red-400 hover:text-red-300">
+                  <button onClick={() => deleteForm(form.id)} className="text-red-400 hover:text-red-300" title="Supprimer">
                     <Trash2 className="size-3.5" />
                   </button>
                 </div>
-                <div className="flex gap-4 font-mono text-[10px] text-muted-foreground/70">
-                  <span>{form.questions.length} question(s)</span>
-                  <span>{submissionsForForm.length} candidature(s)</span>
-                  <span className={form.enabled ? "text-green-500" : "text-muted-foreground/50"}>
-                    {form.enabled ? "actif" : "désactivé"}
-                  </span>
-                </div>
-                <p className="font-mono text-[9px] text-muted-foreground/50">
-                  Utiliser dans Discord : <code className="text-foreground">/apply post form_id:{shortId}</code>
-                </p>
+
+                {isPosting && (
+                  <div className="space-y-2 pt-3 border-t border-dashed">
+                    <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+                      poster ce formulaire dans un salon
+                    </p>
+                    <ChannelSelect
+                      botId={botId}
+                      label="salon_de_postage"
+                      value={postChannelId}
+                      onChange={setPostChannelId}
+                      filter="text"
+                    />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => postForm(form.id)}
+                        disabled={!postChannelId}
+                        className="flex items-center gap-1.5 rounded border border-dashed bg-green-500/10 px-3 py-1.5 font-mono text-[10px] text-green-400 hover:bg-green-500/20 disabled:opacity-30"
+                      >
+                        <Send className="size-3" />
+                        Confirmer l'envoi
+                      </button>
+                      <button
+                        onClick={() => setPostingForm(null)}
+                        className="rounded border border-dashed bg-background px-3 py-1.5 font-mono text-[10px] text-muted-foreground hover:text-foreground"
+                      >
+                        Annuler
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             );
           })
         )}
       </div>
 
-      {/* Candidatures récentes */}
+      {/* Candidatures */}
       {submissions.length > 0 && (
         <div className="space-y-3">
-          <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">candidatures récentes</p>
+          <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">candidatures</p>
           <div className="rounded-xl border border-dashed bg-card divide-y divide-dashed">
-            {submissions.slice(0, 10).map((s) => {
+            {submissions.map((s) => {
               const form = forms.find((f) => f.id === s.formId);
               const user = users[s.userId];
+              const isExpanded = expandedSubmission === s.id;
               return (
-                <div key={s.id} className="flex items-center gap-3 px-4 py-3">
-                  <div
-                    className={`size-2 rounded-full ${
-                      s.status === "accepted" ? "bg-green-500" : s.status === "rejected" ? "bg-red-500" : "bg-yellow-500"
-                    }`}
-                  />
-                  <div className="min-w-0 flex-1">
-                    <p className="font-mono text-[11px] text-foreground truncate" title={s.userId}>
-                      {user?.displayName ?? s.userId}
-                    </p>
-                    <p className="font-mono text-[9px] text-muted-foreground/60">
-                      {form?.title ?? "—"} · {new Date(s.createdAt).toLocaleString("fr-FR")}
-                    </p>
+                <div key={s.id} className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`size-2 shrink-0 rounded-full ${
+                        s.status === "accepted" ? "bg-green-500" : s.status === "rejected" ? "bg-red-500" : "bg-yellow-500"
+                      }`}
+                    />
+                    <div className="min-w-0 flex-1">
+                      <p className="font-mono text-[11px] font-bold text-foreground truncate" title={s.userId}>
+                        {user?.displayName ?? s.userId}
+                      </p>
+                      <p className="font-mono text-[9px] text-muted-foreground/60">
+                        {form?.title ?? "—"} · {new Date(s.createdAt).toLocaleString("fr-FR")}
+                      </p>
+                    </div>
+                    <span
+                      className={`font-mono text-[9px] uppercase tracking-widest ${
+                        s.status === "accepted" ? "text-green-500" : s.status === "rejected" ? "text-red-400" : "text-yellow-500"
+                      }`}
+                    >
+                      {s.status === "pending" ? "en attente" : s.status === "accepted" ? "acceptée" : "refusée"}
+                    </span>
+                    <button
+                      onClick={() => setExpandedSubmission(isExpanded ? null : s.id)}
+                      className="rounded border border-dashed bg-background p-1.5 text-muted-foreground hover:text-foreground"
+                    >
+                      {isExpanded ? <ChevronUp className="size-3" /> : <ChevronDown className="size-3" />}
+                    </button>
                   </div>
-                  <span
-                    className={`font-mono text-[9px] uppercase tracking-widest ${
-                      s.status === "accepted" ? "text-green-500" : s.status === "rejected" ? "text-red-400" : "text-yellow-500"
-                    }`}
-                  >
-                    {s.status}
-                  </span>
+
+                  {isExpanded && (
+                    <div className="mt-3 ml-5 space-y-3 border-l-2 border-dashed border-blue-500/30 pl-4">
+                      {(s.answers ?? []).map((a, i) => (
+                        <div key={i}>
+                          <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/70">
+                            {a.label}
+                          </p>
+                          <p className="font-mono text-[11px] text-foreground/80 mt-0.5 whitespace-pre-wrap">
+                            {a.answer || "—"}
+                          </p>
+                        </div>
+                      ))}
+
+                      {s.status === "pending" && (
+                        <div className="flex gap-2 pt-2">
+                          <button
+                            onClick={() => reviewSubmission(s.id, "accept")}
+                            className="flex items-center gap-1.5 rounded border border-dashed bg-green-500/10 px-3 py-1.5 font-mono text-[10px] text-green-400 hover:bg-green-500/20"
+                          >
+                            <Check className="size-3" /> Accepter
+                          </button>
+                          <button
+                            onClick={() => reviewSubmission(s.id, "reject")}
+                            className="flex items-center gap-1.5 rounded border border-dashed bg-red-500/10 px-3 py-1.5 font-mono text-[10px] text-red-400 hover:bg-red-500/20"
+                          >
+                            <X className="size-3" /> Refuser
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               );
             })}
