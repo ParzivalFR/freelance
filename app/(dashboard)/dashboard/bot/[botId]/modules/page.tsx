@@ -23,20 +23,13 @@ export default function BotModulesPage() {
 
       <div className="space-y-3">
 
-        <ModuleToggle
-          icon={<Activity className="size-3.5" />}
-          label="monitor"
-          description="Surveillance de disponibilité (HTTP / TCP / PING)"
-          enabled={config.moduleMonitor}
-          onToggle={() => update("moduleMonitor", !config.moduleMonitor)}
-          configHref={`${base}/monitor`}
-          locked={!isPro}
-        />
+        {/* ─── FREE ─── */}
+        <p className="font-mono text-[9px] uppercase tracking-widest text-green-500/70 pt-2">— modules gratuits —</p>
 
         <ModuleToggle
           icon={<MessageSquare className="size-3.5" />}
           label="welcome"
-          description="Messages de bienvenue personnalisés"
+          description="Messages de bienvenue, goodbye, auto-rôle, image dynamique"
           enabled={config.moduleWelcome}
           onToggle={() => update("moduleWelcome", !config.moduleWelcome)}
           configHref={`${base}/welcome`}
@@ -45,31 +38,10 @@ export default function BotModulesPage() {
         <ModuleToggle
           icon={<Shield className="size-3.5" />}
           label="moderation"
-          description="/ban /kick /warn /timeout + AutoMod"
+          description="/ban /kick /warn /timeout /softban /massban + AutoMod"
           enabled={config.moduleModeration}
           onToggle={() => update("moduleModeration", !config.moduleModeration)}
           configHref={`${base}/moderation`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Ticket className="size-3.5" />}
-          label="tickets"
-          description="Système de tickets avancé"
-          enabled={config.moduleTickets}
-          onToggle={() => update("moduleTickets", !config.moduleTickets)}
-          configHref={`${base}/tickets`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Star className="size-3.5" />}
-          label="xp & levels"
-          description="/rank /leaderboard · Rôles par niveau"
-          enabled={config.moduleLevel}
-          onToggle={() => update("moduleLevel", !config.moduleLevel)}
-          configHref={`${base}/levels`}
-          locked={!isPro}
         />
 
         <ModuleToggle
@@ -82,50 +54,12 @@ export default function BotModulesPage() {
         />
 
         <ModuleToggle
-          icon={<BarChart2 className="size-3.5" />}
-          label="survey"
-          description="Sondages avancés (choix multiple, classé, pondéré)"
-          enabled={config.moduleSurvey}
-          onToggle={() => update("moduleSurvey", !config.moduleSurvey)}
-          configHref={`${base}/polls`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Gift className="size-3.5" />}
-          label="giveaway"
-          description="Concours avec conditions d'entrée, modes de tirage et re-roll"
-          enabled={config.moduleGiveaway}
-          onToggle={() => update("moduleGiveaway", !config.moduleGiveaway)}
-          configHref={`${base}/giveaway`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<ShieldCheck className="size-3.5" />}
-          label="vérification"
-          description="Panel de vérification avec bouton d'acceptation des règles et CAPTCHA optionnel"
-          enabled={config.moduleVerification}
-          onToggle={() => update("moduleVerification", !config.moduleVerification)}
-          configHref={`${base}/verification`}
-        />
-
-        <ModuleToggle
-          icon={<Volume2 className="size-3.5" />}
-          label="temp channels"
-          description="Salons vocaux temporaires créés automatiquement à la demande"
-          enabled={config.moduleTempchannels}
-          onToggle={() => update("moduleTempchannels", !config.moduleTempchannels)}
-          configHref={`${base}/tempchannels`}
-        />
-
-        <ModuleToggle
           icon={<Star className="size-3.5" />}
-          label="starboard"
-          description="Reposte les messages les plus réactés dans un salon dédié"
-          enabled={config.moduleStarboard}
-          onToggle={() => update("moduleStarboard", !config.moduleStarboard)}
-          configHref={`${base}/starboard`}
+          label="xp & levels"
+          description="/rank /leaderboard · XP message + vocal · Rôles par niveau"
+          enabled={config.moduleLevel}
+          onToggle={() => update("moduleLevel", !config.moduleLevel)}
+          configHref={`${base}/levels`}
         />
 
         <ModuleToggle
@@ -137,22 +71,97 @@ export default function BotModulesPage() {
           configHref={`${base}/reaction-roles`}
         />
 
+        {/* ─── PRO ─── */}
+        <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70 pt-4">— modules pro —</p>
+
+        <ModuleToggle
+          icon={<Ticket className="size-3.5" />}
+          label="tickets"
+          description="Système de tickets avancé avec transcripts HTML"
+          enabled={config.moduleTickets}
+          onToggle={() => update("moduleTickets", !config.moduleTickets)}
+          configHref={`${base}/tickets`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<BarChart2 className="size-3.5" />}
+          label="survey"
+          description="Sondages avancés (choix multiple, classé Borda, pondéré, récurrent)"
+          enabled={config.moduleSurvey}
+          onToggle={() => update("moduleSurvey", !config.moduleSurvey)}
+          configHref={`${base}/polls`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<Activity className="size-3.5" />}
+          label="monitor"
+          description="Surveillance HTTP / TCP / PING / PostgreSQL / MySQL + SSH"
+          enabled={config.moduleMonitor}
+          onToggle={() => update("moduleMonitor", !config.moduleMonitor)}
+          configHref={`${base}/monitor`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<Gift className="size-3.5" />}
+          label="giveaway"
+          description="Concours avec conditions, modes de tirage et re-roll"
+          enabled={config.moduleGiveaway}
+          onToggle={() => update("moduleGiveaway", !config.moduleGiveaway)}
+          configHref={`${base}/giveaway`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<ShieldCheck className="size-3.5" />}
+          label="vérification"
+          description="Panel de vérification avec CAPTCHA optionnel"
+          enabled={config.moduleVerification}
+          onToggle={() => update("moduleVerification", !config.moduleVerification)}
+          configHref={`${base}/verification`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<Volume2 className="size-3.5" />}
+          label="temp channels"
+          description="Salons vocaux temporaires créés automatiquement"
+          enabled={config.moduleTempchannels}
+          onToggle={() => update("moduleTempchannels", !config.moduleTempchannels)}
+          configHref={`${base}/tempchannels`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<Star className="size-3.5" />}
+          label="starboard"
+          description="Reposte les messages les plus réactés dans un salon dédié"
+          enabled={config.moduleStarboard}
+          onToggle={() => update("moduleStarboard", !config.moduleStarboard)}
+          configHref={`${base}/starboard`}
+          locked={!isPro}
+        />
+
         <ModuleToggle
           icon={<MessageSquareReply className="size-3.5" />}
           label="auto-réponses"
-          description="Réponses automatiques aux messages selon des triggers configurables"
+          description="Réponses automatiques selon des triggers configurables"
           enabled={config.moduleAutoresponse}
           onToggle={() => update("moduleAutoresponse", !config.moduleAutoresponse)}
           configHref={`${base}/autoresponse`}
+          locked={!isPro}
         />
 
         <ModuleToggle
           icon={<Coins className="size-3.5" />}
           label="economy"
-          description="/balance /daily /work /pay /slots /coinflip /rob — monnaie virtuelle"
+          description="/balance /daily /work /pay /slots /coinflip /rob"
           enabled={config.moduleEconomy}
           onToggle={() => update("moduleEconomy", !config.moduleEconomy)}
           configHref={`${base}/economy`}
+          locked={!isPro}
         />
 
       </div>
