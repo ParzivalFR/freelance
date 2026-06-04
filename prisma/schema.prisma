@@ -713,3 +713,77 @@ model Birthday {
   @@index([month, day])
   @@map("birthdays")
 }
+
+model ApplicationForm {
+  id              String   @id @default(cuid())
+  botId           String   @map("bot_id")
+  guildId         String   @map("guild_id")
+  title           String
+  description     String?
+  questions       Json     @default("[]")
+  reviewChannelId String?  @map("review_channel_id")
+  acceptRoleId    String?  @map("accept_role_id")
+  rejectDmMessage String?  @map("reject_dm_message")
+  acceptDmMessage String?  @map("accept_dm_message")
+  color           String?  @default("#5865f2")
+  channelId       String?  @map("channel_id")
+  messageId       String?  @map("message_id")
+  maxSubmissions  Int      @default(0) @map("max_submissions")
+  enabled         Boolean  @default(true)
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  @@index([botId])
+  @@map("application_forms")
+}
+
+model ApplicationSubmission {
+  id         String    @id @default(cuid())
+  formId     String    @map("form_id")
+  botId      String    @map("bot_id")
+  guildId    String    @map("guild_id")
+  userId     String    @map("user_id")
+  answers    Json      @default("[]")
+  status     String    @default("pending")
+  reviewerId String?   @map("reviewer_id")
+  reviewedAt DateTime? @map("reviewed_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  @@index([formId])
+  @@index([botId])
+  @@map("application_submissions")
+}
+
+model Suggestion {
+  id          String   @id @default(cuid())
+  botId       String   @map("bot_id")
+  guildId     String   @map("guild_id")
+  userId      String   @map("user_id")
+  content     String
+  status      String   @default("pending")
+  upvotes     Json     @default("[]")
+  downvotes   Json     @default("[]")
+  messageId   String?  @map("message_id")
+  response    String?
+  respondedBy String?  @map("responded_by")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@index([botId])
+  @@map("suggestions")
+}
+
+model ScheduledMessage {
+  id             String    @id @default(cuid())
+  botId          String    @map("bot_id")
+  guildId        String    @map("guild_id")
+  channelId      String    @map("channel_id")
+  content        String
+  cronExpression String?   @map("cron_expression")
+  nextRun        DateTime? @map("next_run")
+  isRecurring    Boolean   @default(false) @map("is_recurring")
+  enabled        Boolean   @default(true)
+  createdAt      DateTime  @default(now()) @map("created_at")
+
+  @@index([botId])
+  @@index([nextRun])
+  @@map("scheduled_messages")
+}
