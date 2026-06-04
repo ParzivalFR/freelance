@@ -72,7 +72,7 @@ export default function TicketsPage() {
         <p className="mb-2 font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
           — statistiques —
         </p>
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           <div className="rounded-lg border border-dashed p-3 space-y-0.5">
             <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/50">
               tickets ouverts

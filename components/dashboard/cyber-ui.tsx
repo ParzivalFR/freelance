@@ -309,7 +309,7 @@ export function StatCard({
           />
         )}
         <p
-          className={`font-mono text-sm font-bold ${
+          className={`truncate font-mono text-sm font-bold ${
             accent ? "text-blue-500" : "text-foreground"
           }`}
         >
@@ -344,7 +344,7 @@ export function PageHeader({
         : "text-muted-foreground";
 
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex items-center gap-3">
         <div className="flex size-9 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 ring-1 ring-blue-500/20">
           {icon}

@@ -252,7 +252,7 @@ export default function ModerationPage() {
                   placeholder="10"
                 />
               )}
-              <div className="grid grid-cols-3 gap-2 pt-1">
+              <div className="grid grid-cols-1 gap-2 pt-1 sm:grid-cols-3">
                 <CyberInput
                   label="spam_max_messages"
                   value={String(config.config.spamMaxMessages ?? "")}

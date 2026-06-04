@@ -129,6 +129,31 @@ export interface ModuleConfig {
   statusBoardEmojiUp?: string;
   statusBoardEmojiDown?: string;
   statusBoardEmojiPending?: string;
+  // Verification
+  verificationUnverifiedRoleId?: string;
+  verificationVerifiedRoleId?: string;
+  verificationEmbedTitle?: string;
+  verificationEmbedDescription?: string;
+  verificationEmbedColor?: string;
+  verificationEmbedImage?: string;
+  verificationCaptchaMode?: boolean;
+  verificationLogChannelId?: string;
+  // TempChannels
+  tempChannelsTriggerChannelId?: string;
+  tempChannelsCategoryId?: string;
+  tempChannelsDefaultUserLimit?: number;
+  tempChannelsChannelNameTemplate?: string;
+  tempChannelsAllowRename?: boolean;
+  tempChannelsAllowLimit?: boolean;
+  tempChannelsAllowPrivate?: boolean;
+  // Starboard
+  starboardChannelId?: string;
+  starboardEmoji?: string;
+  starboardThreshold?: number;
+  starboardSelfStar?: boolean;
+  starboardIgnoreBots?: boolean;
+  starboardEmbedColor?: string;
+  starboardRemoveOnUnstar?: boolean;
   // Général
   guildId?: string;
 }
@@ -151,6 +176,9 @@ export interface BotConfig {
   moduleSurvey: boolean;
   moduleMonitor: boolean;
   moduleGiveaway: boolean;
+  moduleVerification: boolean;
+  moduleTempchannels: boolean;
+  moduleStarboard: boolean;
   config: ModuleConfig;
   workerCommand: string | null;
 }

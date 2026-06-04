@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, BarChart2, Gift, MessageSquare, Puzzle, Save, ScrollText, Shield, Star, Ticket } from "lucide-react";
+import { Activity, BarChart2, Gift, MessageSquare, Puzzle, Save, ScrollText, Shield, ShieldCheck, Star, Ticket, Volume2 } from "lucide-react";
 import { ModuleToggle, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 
@@ -99,6 +99,33 @@ export default function BotModulesPage() {
           onToggle={() => update("moduleGiveaway", !config.moduleGiveaway)}
           configHref={`${base}/giveaway`}
           locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<ShieldCheck className="size-3.5" />}
+          label="vérification"
+          description="Panel de vérification avec bouton d'acceptation des règles et CAPTCHA optionnel"
+          enabled={config.moduleVerification}
+          onToggle={() => update("moduleVerification", !config.moduleVerification)}
+          configHref={`${base}/verification`}
+        />
+
+        <ModuleToggle
+          icon={<Volume2 className="size-3.5" />}
+          label="temp channels"
+          description="Salons vocaux temporaires créés automatiquement à la demande"
+          enabled={config.moduleTempchannels}
+          onToggle={() => update("moduleTempchannels", !config.moduleTempchannels)}
+          configHref={`${base}/tempchannels`}
+        />
+
+        <ModuleToggle
+          icon={<Star className="size-3.5" />}
+          label="starboard"
+          description="Reposte les messages les plus réactés dans un salon dédié"
+          enabled={config.moduleStarboard}
+          onToggle={() => update("moduleStarboard", !config.moduleStarboard)}
+          configHref={`${base}/starboard`}
         />
 
       </div>

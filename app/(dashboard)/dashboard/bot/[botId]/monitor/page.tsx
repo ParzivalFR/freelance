@@ -15,8 +15,10 @@ import {
   Check,
   Tv2,
   Save,
+  Play,
 } from "lucide-react";
 import { PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
+import { useToast } from "@/components/ui/use-toast";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -209,6 +211,8 @@ export default function MonitorPage() {
   const params = useParams();
   const botId = params?.botId as string;
 
+  const { toast } = useToast();
+
   const [monitors, setMonitors] = useState<Monitor[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -218,6 +222,7 @@ export default function MonitorPage() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<{ name: string; interval: number; alertChannelId: string; alertRoleId: string; target: string; dbFields: DbFields; ssh: SshFields; dbInputMode: "fields" | "string" } | null>(null);
   const [editSubmitting, setEditSubmitting] = useState(false);
+  const [testingId, setTestingId] = useState<string | null>(null);
 
   const [boardForm, setBoardForm] = useState({
     enabled: false,
@@ -431,6 +436,28 @@ export default function MonitorPage() {
     }
   }
 
+  async function handleTest(monitor: Monitor) {
+    setTestingId(monitor.id);
+    try {
+      const res = await fetch(`/api/bot/monitors/${monitor.id}/check`, { method: "POST" });
+      if (res.status === 202) {
+        toast({
+          title: "Check planifié",
+          description: "Le résultat sera visible dans ~15 secondes.",
+        });
+      } else {
+        const data = await res.json().catch(() => ({}));
+        toast({
+          title: "Erreur",
+          description: data.error ?? "Impossible de planifier le check.",
+          variant: "destructive",
+        });
+      }
+    } finally {
+      setTestingId(null);
+    }
+  }
+
   if (loading) return <LoadingScreen />;
 
   const totalUp = monitors.filter((m) => m.status === "UP").length;
@@ -555,7 +582,7 @@ export default function MonitorPage() {
               <label className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
                 emojis personnalisés <span className="normal-case">(format <code>&lt;a:nom:id&gt;</code> — vide = 🟢 🔴 🟡)</span>
               </label>
-              <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
                 {([
                   { key: "emojiUp", label: "en ligne" },
                   { key: "emojiDown", label: "hors ligne" },
@@ -678,6 +705,14 @@ export default function MonitorPage() {
 
                 {/* Actions */}
                 <div className="flex shrink-0 items-center gap-1">
+                  <button
+                    onClick={() => handleTest(monitor)}
+                    disabled={testingId === monitor.id}
+                    title="Tester maintenant"
+                    className="rounded p-1.5 text-muted-foreground/50 transition hover:text-green-400 disabled:opacity-40"
+                  >
+                    <Play className="size-3.5" />
+                  </button>
                   <button
                     onClick={() => editingId === monitor.id ? (setEditingId(null), setEditForm(null)) : openEdit(monitor)}
                     title="Modifier"
@@ -849,8 +884,8 @@ export default function MonitorPage() {
                       </div>
                       {editForm.ssh.enabled && (
                         <div className="space-y-2">
-                          <div className="grid grid-cols-3 gap-2">
-                            <div className="space-y-1 col-span-2">
+                          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+                            <div className="space-y-1 sm:col-span-2">
                               <label className="font-mono text-[9px] text-muted-foreground/60">hôte SSH</label>
                               <input value={editForm.ssh.host} onChange={(e) => setEditForm((f) => f && ({ ...f, ssh: { ...f.ssh, host: e.target.value } }))} placeholder="vps.example.com" className="w-full rounded border border-dashed bg-background px-3 py-1.5 font-mono text-xs text-foreground outline-none focus:border-yellow-500/50" />
                             </div>

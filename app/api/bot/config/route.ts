@@ -55,7 +55,7 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json();
-    const { id, name, token, prefix, moduleWelcome, moduleModeration, moduleTickets, moduleLevel, moduleLog, moduleSurvey, moduleMonitor, moduleGiveaway, config, status, workerCommand } = body;
+    const { id, name, token, prefix, moduleWelcome, moduleModeration, moduleTickets, moduleLevel, moduleLog, moduleSurvey, moduleMonitor, moduleGiveaway, moduleVerification, moduleTempchannels, moduleStarboard, config, status, workerCommand } = body;
 
     const VALID_COMMANDS = ["START", "STOP", "RESTART", null];
     if (workerCommand !== undefined && !VALID_COMMANDS.includes(workerCommand)) {
@@ -89,6 +89,9 @@ export async function PATCH(request: Request) {
         ...(moduleSurvey !== undefined && { moduleSurvey }),
         ...(moduleMonitor !== undefined && { moduleMonitor }),
         ...(moduleGiveaway !== undefined && { moduleGiveaway }),
+        ...(moduleVerification !== undefined && { moduleVerification }),
+        ...(moduleTempchannels !== undefined && { moduleTempchannels }),
+        ...(moduleStarboard !== undefined && { moduleStarboard }),
         ...(config !== undefined && { config }),
         ...(status !== undefined && { status }),
         ...(workerCommand !== undefined && { workerCommand }),

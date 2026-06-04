@@ -204,7 +204,7 @@ function EmbedPreview({ form }: { form: ReturnType<typeof makeDefaultForm> }) {
       <div className="bg-[#313338] px-3 py-2.5 space-y-1">
         <p className="font-semibold text-white text-sm">🎁 {form.title || "Titre du giveaway"}</p>
         {form.description && <p className="text-[#b5bac1] text-xs">{form.description}</p>}
-        <div className="grid grid-cols-3 gap-x-4 gap-y-1 pt-1">
+        <div className="grid grid-cols-1 gap-x-4 gap-y-1 pt-1 min-[400px]:grid-cols-3">
           <div>
             <p className="text-[#b5bac1] text-[9px] font-semibold uppercase tracking-wide">Lot</p>
             <p className="text-white text-xs font-bold">{form.prize || "—"}</p>

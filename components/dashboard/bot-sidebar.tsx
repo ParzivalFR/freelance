@@ -50,6 +50,7 @@ import {
   Crown,
   Gift,
   LayoutDashboard,
+  ShieldCheck,
   LogOut,
   MessageSquare,
   MoreVertical,
@@ -61,6 +62,7 @@ import {
   Star,
   Ticket,
   Trash2,
+  Volume2,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -179,6 +181,27 @@ function buildNav(botId: string) {
           icon: Gift,
           exact: false,
           pro: true,
+        },
+        {
+          title: "Vérification",
+          url: `/dashboard/bot/${botId}/verification`,
+          icon: ShieldCheck,
+          exact: false,
+          pro: false,
+        },
+        {
+          title: "Temp Channels",
+          url: `/dashboard/bot/${botId}/tempchannels`,
+          icon: Volume2,
+          exact: false,
+          pro: false,
+        },
+        {
+          title: "Starboard",
+          url: `/dashboard/bot/${botId}/starboard`,
+          icon: Star,
+          exact: false,
+          pro: false,
         },
       ],
     },
