@@ -167,6 +167,18 @@ export interface ModuleConfig {
   startingBalance?: number;
   allowGambling?: boolean;
   maxBet?: number;
+  // Birthday
+  birthday?: {
+    channelId?: string;
+    roleId?: string;
+    message?: string;
+    removeRoleAfterHours?: number;
+  };
+  // Suggestions
+  suggestions?: {
+    channelId?: string;
+    approveRoleId?: string;
+  };
   // Général
   guildId?: string;
 }
@@ -213,6 +225,11 @@ export interface BotConfig {
   moduleReactionRoles: boolean;
   moduleAutoresponse: boolean;
   moduleEconomy: boolean;
+  moduleApplications: boolean;
+  moduleBirthday: boolean;
+  moduleSuggestions: boolean;
+  moduleAfk: boolean;
+  moduleScheduler: boolean;
   config: ModuleConfig;
   workerCommand: string | null;
 }

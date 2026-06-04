@@ -51,6 +51,11 @@ model DiscordBot {
   moduleReactionRoles Boolean @default(false) @map("module_reaction_roles")
   moduleEconomy       Boolean @default(false) @map("module_economy")
   moduleAutoresponse  Boolean @default(false) @map("module_autoresponse")
+  moduleBirthday      Boolean @default(false) @map("module_birthday")
+  moduleApplications  Boolean @default(false) @map("module_applications")
+  moduleSuggestions   Boolean @default(false) @map("module_suggestions")
+  moduleAfk           Boolean @default(false) @map("module_afk")
+  moduleScheduler     Boolean @default(false) @map("module_scheduler")
 
   // Paramètres spécifiques aux modules (JSON pour plus de flexibilité)
   config Json? @default("{}") // ex: { welcomeChannel: "123", ticketCategory: "456" }
@@ -74,6 +79,7 @@ model DiscordBot {
   polls           Poll[]
   monitors        Monitor[]
   refundRequests  RefundRequest[]
+  birthdays       Birthday[]
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -688,4 +694,22 @@ model AutoResponse {
   @@index([botId])
   @@index([guildId])
   @@map("auto_responses")
+}
+
+// ─── Birthdays ───────────────────────────────────────────────────────────────
+
+model Birthday {
+  id        String   @id @default(cuid())
+  botId     String   @map("bot_id")
+  guildId   String   @map("guild_id")
+  userId    String   @map("user_id")
+  day       Int
+  month     Int
+  createdAt DateTime @default(now()) @map("created_at")
+
+  bot DiscordBot @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  @@unique([botId, guildId, userId])
+  @@index([month, day])
+  @@map("birthdays")
 }

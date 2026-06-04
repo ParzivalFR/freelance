@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, BarChart2, Coins, Gift, MessageSquare, MessageSquareReply, MousePointerClick, Puzzle, Save, ScrollText, Shield, ShieldCheck, Star, Ticket, Volume2 } from "lucide-react";
+import { Activity, BarChart2, Cake, ClipboardList, Clock, Coins, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Save, ScrollText, Shield, ShieldCheck, Star, Ticket, Volume2 } from "lucide-react";
 import { ModuleToggle, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 
@@ -161,6 +161,56 @@ export default function BotModulesPage() {
           enabled={config.moduleEconomy}
           onToggle={() => update("moduleEconomy", !config.moduleEconomy)}
           configHref={`${base}/economy`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<ClipboardList className="size-3.5" />}
+          label="candidatures"
+          description="Formulaires de candidature avec review staff"
+          enabled={config.moduleApplications}
+          onToggle={() => update("moduleApplications", !config.moduleApplications)}
+          configHref={`${base}/applications`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<Cake className="size-3.5" />}
+          label="anniversaires"
+          description="/birthday set/show/list — célébration automatique"
+          enabled={config.moduleBirthday}
+          onToggle={() => update("moduleBirthday", !config.moduleBirthday)}
+          configHref={`${base}/birthday`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<Lightbulb className="size-3.5" />}
+          label="suggestions"
+          description="/suggest — votes pour/contre, accepter/refuser"
+          enabled={config.moduleSuggestions}
+          onToggle={() => update("moduleSuggestions", !config.moduleSuggestions)}
+          configHref={`${base}/suggestions`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<Moon className="size-3.5" />}
+          label="afk"
+          description="/afk — notification automatique si mentionné"
+          enabled={config.moduleAfk}
+          onToggle={() => update("moduleAfk", !config.moduleAfk)}
+          configHref={`${base}/afk`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<Clock className="size-3.5" />}
+          label="messages programmés"
+          description="/schedule add — daily / weekly / monthly / datetime"
+          enabled={config.moduleScheduler}
+          onToggle={() => update("moduleScheduler", !config.moduleScheduler)}
+          configHref={`${base}/scheduler`}
           locked={!isPro}
         />
 
