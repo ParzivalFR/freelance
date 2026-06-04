@@ -56,6 +56,7 @@ model DiscordBot {
   moduleSuggestions   Boolean @default(false) @map("module_suggestions")
   moduleAfk           Boolean @default(false) @map("module_afk")
   moduleScheduler     Boolean @default(false) @map("module_scheduler")
+  moduleAibuild       Boolean @default(false) @map("module_aibuild")
 
   // Paramètres spécifiques aux modules (JSON pour plus de flexibilité)
   config Json? @default("{}") // ex: { welcomeChannel: "123", ticketCategory: "456" }
@@ -786,4 +787,23 @@ model ScheduledMessage {
   @@index([botId])
   @@index([nextRun])
   @@map("scheduled_messages")
+}
+
+model ServerGeneration {
+  id          String    @id @default(cuid())
+  botId       String    @map("bot_id")
+  guildId     String    @map("guild_id")
+  userId      String    @map("user_id")
+  serverType  String?   @map("server_type")
+  concept     String?
+  style       String?
+  complexity  String?
+  structure   Json      @default("{}")
+  status      String    @default("pending")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  appliedAt   DateTime? @map("applied_at")
+
+  @@index([botId])
+  @@index([guildId])
+  @@map("server_generations")
 }

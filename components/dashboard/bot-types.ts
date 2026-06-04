@@ -230,6 +230,7 @@ export interface BotConfig {
   moduleSuggestions: boolean;
   moduleAfk: boolean;
   moduleScheduler: boolean;
+  moduleAibuild: boolean;
   config: ModuleConfig;
   workerCommand: string | null;
 }

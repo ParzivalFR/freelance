@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, BarChart2, Cake, ClipboardList, Clock, Coins, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Save, ScrollText, Shield, ShieldCheck, Star, Ticket, Volume2 } from "lucide-react";
+import { Activity, BarChart2, Cake, ClipboardList, Clock, Coins, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, Volume2 } from "lucide-react";
 import { ModuleToggle, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 
@@ -211,6 +211,16 @@ export default function BotModulesPage() {
           enabled={config.moduleScheduler}
           onToggle={() => update("moduleScheduler", !config.moduleScheduler)}
           configHref={`${base}/scheduler`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<Sparkles className="size-3.5" />}
+          label="ai build server"
+          description="/build-server — l'IA génère ton serveur complet (catégories, salons, rôles)"
+          enabled={config.moduleAibuild}
+          onToggle={() => update("moduleAibuild", !config.moduleAibuild)}
+          configHref={`${base}/aibuild`}
           locked={!isPro}
         />
 
