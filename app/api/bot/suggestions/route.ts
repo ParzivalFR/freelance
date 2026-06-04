@@ -76,6 +76,16 @@ export async function DELETE(request: Request) {
   });
   if (!bot) return NextResponse.json({ error: "Non autorisé" }, { status: 404 });
 
+  // Demande au bot de supprimer le message Discord AVANT de supprimer en DB
+  if (sug.messageId) {
+    await prisma.discordBot.update({
+      where: { id: sug.botId },
+      data: { workerCommand: `SUGGESTION_DELETE_${sug.guildId}_${sug.messageId}` },
+    });
+    // Petit délai pour laisser le bot traiter
+    await new Promise((r) => setTimeout(r, 500));
+  }
+
   await prisma.suggestion.delete({ where: { id } });
   return NextResponse.json({ success: true });
 }
