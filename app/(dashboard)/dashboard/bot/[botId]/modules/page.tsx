@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, BarChart2, Gift, MessageSquare, Puzzle, Save, ScrollText, Shield, ShieldCheck, Star, Ticket, Volume2 } from "lucide-react";
+import { Activity, BarChart2, Coins, Gift, MessageSquare, MessageSquareReply, MousePointerClick, Puzzle, Save, ScrollText, Shield, ShieldCheck, Star, Ticket, Volume2 } from "lucide-react";
 import { ModuleToggle, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 
@@ -126,6 +126,33 @@ export default function BotModulesPage() {
           enabled={config.moduleStarboard}
           onToggle={() => update("moduleStarboard", !config.moduleStarboard)}
           configHref={`${base}/starboard`}
+        />
+
+        <ModuleToggle
+          icon={<MousePointerClick className="size-3.5" />}
+          label="reaction roles"
+          description="Panels avec boutons pour auto-assigner des rôles"
+          enabled={config.moduleReactionRoles}
+          onToggle={() => update("moduleReactionRoles", !config.moduleReactionRoles)}
+          configHref={`${base}/reaction-roles`}
+        />
+
+        <ModuleToggle
+          icon={<MessageSquareReply className="size-3.5" />}
+          label="auto-réponses"
+          description="Réponses automatiques aux messages selon des triggers configurables"
+          enabled={config.moduleAutoresponse}
+          onToggle={() => update("moduleAutoresponse", !config.moduleAutoresponse)}
+          configHref={`${base}/autoresponse`}
+        />
+
+        <ModuleToggle
+          icon={<Coins className="size-3.5" />}
+          label="economy"
+          description="/balance /daily /work /pay /slots /coinflip /rob — monnaie virtuelle"
+          enabled={config.moduleEconomy}
+          onToggle={() => update("moduleEconomy", !config.moduleEconomy)}
+          configHref={`${base}/economy`}
         />
 
       </div>

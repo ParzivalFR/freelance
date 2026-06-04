@@ -46,6 +46,7 @@ import {
   BarChart2,
   BookOpen,
   Bot,
+  Coins,
   CreditCard,
   Crown,
   Gift,
@@ -53,6 +54,7 @@ import {
   ShieldCheck,
   LogOut,
   MessageSquare,
+  MessageSquareReply,
   MoreVertical,
   Puzzle,
   Rocket,
@@ -63,6 +65,7 @@ import {
   Ticket,
   Trash2,
   Volume2,
+  MousePointerClick,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -200,6 +203,27 @@ function buildNav(botId: string) {
           title: "Starboard",
           url: `/dashboard/bot/${botId}/starboard`,
           icon: Star,
+          exact: false,
+          pro: false,
+        },
+        {
+          title: "Reaction Roles",
+          url: `/dashboard/bot/${botId}/reaction-roles`,
+          icon: MousePointerClick,
+          exact: false,
+          pro: false,
+        },
+        {
+          title: "Auto-Réponses",
+          url: `/dashboard/bot/${botId}/autoresponse`,
+          icon: MessageSquareReply,
+          exact: false,
+          pro: false,
+        },
+        {
+          title: "Economy",
+          url: `/dashboard/bot/${botId}/economy`,
+          icon: Coins,
           exact: false,
           pro: false,
         },

@@ -154,8 +154,39 @@ export interface ModuleConfig {
   starboardIgnoreBots?: boolean;
   starboardEmbedColor?: string;
   starboardRemoveOnUnstar?: boolean;
+  // Reaction Roles
+  reactionRoles?: RRPanel[];
+  // Economy
+  currencyName?: string;
+  currencyEmoji?: string;
+  dailyAmount?: number;
+  weeklyAmount?: number;
+  workCooldownHours?: number;
+  workMin?: number;
+  workMax?: number;
+  startingBalance?: number;
+  allowGambling?: boolean;
+  maxBet?: number;
   // Général
   guildId?: string;
+}
+
+export interface RRButton {
+  roleId: string;
+  label: string;
+  emoji?: string;
+  style?: "primary" | "secondary" | "success" | "danger";
+}
+
+export interface RRPanel {
+  id: string;
+  channelId: string;
+  messageId?: string;
+  title: string;
+  description?: string;
+  color?: string;
+  mode: "toggle" | "unique" | "verify";
+  buttons: RRButton[];
 }
 
 export interface BotConfig {
@@ -179,6 +210,31 @@ export interface BotConfig {
   moduleVerification: boolean;
   moduleTempchannels: boolean;
   moduleStarboard: boolean;
+  moduleReactionRoles: boolean;
+  moduleAutoresponse: boolean;
+  moduleEconomy: boolean;
   config: ModuleConfig;
   workerCommand: string | null;
+}
+
+export interface AutoResponse {
+  id: string;
+  botId: string;
+  guildId: string;
+  trigger: string;
+  triggerType: "exact" | "contains" | "startswith" | "endswith" | "regex";
+  response: string;
+  responseType: "text" | "embed" | "reaction";
+  embedColor?: string | null;
+  embedTitle?: string | null;
+  caseSensitive: boolean;
+  cooldownSeconds: number;
+  allowedChannelIds: string[];
+  ignoredRoleIds: string[];
+  deleteOriginal: boolean;
+  replyToUser: boolean;
+  triggerCount: number;
+  enabled: boolean;
+  createdAt: string;
+  updatedAt: string;
 }

@@ -47,7 +47,10 @@ model DiscordBot {
   moduleLog        Boolean @default(false) @map("module_log")
   moduleSurvey     Boolean @default(false) @map("module_survey")
   moduleMonitor    Boolean @default(false) @map("module_monitor")
-  moduleGiveaway   Boolean @default(false) @map("module_giveaway")
+  moduleGiveaway      Boolean @default(false) @map("module_giveaway")
+  moduleReactionRoles Boolean @default(false) @map("module_reaction_roles")
+  moduleEconomy       Boolean @default(false) @map("module_economy")
+  moduleAutoresponse  Boolean @default(false) @map("module_autoresponse")
 
   // Paramètres spécifiques aux modules (JSON pour plus de flexibilité)
   config Json? @default("{}") // ex: { welcomeChannel: "123", ticketCategory: "456" }
@@ -247,6 +250,26 @@ model Giveaway {
   bot DiscordBot @relation(fields: [botId], references: [id], onDelete: Cascade)
 
   @@map("giveaways")
+}
+
+// ─── Reaction Role Panels ─────────────────────────────────────────────────────
+
+model ReactionRolePanel {
+  id          String   @id @default(cuid())
+  botId       String   @map("bot_id")
+  guildId     String   @map("guild_id")
+  channelId   String?  @map("channel_id")
+  messageId   String?  @map("message_id")
+  title       String
+  description String?
+  color       String?
+  mode        String   @default("toggle")
+  buttons     Json     @default("[]")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@index([botId])
+  @@map("reaction_role_panels")
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
@@ -616,4 +639,53 @@ model Ticket {
   @@index([botId])
   @@index([guildId, status])
   @@map("tickets")
+}
+
+// ─── Economy ──────────────────────────────────────────────────────────────────
+
+model EconomyWallet {
+  id          String    @id @default(cuid())
+  botId       String    @map("bot_id")
+  guildId     String    @map("guild_id")
+  userId      String    @map("user_id")
+  balance     BigInt    @default(0)
+  bank        BigInt    @default(0)
+  totalEarned BigInt    @default(0) @map("total_earned")
+  lastDaily   DateTime? @map("last_daily")
+  lastWeekly  DateTime? @map("last_weekly")
+  lastWork    DateTime? @map("last_work")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  @@unique([botId, guildId, userId])
+  @@index([botId])
+  @@map("economy_wallets")
+}
+
+// ─── Auto-Réponses ────────────────────────────────────────────────────────────
+
+model AutoResponse {
+  id               String   @id @default(cuid())
+  botId            String   @map("bot_id")
+  guildId          String   @map("guild_id")
+  trigger          String
+  triggerType      String   @default("contains") @map("trigger_type")
+  response         String
+  responseType     String   @default("text") @map("response_type")
+  embedColor       String?  @map("embed_color")
+  embedTitle       String?  @map("embed_title")
+  caseSensitive    Boolean  @default(false) @map("case_sensitive")
+  cooldownSeconds  Int      @default(0) @map("cooldown_seconds")
+  allowedChannelIds Json    @default("[]") @map("allowed_channel_ids")
+  ignoredRoleIds   Json     @default("[]") @map("ignored_role_ids")
+  deleteOriginal   Boolean  @default(false) @map("delete_original")
+  replyToUser      Boolean  @default(true) @map("reply_to_user")
+  triggerCount     Int      @default(0) @map("trigger_count")
+  enabled          Boolean  @default(true)
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+
+  @@index([botId])
+  @@index([guildId])
+  @@map("auto_responses")
 }
