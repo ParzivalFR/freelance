@@ -34,7 +34,9 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/dashboard/bot", request.url));
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  response.headers.set("x-pathname", pathname);
+  return response;
 }
 
 export const config = {
