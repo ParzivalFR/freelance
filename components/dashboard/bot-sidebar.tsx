@@ -154,7 +154,7 @@ function buildNav(botId: string) {
           url: `/dashboard/bot/${botId}/moderation`,
           icon: Shield,
           exact: false,
-          pro: true,
+          pro: false,
         },
         {
           title: "Tickets",
@@ -168,7 +168,7 @@ function buildNav(botId: string) {
           url: `/dashboard/bot/${botId}/levels`,
           icon: Star,
           exact: false,
-          pro: true,
+          pro: false,
         },
         {
           title: "Logs",
@@ -217,7 +217,7 @@ function buildNav(botId: string) {
           url: `/dashboard/bot/${botId}/reaction-roles`,
           icon: MousePointerClick,
           exact: false,
-          pro: true,
+          pro: false,
         },
         {
           title: "Auto-Réponses",
@@ -418,13 +418,20 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                           asChild
                           isActive={isActive}
                           tooltip={item.title}
-                          className={`font-mono text-xs data-[active=true]:border data-[active=true]:border-blue-500/30 data-[active=true]:bg-blue-500/10 data-[active=true]:text-blue-500 ${isLocked ? "opacity-50" : ""}`}
+                          className={`font-mono text-xs data-[active=true]:border data-[active=true]:border-blue-500/30 data-[active=true]:bg-blue-500/10 data-[active=true]:text-blue-500 ${isLocked ? "cursor-not-allowed opacity-50" : ""}`}
                         >
-                          <Link href={item.url}>
-                            <item.icon size={14} />
-                            <span className="flex-1">{item.title}</span>
-                            {isLocked && <Crown size={10} className="text-yellow-500/60" />}
-                          </Link>
+                          {isLocked ? (
+                            <span>
+                              <item.icon size={14} />
+                              <span className="flex-1">{item.title}</span>
+                              <Crown size={10} className="text-yellow-500/60" />
+                            </span>
+                          ) : (
+                            <Link href={item.url}>
+                              <item.icon size={14} />
+                              <span className="flex-1">{item.title}</span>
+                            </Link>
+                          )}
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     );
