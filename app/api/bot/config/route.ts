@@ -91,7 +91,7 @@ export async function PATCH(request: Request) {
     const moduleChanged = MODULE_FLAGS.some(
       ([key, val]) => val !== undefined && val !== (existing as Record<string, unknown>)[key]
     );
-    const shouldRestart = moduleChanged && existing.status === "ONLINE" && workerCommand === undefined;
+    const shouldRestart = moduleChanged && existing.status === "ONLINE" && workerCommand == null;
 
     // Guard plan : les modules PRO ne peuvent pas être activés sans abonnement
     const isPro = existing.plan === "PRO" || existing.plan === "MANAGED";
