@@ -196,84 +196,84 @@ function buildNav(botId: string) {
           url: `/dashboard/bot/${botId}/verification`,
           icon: ShieldCheck,
           exact: false,
-          pro: false,
+          pro: true,
         },
         {
           title: "Temp Channels",
           url: `/dashboard/bot/${botId}/tempchannels`,
           icon: Volume2,
           exact: false,
-          pro: false,
+          pro: true,
         },
         {
           title: "Starboard",
           url: `/dashboard/bot/${botId}/starboard`,
           icon: Star,
           exact: false,
-          pro: false,
+          pro: true,
         },
         {
           title: "Reaction Roles",
           url: `/dashboard/bot/${botId}/reaction-roles`,
           icon: MousePointerClick,
           exact: false,
-          pro: false,
+          pro: true,
         },
         {
           title: "Auto-Réponses",
           url: `/dashboard/bot/${botId}/autoresponse`,
           icon: MessageSquareReply,
           exact: false,
-          pro: false,
+          pro: true,
         },
         {
           title: "Economy",
           url: `/dashboard/bot/${botId}/economy`,
           icon: Coins,
           exact: false,
-          pro: false,
+          pro: true,
         },
         {
           title: "Candidatures",
           url: `/dashboard/bot/${botId}/applications`,
           icon: ClipboardList,
           exact: false,
-          pro: false,
+          pro: true,
         },
         {
           title: "Anniversaires",
           url: `/dashboard/bot/${botId}/birthday`,
           icon: Cake,
           exact: false,
-          pro: false,
+          pro: true,
         },
         {
           title: "Suggestions",
           url: `/dashboard/bot/${botId}/suggestions`,
           icon: Lightbulb,
           exact: false,
-          pro: false,
+          pro: true,
         },
         {
           title: "AFK",
           url: `/dashboard/bot/${botId}/afk`,
           icon: Moon,
           exact: false,
-          pro: false,
+          pro: true,
         },
         {
           title: "Messages programmés",
           url: `/dashboard/bot/${botId}/scheduler`,
           icon: Clock,
           exact: false,
-          pro: false,
+          pro: true,
         },
         {
           title: "AI Build Server",
           url: `/dashboard/bot/${botId}/aibuild`,
           icon: Sparkles,
           exact: false,
-          pro: false,
+          pro: true,
         },
       ],
     },
@@ -410,7 +410,8 @@ export function BotSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                       ? pathname === item.url
                       : pathname === item.url ||
                         pathname.startsWith(item.url + "/");
-                    const isLocked = "pro" in item && item.pro && !plan;
+                    const isPro = plan === "PRO" || plan === "MANAGED";
+                    const isLocked = "pro" in item && item.pro && !isPro;
                     return (
                       <SidebarMenuItem key={item.title}>
                         <SidebarMenuButton

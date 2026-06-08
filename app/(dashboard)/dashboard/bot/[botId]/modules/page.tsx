@@ -10,7 +10,7 @@ export default function BotModulesPage() {
   if (!config) return <LoadingScreen />;
 
   const base = `/dashboard/bot/${config.id}`;
-  const isPro = !!config.plan;
+  const isPro = config.plan === "PRO" || config.plan === "MANAGED";
 
   return (
     <div className="space-y-6 px-5 py-6 md:px-7 lg:px-8">
