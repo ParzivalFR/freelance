@@ -23,19 +23,23 @@ export default function VerificationPage() {
   if (!config) return <LoadingScreen />;
 
   const postPanel = async () => {
+    if (!config.config.verificationChannelId) {
+      toast({ title: "Salon manquant", description: "Configure le salon du panel avant de le poster.", variant: "destructive" });
+      return;
+    }
     setPostingPanel(true);
     try {
-      const res = await fetch("/api/bot/config", {
-        method: "PATCH",
+      const res = await fetch("/api/bot/verification/post-panel", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ botId, action: "post_verification_panel" }),
+        body: JSON.stringify({ botId }),
       });
+      const data = await res.json();
       if (!res.ok) {
-        const data = await res.json();
         toast({ title: "Erreur", description: data.error ?? "Impossible de poster le panel.", variant: "destructive" });
         return;
       }
-      toast({ title: "Panel posté", description: "Le panel de vérification a été posté dans le salon configuré." });
+      toast({ title: "Panel posté ✅", description: "Le panel de vérification a été posté dans le salon configuré." });
     } finally {
       setPostingPanel(false);
     }
@@ -108,6 +112,14 @@ export default function VerificationPage() {
             className="scale-75"
           />
         </div>
+
+        <ChannelSelect
+          botId={botId}
+          label="salon_du_panel"
+          value={config.config.verificationChannelId ?? ""}
+          onChange={(v) => updateModuleConfig("verificationChannelId", v)}
+          filter="text"
+        />
 
         <ChannelSelect
           botId={botId}

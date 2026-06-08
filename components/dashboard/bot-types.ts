@@ -130,6 +130,7 @@ export interface ModuleConfig {
   statusBoardEmojiDown?: string;
   statusBoardEmojiPending?: string;
   // Verification
+  verificationChannelId?: string;
   verificationUnverifiedRoleId?: string;
   verificationVerifiedRoleId?: string;
   verificationEmbedTitle?: string;
