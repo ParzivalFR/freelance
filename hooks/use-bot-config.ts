@@ -48,7 +48,10 @@ export function useBotConfig() {
       });
       if (res.ok) {
         const data = await res.json();
-        setConfig({ ...data, config: data.config ?? {} });
+        // workerCommand est "consommé" côté serveur — on le remet à null
+        // pour éviter qu'il soit renvoyé dans le prochain save et déclenche
+        // un second RESTART inutile.
+        setConfig({ ...data, config: data.config ?? {}, workerCommand: null });
         setIsDirty(false);
       }
       setSaved(true);
