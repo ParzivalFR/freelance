@@ -39,7 +39,7 @@ export async function GET(request: Request) {
     const realStatus = computeStatus(bot);
 
     const { token: _token, ...botWithoutToken } = bot;
-    return NextResponse.json({ ...botWithoutToken, status: realStatus });
+    return NextResponse.json({ ...botWithoutToken, status: realStatus, hasToken: !!_token });
   } catch (error) {
     console.error(error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });

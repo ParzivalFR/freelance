@@ -119,13 +119,13 @@ export default function BotOverviewPage() {
         />
         <StatCard
           label="token"
-          value={config.token ? "CONFIGURÉ" : "MANQUANT"}
+          value={config.hasToken ? "CONFIGURÉ" : "MANQUANT"}
           sub={
-            config.token
+            config.hasToken
               ? "Chiffré — connexion sécurisée"
               : "Token requis pour déployer"
           }
-          accent={!!config.token}
+          accent={config.hasToken}
         />
       </div>
 

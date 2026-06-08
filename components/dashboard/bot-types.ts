@@ -205,6 +205,7 @@ export interface BotConfig {
   id: string;
   name: string;
   token: string | null;
+  hasToken: boolean;
   prefix: string;
   status: string;
   plan: string | null;
