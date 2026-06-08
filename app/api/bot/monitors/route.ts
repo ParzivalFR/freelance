@@ -23,6 +23,9 @@ export async function GET(request: Request) {
     where: { id: botId, userId: session.user.id },
   });
   if (!bot) return NextResponse.json({ monitors: [] });
+  if (bot.plan !== "PRO" && bot.plan !== "MANAGED") {
+    return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
+  }
 
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 

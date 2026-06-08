@@ -22,6 +22,9 @@ export async function GET(request: Request) {
   if (!bot) {
     return NextResponse.json({ wallets: [], stats: { totalCoins: 0, activeMembers: 0 } });
   }
+  if (bot.plan !== "PRO" && bot.plan !== "MANAGED") {
+    return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
+  }
 
   const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
 

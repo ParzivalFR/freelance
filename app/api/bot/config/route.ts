@@ -75,6 +75,25 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
     }
 
+    // Guard plan : les modules PRO ne peuvent pas être activés sans abonnement
+    const isPro = existing.plan === "PRO" || existing.plan === "MANAGED";
+    const PRO_MODULES: Record<string, boolean | undefined> = {
+      moduleModeration, moduleTickets, moduleLevel, moduleSurvey, moduleMonitor,
+      moduleGiveaway, moduleVerification, moduleTempchannels, moduleStarboard,
+      moduleReactionRoles, moduleAutoresponse, moduleEconomy, moduleApplications,
+      moduleBirthday, moduleSuggestions, moduleAfk, moduleScheduler, moduleAibuild,
+    };
+    if (!isPro) {
+      for (const [key, value] of Object.entries(PRO_MODULES)) {
+        if (value === true) {
+          return NextResponse.json(
+            { error: `Le module "${key}" nécessite un abonnement PRO.` },
+            { status: 403 }
+          );
+        }
+      }
+    }
+
     const updated = await prisma.discordBot.update({
       where: { id },
       data: {

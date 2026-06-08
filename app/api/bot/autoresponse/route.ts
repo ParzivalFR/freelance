@@ -15,6 +15,9 @@ export async function GET(request: Request) {
     where: { id: botId, userId: session.user.id },
   });
   if (!bot) return NextResponse.json({ autoResponses: [] });
+  if (bot.plan !== "PRO" && bot.plan !== "MANAGED") {
+    return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
+  }
 
   const autoResponses = await prisma.$queryRaw`
     SELECT * FROM auto_responses

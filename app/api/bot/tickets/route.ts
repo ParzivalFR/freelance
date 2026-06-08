@@ -26,6 +26,9 @@ export async function GET(request: Request) {
     if (!bot) {
       return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
     }
+    if (bot.plan !== "PRO" && bot.plan !== "MANAGED") {
+      return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
+    }
 
     const skip = (page - 1) * limit;
 

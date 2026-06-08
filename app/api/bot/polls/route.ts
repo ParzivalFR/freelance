@@ -19,9 +19,12 @@ export async function GET(request: Request) {
 
   const bot = await prisma.discordBot.findFirst({
     where: { id: botId, userId: session.user.id },
-    select: { id: true },
+    select: { id: true, plan: true },
   });
   if (!bot) return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
+  if (bot.plan !== "PRO" && bot.plan !== "MANAGED") {
+    return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
+  }
 
   const where = { botId, ...(status ? { status } : {}) };
 
