@@ -3,9 +3,11 @@
 import { Activity, BarChart2, Cake, ClipboardList, Clock, Coins, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, Volume2 } from "lucide-react";
 import { ModuleToggle, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function BotModulesPage() {
   const { config, saving, saved, update, save } = useBotConfig();
+  const { toast } = useToast();
 
   if (!config) return <LoadingScreen />;
 
@@ -228,7 +230,16 @@ export default function BotModulesPage() {
 
       <div className="flex justify-end">
         <button
-          onClick={save}
+          onClick={async () => {
+            const result = await save();
+            if (!result.ok) {
+              toast({
+                title: "Erreur lors de la sauvegarde",
+                description: result.error ?? "Une erreur est survenue.",
+                variant: "destructive",
+              });
+            }
+          }}
           disabled={saving}
           className="flex items-center gap-2 rounded-lg border border-dashed px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground transition hover:bg-muted hover:text-foreground disabled:opacity-40"
         >
