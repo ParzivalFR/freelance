@@ -75,6 +75,24 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
     }
 
+    // Détecter si un flag de module a changé → déclencher un RESTART automatique
+    const MODULE_FLAGS = [
+      ["moduleWelcome", moduleWelcome], ["moduleModeration", moduleModeration],
+      ["moduleTickets", moduleTickets], ["moduleLevel", moduleLevel],
+      ["moduleLog", moduleLog], ["moduleSurvey", moduleSurvey],
+      ["moduleMonitor", moduleMonitor], ["moduleGiveaway", moduleGiveaway],
+      ["moduleVerification", moduleVerification], ["moduleTempchannels", moduleTempchannels],
+      ["moduleStarboard", moduleStarboard], ["moduleReactionRoles", moduleReactionRoles],
+      ["moduleAutoresponse", moduleAutoresponse], ["moduleEconomy", moduleEconomy],
+      ["moduleApplications", moduleApplications], ["moduleBirthday", moduleBirthday],
+      ["moduleSuggestions", moduleSuggestions], ["moduleAfk", moduleAfk],
+      ["moduleScheduler", moduleScheduler], ["moduleAibuild", moduleAibuild],
+    ] as const;
+    const moduleChanged = MODULE_FLAGS.some(
+      ([key, val]) => val !== undefined && val !== (existing as Record<string, unknown>)[key]
+    );
+    const shouldRestart = moduleChanged && existing.status === "ONLINE" && workerCommand === undefined;
+
     // Guard plan : les modules PRO ne peuvent pas être activés sans abonnement
     const isPro = existing.plan === "PRO" || existing.plan === "MANAGED";
     const PRO_MODULES: Record<string, boolean | undefined> = {
@@ -123,6 +141,7 @@ export async function PATCH(request: Request) {
         ...(config !== undefined && { config }),
         ...(status !== undefined && { status }),
         ...(workerCommand !== undefined && { workerCommand }),
+        ...(shouldRestart && { workerCommand: "RESTART" }),
       },
     });
 
