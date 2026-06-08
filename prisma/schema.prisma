@@ -57,6 +57,9 @@ model DiscordBot {
   moduleAfk           Boolean @default(false) @map("module_afk")
   moduleScheduler     Boolean @default(false) @map("module_scheduler")
   moduleAibuild       Boolean @default(false) @map("module_aibuild")
+  moduleVerification  Boolean @default(false) @map("module_verification")
+  moduleTempchannels  Boolean @default(false) @map("module_tempchannels")
+  moduleStarboard     Boolean @default(false) @map("module_starboard")
 
   // Paramètres spécifiques aux modules (JSON pour plus de flexibilité)
   config Json? @default("{}") // ex: { welcomeChannel: "123", ticketCategory: "456" }
