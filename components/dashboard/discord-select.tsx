@@ -19,6 +19,28 @@ interface DiscordData {
   roles: DiscordRole[];
 }
 
+// Cache partagé : une seule requête par botId, peu importe combien de composants l'utilisent
+const discordDataCache = new Map<string, Promise<DiscordData>>();
+
+function fetchDiscordData(botId: string): Promise<DiscordData> {
+  if (!discordDataCache.has(botId)) {
+    discordDataCache.set(
+      botId,
+      fetch(`/api/bot/discord-data?botId=${botId}`)
+        .then((res) => {
+          if (!res.ok) throw new Error(`${res.status}`);
+          return res.json() as Promise<DiscordData>;
+        })
+        .catch((err) => {
+          // Invalider le cache en cas d'erreur pour permettre un retry
+          discordDataCache.delete(botId);
+          throw err;
+        })
+    );
+  }
+  return discordDataCache.get(botId)!;
+}
+
 function useDiscordData(botId: string) {
   const [data, setData] = useState<DiscordData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -28,11 +50,7 @@ function useDiscordData(botId: string) {
     if (!botId) return;
     setLoading(true);
     setError(false);
-    fetch(`/api/bot/discord-data?botId=${botId}`)
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json() as Promise<DiscordData>;
-      })
+    fetchDiscordData(botId)
       .then(setData)
       .catch(() => setError(true))
       .finally(() => setLoading(false));
