@@ -63,29 +63,34 @@ export default function BotConfigPage() {
             type="password"
             placeholder="Colle le token de ton bot Discord ici"
           />
-          <CyberInput
-            label="server_id (guild_id)"
-            value={config.config?.guildId ?? ""}
-            onChange={(v) => update("config", { ...config.config, guildId: v })}
-            placeholder="ID de ton serveur Discord"
-          />
-          <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-3">
-            <p className="font-mono text-[9px] uppercase tracking-widest text-yellow-500/70">
-              comment_obtenir_l&apos;id_du_serveur
-            </p>
-            <ol className="mt-2 space-y-1">
-              {[
-                "Active le Mode Développeur dans Discord (Paramètres → Avancé)",
-                "Clic droit sur ton serveur dans la liste",
-                'Clique sur "Copier l\'identifiant"',
-                "Colle-le ici — requis pour les sélecteurs de salons/rôles",
-              ].map((step, i) => (
-                <li key={i} className="font-mono text-[10px] text-muted-foreground/60">
-                  <span className="text-yellow-500/60">{i + 1}.</span> {step}
-                </li>
-              ))}
-            </ol>
-          </div>
+          {config.config?.guildId ? (
+            <div className="space-y-1">
+              <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">server_id (guild_id)</p>
+              <div className="flex items-center gap-2 rounded-xl border border-dashed bg-card px-3 py-2">
+                <span className="flex-1 font-mono text-xs text-foreground">{config.config.guildId}</span>
+                <span className="rounded border border-green-500/30 bg-green-500/10 px-1.5 py-0.5 font-mono text-[9px] text-green-500">auto ✓</span>
+              </div>
+              <p className="font-mono text-[9px] text-muted-foreground/50">Détecté automatiquement au démarrage du bot</p>
+            </div>
+          ) : (
+            <>
+              <CyberInput
+                label="server_id (guild_id)"
+                value=""
+                onChange={(v) => update("config", { ...config.config, guildId: v })}
+                placeholder="Rempli automatiquement au 1er démarrage"
+              />
+              <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-3">
+                <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
+                  💡 comment ça marche
+                </p>
+                <p className="mt-1 font-mono text-[10px] text-muted-foreground/60">
+                  Invite le bot sur ton serveur Discord et démarre-le — l&apos;ID sera détecté et sauvegardé automatiquement.
+                  Tu peux aussi le saisir manuellement (clic droit sur ton serveur → &ldquo;Copier l&apos;identifiant&rdquo; avec le Mode Développeur activé).
+                </p>
+              </div>
+            </>
+          )}
 
           <div className="rounded-lg border border-dashed p-3">
             <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
