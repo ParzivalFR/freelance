@@ -88,13 +88,9 @@ export function ChannelSelect({
         <label className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
           {label}
         </label>
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder ?? "ID du salon"}
-          className="w-full rounded-xl border border-dashed bg-card px-3 py-2 font-mono text-xs text-foreground placeholder-muted-foreground/40 outline-hidden transition focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/10"
-        />
+        <div className="w-full rounded-xl border border-dashed border-yellow-500/30 bg-yellow-500/5 px-3 py-2 font-mono text-[10px] text-yellow-500/70">
+          ⚠ Configure le Server ID dans &ldquo;Identité &amp; Token&rdquo;
+        </div>
       </div>
     );
   }
@@ -163,13 +159,9 @@ export function RoleSelect({
         <label className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
           {label}
         </label>
-        <input
-          type="text"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder ?? "ID du rôle"}
-          className="w-full rounded-xl border border-dashed bg-card px-3 py-2 font-mono text-xs text-foreground placeholder-muted-foreground/40 outline-hidden transition focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/10"
-        />
+        <div className="w-full rounded-xl border border-dashed border-yellow-500/30 bg-yellow-500/5 px-3 py-2 font-mono text-[10px] text-yellow-500/70">
+          ⚠ Configure le Server ID dans &ldquo;Identité &amp; Token&rdquo;
+        </div>
       </div>
     );
   }

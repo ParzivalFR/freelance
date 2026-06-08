@@ -63,6 +63,29 @@ export default function BotConfigPage() {
             type="password"
             placeholder="Colle le token de ton bot Discord ici"
           />
+          <CyberInput
+            label="server_id (guild_id)"
+            value={config.config?.guildId ?? ""}
+            onChange={(v) => update("config", { ...config.config, guildId: v })}
+            placeholder="ID de ton serveur Discord"
+          />
+          <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-3">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-yellow-500/70">
+              comment_obtenir_l&apos;id_du_serveur
+            </p>
+            <ol className="mt-2 space-y-1">
+              {[
+                "Active le Mode Développeur dans Discord (Paramètres → Avancé)",
+                "Clic droit sur ton serveur dans la liste",
+                'Clique sur "Copier l\'identifiant"',
+                "Colle-le ici — requis pour les sélecteurs de salons/rôles",
+              ].map((step, i) => (
+                <li key={i} className="font-mono text-[10px] text-muted-foreground/60">
+                  <span className="text-yellow-500/60">{i + 1}.</span> {step}
+                </li>
+              ))}
+            </ol>
+          </div>
 
           <div className="rounded-lg border border-dashed p-3">
             <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
