@@ -89,6 +89,7 @@ export interface ModuleConfig {
   logsChannelDiscord?: string;
   // Logs — salon sondages
   logsChannelSurveys?: string;
+  logsColorSurveys?: string;
   // Logs — giveaways
   logsChannelGiveaway?: string;
   logsColorGiveaway?: string;

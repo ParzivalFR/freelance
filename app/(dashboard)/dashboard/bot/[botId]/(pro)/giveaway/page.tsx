@@ -1,6 +1,7 @@
 "use client";
 
 import { LoadingScreen, PageHeader, CyberInput } from "@/components/dashboard/cyber-ui";
+import { ChannelSelect, RoleSelect } from "@/components/dashboard/discord-select";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -416,17 +417,18 @@ export default function GiveawayPage() {
       <div className="space-y-2 rounded-xl border border-dashed bg-card p-4">
         <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— config globale —</p>
         <div className="grid grid-cols-2 gap-2">
-          <CyberInput
+          <ChannelSelect
+            botId={config.id}
             label="salon_par_defaut"
             value={config.config.giveawayDefaultChannelId ?? ""}
             onChange={v => updateModuleConfig("giveawayDefaultChannelId", v)}
-            placeholder="ID salon Discord"
+            filter="text"
           />
-          <CyberInput
-            label="role_gestionnaire"
+          <RoleSelect
+            botId={config.id}
+            label="role_gestionnaire (vide = admin)"
             value={config.config.giveawayManagerRoleId ?? ""}
             onChange={v => updateModuleConfig("giveawayManagerRoleId", v)}
-            placeholder="ID rôle (vide = admin)"
           />
         </div>
         <label className="flex cursor-pointer items-center gap-2 pt-1">

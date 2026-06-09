@@ -10,6 +10,8 @@ import {
   Trash2,
   Zap,
 } from "lucide-react";
+import { ChannelSelect, RoleSelect } from "@/components/dashboard/discord-select";
+import { useParams } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import {
   Select,
@@ -19,7 +21,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { useParams } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 
 const TRIGGER_TYPES = [
@@ -49,11 +50,13 @@ const DEFAULT_FORM = {
   cooldownSeconds: 0,
   deleteOriginal: false,
   replyToUser: true,
+  allowedChannelIds: [] as string[],
+  ignoredRoleIds: [] as string[],
 };
 
 export default function AutoresponsePage() {
   const params = useParams();
-  const botId = params?.botId as string;
+  const botId = (params?.botId as string) ?? "";
   const { config } = useBotConfig();
   const { toast } = useToast();
 
@@ -126,6 +129,8 @@ export default function AutoresponsePage() {
           ...form,
           embedColor: form.embedColor || null,
           embedTitle: form.embedTitle || null,
+          allowedChannelIds: form.allowedChannelIds.length > 0 ? form.allowedChannelIds : null,
+          ignoredRoleIds: form.ignoredRoleIds.length > 0 ? form.ignoredRoleIds : null,
         }),
       });
       if (!res.ok) {
@@ -305,6 +310,48 @@ export default function AutoresponsePage() {
             />
           </div>
         )}
+
+        {/* Restrictions optionnelles */}
+        <div className="rounded-lg border border-dashed p-3 space-y-3">
+          <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/40">restrictions (optionnel)</p>
+
+          <div className="space-y-1.5">
+            <p className="font-mono text-[9px] text-muted-foreground/60">Salons autorisés (vide = tous les salons)</p>
+            <div className="flex flex-wrap gap-1.5">
+              {form.allowedChannelIds.map((id) => (
+                <span key={id} className="flex items-center gap-1 rounded border border-dashed bg-background px-1.5 py-0.5 font-mono text-[9px] text-muted-foreground">
+                  {id}
+                  <button type="button" onClick={() => setForm((f) => ({ ...f, allowedChannelIds: f.allowedChannelIds.filter((c) => c !== id) }))} className="hover:text-red-400">✕</button>
+                </span>
+              ))}
+            </div>
+            <ChannelSelect
+              botId={botId}
+              label="ajouter_salon_autorisé"
+              value=""
+              onChange={(v) => { if (v && !form.allowedChannelIds.includes(v)) setForm((f) => ({ ...f, allowedChannelIds: [...f.allowedChannelIds, v] })); }}
+              filter="text"
+            />
+          </div>
+
+          <div className="space-y-1.5">
+            <p className="font-mono text-[9px] text-muted-foreground/60">Rôles ignorés (vide = personne ignoré)</p>
+            <div className="flex flex-wrap gap-1.5">
+              {form.ignoredRoleIds.map((id) => (
+                <span key={id} className="flex items-center gap-1 rounded border border-dashed bg-background px-1.5 py-0.5 font-mono text-[9px] text-muted-foreground">
+                  {id}
+                  <button type="button" onClick={() => setForm((f) => ({ ...f, ignoredRoleIds: f.ignoredRoleIds.filter((r) => r !== id) }))} className="hover:text-red-400">✕</button>
+                </span>
+              ))}
+            </div>
+            <RoleSelect
+              botId={botId}
+              label="ajouter_rôle_ignoré"
+              value=""
+              onChange={(v) => { if (v && !form.ignoredRoleIds.includes(v)) setForm((f) => ({ ...f, ignoredRoleIds: [...f.ignoredRoleIds, v] })); }}
+            />
+          </div>
+        </div>
 
         <div className="flex flex-wrap gap-6">
           <label className="flex items-center gap-2 cursor-pointer">

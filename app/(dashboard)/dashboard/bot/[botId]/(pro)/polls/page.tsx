@@ -7,6 +7,7 @@ import {
   Trash2, StopCircle, RefreshCw, Eye, EyeOff, Save,
 } from "lucide-react";
 import { PageHeader, LoadingScreen, CyberInput } from "@/components/dashboard/cyber-ui";
+import { ChannelSelect, RoleSelect } from "@/components/dashboard/discord-select";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { Switch } from "@/components/ui/switch";
 
@@ -943,23 +944,18 @@ export default function BotPollsPage() {
           </button>
           {configOpen && (
             <div className="space-y-3 border-t border-dashed px-4 pb-4 pt-3">
-              <CyberInput
+              <ChannelSelect
+                botId={botId}
                 label="salon_par_défaut"
                 value={config.config.pollChannelId ?? ""}
                 onChange={(v) => updateModuleConfig("pollChannelId", v)}
-                placeholder="ID salon où poster les sondages"
+                filter="text"
               />
-              <CyberInput
-                label="manager_role_id"
+              <RoleSelect
+                botId={botId}
+                label="manager_role_id (vide = @everyone)"
                 value={config.config.pollManagerRoleId ?? ""}
                 onChange={(v) => updateModuleConfig("pollManagerRoleId", v)}
-                placeholder="ID rôle autorisé à créer des sondages (vide = @everyone)"
-              />
-              <CyberInput
-                label="couleur_embed (hex sans #)"
-                value={config.config.pollColor ?? ""}
-                onChange={(v) => updateModuleConfig("pollColor", v)}
-                placeholder="5865f2"
               />
               <div className="flex justify-end">
                 <button

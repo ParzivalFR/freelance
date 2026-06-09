@@ -62,6 +62,8 @@ const COLOR_FIELDS = [
   ["logsColorTickets",    "couleur_tickets",       "3b82f6"],
   ["logsColorLevels",     "couleur_niveaux",       "f59e0b"],
   ["logsColorDiscord",    "couleur_discord_natif", "5865f2"],
+  ["logsColorSurveys",    "couleur_sondages",      "a855f7"],
+  ["logsColorGiveaway",   "couleur_giveaways",     "f97316"],
 ] as const;
 
 type ColorField = (typeof COLOR_FIELDS)[number][0];
@@ -142,6 +144,13 @@ export default function LogsPage() {
             label="salon_sondages"
             value={config.config.logsChannelSurveys ?? ""}
             onChange={(v) => updateModuleConfig("logsChannelSurveys", v)}
+            filter="text"
+          />
+          <ChannelSelect
+            botId={botId}
+            label="salon_giveaways"
+            value={config.config.logsChannelGiveaway ?? ""}
+            onChange={(v) => updateModuleConfig("logsChannelGiveaway", v)}
             filter="text"
           />
         </div>

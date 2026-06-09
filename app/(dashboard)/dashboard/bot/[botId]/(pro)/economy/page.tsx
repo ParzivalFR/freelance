@@ -195,6 +195,24 @@ export default function EconomyPage() {
                 onChange={(v) => updateModuleConfig("workCooldownHours", v ? Number(v) : undefined)}
                 placeholder="4"
               />
+              <CyberInput
+                label="work_gain_min"
+                value={String(config.config.workMin ?? "")}
+                onChange={(v) => updateModuleConfig("workMin", v ? Number(v) : undefined)}
+                placeholder="50"
+              />
+              <CyberInput
+                label="work_gain_max"
+                value={String(config.config.workMax ?? "")}
+                onChange={(v) => updateModuleConfig("workMax", v ? Number(v) : undefined)}
+                placeholder="200"
+              />
+              <CyberInput
+                label="starting_balance"
+                value={String(config.config.startingBalance ?? "")}
+                onChange={(v) => updateModuleConfig("startingBalance", v ? Number(v) : undefined)}
+                placeholder="0"
+              />
             </div>
             <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— jeux —</p>
             <div className="flex items-center justify-between">

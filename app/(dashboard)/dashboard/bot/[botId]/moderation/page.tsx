@@ -193,6 +193,17 @@ export default function ModerationPage() {
             <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
               — automod —
             </p>
+            <div className="flex items-center justify-between rounded-lg border border-dashed px-3 py-2">
+              <div>
+                <p className="font-mono text-[10px] text-foreground">automod_enabled</p>
+                <p className="font-mono text-[9px] text-muted-foreground/60">Activer / désactiver l&apos;automodération</p>
+              </div>
+              <Switch
+                checked={config.config.automodEnabled ?? false}
+                onCheckedChange={(v) => updateModuleConfig("automodEnabled", v)}
+                className="scale-75"
+              />
+            </div>
             <div className="rounded-lg border border-dashed p-3 space-y-3">
               {[
                 { key: "automodAntiSpam",       label: "anti-spam",         desc: "Messages répétés rapidement" },

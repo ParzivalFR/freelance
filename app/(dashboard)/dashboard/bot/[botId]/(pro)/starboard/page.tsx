@@ -100,6 +100,45 @@ export default function StarboardPage() {
         </div>
       </div>
 
+      <div className="space-y-3 rounded-xl border border-dashed bg-card p-4">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— salons exclus —</p>
+        <p className="font-mono text-[9px] text-muted-foreground/50">
+          Les messages de ces salons ne seront jamais postés dans le starboard.
+        </p>
+        <div className="space-y-2">
+          {((config.config.starboardIgnoreChannels ?? []) as string[]).map((chId) => (
+            <div key={chId} className="flex items-center gap-2">
+              <span className="flex-1 rounded border border-dashed bg-background px-2 py-1 font-mono text-[10px] text-muted-foreground">
+                {chId}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  const next = ((config.config.starboardIgnoreChannels ?? []) as string[]).filter((id) => id !== chId);
+                  updateModuleConfig("starboardIgnoreChannels", next);
+                }}
+                className="shrink-0 text-muted-foreground/40 transition hover:text-red-400"
+              >
+                ✕
+              </button>
+            </div>
+          ))}
+        </div>
+        <ChannelSelect
+          botId={botId}
+          label="ajouter_un_salon_exclu"
+          value=""
+          onChange={(v) => {
+            if (!v) return;
+            const current = (config.config.starboardIgnoreChannels ?? []) as string[];
+            if (!current.includes(v)) {
+              updateModuleConfig("starboardIgnoreChannels", [...current, v]);
+            }
+          }}
+          filter="text"
+        />
+      </div>
+
       <div className="flex justify-end">
         <button
           onClick={save}

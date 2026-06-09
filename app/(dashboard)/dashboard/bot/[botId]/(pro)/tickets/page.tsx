@@ -161,11 +161,12 @@ export default function TicketsPage() {
         <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
           — salons —
         </p>
-        <CyberInput
-          label="discord_category_id"
+        <ChannelSelect
+          botId={botId}
+          label="discord_category_id (catégorie)"
           value={config.config.categoryId ?? ""}
           onChange={(v) => updateModuleConfig("categoryId", v)}
-          placeholder="ID catégorie Discord (où créer les salons)"
+          filter="all"
         />
         <ChannelSelect
           botId={botId}
@@ -307,6 +308,16 @@ export default function TicketsPage() {
             />
           </div>
         </div>
+
+        <CyberInput
+          label="inactivity_timeout (minutes, 0 = désactivé)"
+          value={String(config.config.inactivityTimeout ?? "")}
+          onChange={(v) => updateModuleConfig("inactivityTimeout", v ? Number(v) : undefined)}
+          placeholder="0"
+        />
+        <p className="font-mono text-[9px] text-muted-foreground/50">
+          Ferme automatiquement les tickets sans activité après N minutes (0 = désactivé).
+        </p>
 
         <CyberInput
           label="open_message"
