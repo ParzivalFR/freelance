@@ -227,6 +227,68 @@ export default function BotDeployPage() {
         </div>
       )}
 
+      {/* Plan MANAGED */}
+      {config.plan === "MANAGED" && (
+        <div className="space-y-3">
+          <div className="rounded-xl border border-purple-500/20 bg-purple-500/5 px-4 py-4">
+            <div className="flex items-center gap-3">
+              <div className="flex size-10 items-center justify-center rounded-xl bg-purple-500/15">
+                <CloudIcon className="size-5 text-purple-400" />
+              </div>
+              <div>
+                <p className="font-mono text-xs font-bold text-purple-400">Plan Managed — hébergement dédié</p>
+                <p className="font-mono text-[10px] text-muted-foreground">
+                  Ton bot est géré manuellement par l&apos;équipe. Configuration et déploiement assurés.
+                </p>
+              </div>
+            </div>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              {["Hébergement dédié", "Tous les modules", "Support direct", "Mises à jour incluses"].map((f) => (
+                <p key={f} className="font-mono text-[10px] text-muted-foreground">✓ {f}</p>
+              ))}
+            </div>
+          </div>
+
+          <div className="rounded-xl border border-dashed bg-card p-4">
+            <p className="mb-3 font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+              contrôle_du_processus
+            </p>
+            <div className="flex gap-2">
+              {config.status === "OFFLINE" || config.status === "ERROR" ? (
+                <button
+                  onClick={() => sendWorkerCommand("START")}
+                  disabled={!!workerLoading}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-600/20 px-3 py-2.5 font-mono text-[11px] font-bold text-green-400 transition hover:bg-green-600/30 disabled:opacity-50"
+                >
+                  <Power className="size-3.5" />
+                  {workerLoading === "START" ? "démarrage..." : "Démarrer"}
+                </button>
+              ) : (
+                <button
+                  onClick={() => sendWorkerCommand("STOP")}
+                  disabled={!!workerLoading}
+                  className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-red-600/20 px-3 py-2.5 font-mono text-[11px] font-bold text-red-400 transition hover:bg-red-600/30 disabled:opacity-50"
+                >
+                  <Square className="size-3.5" />
+                  {workerLoading === "STOP" ? "arrêt..." : "Arrêter"}
+                </button>
+              )}
+              <button
+                onClick={() => sendWorkerCommand("RESTART")}
+                disabled={!!workerLoading}
+                className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-blue-600/20 px-3 py-2.5 font-mono text-[11px] font-bold text-blue-400 transition hover:bg-blue-600/30 disabled:opacity-50"
+              >
+                <RotateCw className={`size-3.5 ${workerLoading === "RESTART" ? "animate-spin" : ""}`} />
+                {workerLoading === "RESTART" ? "redémarrage..." : "Redémarrer"}
+              </button>
+            </div>
+            <p className="mt-2 font-mono text-[9px] text-muted-foreground/40">
+              La commande est transmise au worker — prise en compte sous ~15s
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Plan ZIP */}
       {config.plan === "ZIP" && (
         <div className="space-y-3">
