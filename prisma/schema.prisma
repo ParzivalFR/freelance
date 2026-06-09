@@ -810,3 +810,34 @@ model ServerGeneration {
   @@index([guildId])
   @@map("server_generations")
 }
+
+// ─── AFK ──────────────────────────────────────────────────────────────────────
+
+model AfkStatus {
+  id     String   @id @default(cuid())
+  botId  String   @map("bot_id")
+  userId String   @map("user_id")
+  reason String
+  since  DateTime @default(now())
+
+  @@unique([botId, userId])
+  @@index([botId])
+  @@map("afk_statuses")
+}
+
+// ─── Starboard ────────────────────────────────────────────────────────────────
+
+model StarboardEntry {
+  id                 String   @id @default(cuid())
+  botId              String   @map("bot_id")
+  guildId            String   @map("guild_id")
+  messageId          String   @map("message_id")
+  starboardMessageId String   @map("starboard_message_id")
+  starCount          Int      @default(0) @map("star_count")
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  @@unique([botId, messageId])
+  @@index([botId])
+  @@map("starboard_entries")
+}
+
