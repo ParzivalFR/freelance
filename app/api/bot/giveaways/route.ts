@@ -49,9 +49,11 @@ export async function POST(request: Request) {
 
   const bot = await prisma.discordBot.findFirst({
     where: { id: botId, userId: session.user.id },
-    select: { id: true, token: true },
+    select: { id: true, plan: true, token: true },
   });
   if (!bot) return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
+  if (bot.plan !== "PRO" && bot.plan !== "MANAGED")
+    return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
   if (!bot.token) return NextResponse.json({ error: "Token bot manquant" }, { status: 400 });
 
   // Récupérer le guild automatiquement via l'API Discord

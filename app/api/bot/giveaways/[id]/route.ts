@@ -18,11 +18,13 @@ export async function PATCH(
 
   const giveaway = await prisma.giveaway.findFirst({
     where: { id },
-    include: { bot: { select: { userId: true } } },
+    include: { bot: { select: { userId: true, plan: true } } },
   });
 
   if (!giveaway || giveaway.bot.userId !== session.user.id)
     return NextResponse.json({ error: "Giveaway introuvable" }, { status: 404 });
+  if (giveaway.bot.plan !== "PRO" && giveaway.bot.plan !== "MANAGED")
+    return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
 
   const { action } = body;
 
@@ -89,11 +91,13 @@ export async function DELETE(
 
   const giveaway = await prisma.giveaway.findFirst({
     where: { id },
-    include: { bot: { select: { userId: true } } },
+    include: { bot: { select: { userId: true, plan: true } } },
   });
 
   if (!giveaway || giveaway.bot.userId !== session.user.id)
     return NextResponse.json({ error: "Giveaway introuvable" }, { status: 404 });
+  if (giveaway.bot.plan !== "PRO" && giveaway.bot.plan !== "MANAGED")
+    return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
 
   await prisma.giveaway.delete({ where: { id } });
   return NextResponse.json({ ok: true });

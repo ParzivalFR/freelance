@@ -95,10 +95,11 @@ export async function PATCH(request: Request) {
 
     // Guard plan : les modules PRO ne peuvent pas être activés sans abonnement
     const isPro = existing.plan === "PRO" || existing.plan === "MANAGED";
+    // Seuls les modules réellement PRO — welcome/moderation/logs/levels/reactionroles sont GRATUITS
     const PRO_MODULES: Record<string, boolean | undefined> = {
-      moduleModeration, moduleTickets, moduleLevel, moduleSurvey, moduleMonitor,
+      moduleTickets, moduleSurvey, moduleMonitor,
       moduleGiveaway, moduleVerification, moduleTempchannels, moduleStarboard,
-      moduleReactionRoles, moduleAutoresponse, moduleEconomy, moduleApplications,
+      moduleAutoresponse, moduleEconomy, moduleApplications,
       moduleBirthday, moduleSuggestions, moduleAfk, moduleScheduler, moduleAibuild,
     };
     if (!isPro) {

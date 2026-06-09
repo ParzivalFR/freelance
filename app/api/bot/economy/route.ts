@@ -85,6 +85,9 @@ export async function POST(request: Request) {
   if (!bot) {
     return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
   }
+  if (bot.plan !== "PRO" && bot.plan !== "MANAGED") {
+    return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
+  }
 
   if (action === "give") {
     if (!userId || !guildId || typeof amount !== "number" || amount <= 0) {

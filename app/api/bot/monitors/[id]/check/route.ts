@@ -14,11 +14,13 @@ export async function POST(
 
   const monitor = await prisma.monitor.findUnique({
     where: { id },
-    include: { bot: { select: { userId: true } } },
+    include: { bot: { select: { userId: true, plan: true } } },
   });
 
   if (!monitor || monitor.bot.userId !== session.user.id)
     return NextResponse.json({ error: "Monitor introuvable" }, { status: 404 });
+  if (monitor.bot.plan !== "PRO" && monitor.bot.plan !== "MANAGED")
+    return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
 
   // The actual check must run on the bot-engine (TCP/ping/DB are not available from Vercel).
   // We schedule it by writing a pending command into the bot config via DB.

@@ -44,6 +44,8 @@ export async function POST(request: Request) {
     where: { id: botId, userId: session.user.id },
   });
   if (!bot) return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
+  if (bot.plan !== "PRO" && bot.plan !== "MANAGED")
+    return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
 
   const id = crypto.randomUUID();
 
@@ -87,6 +89,8 @@ export async function PATCH(request: Request) {
     where: { id: botId, userId: session.user.id },
   });
   if (!bot) return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
+  if (bot.plan !== "PRO" && bot.plan !== "MANAGED")
+    return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
 
   // Vérifier que l'autoresponse appartient bien à ce bot
   const existing = await prisma.$queryRaw<{ id: string }[]>`

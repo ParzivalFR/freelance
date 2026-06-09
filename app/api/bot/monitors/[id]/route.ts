@@ -16,11 +16,14 @@ export async function DELETE(
   const { id } = await params;
   const monitor = await prisma.monitor.findUnique({
     where: { id },
-    include: { bot: { select: { userId: true } } },
+    include: { bot: { select: { userId: true, plan: true } } },
   });
 
   if (!monitor || monitor.bot.userId !== session.user.id) {
     return NextResponse.json({ error: "Introuvable" }, { status: 404 });
+  }
+  if (monitor.bot.plan !== "PRO" && monitor.bot.plan !== "MANAGED") {
+    return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
   }
 
   await prisma.monitor.delete({ where: { id } });
@@ -40,11 +43,14 @@ export async function PATCH(
 
   const monitor = await prisma.monitor.findUnique({
     where: { id },
-    include: { bot: { select: { userId: true } } },
+    include: { bot: { select: { userId: true, plan: true } } },
   });
 
   if (!monitor || monitor.bot.userId !== session.user.id) {
     return NextResponse.json({ error: "Introuvable" }, { status: 404 });
+  }
+  if (monitor.bot.plan !== "PRO" && monitor.bot.plan !== "MANAGED") {
+    return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
   }
 
   const { name, interval, alertChannelId, alertRoleId, active, target, sshConfig } = body;

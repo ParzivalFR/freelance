@@ -52,6 +52,8 @@ export async function POST(request: Request) {
     where: { id: botId, userId: session.user.id },
   });
   if (!bot) return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
+  if (bot.plan !== "PRO" && bot.plan !== "MANAGED")
+    return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
 
   const guildId = (bot.config as { guildId?: string } | null)?.guildId;
   if (!guildId) return NextResponse.json({ error: "GuildId manquant" }, { status: 400 });
@@ -94,6 +96,8 @@ export async function PATCH(request: Request) {
     where: { id: form.botId, userId: session.user.id },
   });
   if (!bot) return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
+  if (bot.plan !== "PRO" && bot.plan !== "MANAGED")
+    return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
 
   const updated = await prisma.applicationForm.update({
     where: { id },
@@ -120,6 +124,8 @@ export async function DELETE(request: Request) {
     where: { id: form.botId, userId: session.user.id },
   });
   if (!bot) return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
+  if (bot.plan !== "PRO" && bot.plan !== "MANAGED")
+    return NextResponse.json({ error: "Abonnement PRO requis." }, { status: 403 });
 
   await prisma.applicationSubmission.deleteMany({ where: { formId: id } });
   await prisma.applicationForm.delete({ where: { id } });
