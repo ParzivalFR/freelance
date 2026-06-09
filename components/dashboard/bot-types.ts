@@ -31,6 +31,7 @@ export interface ModuleConfig {
   goodbyeEnabled?: boolean;
   goodbyeChannelId?: string;
   goodbyeMessage?: string;
+  goodbyeUseEmbed?: boolean;
   autoRoleIds?: string[];
   // Moderation
   logChannelId?: string;
@@ -88,6 +89,9 @@ export interface ModuleConfig {
   logsChannelDiscord?: string;
   // Logs — salon sondages
   logsChannelSurveys?: string;
+  // Logs — giveaways
+  logsChannelGiveaway?: string;
+  logsColorGiveaway?: string;
   // Welcome — image dynamique
   useWelcomeImage?: boolean;
   welcomeImageBackground?: string;
@@ -107,6 +111,7 @@ export interface ModuleConfig {
   enableRating?: boolean;
   enableClaim?: boolean;
   openMessage?: string;
+  inactivityTimeout?: number;
   // Survey (paramètres globaux du module)
   pollChannelId?: string;     // salon par défaut pour les sondages
   pollManagerRoleId?: string; // rôle autorisé à créer des sondages (vide = @everyone)
@@ -153,6 +158,7 @@ export interface ModuleConfig {
   starboardThreshold?: number;
   starboardSelfStar?: boolean;
   starboardIgnoreBots?: boolean;
+  starboardIgnoreChannels?: string[];
   starboardEmbedColor?: string;
   starboardRemoveOnUnstar?: boolean;
   // Reaction Roles
