@@ -17,7 +17,10 @@ export async function proxy(request: NextRequest) {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL("/signin", request.url));
     }
-    if (session?.user?.email !== ADMIN_EMAIL) {
+    const isAdmin =
+      session?.user?.email === ADMIN_EMAIL ||
+      (session?.user as { role?: string })?.role === "ADMIN";
+    if (!isAdmin) {
       return NextResponse.redirect(new URL("/dashboard/bot", request.url));
     }
   }

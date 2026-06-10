@@ -1,3 +1,9 @@
+export interface StatusEntry {
+  type: "PLAYING" | "WATCHING" | "LISTENING" | "COMPETING" | "STREAMING" | "CUSTOM";
+  text: string;
+  streamUrl?: string;
+}
+
 export interface LevelReward {
   level: number;
   roleId: string;
@@ -187,6 +193,10 @@ export interface ModuleConfig {
     channelId?: string;
     approveRoleId?: string;
   };
+  // Status / Présence bot
+  statusEntries?: StatusEntry[];
+  statusRotationInterval?: number;
+  botOnlineStatus?: "online" | "idle" | "dnd" | "invisible";
   // Général
   guildId?: string;
 }
@@ -231,6 +241,7 @@ export interface BotConfig {
   moduleVerification: boolean;
   moduleTempchannels: boolean;
   moduleStarboard: boolean;
+  moduleStatus: boolean;
   moduleReactionRoles: boolean;
   moduleAutoresponse: boolean;
   moduleEconomy: boolean;

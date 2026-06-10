@@ -52,6 +52,7 @@ import {
   Coins,
   Lightbulb,
   Moon,
+  Radio,
   Sparkles,
   CreditCard,
   Crown,
@@ -239,6 +240,13 @@ function buildNav(botId: string) {
           icon: Star,
           exact: false,
           pro: true,
+        },
+        {
+          title: "Statut bot",
+          url: `/dashboard/bot/${botId}/status`,
+          icon: Radio,
+          exact: false,
+          pro: false,
         },
         {
           title: "Suggestions",

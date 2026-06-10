@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, BarChart2, Cake, ClipboardList, Clock, Coins, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, Volume2 } from "lucide-react";
+import { Activity, BarChart2, Cake, ClipboardList, Clock, Coins, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, Volume2 } from "lucide-react";
 import { ModuleToggle, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useToast } from "@/components/ui/use-toast";
@@ -71,6 +71,15 @@ export default function BotModulesPage() {
           enabled={config.moduleReactionRoles}
           onToggle={() => update("moduleReactionRoles", !config.moduleReactionRoles)}
           configHref={`${base}/reaction-roles`}
+        />
+
+        <ModuleToggle
+          icon={<Radio className="size-3.5" />}
+          label="statut bot"
+          description="Présence Discord : Joue à, Regarde, Écoute — rotation automatique"
+          enabled={config.moduleStatus}
+          onToggle={() => update("moduleStatus", !config.moduleStatus)}
+          configHref={`${base}/status`}
         />
 
         {/* ─── PRO ─── */}
