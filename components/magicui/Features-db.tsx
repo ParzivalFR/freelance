@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowUpRight, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { Skeleton } from "../ui/skeleton";
 
@@ -17,9 +17,55 @@ type Project = {
   order: number;
 };
 
+function ImageModal({ project, onClose }: { project: Project; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
+        onClick={onClose}
+      >
+        <motion.div
+          initial={{ opacity: 0, scale: 0.92 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.92 }}
+          transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+          className="relative max-w-3xl w-full"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            onClick={onClose}
+            className="absolute -top-10 right-0 text-white/60 hover:text-white transition-colors"
+          >
+            <X className="size-6" />
+          </button>
+          <img
+            src={project.image}
+            alt={project.title}
+            className="w-full rounded-2xl border border-white/10 shadow-2xl object-cover"
+          />
+          <p className="mt-3 text-center font-[family-name:var(--font-display)] text-sm uppercase tracking-widest text-white/50">
+            {project.title}
+          </p>
+        </motion.div>
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 export function FeatureSectionDB() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [zoomed, setZoomed] = useState<Project | null>(null);
 
   useEffect(() => {
     fetch("/api/projects")
@@ -31,6 +77,8 @@ export function FeatureSectionDB() {
 
   return (
     <section id="features" className="py-20">
+      {zoomed && <ImageModal project={zoomed} onClose={() => setZoomed(null)} />}
+
       <div className="mx-auto max-w-5xl px-6 md:px-8">
 
         <div className="mb-14 text-center">
@@ -67,11 +115,8 @@ export function FeatureSectionDB() {
         {!isLoading && projects.length > 0 && (
           <div className="flex flex-col">
             {projects.map((p, i) => (
-              <motion.a
+              <motion.div
                 key={p.id}
-                href={p.url || undefined}
-                target={p.url ? "_blank" : undefined}
-                rel="noopener noreferrer"
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-10% 0px" }}
@@ -83,8 +128,13 @@ export function FeatureSectionDB() {
                   {String(i + 1).padStart(2, "0")}
                 </span>
 
-                {/* Contenu */}
-                <div className="flex flex-1 flex-col gap-2 min-w-0">
+                {/* Contenu — cliquable vers le projet */}
+                <a
+                  href={p.url || undefined}
+                  target={p.url ? "_blank" : undefined}
+                  rel="noopener noreferrer"
+                  className="flex flex-1 flex-col gap-2 min-w-0"
+                >
                   <div className="flex items-center gap-3">
                     <h3 className="font-[family-name:var(--font-display)] text-xl uppercase leading-none text-foreground transition-colors group-hover:text-[#7158ff] md:text-2xl">
                       {p.title}
@@ -106,26 +156,31 @@ export function FeatureSectionDB() {
                       ))}
                     </div>
                   )}
-                </div>
+                </a>
 
-                {/* Miniature */}
-                <div className="hidden sm:block shrink-0 w-28 overflow-hidden rounded-xl border border-transparent transition-all duration-300 group-hover:border-[#7158ff]/30 group-hover:shadow-md group-hover:shadow-[#7158ff]/10">
-                  {p.image ? (
+                {/* Miniature — cliquable pour le zoom */}
+                {p.image && (
+                  <button
+                    type="button"
+                    onClick={() => setZoomed(p)}
+                    className="hidden sm:block shrink-0 w-28 overflow-hidden rounded-xl border border-transparent transition-all duration-300 group-hover:border-[#7158ff]/30 group-hover:shadow-md group-hover:shadow-[#7158ff]/10 cursor-zoom-in"
+                  >
                     <img
                       src={p.image}
                       alt={p.title}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                       style={{ height: "72px" }}
                     />
-                  ) : (
-                    <div className="flex h-[72px] items-center justify-center bg-muted">
-                      <span className="font-[family-name:var(--font-display)] text-3xl uppercase text-muted-foreground/20">
-                        {p.title[0]}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              </motion.a>
+                  </button>
+                )}
+                {!p.image && (
+                  <div className="hidden sm:flex shrink-0 w-28 h-[72px] items-center justify-center rounded-xl bg-muted">
+                    <span className="font-[family-name:var(--font-display)] text-3xl uppercase text-muted-foreground/20">
+                      {p.title[0]}
+                    </span>
+                  </div>
+                )}
+              </motion.div>
             ))}
           </div>
         )}
