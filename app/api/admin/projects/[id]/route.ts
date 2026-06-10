@@ -48,18 +48,29 @@ export async function PUT(
       order,
     } = body;
 
+    // Si l'ordre a changé, décaler les autres projets
+    const current = await prisma.project.findUnique({ where: { id }, select: { order: true } });
+    const oldOrder = current?.order ?? order;
+
+    if (order !== undefined && order !== oldOrder) {
+      if (order > oldOrder) {
+        // Déplacement vers le bas → décaler vers le haut les projets entre oldOrder+1 et newOrder
+        await prisma.project.updateMany({
+          where: { id: { not: id }, order: { gt: oldOrder, lte: order } },
+          data: { order: { decrement: 1 } },
+        });
+      } else {
+        // Déplacement vers le haut → décaler vers le bas les projets entre newOrder et oldOrder-1
+        await prisma.project.updateMany({
+          where: { id: { not: id }, order: { gte: order, lt: oldOrder } },
+          data: { order: { increment: 1 } },
+        });
+      }
+    }
+
     const project = await prisma.project.update({
       where: { id },
-      data: {
-        title,
-        description,
-        image,
-        url,
-        technologies,
-        category,
-        isPublished,
-        order,
-      },
+      data: { title, description, image, url, technologies, category, isPublished, order },
     });
 
     return NextResponse.json(project);

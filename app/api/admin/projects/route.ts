@@ -39,14 +39,25 @@ export async function POST(request: Request) {
       order,
     } = body;
 
-    // Auto-incrément de l'ordre si non fourni
-    let finalOrder = order;
-    if (finalOrder === undefined || finalOrder === null || finalOrder === 0) {
-      const maxOrderResult = await prisma.project.findFirst({
-        orderBy: { order: 'desc' },
-        select: { order: true }
+    // Calcul de l'ordre final
+    const maxOrderResult = await prisma.project.findFirst({
+      orderBy: { order: 'desc' },
+      select: { order: true },
+    });
+    const maxOrder = maxOrderResult?.order ?? 0;
+
+    // Si order non fourni ou hors limites → placer en dernier
+    const finalOrder =
+      order !== undefined && order !== null && order >= 1 && order <= maxOrder + 1
+        ? order
+        : maxOrder + 1;
+
+    // Décaler vers le haut tous les projets à partir de la position choisie
+    if (finalOrder <= maxOrder) {
+      await prisma.project.updateMany({
+        where: { order: { gte: finalOrder } },
+        data: { order: { increment: 1 } },
       });
-      finalOrder = (maxOrderResult?.order ?? -1) + 1;
     }
 
     const project = await prisma.project.create({
