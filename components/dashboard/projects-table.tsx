@@ -15,7 +15,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Edit, ExternalLink, GripVertical, MoreHorizontal, Trash2 } from "lucide-react";
+import { Edit, ExternalLink, GripVertical, MoreHorizontal, Star, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -48,6 +48,7 @@ type Project = {
   technologies: string[];
   category: string;
   isPublished: boolean;
+  featured?: boolean;
   order: number;
   createdAt: Date;
   updatedAt: Date;
@@ -61,11 +62,13 @@ function SortableRow({
   project,
   onDelete,
   onTogglePublish,
+  onToggleFeatured,
   isDeleting,
 }: {
   project: Project;
   onDelete: (id: string) => void;
   onTogglePublish: (id: string, current: boolean) => void;
+  onToggleFeatured: (id: string, current: boolean) => void;
   isDeleting: string | null;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
@@ -116,13 +119,23 @@ function SortableRow({
         <Badge variant="outline">{project.category}</Badge>
       </TableCell>
       <TableCell>
-        <Badge
-          variant={project.isPublished ? "default" : "secondary"}
-          className="cursor-pointer"
-          onClick={() => onTogglePublish(project.id, project.isPublished)}
-        >
-          {project.isPublished ? "Publié" : "Brouillon"}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge
+            variant={project.isPublished ? "default" : "secondary"}
+            className="cursor-pointer"
+            onClick={() => onTogglePublish(project.id, project.isPublished)}
+          >
+            {project.isPublished ? "Publié" : "Brouillon"}
+          </Badge>
+          <button
+            type="button"
+            onClick={() => onToggleFeatured(project.id, project.featured ?? false)}
+            title={project.featured ? "Retirer la mise en avant" : "Mettre en avant"}
+            className={`transition-colors ${project.featured ? "text-yellow-400" : "text-muted-foreground/30 hover:text-yellow-400"}`}
+          >
+            <Star className="size-4" fill={project.featured ? "currentColor" : "none"} />
+          </button>
+        </div>
       </TableCell>
       <TableCell>
         <span className="font-mono text-sm">{project.order}</span>
@@ -239,6 +252,23 @@ export function ProjectsTable({ projects: initialProjects }: ProjectsTableProps)
     }
   };
 
+  const toggleFeatured = async (id: string, featured: boolean) => {
+    try {
+      const response = await fetch(`/api/admin/projects/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ featured: !featured }),
+      });
+      if (response.ok) {
+        setProjects((prev) =>
+          prev.map((p) => (p.id === id ? { ...p, featured: !featured } : p))
+        );
+      }
+    } catch {
+      // silent
+    }
+  };
+
   if (projects.length === 0) {
     return (
       <Card className="p-8 text-center">
@@ -290,6 +320,7 @@ export function ProjectsTable({ projects: initialProjects }: ProjectsTableProps)
                     project={project}
                     onDelete={handleDelete}
                     onTogglePublish={togglePublish}
+                    onToggleFeatured={toggleFeatured}
                     isDeleting={isDeleting}
                   />
                 ))}

@@ -7,9 +7,10 @@ export async function GET() {
       where: {
         isPublished: true,
       },
-      orderBy: {
-        order: 'asc',
-      },
+      orderBy: [
+        { featured: 'desc' },
+        { order: 'asc' },
+      ],
     });
 
     return NextResponse.json(projects);

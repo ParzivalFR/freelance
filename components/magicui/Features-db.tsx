@@ -14,6 +14,7 @@ type Project = {
   technologies: string[];
   category: string;
   isPublished: boolean;
+  featured?: boolean;
   order: number;
 };
 
@@ -121,10 +122,18 @@ export function FeatureSectionDB() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "150px 0px" }}
                 transition={{ duration: 0.3, delay: i * 0.03, ease: [0.16, 1, 0.3, 1] }}
-                className="group -mx-4 flex items-center gap-5 border-t border-border px-4 py-7 transition-colors duration-200 last:border-b hover:bg-muted/40 md:gap-8"
+                className={`group -mx-4 flex items-center gap-5 border-t border-border px-4 transition-colors duration-200 last:border-b md:gap-8 ${
+                  p.featured
+                    ? "border-l-2 border-l-[#7158ff]/60 bg-[#7158ff]/[0.04] py-8 hover:bg-[#7158ff]/[0.07]"
+                    : "py-7 hover:bg-muted/40"
+                }`}
               >
                 {/* Numéro */}
-                <span className="font-[family-name:var(--font-display)] text-4xl leading-none text-[#7158ff]/20 transition-colors duration-300 group-hover:text-[#7158ff]/60 shrink-0 md:text-5xl">
+                <span className={`font-[family-name:var(--font-display)] leading-none shrink-0 transition-colors duration-300 ${
+                  p.featured
+                    ? "text-4xl text-[#7158ff]/70 group-hover:text-[#7158ff] md:text-5xl"
+                    : "text-4xl text-[#7158ff]/20 group-hover:text-[#7158ff]/60 md:text-5xl"
+                }`}>
                   {String(i + 1).padStart(2, "0")}
                 </span>
 
@@ -136,9 +145,16 @@ export function FeatureSectionDB() {
                   className="flex flex-1 flex-col gap-2 min-w-0"
                 >
                   <div className="flex items-center gap-3">
-                    <h3 className="font-[family-name:var(--font-display)] text-xl uppercase leading-none text-foreground transition-colors group-hover:text-[#7158ff] md:text-2xl">
+                    <h3 className={`font-[family-name:var(--font-display)] uppercase leading-none text-foreground transition-colors group-hover:text-[#7158ff] ${
+                      p.featured ? "text-2xl md:text-3xl" : "text-xl md:text-2xl"
+                    }`}>
                       {p.title}
                     </h3>
+                    {p.featured && (
+                      <span className="shrink-0 rounded-full border border-[#7158ff]/30 bg-[#7158ff]/10 px-2 py-0.5 font-mono text-[10px] text-[#7158ff]">
+                        ✦ à la une
+                      </span>
+                    )}
                     <ArrowUpRight className="size-4 shrink-0 text-[#7158ff] opacity-0 -translate-x-1 transition-all duration-200 group-hover:opacity-100 group-hover:translate-x-0" />
                   </div>
                   <p className="text-sm leading-relaxed text-muted-foreground line-clamp-2">
@@ -163,18 +179,22 @@ export function FeatureSectionDB() {
                   <button
                     type="button"
                     onClick={() => setZoomed(p)}
-                    className="hidden sm:block shrink-0 w-28 overflow-hidden rounded-xl border border-transparent transition-all duration-300 group-hover:border-[#7158ff]/30 group-hover:shadow-md group-hover:shadow-[#7158ff]/10 cursor-zoom-in"
+                    className={`hidden sm:block shrink-0 overflow-hidden rounded-xl border border-transparent transition-all duration-300 group-hover:border-[#7158ff]/30 group-hover:shadow-md group-hover:shadow-[#7158ff]/10 cursor-zoom-in ${
+                      p.featured ? "w-36" : "w-28"
+                    }`}
                   >
                     <img
                       src={p.image}
                       alt={p.title}
                       className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
-                      style={{ height: "72px" }}
+                      style={{ height: p.featured ? "100px" : "72px" }}
                     />
                   </button>
                 )}
                 {!p.image && (
-                  <div className="hidden sm:flex shrink-0 w-28 h-[72px] items-center justify-center rounded-xl bg-muted">
+                  <div className={`hidden sm:flex shrink-0 items-center justify-center rounded-xl bg-muted ${
+                    p.featured ? "w-36 h-[100px]" : "w-28 h-[72px]"
+                  }`}>
                     <span className="font-[family-name:var(--font-display)] text-3xl uppercase text-muted-foreground/20">
                       {p.title[0]}
                     </span>
