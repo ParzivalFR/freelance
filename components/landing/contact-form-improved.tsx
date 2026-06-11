@@ -130,7 +130,7 @@ export default function ContactFormImproved() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.35 }}
-          viewport={{ once: true }}
+          viewport={{ once: true, margin: "150px 0px" }}
           className="mx-auto mb-16 max-w-3xl text-center"
         >
           <p className="font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
@@ -152,7 +152,7 @@ export default function ContactFormImproved() {
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.35, delay: 0.1 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "150px 0px" }}
             className="flex flex-col gap-8 lg:col-span-2"
           >
             <div>
@@ -182,7 +182,7 @@ export default function ContactFormImproved() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.35, delay: 0.2 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "150px 0px" }}
             className="lg:col-span-3"
           >
             <Form {...form}>

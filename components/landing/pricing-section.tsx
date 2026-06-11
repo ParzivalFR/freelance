@@ -121,8 +121,8 @@ export default function FreelanceServicesSection() {
               key={service.id}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.35, delay: idx * 0.08 }}
+              viewport={{ once: true, margin: "150px 0px" }}
+              transition={{ duration: 0.3, delay: idx * 0.04 }}
               className={cn(
                 "relative flex flex-col gap-5 rounded-2xl border p-6 transition-colors",
                 service.isMostPopular

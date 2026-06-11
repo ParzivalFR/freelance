@@ -63,7 +63,7 @@ export function FAQ() {
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.35 }}
-            viewport={{ once: true }}
+            viewport={{ once: true, margin: "150px 0px" }}
             className="mx-auto mb-16 max-w-3xl text-center"
           >
             <p className="font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
@@ -84,8 +84,8 @@ export function FAQ() {
                 key={i}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, delay: i * 0.05 }}
-                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: i * 0.03 }}
+                viewport={{ once: true, margin: "150px 0px" }}
               >
                 <Accordion type="single" collapsible>
                   <AccordionItem

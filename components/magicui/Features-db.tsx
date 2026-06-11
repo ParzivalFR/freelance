@@ -119,8 +119,8 @@ export function FeatureSectionDB() {
                 key={p.id}
                 initial={{ opacity: 0, y: 16 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-10% 0px" }}
-                transition={{ duration: 0.4, delay: i * 0.06, ease: [0.16, 1, 0.3, 1] }}
+                viewport={{ once: true, margin: "150px 0px" }}
+                transition={{ duration: 0.3, delay: i * 0.03, ease: [0.16, 1, 0.3, 1] }}
                 className="group -mx-4 flex items-center gap-5 border-t border-border px-4 py-7 transition-colors duration-200 last:border-b hover:bg-muted/40 md:gap-8"
               >
                 {/* Numéro */}

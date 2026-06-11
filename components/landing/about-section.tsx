@@ -52,7 +52,7 @@ export default function AboutSection() {
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.35 }}
-            viewport={{ once: true, margin: "-10% 0px" }}
+            viewport={{ once: true, margin: "150px 0px" }}
             className="space-y-5 text-lg leading-relaxed text-muted-foreground"
           >
             <p>
@@ -90,7 +90,7 @@ export default function AboutSection() {
             initial={{ opacity: 0, x: 20 }}
             whileInView={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.35, delay: 0.15 }}
-            viewport={{ once: true, margin: "-10% 0px" }}
+            viewport={{ once: true, margin: "150px 0px" }}
             className="space-y-8"
           >
             <div className="grid grid-cols-2 gap-3">
