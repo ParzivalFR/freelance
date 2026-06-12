@@ -53,6 +53,9 @@ export default function BotStatusPage() {
 
   const addEntry = () => {
     updateModuleConfig("statusEntries", [...entries, emptyEntry()]);
+    if (!config.config.statusRotationInterval) {
+      updateModuleConfig("statusRotationInterval", 30);
+    }
   };
 
   const currentOnline = ONLINE_STATUSES.find((s) => s.value === onlineStatus) ?? ONLINE_STATUSES[0];
