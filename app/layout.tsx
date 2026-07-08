@@ -45,7 +45,7 @@ export const metadata: Metadata = {
   description:
     "Propulsez votre présence sur le web. Des solutions sur mesure pour vos projets web, développées avec passion et expertise avec une attention particulière pour l'expérience utilisateur.",
   openGraph: {
-    url: "https://freelance.gael-dev.fr",
+    url: "https://gael-dev.fr",
     type: "website",
     title: "Gael Richard - Développeur Freelance",
     description:
