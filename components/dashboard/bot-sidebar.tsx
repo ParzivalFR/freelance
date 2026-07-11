@@ -46,6 +46,7 @@ import {
   BarChart2,
   BookOpen,
   Bot,
+  Bug,
   Cake,
   ClipboardList,
   Clock,
@@ -192,6 +193,13 @@ function buildNav(botId: string) {
           icon: Gift,
           exact: false,
           pro: true,
+        },
+        {
+          title: "Honeypot",
+          url: `/dashboard/bot/${botId}/honeypot`,
+          icon: Bug,
+          exact: false,
+          pro: false,
         },
         {
           title: "Logs",

@@ -197,6 +197,19 @@ export interface ModuleConfig {
   statusEntries?: StatusEntry[];
   statusRotationInterval?: number;
   botOnlineStatus?: "online" | "idle" | "dnd" | "invisible";
+  // Honeypot
+  honeypotChannelId?: string;
+  honeypotExemptRoleIds?: string[];
+  honeypotDmEnabled?: boolean;
+  honeypotDeleteMessageHours?: number;
+  honeypotRestoreRoles?: boolean;
+  honeypotCounter?: number;
+  honeypotEmbedTitle?: string;
+  honeypotEmbedDescription?: string;
+  honeypotEmbedColor?: string;
+  honeypotEmbedFooter?: string;
+  honeypotEmbedChannelId?: string;
+  honeypotEmbedMessageId?: string;
   // Général
   guildId?: string;
 }
@@ -242,6 +255,7 @@ export interface BotConfig {
   moduleTempchannels: boolean;
   moduleStarboard: boolean;
   moduleStatus: boolean;
+  moduleHoneypot: boolean;
   moduleReactionRoles: boolean;
   moduleAutoresponse: boolean;
   moduleEconomy: boolean;

@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, BarChart2, Cake, ClipboardList, Clock, Coins, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, Volume2 } from "lucide-react";
+import { Activity, BarChart2, Bug, Cake, ClipboardList, Clock, Coins, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, Volume2 } from "lucide-react";
 import { ModuleToggle, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useToast } from "@/components/ui/use-toast";
@@ -80,6 +80,15 @@ export default function BotModulesPage() {
           enabled={config.moduleStatus}
           onToggle={() => update("moduleStatus", !config.moduleStatus)}
           configHref={`${base}/status`}
+        />
+
+        <ModuleToggle
+          icon={<Bug className="size-3.5" />}
+          label="honeypot"
+          description="Salon-piège anti-spam : softban auto, MP de prévention, restauration des rôles"
+          enabled={config.moduleHoneypot}
+          onToggle={() => update("moduleHoneypot", !config.moduleHoneypot)}
+          configHref={`${base}/honeypot`}
         />
 
         {/* ─── PRO ─── */}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>GR. — Générateur PNG</title>
+<style>
+  body { font-family: system-ui, sans-serif; background: #0f0f14; color: #f4f4f6; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; gap: 24px; margin: 0; padding: 24px; }
+  h1 { font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase; color: #8b8b9e; margin: 0; }
+  .grid { display: flex; flex-wrap: wrap; gap: 16px; justify-content: center; }
+  button { background: #7158ff; color: #fff; border: none; border-radius: 10px; padding: 12px 24px; font-size: 13px; font-weight: 700; cursor: pointer; transition: opacity 0.15s; }
+  button:hover { opacity: 0.85; }
+  canvas { border-radius: 12%; }
+  .item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .size { font-size: 11px; color: #8b8b9e; }
+  .note { font-size: 12px; color: #8b8b9e; text-align: center; max-width: 400px; line-height: 1.6; }
+  .note strong { color: #7158ff; }
+  .delete-note { font-size: 11px; color: #555; margin-top: 8px; }
+</style>
+</head>
+<body>
+
+<h1>GR. — Générateur de logos PNG</h1>
+
+<div class="grid" id="previews"></div>
+
+<button onclick="downloadAll()">⬇ Tout télécharger</button>
+
+<p class="note">Ouvre cette page dans ton navigateur, clique sur le bouton. Les PNG seront téléchargés automatiquement.</p>
+<p class="delete-note">Tu peux supprimer ce fichier après utilisation.</p>
+
+<script>
+const SIZES = [512, 192, 180, 64, 32, 16];
+
+function drawLogo(canvas, size) {
+  canvas.width = size;
+  canvas.height = size;
+  const ctx = canvas.getContext('2d');
+
+  ctx.fillStyle = '#0A0A0F';
+  ctx.beginPath();
+  ctx.roundRect(0, 0, size, size, size * 0.18);
+  ctx.fill();
+
+  const fontSize = Math.round(size * 0.54);
+  ctx.font = `900 ${fontSize}px "Arial Black", "Helvetica Neue", Impact, sans-serif`;
+  ctx.textBaseline = 'middle';
+  ctx.textAlign = 'left';
+
+  const grW = ctx.measureText('GR').width;
+  const dotW = ctx.measureText('.').width;
+  const startX = (size - grW - dotW) / 2;
+
+  ctx.fillStyle = '#F4F4F6';
+  ctx.fillText('GR', startX, size / 2);
+  ctx.fillStyle = '#7158ff';
+  ctx.fillText('.', startX + grW, size / 2);
+}
+
+// Render previews
+SIZES.forEach(size => {
+  const item = document.createElement('div');
+  item.className = 'item';
+  const canvas = document.createElement('canvas');
+  const display = Math.min(size, 96);
+  canvas.style.width = display + 'px';
+  canvas.style.height = display + 'px';
+  drawLogo(canvas, size);
+  const label = document.createElement('span');
+  label.className = 'size';
+  label.textContent = `${size}×${size}`;
+  item.appendChild(canvas);
+  item.appendChild(label);
+  document.getElementById('previews').appendChild(item);
+});
+
+function downloadAll() {
+  SIZES.forEach((size, i) => {
+    const canvas = document.createElement('canvas');
+    drawLogo(canvas, size);
+    setTimeout(() => {
+      const a = document.createElement('a');
+      a.href = canvas.toDataURL('image/png');
+      a.download = `gr-logo-${size}x${size}.png`;
+      a.click();
+    }, i * 200);
+  });
+}
+</script>
+</body>
+</html>
