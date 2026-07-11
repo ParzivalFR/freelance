@@ -38,7 +38,7 @@ export default function TempChannelsPage() {
           label="category_id"
           value={config.config.tempChannelsCategoryId ?? ""}
           onChange={(v) => updateModuleConfig("tempChannelsCategoryId", v)}
-          filter="all"
+          filter="category"
         />
 
         <CyberInput

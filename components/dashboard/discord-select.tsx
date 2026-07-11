@@ -74,13 +74,14 @@ export function ChannelSelect({
   onChange: (v: string) => void;
   label: string;
   placeholder?: string;
-  filter?: "text" | "voice" | "all";
+  filter?: "text" | "voice" | "category" | "all";
 }) {
   const { data, loading, error } = useDiscordData(botId);
 
   const channels = (data?.channels ?? []).filter((c) => {
     if (filter === "text") return c.type === 0;
     if (filter === "voice") return c.type === 2;
+    if (filter === "category") return c.type === 4;
     return true;
   });
 
@@ -130,7 +131,7 @@ export function ChannelSelect({
         )}
         {channels.map((c) => (
           <option key={c.id} value={c.id}>
-            {c.type === 2 ? "🔊 " : "# "}{c.name}
+            {c.type === 2 ? "🔊 " : c.type === 4 ? "📁 " : "# "}{c.name}
           </option>
         ))}
       </select>

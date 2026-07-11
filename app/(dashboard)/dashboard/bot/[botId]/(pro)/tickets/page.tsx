@@ -166,7 +166,7 @@ export default function TicketsPage() {
           label="discord_category_id (catégorie)"
           value={config.config.categoryId ?? ""}
           onChange={(v) => updateModuleConfig("categoryId", v)}
-          filter="all"
+          filter="category"
         />
         <ChannelSelect
           botId={botId}
