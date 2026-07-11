@@ -165,12 +165,36 @@ export default function AnnouncePage() {
                   />
                 </div>
               </div>
-              <CyberInput
-                label="footer"
-                value={embedFooter}
-                onChange={setEmbedFooter}
-                placeholder="Ton serveur • Annonce"
-              />
+              <div className="space-y-1.5">
+                <p className="font-mono text-[9px] font-bold uppercase tracking-widest text-muted-foreground">footer</p>
+                <input
+                  type="text"
+                  value={embedFooter}
+                  onChange={(e) => setEmbedFooter(e.target.value)}
+                  placeholder="Ton serveur • Annonce"
+                  className="w-full rounded-lg border border-dashed bg-background py-2.5 pl-3 pr-3 font-mono text-sm text-foreground placeholder-muted-foreground/40 outline-hidden transition focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/10"
+                />
+                <div className="flex flex-wrap gap-1 pt-0.5">
+                  {[
+                    { label: "📅 Date", value: new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" }) },
+                    { label: "🕐 Heure", value: new Date().toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }) },
+                    { label: "📅 Date & heure", value: new Date().toLocaleString("fr-FR", { day: "numeric", month: "long", year: "numeric", hour: "2-digit", minute: "2-digit" }) },
+                    { label: "📣 Annonce officielle", value: "Annonce officielle" },
+                    { label: "⚠️ Important", value: "Important" },
+                    { label: "🔔 Mise à jour", value: "Mise à jour" },
+                    { label: "📌 Épinglé", value: "Épinglé" },
+                  ].map(({ label, value }) => (
+                    <button
+                      key={label}
+                      type="button"
+                      onClick={() => setEmbedFooter(embedFooter ? `${embedFooter} • ${value}` : value)}
+                      className="rounded border border-dashed px-2 py-0.5 font-mono text-[9px] text-muted-foreground/60 transition hover:border-blue-500/30 hover:text-blue-400"
+                    >
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
             <CyberInput
               label="image (url, optionnel)"
