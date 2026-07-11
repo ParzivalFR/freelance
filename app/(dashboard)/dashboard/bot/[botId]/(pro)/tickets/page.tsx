@@ -161,6 +161,15 @@ export default function TicketsPage() {
         <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
           — salons —
         </p>
+        <CyberInput
+          label="préfixe_des_salons"
+          value={config.config.channelPrefix ?? ""}
+          onChange={(v) => updateModuleConfig("channelPrefix", v)}
+          placeholder="ticket"
+        />
+        <p className="font-mono text-[9px] text-muted-foreground/50 -mt-1">
+          Nom des salons créés : <span className="text-foreground">{(config.config.channelPrefix?.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 20) || "ticket")}-a1b2c3-pseudo</span>. Minuscules et chiffres uniquement.
+        </p>
         <ChannelSelect
           botId={botId}
           label="discord_category_id (catégorie)"

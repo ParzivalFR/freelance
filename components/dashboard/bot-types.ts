@@ -108,6 +108,7 @@ export interface ModuleConfig {
   antiRaidAction?: "kick" | "ban" | "mute";
   antiRaidJoinRateLimit?: number;
   // Tickets
+  channelPrefix?: string;
   categoryId?: string;
   staffRoleId?: string;
   panelTitle?: string;
