@@ -51,6 +51,7 @@ import {
   Clock,
   Coins,
   Lightbulb,
+  Megaphone,
   Moon,
   Radio,
   Sparkles,
@@ -136,6 +137,13 @@ function buildNav(botId: string) {
     {
       label: "Modules",
       items: [
+        {
+          title: "Annonces",
+          url: `/dashboard/bot/${botId}/announce`,
+          icon: Megaphone,
+          exact: false,
+          pro: false,
+        },
         {
           title: "AFK",
           url: `/dashboard/bot/${botId}/afk`,
