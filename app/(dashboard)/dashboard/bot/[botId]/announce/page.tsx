@@ -16,7 +16,10 @@ export default function AnnouncePage() {
   const botId = params?.botId as string;
   const { config } = useBotConfig();
 
+  const [action, setAction] = useState<"new" | "edit">("new");
   const [channelId, setChannelId] = useState("");
+  const [messageLink, setMessageLink] = useState("");
+  const [messageId, setMessageId] = useState("");
   const [mode, setMode] = useState<"text" | "embed">("text");
   const [content, setContent] = useState("");
   const [embedTitle, setEmbedTitle] = useState("");
@@ -25,49 +28,93 @@ export default function AnnouncePage() {
   const [embedFooter, setEmbedFooter] = useState("");
   const [embedImageUrl, setEmbedImageUrl] = useState("");
   const [sending, setSending] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   if (!config) return <LoadingScreen />;
 
-  const canSend =
-    !!channelId &&
-    (mode === "text" ? !!content.trim() : !!(embedTitle.trim() || embedDescription.trim()));
+  const hasContent = mode === "text" ? !!content.trim() : !!(embedTitle.trim() || embedDescription.trim());
+  const canSend = action === "new" ? !!channelId && hasContent : !!messageId && hasContent;
 
-  const send = async () => {
+  // Parse un lien de message Discord → { channelId, messageId }
+  const parseMessageLink = (link: string): { channelId: string; messageId: string } | null => {
+    const m = link.trim().match(/channels\/\d+\/(\d+)\/(\d+)/);
+    return m ? { channelId: m[1], messageId: m[2] } : null;
+  };
+
+  const loadMessage = async () => {
+    const parsed = parseMessageLink(messageLink);
+    if (!parsed) {
+      toast.error("Lien de message Discord invalide. Fais clic droit sur le message → Copier le lien du message.");
+      return;
+    }
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/bot/${botId}/announce?channelId=${parsed.channelId}&messageId=${parsed.messageId}`);
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error ?? "Impossible de charger le message");
+        return;
+      }
+      setChannelId(parsed.channelId);
+      setMessageId(parsed.messageId);
+      if (data.mode === "embed") {
+        setMode("embed");
+        setEmbedTitle(data.embed.title ?? "");
+        setEmbedDescription(data.embed.description ?? "");
+        setEmbedColor(data.embed.color ?? DEFAULT_COLOR);
+        setEmbedFooter(data.embed.footer ?? "");
+        setEmbedImageUrl(data.embed.imageUrl ?? "");
+      } else {
+        setMode("text");
+        setContent(data.content ?? "");
+      }
+      toast.success("Annonce chargée ! Modifie puis enregistre.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const resetForm = () => {
+    setContent("");
+    setEmbedTitle("");
+    setEmbedDescription("");
+    setEmbedColor(DEFAULT_COLOR);
+    setEmbedFooter("");
+    setEmbedImageUrl("");
+  };
+
+  const submit = async () => {
     if (!canSend || sending) return;
     setSending(true);
     try {
+      const embedPayload =
+        mode === "embed"
+          ? { title: embedTitle, description: embedDescription, color: embedColor || DEFAULT_COLOR, footer: embedFooter, imageUrl: embedImageUrl }
+          : undefined;
+
       const res = await fetch(`/api/bot/${botId}/announce`, {
-        method: "POST",
+        method: action === "new" ? "POST" : "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           channelId,
+          ...(action === "edit" && { messageId }),
           mode,
           content: mode === "text" ? content : undefined,
-          embed:
-            mode === "embed"
-              ? {
-                  title: embedTitle,
-                  description: embedDescription,
-                  color: embedColor || DEFAULT_COLOR,
-                  footer: embedFooter,
-                  imageUrl: embedImageUrl,
-                }
-              : undefined,
+          embed: embedPayload,
         }),
       });
 
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error ?? "Erreur lors de l'envoi");
+        toast.error(data.error ?? "Une erreur est survenue");
         return;
       }
-      toast.success("Message envoyé avec succès !");
-      setContent("");
-      setEmbedTitle("");
-      setEmbedDescription("");
-      setEmbedColor(DEFAULT_COLOR);
-      setEmbedFooter("");
-      setEmbedImageUrl("");
+      if (action === "new") {
+        toast.success("Message envoyé avec succès !");
+        resetForm();
+      } else {
+        toast.success("Annonce modifiée avec succès !");
+      }
     } finally {
       setSending(false);
     }
@@ -86,17 +133,70 @@ export default function AnnouncePage() {
       />
 
       <div className="space-y-4">
-        {/* Salon cible */}
+        {/* Action */}
         <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
-          <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— salon cible —</p>
-          <ChannelSelect
-            botId={botId}
-            label="channel_id"
-            value={channelId}
-            onChange={setChannelId}
-            filter="text"
-          />
+          <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— action —</p>
+          <div className="grid grid-cols-2 gap-2">
+            {([["new", "✚ Nouvelle annonce"], ["edit", "✎ Modifier une annonce"]] as const).map(([a, label]) => (
+              <button
+                key={a}
+                type="button"
+                onClick={() => setAction(a)}
+                className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 font-mono text-[10px] uppercase tracking-widest transition ${
+                  action === a
+                    ? "border-blue-500/40 bg-blue-500/10 text-blue-400"
+                    : "border-dashed text-muted-foreground/50 hover:border-blue-500/20 hover:text-muted-foreground"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
         </div>
+
+        {/* Salon cible OU message à modifier */}
+        {action === "new" ? (
+          <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— salon cible —</p>
+            <ChannelSelect
+              botId={botId}
+              label="channel_id"
+              value={channelId}
+              onChange={setChannelId}
+              filter="text"
+            />
+          </div>
+        ) : (
+          <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— annonce à modifier —</p>
+            <div className="space-y-1.5">
+              <p className="font-mono text-[9px] font-bold uppercase tracking-widest text-muted-foreground">lien_du_message</p>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={messageLink}
+                  onChange={(e) => setMessageLink(e.target.value)}
+                  placeholder="https://discord.com/channels/…/…/…"
+                  className="w-full rounded-lg border border-dashed bg-background py-2.5 pl-3 pr-3 font-mono text-sm text-foreground placeholder-muted-foreground/40 outline-hidden transition focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/10"
+                />
+                <button
+                  type="button"
+                  onClick={loadMessage}
+                  disabled={loading || !messageLink.trim()}
+                  className="shrink-0 rounded-lg border border-dashed px-4 font-mono text-[10px] font-bold uppercase tracking-widest text-muted-foreground transition hover:border-blue-500/30 hover:text-blue-400 disabled:opacity-40"
+                >
+                  {loading ? "…" : "charger"}
+                </button>
+              </div>
+              <p className="font-mono text-[9px] text-muted-foreground/50">
+                Clic droit sur le message → <span className="text-foreground">Copier le lien du message</span>. Le bot ne peut modifier que ses propres messages.
+              </p>
+              {messageId && (
+                <p className="font-mono text-[9px] text-green-500/70">✓ Message chargé (ID {messageId})</p>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Mode */}
         <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
@@ -247,12 +347,14 @@ export default function AnnouncePage() {
         {/* Bouton envoi */}
         <div className="flex justify-end">
           <button
-            onClick={send}
+            onClick={submit}
             disabled={!canSend || sending}
             className="flex items-center gap-2 rounded-lg border border-dashed px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground transition hover:bg-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-40"
           >
             <Send className="size-3.5" />
-            {sending ? "envoi_en_cours..." : "envoyer_maintenant"}
+            {sending
+              ? action === "new" ? "envoi_en_cours..." : "modification..."
+              : action === "new" ? "envoyer_maintenant" : "enregistrer_les_modifications"}
           </button>
         </div>
       </div>
