@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { decryptIfNeeded } from "@/lib/monitor-crypto";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -31,6 +32,10 @@ export async function POST(request: Request) {
   if (!bot) {
     return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
   }
+  if (!bot.token) {
+    return NextResponse.json({ error: "Token bot manquant" }, { status: 400 });
+  }
+  const botToken = decryptIfNeeded(bot.token);
 
   const result: Record<string, { username: string; displayName: string; avatar: string | null }> = {};
 
@@ -40,7 +45,7 @@ export async function POST(request: Request) {
         const res = await fetch(
           `https://discord.com/api/v10/guilds/${bot.guildId}/members/${userId}`,
           {
-            headers: { Authorization: `Bot ${bot.token}` },
+            headers: { Authorization: `Bot ${botToken}` },
           }
         );
         if (!res.ok) throw new Error(`HTTP ${res.status}`);

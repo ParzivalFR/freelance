@@ -56,13 +56,20 @@ export default function BotConfigPage() {
               placeholder="!"
             />
           </div>
-          <CyberInput
-            label="discord_token"
-            value={config.token ?? ""}
-            onChange={(v) => update("token", v)}
-            type="password"
-            placeholder="Colle le token de ton bot Discord ici"
-          />
+          <div className="space-y-1.5">
+            <CyberInput
+              label="discord_token"
+              value={config.token ?? ""}
+              onChange={(v) => update("token", v)}
+              type="password"
+              placeholder={config.hasToken ? "•••••••• (laisse vide pour ne pas changer)" : "Colle le token de ton bot Discord ici"}
+            />
+            {config.hasToken && !config.token && (
+              <p className="font-mono text-[9px] text-green-500/70">
+                ✓ Token enregistré et chiffré. Laisse ce champ vide pour le conserver, ou colle un nouveau token pour le remplacer.
+              </p>
+            )}
+          </div>
           <div className="space-y-1.5">
             <CyberInput
               label="server_id (guild_id)"

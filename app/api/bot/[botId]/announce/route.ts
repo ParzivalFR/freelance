@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { decryptIfNeeded } from "@/lib/monitor-crypto";
 import { NextResponse } from "next/server";
 
 const DISCORD_API = "https://discord.com/api/v10";
@@ -18,7 +19,7 @@ async function getBotToken(botId: string, userId: string): Promise<string | null
     where: { id: botId, userId },
     select: { token: true },
   });
-  return bot?.token ?? null;
+  return bot?.token ? decryptIfNeeded(bot.token) : null;
 }
 
 // Construit le payload Discord à partir du mode + contenu

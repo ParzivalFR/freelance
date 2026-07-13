@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { decryptIfNeeded } from "@/lib/monitor-crypto";
 import { NextResponse } from "next/server";
 
 // GET /api/bot/giveaways?botId=x&status=ACTIVE
@@ -58,7 +59,7 @@ export async function POST(request: Request) {
 
   // Récupérer le guild automatiquement via l'API Discord
   const guildsRes = await fetch("https://discord.com/api/v10/users/@me/guilds", {
-    headers: { Authorization: `Bot ${bot.token}` },
+    headers: { Authorization: `Bot ${decryptIfNeeded(bot.token)}` },
   });
   if (!guildsRes.ok) return NextResponse.json({ error: "Impossible de récupérer le serveur Discord" }, { status: 502 });
 

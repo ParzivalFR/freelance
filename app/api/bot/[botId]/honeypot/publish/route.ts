@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { decryptIfNeeded } from "@/lib/monitor-crypto";
 import { NextResponse } from "next/server";
 
 const DEFAULT_COLOR = "393a41";
@@ -53,7 +54,7 @@ export async function POST(
   const res = await fetch(`https://discord.com/api/v10/channels/${channelId}/messages`, {
     method: "POST",
     headers: {
-      Authorization: `Bot ${bot.token}`,
+      Authorization: `Bot ${decryptIfNeeded(bot.token)}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({ embeds: [embed] }),

@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { encrypt } from "@/lib/monitor-crypto";
 import { NextResponse } from "next/server";
 
 // Délai max sans heartbeat avant de considérer le bot OFFLINE (90s)
@@ -118,7 +119,8 @@ export async function PATCH(request: Request) {
       where: { id },
       data: {
         ...(name !== undefined && { name }),
-        ...(token !== undefined && { token }),
+        // On chiffre le token avant stockage. Un token vide = « ne pas changer ».
+        ...(token !== undefined && token !== "" && { token: encrypt(token) }),
         ...(prefix !== undefined && { prefix }),
         ...(moduleWelcome !== undefined && { moduleWelcome }),
         ...(moduleModeration !== undefined && { moduleModeration }),

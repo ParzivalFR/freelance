@@ -40,6 +40,11 @@ export function isEncrypted(value: string): boolean {
   return /^[0-9a-f]{24}:[0-9a-f]{32}:[0-9a-f]+$/i.test(value);
 }
 
+/** Déchiffre la valeur si elle est chiffrée, sinon la renvoie telle quelle (rétrocompat). */
+export function decryptIfNeeded(value: string): string {
+  return isEncrypted(value) ? decrypt(value) : value;
+}
+
 /** Replace the password in a DB URL with *** for display. */
 export function maskConnectionString(url: string): string {
   try {

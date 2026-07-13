@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { decryptIfNeeded } from "@/lib/monitor-crypto";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -35,7 +36,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "guildId non configuré" }, { status: 400 });
   }
 
-  const headers = { Authorization: `Bot ${bot.token}` };
+  const headers = { Authorization: `Bot ${decryptIfNeeded(bot.token)}` };
 
   const [channelsRes, rolesRes] = await Promise.all([
     fetch(`https://discord.com/api/v10/guilds/${guildId}/channels`, { headers }),

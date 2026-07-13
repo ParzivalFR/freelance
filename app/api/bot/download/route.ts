@@ -1,5 +1,6 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
+import { decryptIfNeeded, encrypt } from "@/lib/monitor-crypto";
 import AdmZip from "adm-zip";
 import { NextResponse } from "next/server";
 import path from "path";
@@ -50,7 +51,7 @@ export async function GET() {
     {
       name: bot.name,
       prefix: bot.prefix,
-      token: bot.token ?? "",
+      token: bot.token ? decryptIfNeeded(bot.token) : "",
       modules: {
         welcome:    bot.moduleWelcome,
         moderation: bot.moduleModeration,
@@ -111,7 +112,7 @@ async function setup() {
       data: {
         userId: user.id,
         name: config.name,
-        token: config.token,
+        token: config.token ? encrypt(config.token) : null,
         prefix: config.prefix,
         moduleWelcome: config.modules.welcome,
         moduleModeration: config.modules.moderation,
