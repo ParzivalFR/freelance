@@ -50,13 +50,8 @@ export async function POST(request: Request) {
 
   const colorHex = (panel.color ?? "393a41").replace("#", "");
   const color = parseInt(colorHex, 16);
-  const embed = {
-    color: Number.isNaN(color) ? parseInt("393a41", 16) : color,
-    title: panel.title,
-    ...(panel.description ? { description: panel.description } : {}),
-  };
 
-  // Boutons chunkés par 5 (max par ligne), 5 lignes max
+  // Boutons chunkés par 5 (max par ligne)
   const rows: unknown[] = [];
   for (let i = 0; i < panel.buttons.length; i += 5) {
     const chunk = panel.buttons.slice(i, i + 5);
@@ -72,11 +67,24 @@ export async function POST(request: Request) {
     });
   }
 
+  // Container Components V2 (type 17) : titre + description + boutons dans un seul bloc.
+  const container = {
+    type: 17,
+    accent_color: Number.isNaN(color) ? parseInt("393a41", 16) : color,
+    components: [
+      { type: 10, content: `## ${panel.title}` },
+      ...(panel.description ? [{ type: 14, spacing: 1 }, { type: 10, content: panel.description }] : []),
+      { type: 14, spacing: 1 },
+      ...rows,
+    ],
+  };
+
   const token = decryptIfNeeded(bot.token);
   const res = await fetch(`https://discord.com/api/v10/channels/${panel.channelId}/messages`, {
     method: "POST",
     headers: { Authorization: `Bot ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ embeds: [embed], components: rows }),
+    // 32768 = MessageFlags.IsComponentsV2
+    body: JSON.stringify({ flags: 32768, components: [container] }),
   });
 
   if (!res.ok) {
