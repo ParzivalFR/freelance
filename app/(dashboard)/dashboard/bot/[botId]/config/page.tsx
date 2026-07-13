@@ -5,11 +5,18 @@ import { Cpu, Save } from "lucide-react";
 import { BorderBeam } from "@/components/magicui/border-beam";
 import { CyberInput, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
+import { toast } from "sonner";
 
 export default function BotConfigPage() {
   const { config, saving, saved, update, save } = useBotConfig();
 
   if (!config) return <LoadingScreen />;
+
+  const handleSave = async () => {
+    const res = await save();
+    if (res.ok) toast.success("Configuration enregistrée !");
+    else toast.error(res.error ?? "Erreur lors de l'enregistrement");
+  };
 
   return (
     <div className="space-y-6 px-5 py-6 md:px-7 lg:px-8">
@@ -116,7 +123,7 @@ export default function BotConfigPage() {
 
       <div className="flex justify-end">
         <button
-          onClick={save}
+          onClick={handleSave}
           disabled={saving}
           className="flex items-center gap-2 rounded-lg border border-dashed px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground transition hover:bg-muted hover:text-foreground disabled:opacity-40"
         >
