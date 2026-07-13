@@ -51,7 +51,7 @@ export async function GET(request: Request) {
   const rawRoles = await rolesRes.json() as { id: string; name: string; color: number }[];
 
   const channels = rawChannels
-    .filter((c) => c.type === 0 || c.type === 2 || c.type === 4)
+    .filter((c) => c.type === 0 || c.type === 2 || c.type === 4 || c.type === 15)
     .map((c) => ({ id: c.id, name: c.name, type: c.type }));
 
   const roles = rawRoles
