@@ -63,34 +63,29 @@ export default function BotConfigPage() {
             type="password"
             placeholder="Colle le token de ton bot Discord ici"
           />
-          {config.config?.guildId ? (
-            <div className="space-y-1">
-              <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">server_id (guild_id)</p>
-              <div className="flex items-center gap-2 rounded-xl border border-dashed bg-card px-3 py-2">
-                <span className="flex-1 font-mono text-xs text-foreground">{config.config.guildId}</span>
-                <span className="rounded border border-green-500/30 bg-green-500/10 px-1.5 py-0.5 font-mono text-[9px] text-green-500">auto ✓</span>
-              </div>
-              <p className="font-mono text-[9px] text-muted-foreground/50">Détecté automatiquement au démarrage du bot</p>
+          <div className="space-y-1.5">
+            <CyberInput
+              label="server_id (guild_id)"
+              value={config.config?.guildId ?? ""}
+              onChange={(v) => update("config", { ...config.config, guildId: v.trim() })}
+              placeholder="Rempli automatiquement au 1er démarrage"
+            />
+            {config.config?.guildId && (
+              <p className="font-mono text-[9px] text-green-500/70">
+                ✓ Détecté automatiquement — modifiable si le bot cible le mauvais serveur.
+              </p>
+            )}
+            <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-3">
+              <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
+                💡 comment ça marche
+              </p>
+              <p className="mt-1 font-mono text-[10px] text-muted-foreground/60">
+                L&apos;ID est détecté et sauvegardé au 1er démarrage du bot. Si ton bot est sur
+                plusieurs serveurs et cible le mauvais, colle ici l&apos;ID du bon serveur
+                (clic droit sur ton serveur → &ldquo;Copier l&apos;identifiant&rdquo;, Mode Développeur activé), puis enregistre.
+              </p>
             </div>
-          ) : (
-            <>
-              <CyberInput
-                label="server_id (guild_id)"
-                value=""
-                onChange={(v) => update("config", { ...config.config, guildId: v })}
-                placeholder="Rempli automatiquement au 1er démarrage"
-              />
-              <div className="rounded-lg border border-blue-500/20 bg-blue-500/5 p-3">
-                <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
-                  💡 comment ça marche
-                </p>
-                <p className="mt-1 font-mono text-[10px] text-muted-foreground/60">
-                  Invite le bot sur ton serveur Discord et démarre-le — l&apos;ID sera détecté et sauvegardé automatiquement.
-                  Tu peux aussi le saisir manuellement (clic droit sur ton serveur → &ldquo;Copier l&apos;identifiant&rdquo; avec le Mode Développeur activé).
-                </p>
-              </div>
-            </>
-          )}
+          </div>
 
           <div className="rounded-lg border border-dashed p-3">
             <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
