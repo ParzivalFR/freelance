@@ -202,6 +202,13 @@ function buildNav(botId: string) {
           pro: false,
         },
         {
+          title: "Quêtes",
+          url: `/dashboard/bot/${botId}/quests`,
+          icon: Rocket,
+          exact: false,
+          pro: true,
+        },
+        {
           title: "Logs",
           url: `/dashboard/bot/${botId}/logs`,
           icon: ScrollText,

@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, BarChart2, Bug, Cake, ClipboardList, Clock, Coins, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, Volume2 } from "lucide-react";
+import { Activity, BarChart2, Bug, Cake, ClipboardList, Clock, Coins, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Rocket, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, Volume2 } from "lucide-react";
 import { ModuleToggle, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useToast } from "@/components/ui/use-toast";
@@ -241,6 +241,16 @@ export default function BotModulesPage() {
           enabled={config.moduleAibuild}
           onToggle={() => update("moduleAibuild", !config.moduleAibuild)}
           configHref={`${base}/aibuild`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<Rocket className="size-3.5" />}
+          label="quêtes"
+          description="/quete poster — forum bénévoles & contrats avec Components V2"
+          enabled={config.moduleQuests}
+          onToggle={() => update("moduleQuests", !config.moduleQuests)}
+          configHref={`${base}/quests`}
           locked={!isPro}
         />
 

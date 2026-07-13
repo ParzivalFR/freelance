@@ -74,7 +74,7 @@ export function ChannelSelect({
   onChange: (v: string) => void;
   label: string;
   placeholder?: string;
-  filter?: "text" | "voice" | "category" | "all";
+  filter?: "text" | "voice" | "category" | "forum" | "all";
 }) {
   const { data, loading, error } = useDiscordData(botId);
 
@@ -82,6 +82,7 @@ export function ChannelSelect({
     if (filter === "text") return c.type === 0;
     if (filter === "voice") return c.type === 2;
     if (filter === "category") return c.type === 4;
+    if (filter === "forum") return c.type === 15;
     return true;
   });
 

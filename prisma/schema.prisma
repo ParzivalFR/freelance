@@ -62,6 +62,7 @@ model DiscordBot {
   moduleStarboard     Boolean @default(false) @map("module_starboard")
   moduleStatus        Boolean @default(false) @map("module_status")
   moduleHoneypot      Boolean @default(false) @map("module_honeypot")
+  moduleQuests        Boolean @default(false) @map("module_quests")
 
   // Paramètres spécifiques aux modules (JSON pour plus de flexibilité)
   config Json? @default("{}") // ex: { welcomeChannel: "123", ticketCategory: "456" }
@@ -842,5 +843,47 @@ model StarboardEntry {
   @@unique([botId, messageId])
   @@index([botId])
   @@map("starboard_entries")
+}
+
+// ─── Quêtes ───────────────────────────────────────────────────────────────────
+
+model Quest {
+  id           String   @id @default(cuid())
+  botId        String   @map("bot_id")
+  guildId      String   @map("guild_id")
+  threadId     String   @map("thread_id")
+  userId       String   @map("user_id")
+  authorAvatar String?  @map("author_avatar")
+  type         String
+  nature       String   // benevole | remuneree
+  title        String
+  description  String   @db.Text
+  budget       String?
+  deadline     String?
+  status       String   @default("open") // open | closed
+
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  applications QuestApplication[]
+
+  @@index([botId])
+  @@index([guildId, status])
+  @@map("quests")
+}
+
+model QuestApplication {
+  id        String   @id @default(cuid())
+  questId   String   @map("quest_id")
+  botId     String   @map("bot_id")
+  userId    String   @map("user_id")
+  link      String?
+  isMaitre  Boolean  @default(false) @map("is_maitre")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  quest Quest @relation(fields: [questId], references: [id], onDelete: Cascade)
+
+  @@unique([questId, userId])
+  @@index([questId])
+  @@map("quest_applications")
 }
 

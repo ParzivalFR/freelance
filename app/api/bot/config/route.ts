@@ -56,7 +56,7 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json();
-    const { id, name, token, prefix, moduleWelcome, moduleModeration, moduleTickets, moduleLevel, moduleLog, moduleSurvey, moduleMonitor, moduleGiveaway, moduleVerification, moduleTempchannels, moduleStarboard, moduleReactionRoles, moduleAutoresponse, moduleEconomy, moduleApplications, moduleBirthday, moduleSuggestions, moduleAfk, moduleScheduler, moduleAibuild, moduleStatus, moduleHoneypot, config, status, workerCommand } = body;
+    const { id, name, token, prefix, moduleWelcome, moduleModeration, moduleTickets, moduleLevel, moduleLog, moduleSurvey, moduleMonitor, moduleGiveaway, moduleVerification, moduleTempchannels, moduleStarboard, moduleReactionRoles, moduleAutoresponse, moduleEconomy, moduleApplications, moduleBirthday, moduleSuggestions, moduleAfk, moduleScheduler, moduleAibuild, moduleStatus, moduleHoneypot, moduleQuests, config, status, workerCommand } = body;
 
     const VALID_COMMANDS = ["START", "STOP", "RESTART", null];
     if (workerCommand !== undefined && !VALID_COMMANDS.includes(workerCommand)) {
@@ -89,6 +89,7 @@ export async function PATCH(request: Request) {
       ["moduleSuggestions", moduleSuggestions], ["moduleAfk", moduleAfk],
       ["moduleScheduler", moduleScheduler], ["moduleAibuild", moduleAibuild],
       ["moduleStatus", moduleStatus], ["moduleHoneypot", moduleHoneypot],
+      ["moduleQuests", moduleQuests],
     ] as const;
     const moduleChanged = MODULE_FLAGS.some(
       ([key, val]) => val !== undefined && val !== (existing as Record<string, unknown>)[key]
@@ -144,6 +145,7 @@ export async function PATCH(request: Request) {
         ...(moduleAibuild !== undefined && { moduleAibuild }),
         ...(moduleStatus !== undefined && { moduleStatus }),
         ...(moduleHoneypot !== undefined && { moduleHoneypot }),
+        ...(moduleQuests !== undefined && { moduleQuests }),
         ...(config !== undefined && { config }),
         ...(status !== undefined && { status }),
         ...(workerCommand !== undefined && { workerCommand }),

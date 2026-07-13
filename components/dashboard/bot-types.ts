@@ -199,6 +199,13 @@ export interface ModuleConfig {
   statusEntries?: StatusEntry[];
   statusRotationInterval?: number;
   botOnlineStatus?: "online" | "idle" | "dnd" | "invisible";
+  // Quêtes
+  questsBenevoleForumId?: string;
+  questsContratForumId?: string;
+  questsNotifBenevoleRoleId?: string;
+  questsNotifContratRoleId?: string;
+  questsGardeRoleId?: string;
+  questsMaitreArtisanRoleId?: string;
   // Honeypot
   honeypotChannelId?: string;
   honeypotExemptRoleIds?: string[];
@@ -258,6 +265,7 @@ export interface BotConfig {
   moduleStarboard: boolean;
   moduleStatus: boolean;
   moduleHoneypot: boolean;
+  moduleQuests: boolean;
   moduleReactionRoles: boolean;
   moduleAutoresponse: boolean;
   moduleEconomy: boolean;
