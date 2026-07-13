@@ -26,26 +26,30 @@ export async function POST(request: Request) {
   if (!channelId)
     return NextResponse.json({ error: "Aucun salon configuré pour le panel." }, { status: 400 });
 
-  const colorHex = ((cfg.verificationEmbedColor as string) ?? "5865F2").replace("#", "");
-  const color = parseInt(colorHex, 16) || 0x5865f2;
+  const colorHex = ((cfg.verificationEmbedColor as string) ?? "393a41").replace("#", "");
+  const color = parseInt(colorHex, 16) || parseInt("393a41", 16);
+  const title = (cfg.verificationEmbedTitle as string) || "Vérification";
+  const description =
+    (cfg.verificationEmbedDescription as string) ||
+    "Clique sur le bouton ci-dessous pour accepter les règles et accéder au serveur.";
+  const buttonLabel = (cfg.verificationButtonLabel as string) || "✅ J'accepte les règles";
+  const image = cfg.verificationEmbedImage as string | undefined;
 
-  const embed = {
-    color,
-    title: (cfg.verificationEmbedTitle as string) || "Vérification",
-    description:
-      (cfg.verificationEmbedDescription as string) ||
-      "Clique sur le bouton ci-dessous pour accepter les règles et accéder au serveur.",
-    ...(cfg.verificationEmbedImage ? { image: { url: cfg.verificationEmbedImage } } : {}),
-  };
-
-  const component = {
-    type: 1,
+  // Container Components V2 (type 17) : texte + image + bouton, dans un seul bloc.
+  const container = {
+    type: 17,
+    accent_color: color,
     components: [
+      { type: 10, content: `## ${title}` },
+      { type: 14, spacing: 1 },
+      { type: 10, content: description },
+      ...(image ? [{ type: 12, items: [{ media: { url: image } }] }] : []),
+      { type: 14, spacing: 1 },
       {
-        type: 2,
-        style: 3,
-        label: "✅ J'accepte les règles",
-        custom_id: "verification:accept",
+        type: 1,
+        components: [
+          { type: 2, style: 3, label: buttonLabel, custom_id: "verification:accept" },
+        ],
       },
     ],
   };
@@ -56,7 +60,8 @@ export async function POST(request: Request) {
       Authorization: `Bot ${decryptIfNeeded(bot.token)}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ embeds: [embed], components: [component] }),
+    // 32768 = MessageFlags.IsComponentsV2
+    body: JSON.stringify({ flags: 32768, components: [container] }),
   });
 
   if (!res.ok) {

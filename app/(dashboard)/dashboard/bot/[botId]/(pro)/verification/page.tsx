@@ -97,6 +97,12 @@ export default function VerificationPage() {
               placeholder="https://..."
             />
           </div>
+          <CyberInput
+            label="label du bouton"
+            value={config.config.verificationButtonLabel ?? ""}
+            onChange={(v) => updateModuleConfig("verificationButtonLabel", v)}
+            placeholder="✅ J'accepte les règles"
+          />
         </div>
 
         <div className="flex items-center justify-between py-1">
