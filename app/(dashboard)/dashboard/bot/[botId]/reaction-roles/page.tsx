@@ -3,7 +3,7 @@
 import { MousePointerClick, Plus, Trash2, Save, Send } from "lucide-react";
 import { PageHeader, CyberInput, CyberTextarea, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
-import { RoleSelect } from "@/components/dashboard/discord-select";
+import { RoleSelect, ChannelSelect } from "@/components/dashboard/discord-select";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import type { RRPanel, RRButton } from "@/components/dashboard/bot-types";
@@ -51,6 +51,13 @@ export default function ReactionRolesPage() {
     );
   }
 
+  function setPanelChannel(panelId: string, channelId: string) {
+    updateModuleConfig(
+      "reactionRoles",
+      panels.map((p) => (p.id === panelId ? { ...p, channelId } : p))
+    );
+  }
+
   function addButton(panelId: string, btn: RRButton) {
     updateModuleConfig(
       "reactionRoles",
@@ -72,17 +79,36 @@ export default function ReactionRolesPage() {
   }
 
   async function postPanel(panelId: string) {
+    const panel = panels.find((p) => p.id === panelId);
+    if (!panel?.channelId) {
+      toast({ title: "Salon manquant", description: "Choisis un salon pour ce panel avant de le poster.", variant: "destructive" });
+      return;
+    }
+    if (panel.buttons.length === 0) {
+      toast({ title: "Aucun bouton", description: "Ajoute au moins un bouton avant de poster.", variant: "destructive" });
+      return;
+    }
     setPostingId(panelId);
     try {
-      const res = await fetch("/api/bot/config", {
-        method: "PATCH",
+      // On enregistre d'abord pour que la route lise le panel à jour en DB
+      const saveRes = await save();
+      if (!saveRes.ok) {
+        toast({ title: "Erreur", description: saveRes.error ?? "Enregistrement impossible.", variant: "destructive" });
+        return;
+      }
+      const res = await fetch("/api/bot/reaction-roles/post", {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ botId, workerCommand: `RR_POST_${panelId}` }),
+        body: JSON.stringify({ botId, panelId }),
       });
-      if (!res.ok) throw new Error("Erreur serveur");
-      toast({ title: "Commande envoyée", description: `Le panel sera posté sur Discord.` });
+      const data = await res.json();
+      if (!res.ok) {
+        toast({ title: "Erreur", description: data.error ?? "Impossible de poster le panel.", variant: "destructive" });
+        return;
+      }
+      toast({ title: "Panel posté", description: "Le panel est en ligne sur Discord." });
     } catch {
-      toast({ title: "Erreur", description: "Impossible d'envoyer la commande.", variant: "destructive" });
+      toast({ title: "Erreur", description: "Impossible de poster le panel.", variant: "destructive" });
     } finally {
       setPostingId(null);
     }
@@ -112,6 +138,7 @@ export default function ReactionRolesPage() {
             onDelete={() => deletePanel(panel.id)}
             onAddButton={(btn) => addButton(panel.id, btn)}
             onRemoveButton={(idx) => removeButton(panel.id, idx)}
+            onSetChannel={(channelId) => setPanelChannel(panel.id, channelId)}
             onPost={() => postPanel(panel.id)}
             posting={postingId === panel.id}
           />
@@ -120,6 +147,13 @@ export default function ReactionRolesPage() {
         {showForm && (
           <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
             <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— nouveau panel —</p>
+            <ChannelSelect
+              botId={botId}
+              label="salon de publication"
+              value={newPanel.channelId}
+              onChange={(v) => setNewPanel((p) => ({ ...p, channelId: v }))}
+              filter="text"
+            />
             <CyberInput
               label="titre"
               value={newPanel.title}
@@ -205,6 +239,7 @@ function PanelCard({
   onDelete,
   onAddButton,
   onRemoveButton,
+  onSetChannel,
   onPost,
   posting,
 }: {
@@ -213,6 +248,7 @@ function PanelCard({
   onDelete: () => void;
   onAddButton: (btn: RRButton) => void;
   onRemoveButton: (idx: number) => void;
+  onSetChannel: (channelId: string) => void;
   onPost: () => void;
   posting: boolean;
 }) {
@@ -258,6 +294,14 @@ function PanelCard({
           </button>
         </div>
       </div>
+
+      <ChannelSelect
+        botId={botId}
+        label="salon de publication"
+        value={panel.channelId ?? ""}
+        onChange={onSetChannel}
+        filter="text"
+      />
 
       {panel.buttons.length > 0 && (
         <div className="flex flex-wrap gap-2">
