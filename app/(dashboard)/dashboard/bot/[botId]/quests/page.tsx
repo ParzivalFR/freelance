@@ -74,7 +74,7 @@ export default function QuestsPage() {
           label="nom_de_la_commande"
           value={c.questsCommandName ?? ""}
           onChange={(v) => updateModuleConfig("questsCommandName", v)}
-          placeholder="quete"
+          placeholder="mission"
         />
         <p className="font-mono text-[9px] text-muted-foreground/50 -mt-2">
           Ex: &quot;mission&quot; → /mission poster, /mission clore. Pas d&apos;espaces ni de majuscules.
