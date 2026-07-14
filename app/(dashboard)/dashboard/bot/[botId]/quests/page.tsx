@@ -1,7 +1,7 @@
 "use client";
 
 import { Save, Rocket, ExternalLink, Clock, Users } from "lucide-react";
-import { PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
+import { CyberInput, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useParams } from "next/navigation";
 import {
@@ -63,6 +63,23 @@ export default function QuestsPage() {
         subtitle="Système de quêtes bénévoles & contrats via forum Discord"
         status={config.status}
       />
+
+      {/* ── Personnalisation ───────────────────────────────────────── */}
+      <div className="space-y-3">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
+          personnalisation
+        </p>
+
+        <CyberInput
+          label="nom_de_la_commande"
+          value={c.questsCommandName ?? ""}
+          onChange={(v) => updateModuleConfig("questsCommandName", v)}
+          placeholder="quete"
+        />
+        <p className="font-mono text-[9px] text-muted-foreground/50 -mt-2">
+          Ex: &quot;mission&quot; → /mission poster, /mission clore. Pas d&apos;espaces ni de majuscules.
+        </p>
+      </div>
 
       {/* ── Salons ─────────────────────────────────────────────────── */}
       <div className="space-y-3">

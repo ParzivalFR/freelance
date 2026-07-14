@@ -200,6 +200,7 @@ export interface ModuleConfig {
   statusRotationInterval?: number;
   botOnlineStatus?: "online" | "idle" | "dnd" | "invisible";
   // Quêtes
+  questsCommandName?: string;
   questsBenevoleChannelId?: string;
   questsContratChannelId?: string;
   questsNotifBenevoleRoleId?: string;
