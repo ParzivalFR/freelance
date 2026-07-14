@@ -35,6 +35,9 @@ export async function POST(request: Request) {
   const buttonLabel = (cfg.verificationButtonLabel as string) || "✅ J'accepte les règles";
   const image = cfg.verificationEmbedImage as string | undefined;
 
+  const BUTTON_STYLES: Record<string, number> = { blue: 1, gray: 2, green: 3, red: 4 };
+  const buttonStyle = BUTTON_STYLES[cfg.verificationButtonStyle as string] ?? 3;
+
   // Container Components V2 (type 17) : texte + image + bouton, dans un seul bloc.
   const container = {
     type: 17,
@@ -48,7 +51,7 @@ export async function POST(request: Request) {
       {
         type: 1,
         components: [
-          { type: 2, style: 3, label: buttonLabel, custom_id: "verification:accept" },
+          { type: 2, style: buttonStyle, label: buttonLabel, custom_id: "verification:accept" },
         ],
       },
     ],

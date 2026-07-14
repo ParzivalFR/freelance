@@ -104,6 +104,19 @@ export default function VerificationPage() {
             onChange={(v) => updateModuleConfig("verificationButtonLabel", v)}
             placeholder="✅ J'accepte les règles"
           />
+          <div className="space-y-1">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">couleur du bouton</p>
+            <select
+              value={config.config.verificationButtonStyle ?? "green"}
+              onChange={(e) => updateModuleConfig("verificationButtonStyle", e.target.value)}
+              className="w-full rounded-md border border-dashed bg-background px-2 py-1.5 font-mono text-xs text-foreground"
+            >
+              <option value="blue">bleu (primary)</option>
+              <option value="gray">gris (secondary)</option>
+              <option value="green">vert (success)</option>
+              <option value="red">rouge (danger)</option>
+            </select>
+          </div>
         </div>
 
         <div className="flex items-center justify-between py-1">

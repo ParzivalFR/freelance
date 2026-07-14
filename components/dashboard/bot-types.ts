@@ -151,6 +151,7 @@ export interface ModuleConfig {
   verificationEmbedColor?: string;
   verificationEmbedImage?: string;
   verificationButtonLabel?: string;
+  verificationButtonStyle?: string;
   verificationCaptchaMode?: boolean;
   verificationLogChannelId?: string;
   // TempChannels
