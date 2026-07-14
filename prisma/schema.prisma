@@ -63,6 +63,7 @@ model DiscordBot {
   moduleStatus        Boolean @default(false) @map("module_status")
   moduleHoneypot      Boolean @default(false) @map("module_honeypot")
   moduleQuests        Boolean @default(false) @map("module_quests")
+  moduleProfiles      Boolean @default(false) @map("module_profiles")
 
   // Paramètres spécifiques aux modules (JSON pour plus de flexibilité)
   config Json? @default("{}") // ex: { welcomeChannel: "123", ticketCategory: "456" }
@@ -887,5 +888,47 @@ model QuestApplication {
   @@unique([questId, userId])
   @@index([questId])
   @@map("quest_applications")
+}
+
+// ─── Profils membres (générique, ex-"Artisans") ────────────────────────────────
+
+model MemberProfile {
+  id          String   @id @default(cuid())
+  botId       String   @map("bot_id")
+  guildId     String   @map("guild_id")
+  userId      String   @map("user_id")
+  channelId   String   @map("channel_id")
+  messageId   String   @map("message_id")
+  specialties Json     @default("[]") // string[]
+  questTypes  String   @map("quest_types") // benevole | remuneree | both
+  description String   @db.Text
+  rate        String?
+  portfolio   String?
+  contact     String?
+  score       Float    @default(0)
+  reviewCount Int      @default(0) @map("review_count")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  reviews ProfileReview[]
+
+  @@unique([botId, guildId, userId])
+  @@index([botId])
+  @@map("member_profiles")
+}
+
+model ProfileReview {
+  id         String   @id @default(cuid())
+  profileId  String   @map("profile_id")
+  botId      String   @map("bot_id")
+  reviewerId String   @map("reviewer_id")
+  rating     Int
+  comment    String?  @db.Text
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  profile MemberProfile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@index([profileId])
+  @@map("profile_reviews")
 }
 

@@ -206,6 +206,13 @@ export interface ModuleConfig {
   questsNotifContratRoleId?: string;
   questsGardeRoleId?: string;
   questsMaitreArtisanRoleId?: string;
+  // Profils membres (générique)
+  profilesCommandName?: string;
+  profilesChannelId?: string;
+  profilesRoleId?: string;
+  profilesTermSingular?: string;
+  profilesTermReview?: string;
+  profilesScoreEmoji?: string;
   // Honeypot
   honeypotChannelId?: string;
   honeypotExemptRoleIds?: string[];
@@ -266,6 +273,7 @@ export interface BotConfig {
   moduleStatus: boolean;
   moduleHoneypot: boolean;
   moduleQuests: boolean;
+  moduleProfiles: boolean;
   moduleReactionRoles: boolean;
   moduleAutoresponse: boolean;
   moduleEconomy: boolean;

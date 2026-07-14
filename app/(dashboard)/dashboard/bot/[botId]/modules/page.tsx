@@ -247,10 +247,20 @@ export default function BotModulesPage() {
         <ModuleToggle
           icon={<Rocket className="size-3.5" />}
           label="quêtes"
-          description="/quete poster — forum bénévoles & contrats avec Components V2"
+          description="/quete poster — salons bénévoles & contrats avec Components V2"
           enabled={config.moduleQuests}
           onToggle={() => update("moduleQuests", !config.moduleQuests)}
           configHref={`${base}/quests`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<ClipboardList className="size-3.5" />}
+          label="profils"
+          description="/profil creer|voir — registre de profils membres, nom de commande personnalisable"
+          enabled={config.moduleProfiles}
+          onToggle={() => update("moduleProfiles", !config.moduleProfiles)}
+          configHref={`${base}/profiles`}
           locked={!isPro}
         />
 

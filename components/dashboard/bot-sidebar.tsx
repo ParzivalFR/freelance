@@ -209,6 +209,13 @@ function buildNav(botId: string) {
           pro: true,
         },
         {
+          title: "Profils",
+          url: `/dashboard/bot/${botId}/profiles`,
+          icon: ClipboardList,
+          exact: false,
+          pro: true,
+        },
+        {
           title: "Logs",
           url: `/dashboard/bot/${botId}/logs`,
           icon: ScrollText,
