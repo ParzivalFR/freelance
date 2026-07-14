@@ -14,7 +14,7 @@ const DEFAULT_COLOR = "393a41";
 export default function AnnouncePage() {
   const params = useParams();
   const botId = params?.botId as string;
-  const { config } = useBotConfig();
+  const { config, update, save: saveCommandToggle, saving: savingToggle } = useBotConfig();
 
   const [action, setAction] = useState<"new" | "edit">("new");
   const [channelId, setChannelId] = useState("");
@@ -133,6 +133,34 @@ export default function AnnouncePage() {
       />
 
       <div className="space-y-4">
+        <div className="flex items-center justify-between rounded-xl border border-dashed bg-card p-4">
+          <div>
+            <p className="font-mono text-[10px] text-foreground">commande_slash_/annonce</p>
+            <p className="font-mono text-[9px] text-muted-foreground/60">
+              Permet au staff (rôle Gérer le serveur) de poster une annonce directement depuis Discord
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={config.moduleAnnounceCommand}
+              onCheckedChange={(v) => update("moduleAnnounceCommand", v)}
+              className="scale-75"
+            />
+            <button
+              type="button"
+              onClick={async () => {
+                const res = await saveCommandToggle();
+                if (!res.ok) toast.error(res.error ?? "Erreur lors de l'enregistrement");
+                else toast.success("Enregistré");
+              }}
+              disabled={savingToggle}
+              className="rounded-lg border border-dashed px-3 py-1.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground transition hover:bg-muted hover:text-foreground disabled:opacity-40"
+            >
+              {savingToggle ? "..." : "save"}
+            </button>
+          </div>
+        </div>
+
         {/* Action */}
         <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
           <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— action —</p>

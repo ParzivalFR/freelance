@@ -284,6 +284,7 @@ export interface BotConfig {
   moduleQuests: boolean;
   moduleProfiles: boolean;
   moduleTeams: boolean;
+  moduleAnnounceCommand: boolean;
   moduleReactionRoles: boolean;
   moduleAutoresponse: boolean;
   moduleEconomy: boolean;
