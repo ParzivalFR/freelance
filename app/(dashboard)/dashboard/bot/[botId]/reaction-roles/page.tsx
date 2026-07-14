@@ -44,11 +44,25 @@ export default function ReactionRolesPage() {
     toast({ title: "Panel créé", description: "N'oublie pas de sauvegarder." });
   }
 
-  function deletePanel(id: string) {
+  async function deletePanel(id: string) {
     updateModuleConfig(
       "reactionRoles",
       panels.filter((p) => p.id !== id)
     );
+    try {
+      const res = await fetch("/api/bot/reaction-roles/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ botId, panelId: id }),
+      });
+      if (!res.ok) throw new Error();
+    } catch {
+      toast({
+        title: "Panel supprimé du dashboard",
+        description: "Le message n'a pas pu être supprimé sur Discord (déjà effacé ou permissions manquantes).",
+        variant: "destructive",
+      });
+    }
   }
 
   function setPanelChannel(panelId: string, channelId: string) {
