@@ -247,7 +247,7 @@ export default function BotModulesPage() {
         <ModuleToggle
           icon={<Rocket className="size-3.5" />}
           label="quêtes"
-          description="/quete poster — salons bénévoles & contrats avec Components V2"
+          description="/mission poster — salons bénévoles & contrats, nom de commande personnalisable"
           enabled={config.moduleQuests}
           onToggle={() => update("moduleQuests", !config.moduleQuests)}
           configHref={`${base}/quests`}
