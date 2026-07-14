@@ -56,7 +56,7 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json();
-    const { id, name, token, prefix, moduleWelcome, moduleModeration, moduleTickets, moduleLevel, moduleLog, moduleSurvey, moduleMonitor, moduleGiveaway, moduleVerification, moduleTempchannels, moduleStarboard, moduleReactionRoles, moduleAutoresponse, moduleEconomy, moduleApplications, moduleBirthday, moduleSuggestions, moduleAfk, moduleScheduler, moduleAibuild, moduleStatus, moduleHoneypot, moduleQuests, moduleProfiles, config, status, workerCommand } = body;
+    const { id, name, token, prefix, moduleWelcome, moduleModeration, moduleTickets, moduleLevel, moduleLog, moduleSurvey, moduleMonitor, moduleGiveaway, moduleVerification, moduleTempchannels, moduleStarboard, moduleReactionRoles, moduleAutoresponse, moduleEconomy, moduleApplications, moduleBirthday, moduleSuggestions, moduleAfk, moduleScheduler, moduleAibuild, moduleStatus, moduleHoneypot, moduleQuests, moduleProfiles, moduleTeams, config, status, workerCommand } = body;
 
     const VALID_COMMANDS = ["START", "STOP", "RESTART", null];
     if (workerCommand !== undefined && !VALID_COMMANDS.includes(workerCommand)) {
@@ -90,6 +90,7 @@ export async function PATCH(request: Request) {
       ["moduleScheduler", moduleScheduler], ["moduleAibuild", moduleAibuild],
       ["moduleStatus", moduleStatus], ["moduleHoneypot", moduleHoneypot],
       ["moduleQuests", moduleQuests], ["moduleProfiles", moduleProfiles],
+      ["moduleTeams", moduleTeams],
     ] as const;
     const moduleChanged = MODULE_FLAGS.some(
       ([key, val]) => val !== undefined && val !== (existing as Record<string, unknown>)[key]
@@ -104,7 +105,7 @@ export async function PATCH(request: Request) {
       moduleGiveaway, moduleVerification, moduleTempchannels, moduleStarboard,
       moduleAutoresponse, moduleEconomy, moduleApplications,
       moduleBirthday, moduleSuggestions, moduleAfk, moduleScheduler, moduleAibuild,
-      moduleQuests, moduleProfiles,
+      moduleQuests, moduleProfiles, moduleTeams,
     };
     if (!isPro) {
       for (const [key, value] of Object.entries(PRO_MODULES)) {
@@ -148,6 +149,7 @@ export async function PATCH(request: Request) {
         ...(moduleHoneypot !== undefined && { moduleHoneypot }),
         ...(moduleQuests !== undefined && { moduleQuests }),
         ...(moduleProfiles !== undefined && { moduleProfiles }),
+        ...(moduleTeams !== undefined && { moduleTeams }),
         ...(config !== undefined && { config }),
         ...(status !== undefined && { status }),
         ...(workerCommand !== undefined && { workerCommand }),

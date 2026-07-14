@@ -64,6 +64,7 @@ model DiscordBot {
   moduleHoneypot      Boolean @default(false) @map("module_honeypot")
   moduleQuests        Boolean @default(false) @map("module_quests")
   moduleProfiles      Boolean @default(false) @map("module_profiles")
+  moduleTeams         Boolean @default(false) @map("module_teams")
 
   // Paramètres spécifiques aux modules (JSON pour plus de flexibilité)
   config Json? @default("{}") // ex: { welcomeChannel: "123", ticketCategory: "456" }
@@ -930,5 +931,44 @@ model ProfileReview {
 
   @@index([profileId])
   @@map("profile_reviews")
+}
+
+// ─── Projets d'équipe (générique, ex-"Guilde") ─────────────────────────────────
+
+model TeamProject {
+  id              String   @id @default(cuid())
+  botId           String   @map("bot_id")
+  guildId         String   @map("guild_id")
+  channelId       String   @map("channel_id")
+  messageId       String   @map("message_id")
+  userId          String   @map("user_id")
+  authorAvatar    String?  @map("author_avatar")
+  name            String
+  description     String   @db.Text
+  profilesNeeded  String?  @map("profiles_needed")
+  nature          String   // benevole | remuneree
+  status          String   @default("open") // open | in_progress | closed
+  selectedUserId  String?  @map("selected_user_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  members TeamMember[]
+
+  @@index([botId])
+  @@map("team_projects")
+}
+
+model TeamMember {
+  id         String   @id @default(cuid())
+  teamId     String   @map("team_id")
+  botId      String   @map("bot_id")
+  userId     String   @map("user_id")
+  motivation String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  team TeamProject @relation(fields: [teamId], references: [id], onDelete: Cascade)
+
+  @@unique([teamId, userId])
+  @@index([teamId])
+  @@map("team_members")
 }
 

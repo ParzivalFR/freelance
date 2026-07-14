@@ -75,6 +75,7 @@ import {
   Trash2,
   Volume2,
   MousePointerClick,
+  Users2,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -212,6 +213,13 @@ function buildNav(botId: string) {
           title: "Profils",
           url: `/dashboard/bot/${botId}/profiles`,
           icon: ClipboardList,
+          exact: false,
+          pro: true,
+        },
+        {
+          title: "Projets",
+          url: `/dashboard/bot/${botId}/teams`,
+          icon: Users2,
           exact: false,
           pro: true,
         },

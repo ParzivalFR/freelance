@@ -214,6 +214,13 @@ export interface ModuleConfig {
   profilesTermSingular?: string;
   profilesTermReview?: string;
   profilesScoreEmoji?: string;
+  // Projets d'équipe (générique)
+  teamsCommandName?: string;
+  teamsChannelId?: string;
+  teamsGardeRoleId?: string;
+  // Restriction globale des commandes (partagée entre quests/profiles/teams)
+  commandsChannelId?: string;
+  commandsRestrictedMessage?: string;
   // Honeypot
   honeypotChannelId?: string;
   honeypotExemptRoleIds?: string[];
@@ -275,6 +282,7 @@ export interface BotConfig {
   moduleHoneypot: boolean;
   moduleQuests: boolean;
   moduleProfiles: boolean;
+  moduleTeams: boolean;
   moduleReactionRoles: boolean;
   moduleAutoresponse: boolean;
   moduleEconomy: boolean;

@@ -4,11 +4,12 @@ import { FaDiscord } from "react-icons/fa";
 import { Cpu, Save } from "lucide-react";
 import { BorderBeam } from "@/components/magicui/border-beam";
 import { CyberInput, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
+import { ChannelSelect } from "@/components/dashboard/discord-select";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { toast } from "sonner";
 
 export default function BotConfigPage() {
-  const { config, saving, saved, update, save } = useBotConfig();
+  const { config, saving, saved, update, updateModuleConfig, save } = useBotConfig();
 
   if (!config) return <LoadingScreen />;
 
@@ -118,6 +119,33 @@ export default function BotConfigPage() {
               ))}
             </ol>
           </div>
+        </div>
+      </div>
+
+      <div className="relative overflow-hidden rounded-xl border bg-card">
+        <div className="flex items-center gap-2 border-b px-4 py-3">
+          <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
+            &gt; restriction_commandes — modules quêtes / profils / projets
+          </span>
+        </div>
+        <div className="space-y-3 p-5">
+          <p className="font-mono text-[9px] text-muted-foreground/50">
+            Si un salon est choisi, les commandes de création (/mission poster, /profil creer, /projet poster...)
+            ne fonctionneront que dans ce salon. Laisse vide pour ne restreindre aucun salon.
+          </p>
+          <ChannelSelect
+            botId={config.id}
+            label="salon_des_commandes"
+            value={config.config?.commandsChannelId ?? ""}
+            onChange={(v) => updateModuleConfig("commandsChannelId", v)}
+            filter="text"
+          />
+          <CyberInput
+            label="message_si_mauvais_salon (optionnel)"
+            value={config.config?.commandsRestrictedMessage ?? ""}
+            onChange={(v) => updateModuleConfig("commandsRestrictedMessage", v)}
+            placeholder="Merci d'utiliser #commandes pour interagir avec le bot ! 🤖"
+          />
         </div>
       </div>
 

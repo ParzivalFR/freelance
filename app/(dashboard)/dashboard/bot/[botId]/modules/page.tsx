@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, BarChart2, Bug, Cake, ClipboardList, Clock, Coins, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Rocket, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, Volume2 } from "lucide-react";
+import { Activity, BarChart2, Bug, Cake, ClipboardList, Clock, Coins, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Rocket, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, Users2, Volume2 } from "lucide-react";
 import { ModuleToggle, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useToast } from "@/components/ui/use-toast";
@@ -261,6 +261,16 @@ export default function BotModulesPage() {
           enabled={config.moduleProfiles}
           onToggle={() => update("moduleProfiles", !config.moduleProfiles)}
           configHref={`${base}/profiles`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<Users2 className="size-3.5" />}
+          label="projets"
+          description="/projet poster|clore — recherche de coéquipiers, nom de commande personnalisable"
+          enabled={config.moduleTeams}
+          onToggle={() => update("moduleTeams", !config.moduleTeams)}
+          configHref={`${base}/teams`}
           locked={!isPro}
         />
 
