@@ -18,9 +18,19 @@ interface QuestRow {
   status: string;
   budget: string | null;
   deadline: string | null;
-  threadId: string;
+  guildId: string;
+  channelId: string;
+  messageId: string;
   createdAt: string;
   applications: { id: string }[];
+}
+
+function statusBadge(status: string) {
+  if (status === "closed")
+    return <span className="text-green-400">🟢 Terminée</span>;
+  if (status === "in_progress")
+    return <span className="text-blue-400">🔵 En cours</span>;
+  return <span className="text-yellow-400">🟡 Ouverte</span>;
 }
 
 export default function QuestsPage() {
@@ -54,26 +64,26 @@ export default function QuestsPage() {
         status={config.status}
       />
 
-      {/* ── Salons forum ───────────────────────────────────────────── */}
+      {/* ── Salons ─────────────────────────────────────────────────── */}
       <div className="space-y-3">
         <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
-          salons forum
+          salons (texte)
         </p>
 
         <ChannelSelect
           botId={botId}
-          label="forum_bénévoles"
-          value={c.questsBenevoleForumId ?? ""}
-          onChange={(v) => updateModuleConfig("questsBenevoleForumId", v)}
-          filter="forum"
+          label="salon_bénévoles"
+          value={c.questsBenevoleChannelId ?? ""}
+          onChange={(v) => updateModuleConfig("questsBenevoleChannelId", v)}
+          filter="text"
         />
 
         <ChannelSelect
           botId={botId}
-          label="forum_contrats"
-          value={c.questsContratForumId ?? ""}
-          onChange={(v) => updateModuleConfig("questsContratForumId", v)}
-          filter="forum"
+          label="salon_contrats"
+          value={c.questsContratChannelId ?? ""}
+          onChange={(v) => updateModuleConfig("questsContratChannelId", v)}
+          filter="text"
         />
       </div>
 
@@ -160,7 +170,7 @@ export default function QuestsPage() {
                   <th className="px-3 py-2">
                     <Clock className="inline size-3" />
                   </th>
-                  <th className="px-3 py-2">Fil</th>
+                  <th className="px-3 py-2">Lien</th>
                 </tr>
               </thead>
               <tbody>
@@ -178,17 +188,7 @@ export default function QuestsPage() {
                     <td className="px-3 py-2">
                       {q.nature === "benevole" ? "Bénévole" : "Rémunérée"}
                     </td>
-                    <td className="px-3 py-2">
-                      <span
-                        className={
-                          q.status === "open"
-                            ? "text-yellow-400"
-                            : "text-green-400"
-                        }
-                      >
-                        {q.status === "open" ? "🟡 Ouverte" : "🟢 Terminée"}
-                      </span>
-                    </td>
+                    <td className="px-3 py-2">{statusBadge(q.status)}</td>
                     <td className="px-3 py-2 text-muted-foreground">
                       {q.applications.length}
                     </td>
@@ -197,7 +197,7 @@ export default function QuestsPage() {
                     </td>
                     <td className="px-3 py-2">
                       <a
-                        href={`https://discord.com/channels/@me/${q.threadId}`}
+                        href={`https://discord.com/channels/${q.guildId}/${q.channelId}/${q.messageId}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="text-blue-400 hover:underline flex items-center gap-1"

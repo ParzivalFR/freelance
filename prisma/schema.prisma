@@ -849,18 +849,20 @@ model StarboardEntry {
 
 model Quest {
   id           String   @id @default(cuid())
-  botId        String   @map("bot_id")
-  guildId      String   @map("guild_id")
-  threadId     String   @map("thread_id")
-  userId       String   @map("user_id")
-  authorAvatar String?  @map("author_avatar")
-  type         String
-  nature       String   // benevole | remuneree
-  title        String
-  description  String   @db.Text
-  budget       String?
-  deadline     String?
-  status       String   @default("open") // open | closed
+  botId          String   @map("bot_id")
+  guildId        String   @map("guild_id")
+  channelId      String   @map("channel_id")
+  messageId      String   @map("message_id")
+  userId         String   @map("user_id")
+  authorAvatar   String?  @map("author_avatar")
+  type           String
+  nature         String   // benevole | remuneree
+  title          String
+  description    String   @db.Text
+  budget         String?
+  deadline       String?
+  status         String   @default("open") // open | in_progress | closed
+  selectedUserId String?  @map("selected_user_id")
 
   createdAt    DateTime @default(now()) @map("created_at")
 
