@@ -3,6 +3,7 @@
 import { Save, ShieldCheck } from "lucide-react";
 import {
   CyberInput,
+  CyberTextarea,
   PageHeader,
   LoadingScreen,
 } from "@/components/dashboard/cyber-ui";
@@ -77,7 +78,7 @@ export default function VerificationPage() {
             onChange={(v) => updateModuleConfig("verificationEmbedTitle", v)}
             placeholder="Vérification"
           />
-          <CyberInput
+          <CyberTextarea
             label="description"
             value={config.config.verificationEmbedDescription ?? ""}
             onChange={(v) => updateModuleConfig("verificationEmbedDescription", v)}
