@@ -2,9 +2,10 @@
 
 import { useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, ChevronUp, Crown, Eye, EyeOff, Settings } from "lucide-react";
+import { AtSign, ChevronDown, ChevronUp, Crown, Eye, EyeOff, Hash, Settings } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import Link from "next/link";
+import { useDiscordData } from "@/components/dashboard/discord-select";
 
 // ─── CyberLabel ───────────────────────────────────────────────────────────────
 
@@ -72,20 +73,78 @@ export const FORMAT_ACTIONS = [
   { label: "↵",  wrap: ["\n", ""],     title: "Saut de ligne" },
 ] as const;
 
+function MentionPicker({
+  icon,
+  title,
+  items,
+  onPick,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  items: { id: string; label: string }[];
+  onPick: (id: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const boxRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <div className="relative" ref={boxRef}>
+      <button
+        type="button"
+        title={title}
+        onMouseDown={(e) => e.preventDefault()}
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center gap-1 rounded border border-dashed px-1.5 py-0.5 font-mono text-[10px] text-muted-foreground transition hover:border-blue-500/40 hover:bg-blue-500/5 hover:text-blue-400"
+      >
+        {icon}
+        {title}
+      </button>
+      {open && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+          <div className="absolute left-0 z-20 mt-1 max-h-48 w-52 overflow-y-auto rounded-lg border border-dashed bg-card p-1 shadow-lg">
+            {items.length === 0 ? (
+              <p className="px-2 py-1.5 font-mono text-[10px] text-muted-foreground/50">Aucun résultat</p>
+            ) : (
+              items.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    onPick(item.id);
+                    setOpen(false);
+                  }}
+                  className="block w-full truncate rounded px-2 py-1 text-left font-mono text-[10px] text-foreground transition hover:bg-blue-500/10"
+                >
+                  {item.label}
+                </button>
+              ))
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 export function CyberTextarea({
   label,
   value,
   onChange,
   placeholder,
   rows = 4,
+  botId,
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   rows?: number;
+  botId?: string;
 }) {
   const ref = useRef<HTMLTextAreaElement>(null);
+  const { data } = useDiscordData(botId ?? "");
 
   const applyFormat = (wrap: readonly [string, string]) => {
     const el = ref.current;
@@ -100,6 +159,22 @@ export function CyberTextarea({
     requestAnimationFrame(() => {
       el.focus();
       const cursor = start + wrap[0].length + selected.length + wrap[1].length;
+      el.setSelectionRange(cursor, cursor);
+    });
+  };
+
+  const insertMention = (text: string) => {
+    const el = ref.current;
+    if (!el) return;
+    const start = el.selectionStart;
+    const end = el.selectionEnd;
+    const before = value.slice(0, start);
+    const after = value.slice(end);
+    const newVal = before + text + after;
+    onChange(newVal);
+    requestAnimationFrame(() => {
+      el.focus();
+      const cursor = start + text.length;
       el.setSelectionRange(cursor, cursor);
     });
   };
@@ -119,6 +194,24 @@ export function CyberTextarea({
             {action.label}
           </button>
         ))}
+        {botId && (
+          <>
+            <MentionPicker
+              icon={<AtSign className="size-2.5" />}
+              title="rôle"
+              items={(data?.roles ?? []).map((r) => ({ id: r.id, label: r.name }))}
+              onPick={(id) => insertMention(`<@&${id}>`)}
+            />
+            <MentionPicker
+              icon={<Hash className="size-2.5" />}
+              title="salon"
+              items={(data?.channels ?? [])
+                .filter((c) => c.type === 0)
+                .map((c) => ({ id: c.id, label: c.name }))}
+              onPick={(id) => insertMention(`<#${id}>`)}
+            />
+          </>
+        )}
       </div>
       <div className="relative">
         <span className="absolute left-3 top-3 font-mono text-xs text-blue-500/40">›</span>

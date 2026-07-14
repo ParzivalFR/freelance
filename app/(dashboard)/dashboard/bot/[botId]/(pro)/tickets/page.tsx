@@ -207,6 +207,7 @@ export default function TicketsPage() {
           onChange={(v) => updateModuleConfig("panelDescription", v)}
           placeholder={"Besoin d'aide ? Ouvre un ticket !\n\n**Sélectionne une catégorie ↓**"}
           rows={3}
+          botId={botId}
         />
         <div className="grid grid-cols-2 gap-2">
           <CyberInput

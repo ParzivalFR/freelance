@@ -41,7 +41,7 @@ function fetchDiscordData(botId: string): Promise<DiscordData> {
   return discordDataCache.get(botId)!;
 }
 
-function useDiscordData(botId: string) {
+export function useDiscordData(botId: string) {
   const [data, setData] = useState<DiscordData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);

@@ -228,6 +228,7 @@ export default function AnnouncePage() {
               value={content}
               onChange={setContent}
               placeholder="Salut tout le monde ! Voici une annonce importante…"
+              botId={botId}
             />
           </div>
         ) : (
@@ -244,6 +245,7 @@ export default function AnnouncePage() {
               value={embedDescription}
               onChange={setEmbedDescription}
               placeholder="Contenu de l'annonce…"
+              botId={botId}
             />
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1.5">

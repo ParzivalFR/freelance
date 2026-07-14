@@ -165,6 +165,7 @@ export default function ReactionRolesPage() {
               value={newPanel.description ?? ""}
               onChange={(v) => setNewPanel((p) => ({ ...p, description: v }))}
               placeholder="Clique sur un bouton pour obtenir le rôle correspondant."
+              botId={botId}
             />
             <div className="grid grid-cols-2 gap-2">
               <CyberInput

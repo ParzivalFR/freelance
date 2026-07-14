@@ -181,6 +181,7 @@ export default function HoneypotPage() {
           value={c.honeypotEmbedDescription ?? ""}
           onChange={(v) => updateModuleConfig("honeypotEmbedDescription", v)}
           placeholder={"N'envoyez aucun message ici — bannissement automatique."}
+          botId={botId}
         />
         <div className="grid grid-cols-2 gap-2">
           <div className="space-y-1.5">

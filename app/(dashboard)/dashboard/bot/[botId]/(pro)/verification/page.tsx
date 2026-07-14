@@ -83,6 +83,7 @@ export default function VerificationPage() {
             value={config.config.verificationEmbedDescription ?? ""}
             onChange={(v) => updateModuleConfig("verificationEmbedDescription", v)}
             placeholder="Clique sur le bouton ci-dessous pour accepter les règles et accéder au serveur."
+            botId={botId}
           />
           <div className="grid grid-cols-2 gap-2">
             <CyberInput

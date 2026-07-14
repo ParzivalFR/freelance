@@ -70,6 +70,7 @@ export default function WelcomePage() {
               value={config.config.embedDescription ?? ""}
               onChange={(v) => updateModuleConfig("embedDescription", v)}
               placeholder={"Bienvenue {mention} !\n\n• Tu es le **{memberCount}e** membre\n• Compte créé il y a {accountAge}"}
+              botId={botId}
             />
             <div className="grid grid-cols-2 gap-2">
               <CyberInput
