@@ -229,6 +229,7 @@ export interface ModuleConfig {
   invitesLeaveMessage?: string;
   invitesFakeAccountAgeDays?: number;
   invitesStaffRoleId?: string;
+  invitesCodeLabels?: Record<string, string>;
   // Honeypot
   honeypotChannelId?: string;
   honeypotExemptRoleIds?: string[];

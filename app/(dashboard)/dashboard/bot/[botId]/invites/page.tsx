@@ -1,6 +1,6 @@
 "use client";
 
-import { Save, UserPlus, Trophy } from "lucide-react";
+import { Save, UserPlus, Trophy, Plus, Trash2 } from "lucide-react";
 import { CyberInput, CyberTextarea, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useParams } from "next/navigation";
@@ -22,6 +22,8 @@ export default function InvitesPage() {
   const { config, saving, saved, updateModuleConfig, save } = useBotConfig();
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loadingBoard, setLoadingBoard] = useState(true);
+  const [newCode, setNewCode] = useState("");
+  const [newLabel, setNewLabel] = useState("");
 
   useEffect(() => {
     if (!botId) return;
@@ -119,6 +121,66 @@ export default function InvitesPage() {
           value={c.invitesStaffRoleId ?? ""}
           onChange={(v) => updateModuleConfig("invitesStaffRoleId", v)}
         />
+      </div>
+
+      <div className="space-y-3">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
+          codes d&apos;invitation étiquetés
+        </p>
+        <p className="font-mono text-[9px] text-muted-foreground/50">
+          Un code d&apos;invite créé pour un site de listing (Disboard, D-Invites, Discadia...) affiche son nom
+          dans le journal au lieu de « lien inconnu ». Ces arrivées ne sont pas créditées à un membre.
+        </p>
+
+        <div className="space-y-2">
+          {Object.entries(c.invitesCodeLabels ?? {}).map(([code, label]) => (
+            <div key={code} className="flex items-center gap-2 rounded-lg border border-dashed bg-card px-3 py-2">
+              <span className="font-mono text-xs text-blue-400">{code}</span>
+              <span className="font-mono text-xs text-muted-foreground">→</span>
+              <span className="flex-1 font-mono text-xs text-foreground">{label}</span>
+              <button
+                type="button"
+                onClick={() => {
+                  const next = { ...(c.invitesCodeLabels ?? {}) };
+                  delete next[code];
+                  updateModuleConfig("invitesCodeLabels", next);
+                }}
+                className="text-muted-foreground/50 transition hover:text-red-400"
+              >
+                <Trash2 className="size-3.5" />
+              </button>
+            </div>
+          ))}
+        </div>
+
+        <div className="flex items-end gap-2">
+          <div className="flex-1">
+            <CyberInput
+              label="code_invite"
+              value={newCode}
+              onChange={setNewCode}
+              placeholder="discord.gg/xxxxxx → xxxxxx"
+            />
+          </div>
+          <div className="flex-1">
+            <CyberInput label="nom_affiché" value={newLabel} onChange={setNewLabel} placeholder="Disboard" />
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              if (!newCode.trim() || !newLabel.trim()) return;
+              updateModuleConfig("invitesCodeLabels", {
+                ...(c.invitesCodeLabels ?? {}),
+                [newCode.trim()]: newLabel.trim(),
+              });
+              setNewCode("");
+              setNewLabel("");
+            }}
+            className="flex items-center gap-1 rounded-lg border border-dashed px-3 py-2.5 font-mono text-xs text-muted-foreground transition hover:border-blue-500/40 hover:text-blue-400"
+          >
+            <Plus className="size-3.5" />
+          </button>
+        </div>
       </div>
 
       <div className="flex justify-end pt-2">
