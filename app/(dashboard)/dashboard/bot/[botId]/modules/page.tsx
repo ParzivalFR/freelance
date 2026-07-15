@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, BarChart2, Bug, Cake, ClipboardList, Clock, Coins, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Rocket, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, Users2, Volume2 } from "lucide-react";
+import { Activity, BarChart2, Bug, Cake, ClipboardList, Clock, Coins, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Rocket, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, UserPlus, Users2, Volume2 } from "lucide-react";
 import { ModuleToggle, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useToast } from "@/components/ui/use-toast";
@@ -271,6 +271,16 @@ export default function BotModulesPage() {
           enabled={config.moduleTeams}
           onToggle={() => update("moduleTeams", !config.moduleTeams)}
           configHref={`${base}/teams`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<UserPlus className="size-3.5" />}
+          label="invitations"
+          description="/invites voir|classement|ajouter|retirer|reset — tracker complet avec détection de faux comptes"
+          enabled={config.moduleInvites}
+          onToggle={() => update("moduleInvites", !config.moduleInvites)}
+          configHref={`${base}/invites`}
           locked={!isPro}
         />
 

@@ -222,6 +222,13 @@ export interface ModuleConfig {
   // Restriction globale des commandes (partagée entre quests/profiles/teams)
   commandsChannelId?: string;
   commandsRestrictedMessage?: string;
+  // Invite Tracker
+  invitesJoinAnnounceChannelId?: string;
+  invitesJoinMessage?: string;
+  invitesLeaveAnnounceChannelId?: string;
+  invitesLeaveMessage?: string;
+  invitesFakeAccountAgeDays?: number;
+  invitesStaffRoleId?: string;
   // Honeypot
   honeypotChannelId?: string;
   honeypotExemptRoleIds?: string[];
@@ -285,6 +292,7 @@ export interface BotConfig {
   moduleProfiles: boolean;
   moduleTeams: boolean;
   moduleAnnounceCommand: boolean;
+  moduleInvites: boolean;
   moduleReactionRoles: boolean;
   moduleAutoresponse: boolean;
   moduleEconomy: boolean;

@@ -66,6 +66,7 @@ model DiscordBot {
   moduleProfiles      Boolean @default(false) @map("module_profiles")
   moduleTeams         Boolean @default(false) @map("module_teams")
   moduleAnnounceCommand Boolean @default(false) @map("module_announce_command")
+  moduleInvites       Boolean @default(false) @map("module_invites")
 
   // Paramètres spécifiques aux modules (JSON pour plus de flexibilité)
   config Json? @default("{}") // ex: { welcomeChannel: "123", ticketCategory: "456" }
@@ -932,6 +933,40 @@ model ProfileReview {
 
   @@index([profileId])
   @@map("profile_reviews")
+}
+
+// ─── Invite Tracker ─────────────────────────────────────────────────────────────
+
+model InviteJoin {
+  id             String    @id @default(cuid())
+  botId          String    @map("bot_id")
+  guildId        String    @map("guild_id")
+  userId         String    @map("user_id")
+  inviterId      String?   @map("inviter_id")
+  code           String?
+  isFake         Boolean   @default(false) @map("is_fake")
+  isLeft         Boolean   @default(false) @map("is_left")
+  accountAgeDays Int?      @map("account_age_days")
+  joinedAt       DateTime  @default(now()) @map("joined_at")
+  leftAt         DateTime? @map("left_at")
+
+  @@unique([botId, guildId, userId])
+  @@index([botId, guildId, inviterId])
+  @@map("invite_joins")
+}
+
+model InviteBonus {
+  id        String   @id @default(cuid())
+  botId     String   @map("bot_id")
+  guildId   String   @map("guild_id")
+  inviterId String   @map("inviter_id")
+  amount    Int
+  reason    String?
+  grantedBy String   @map("granted_by")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([botId, guildId, inviterId])
+  @@map("invite_bonuses")
 }
 
 // ─── Projets d'équipe (générique, ex-"Guilde") ─────────────────────────────────

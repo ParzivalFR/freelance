@@ -76,6 +76,7 @@ import {
   Volume2,
   MousePointerClick,
   Users2,
+  UserPlus,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -220,6 +221,13 @@ function buildNav(botId: string) {
           title: "Projets",
           url: `/dashboard/bot/${botId}/teams`,
           icon: Users2,
+          exact: false,
+          pro: true,
+        },
+        {
+          title: "Invitations",
+          url: `/dashboard/bot/${botId}/invites`,
+          icon: UserPlus,
           exact: false,
           pro: true,
         },
