@@ -67,6 +67,7 @@ model DiscordBot {
   moduleTeams         Boolean @default(false) @map("module_teams")
   moduleAnnounceCommand Boolean @default(false) @map("module_announce_command")
   moduleInvites       Boolean @default(false) @map("module_invites")
+  moduleBooster       Boolean @default(false) @map("module_booster")
 
   // Paramètres spécifiques aux modules (JSON pour plus de flexibilité)
   config Json? @default("{}") // ex: { welcomeChannel: "123", ticketCategory: "456" }

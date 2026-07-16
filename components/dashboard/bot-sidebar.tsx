@@ -77,6 +77,7 @@ import {
   MousePointerClick,
   Users2,
   UserPlus,
+  Gem,
 } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
@@ -230,6 +231,13 @@ function buildNav(botId: string) {
           icon: UserPlus,
           exact: false,
           pro: true,
+        },
+        {
+          title: "Booster",
+          url: `/dashboard/bot/${botId}/booster`,
+          icon: Gem,
+          exact: false,
+          pro: false,
         },
         {
           title: "Logs",

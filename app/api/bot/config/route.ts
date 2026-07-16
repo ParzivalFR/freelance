@@ -56,7 +56,7 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json();
-    const { id, name, token, prefix, moduleWelcome, moduleModeration, moduleTickets, moduleLevel, moduleLog, moduleSurvey, moduleMonitor, moduleGiveaway, moduleVerification, moduleTempchannels, moduleStarboard, moduleReactionRoles, moduleAutoresponse, moduleEconomy, moduleApplications, moduleBirthday, moduleSuggestions, moduleAfk, moduleScheduler, moduleAibuild, moduleStatus, moduleHoneypot, moduleQuests, moduleProfiles, moduleTeams, moduleAnnounceCommand, moduleInvites, config, status, workerCommand } = body;
+    const { id, name, token, prefix, moduleWelcome, moduleModeration, moduleTickets, moduleLevel, moduleLog, moduleSurvey, moduleMonitor, moduleGiveaway, moduleVerification, moduleTempchannels, moduleStarboard, moduleReactionRoles, moduleAutoresponse, moduleEconomy, moduleApplications, moduleBirthday, moduleSuggestions, moduleAfk, moduleScheduler, moduleAibuild, moduleStatus, moduleHoneypot, moduleQuests, moduleProfiles, moduleTeams, moduleAnnounceCommand, moduleInvites, moduleBooster, config, status, workerCommand } = body;
 
     const VALID_COMMANDS = ["START", "STOP", "RESTART", null];
     if (workerCommand !== undefined && !VALID_COMMANDS.includes(workerCommand)) {
@@ -91,7 +91,7 @@ export async function PATCH(request: Request) {
       ["moduleStatus", moduleStatus], ["moduleHoneypot", moduleHoneypot],
       ["moduleQuests", moduleQuests], ["moduleProfiles", moduleProfiles],
       ["moduleTeams", moduleTeams], ["moduleAnnounceCommand", moduleAnnounceCommand],
-      ["moduleInvites", moduleInvites],
+      ["moduleInvites", moduleInvites], ["moduleBooster", moduleBooster],
     ] as const;
     const moduleChanged = MODULE_FLAGS.some(
       ([key, val]) => val !== undefined && val !== (existing as Record<string, unknown>)[key]
@@ -153,6 +153,7 @@ export async function PATCH(request: Request) {
         ...(moduleTeams !== undefined && { moduleTeams }),
         ...(moduleAnnounceCommand !== undefined && { moduleAnnounceCommand }),
         ...(moduleInvites !== undefined && { moduleInvites }),
+        ...(moduleBooster !== undefined && { moduleBooster }),
         ...(config !== undefined && { config }),
         ...(status !== undefined && { status }),
         ...(workerCommand !== undefined && { workerCommand }),

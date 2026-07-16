@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, BarChart2, Bug, Cake, ClipboardList, Clock, Coins, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Rocket, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, UserPlus, Users2, Volume2 } from "lucide-react";
+import { Activity, BarChart2, Bug, Cake, ClipboardList, Clock, Coins, Gem, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Rocket, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, UserPlus, Users2, Volume2 } from "lucide-react";
 import { ModuleToggle, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useToast } from "@/components/ui/use-toast";
@@ -282,6 +282,15 @@ export default function BotModulesPage() {
           onToggle={() => update("moduleInvites", !config.moduleInvites)}
           configHref={`${base}/invites`}
           locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<Gem className="size-3.5" />}
+          label="booster"
+          description="Attribue automatiquement un rôle aux membres qui boostent le serveur"
+          enabled={config.moduleBooster}
+          onToggle={() => update("moduleBooster", !config.moduleBooster)}
+          configHref={`${base}/booster`}
         />
 
       </div>

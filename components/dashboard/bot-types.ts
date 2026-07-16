@@ -230,6 +230,10 @@ export interface ModuleConfig {
   invitesFakeAccountAgeDays?: number;
   invitesStaffRoleId?: string;
   invitesCodeLabels?: Record<string, string>;
+  // Booster (autorole boost serveur)
+  boosterRoleId?: string;
+  boosterAnnounceChannelId?: string;
+  boosterAnnounceMessage?: string;
   // Honeypot
   honeypotChannelId?: string;
   honeypotExemptRoleIds?: string[];
@@ -294,6 +298,7 @@ export interface BotConfig {
   moduleTeams: boolean;
   moduleAnnounceCommand: boolean;
   moduleInvites: boolean;
+  moduleBooster: boolean;
   moduleReactionRoles: boolean;
   moduleAutoresponse: boolean;
   moduleEconomy: boolean;
