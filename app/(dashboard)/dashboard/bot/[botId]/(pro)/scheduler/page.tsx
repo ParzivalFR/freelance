@@ -37,7 +37,16 @@ const EMPTY_FORM: FormState = { channelId: "", content: "", recurrence: "once", 
 
 function toWhen(form: FormState): string {
   if (form.recurrence !== "once") return form.recurrence;
-  return form.date.replace("T", " ");
+  // Le input datetime-local est en heure locale du navigateur : on le convertit
+  // en ISO absolu ici plutôt que d'envoyer une chaîne ambiguë que le serveur
+  // (VPS, souvent en UTC) interpréterait dans son propre fuseau.
+  return new Date(form.date).toISOString();
+}
+
+function toLocalInputValue(iso: string): string {
+  const d = new Date(iso);
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
 }
 
 function formatWhen(m: ScheduledMessage): string {
@@ -81,7 +90,7 @@ export default function SchedulerPage() {
       channelId: m.channelId,
       content: m.content,
       recurrence: m.isRecurring ? (m.cronExpression ?? "daily") : "once",
-      date: m.nextRun ? m.nextRun.slice(0, 16) : "",
+      date: m.nextRun ? toLocalInputValue(m.nextRun) : "",
     });
     setEditingId(m.id);
     setShowForm(true);
