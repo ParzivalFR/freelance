@@ -206,7 +206,7 @@ export function CyberTextarea({
               icon={<Hash className="size-2.5" />}
               title="salon"
               items={(data?.channels ?? [])
-                .filter((c) => c.type === 0)
+                .filter((c) => c.type === 0 || c.type === 15)
                 .map((c) => ({ id: c.id, label: c.name }))}
               onPick={(id) => insertMention(`<#${id}>`)}
             />
