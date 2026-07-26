@@ -36,11 +36,13 @@ interface FormState {
 const EMPTY_FORM: FormState = { channelId: "", content: "", recurrence: "once", date: "" };
 
 function toWhen(form: FormState): string {
-  if (form.recurrence !== "once") return form.recurrence;
   // Le input datetime-local est en heure locale du navigateur : on le convertit
   // en ISO absolu ici plutôt que d'envoyer une chaîne ambiguë que le serveur
-  // (VPS, souvent en UTC) interpréterait dans son propre fuseau.
-  return new Date(form.date).toISOString();
+  // (VPS, souvent en UTC) interpréterait dans son propre fuseau. On l'inclut
+  // aussi pour les récurrences (daily/weekly/monthly) afin que l'heure choisie
+  // soit respectée dès le premier envoi, pas juste "maintenant + intervalle".
+  if (!form.date) return form.recurrence;
+  return `${form.recurrence}|${new Date(form.date).toISOString()}`;
 }
 
 function toLocalInputValue(iso: string): string {

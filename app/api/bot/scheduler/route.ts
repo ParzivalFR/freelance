@@ -2,21 +2,34 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-function parseSchedule(input: string): { nextRun: Date; recurring: boolean } | null {
-  const lower = input.trim().toLowerCase();
+// "quand" peut être : "once|<isoDate>", "daily|<isoDate>", "weekly|<isoDate>",
+// "monthly|<isoDate>", ou juste "daily"/"weekly"/"monthly" sans date précise
+// (dans ce cas on calcule le premier envoi comme maintenant + intervalle).
+function parseSchedule(input: string): { nextRun: Date; recurring: boolean; cron: string | null } | null {
+  const [rawRecurrence, isoDate] = input.trim().split("|");
+  const recurrence = rawRecurrence.toLowerCase();
   const now = new Date();
 
-  if (lower === "daily") return { nextRun: new Date(now.getTime() + 86_400_000), recurring: true };
-  if (lower === "weekly") return { nextRun: new Date(now.getTime() + 7 * 86_400_000), recurring: true };
-  if (lower === "monthly") {
-    const next = new Date(now);
-    next.setMonth(next.getMonth() + 1);
-    return { nextRun: next, recurring: true };
+  if (recurrence === "once") {
+    if (!isoDate) return null;
+    const date = new Date(isoDate);
+    if (isNaN(date.getTime()) || date.getTime() <= now.getTime()) return null;
+    return { nextRun: date, recurring: false, cron: null };
   }
 
-  const date = new Date(input.includes("T") ? input : input.replace(" ", "T"));
-  if (isNaN(date.getTime()) || date.getTime() <= now.getTime()) return null;
-  return { nextRun: date, recurring: false };
+  if (recurrence === "daily" || recurrence === "weekly" || recurrence === "monthly") {
+    if (isoDate) {
+      const date = new Date(isoDate);
+      if (!isNaN(date.getTime())) return { nextRun: date, recurring: true, cron: recurrence };
+    }
+    if (recurrence === "daily") return { nextRun: new Date(now.getTime() + 86_400_000), recurring: true, cron: "daily" };
+    if (recurrence === "weekly") return { nextRun: new Date(now.getTime() + 7 * 86_400_000), recurring: true, cron: "weekly" };
+    const next = new Date(now);
+    next.setMonth(next.getMonth() + 1);
+    return { nextRun: next, recurring: true, cron: "monthly" };
+  }
+
+  return null;
 }
 
 async function getOwnedBot(botId: string | null, userId: string) {
@@ -81,7 +94,7 @@ export async function POST(request: Request) {
       guildId,
       channelId,
       content,
-      cronExpression: parsed.recurring ? when.toLowerCase() : null,
+      cronExpression: parsed.cron,
       nextRun: parsed.nextRun,
       isRecurring: parsed.recurring,
     },
@@ -120,7 +133,7 @@ export async function PATCH(request: Request) {
       );
     }
     scheduleFields = {
-      cronExpression: parsed.recurring ? when.toLowerCase() : null,
+      cronExpression: parsed.cron,
       nextRun: parsed.nextRun,
       isRecurring: parsed.recurring,
     };
