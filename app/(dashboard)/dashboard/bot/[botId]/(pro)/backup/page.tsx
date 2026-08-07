@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Archive, Plus, RefreshCw, RotateCcw, Trash2 } from "lucide-react";
+import { Archive, Eye, Folder, Hash, Plus, RefreshCw, RotateCcw, Trash2, Volume2 } from "lucide-react";
 import { PageHeader, LoadingScreen, CyberInput } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useToast } from "@/components/ui/use-toast";
@@ -16,6 +16,12 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface BackupSummary {
   id: string;
@@ -25,6 +31,35 @@ interface BackupSummary {
   roleCount: number;
   categoryCount: number;
   channelCount: number;
+}
+
+interface SnapshotRole {
+  name: string;
+  color: number;
+  hoist: boolean;
+  mentionable: boolean;
+  position: number;
+}
+
+interface SnapshotChannel {
+  name: string;
+  type: number;
+  topic: string | null;
+  position: number;
+  categoryName: string | null;
+}
+
+interface Snapshot {
+  roles: SnapshotRole[];
+  categories: { name: string; position: number }[];
+  channels: SnapshotChannel[];
+}
+
+const CHANNEL_TYPE_LABEL: Record<number, string> = { 0: "texte", 2: "vocal", 5: "annonces", 13: "stage", 15: "forum" };
+
+function roleColorHex(color: number): string {
+  if (color === 0) return "#99a1af"; // gris par défaut si le rôle n'a pas de couleur
+  return `#${color.toString(16).padStart(6, "0")}`;
 }
 
 export default function BackupPage() {
@@ -38,6 +73,9 @@ export default function BackupPage() {
   const [creating, setCreating] = useState(false);
   const [restoringId, setRestoringId] = useState<string | null>(null);
   const [confirmRestore, setConfirmRestore] = useState<BackupSummary | null>(null);
+  const [viewing, setViewing] = useState<BackupSummary | null>(null);
+  const [viewingSnapshot, setViewingSnapshot] = useState<Snapshot | null>(null);
+  const [loadingSnapshot, setLoadingSnapshot] = useState(false);
 
   async function load() {
     const res = await fetch(`/api/bot/backup?botId=${botId}`);
@@ -78,6 +116,21 @@ export default function BackupPage() {
     }
     setBackups((prev) => prev?.filter((b) => b.id !== id) ?? null);
     toast({ title: "Sauvegarde supprimée" });
+  }
+
+  async function view(b: BackupSummary) {
+    setViewing(b);
+    setLoadingSnapshot(true);
+    setViewingSnapshot(null);
+    try {
+      const res = await fetch(`/api/bot/backup/${b.id}?botId=${botId}`);
+      if (res.ok) {
+        const data = await res.json();
+        setViewingSnapshot(data.snapshot as Snapshot);
+      }
+    } finally {
+      setLoadingSnapshot(false);
+    }
   }
 
   async function restore(id: string) {
@@ -150,6 +203,13 @@ export default function BackupPage() {
             </div>
             <div className="flex items-center gap-3 shrink-0">
               <button
+                onClick={() => view(b)}
+                className="flex items-center gap-1.5 rounded-lg border border-dashed px-3 py-1.5 font-mono text-[10px] text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <Eye className="size-3" />
+                voir
+              </button>
+              <button
                 onClick={() => setConfirmRestore(b)}
                 disabled={restoringId === b.id}
                 className="flex items-center gap-1.5 rounded-lg border border-dashed px-3 py-1.5 font-mono text-[10px] text-blue-400 hover:bg-blue-500/10 disabled:opacity-40"
@@ -182,6 +242,85 @@ export default function BackupPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={!!viewing} onOpenChange={(open) => !open && setViewing(null)}>
+        <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>{viewing?.name || `Sauvegarde ${viewing?.id.slice(0, 8)}`}</DialogTitle>
+          </DialogHeader>
+
+          {loadingSnapshot && (
+            <p className="font-mono text-xs text-muted-foreground">Chargement…</p>
+          )}
+
+          {viewingSnapshot && (
+            <div className="space-y-5">
+              <div className="space-y-2">
+                <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
+                  rôles ({viewingSnapshot.roles.length})
+                </p>
+                <div className="flex flex-wrap gap-1.5">
+                  {[...viewingSnapshot.roles].sort((a, b) => b.position - a.position).map((r) => (
+                    <span
+                      key={r.name}
+                      className="rounded border border-dashed px-2 py-0.5 font-mono text-[10px]"
+                      style={{ color: roleColorHex(r.color), borderColor: roleColorHex(r.color) + "60" }}
+                    >
+                      {r.hoist ? "★ " : ""}{r.name}
+                    </span>
+                  ))}
+                  {viewingSnapshot.roles.length === 0 && (
+                    <p className="font-mono text-[10px] text-muted-foreground/50">Aucun rôle.</p>
+                  )}
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
+                  structure ({viewingSnapshot.categories.length} catégories · {viewingSnapshot.channels.length} salons)
+                </p>
+
+                {[...viewingSnapshot.categories].sort((a, b) => a.position - b.position).map((cat) => (
+                  <div key={cat.name} className="space-y-1">
+                    <div className="flex items-center gap-1.5 font-mono text-[11px] font-bold text-foreground">
+                      <Folder className="size-3" />
+                      {cat.name.toUpperCase()}
+                    </div>
+                    <div className="ml-4 space-y-0.5 border-l border-dashed pl-3">
+                      {viewingSnapshot.channels
+                        .filter((c) => c.categoryName === cat.name)
+                        .sort((a, b) => a.position - b.position)
+                        .map((c) => (
+                          <div key={c.name} className="flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground">
+                            {c.type === 2 ? <Volume2 className="size-3" /> : <Hash className="size-3" />}
+                            {c.name}
+                            <span className="text-muted-foreground/40">· {CHANNEL_TYPE_LABEL[c.type] ?? c.type}</span>
+                          </div>
+                        ))}
+                    </div>
+                  </div>
+                ))}
+
+                {viewingSnapshot.channels.filter((c) => !c.categoryName).length > 0 && (
+                  <div className="space-y-0.5">
+                    <p className="font-mono text-[10px] font-bold text-foreground">Sans catégorie</p>
+                    {viewingSnapshot.channels
+                      .filter((c) => !c.categoryName)
+                      .sort((a, b) => a.position - b.position)
+                      .map((c) => (
+                        <div key={c.name} className="flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground">
+                          {c.type === 2 ? <Volume2 className="size-3" /> : <Hash className="size-3" />}
+                          {c.name}
+                          <span className="text-muted-foreground/40">· {CHANNEL_TYPE_LABEL[c.type] ?? c.type}</span>
+                        </div>
+                      ))}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
