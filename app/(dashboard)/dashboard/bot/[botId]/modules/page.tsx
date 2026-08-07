@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, AlarmClock, BarChart2, Bug, Cake, ClipboardList, Clock, Coins, Gem, Gift, Lightbulb, Megaphone, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Rocket, Save, ScrollText, Shield, ShieldAlert, ShieldCheck, Sparkles, Star, Ticket, UserPlus, Users2, Volume2 } from "lucide-react";
+import { Activity, AlarmClock, Archive, BarChart2, Bug, Cake, ClipboardList, Clock, Coins, Gem, Gift, Lightbulb, Megaphone, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Rocket, Save, ScrollText, Shield, ShieldAlert, ShieldCheck, Sparkles, Star, Ticket, UserPlus, Users2, Volume2 } from "lucide-react";
 import { ModuleToggle, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useToast } from "@/components/ui/use-toast";
@@ -318,6 +318,16 @@ export default function BotModulesPage() {
           enabled={config.moduleAntinuke}
           onToggle={() => update("moduleAntinuke", !config.moduleAntinuke)}
           configHref={`${base}/antinuke`}
+          locked={!isPro}
+        />
+
+        <ModuleToggle
+          icon={<Archive className="size-3.5" />}
+          label="sauvegardes"
+          description="/backup create|list|restore|delete — snapshot de la structure du serveur (rôles, salons)"
+          enabled={config.moduleBackup}
+          onToggle={() => update("moduleBackup", !config.moduleBackup)}
+          configHref={`${base}/backup`}
           locked={!isPro}
         />
 

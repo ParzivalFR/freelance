@@ -70,6 +70,7 @@ model DiscordBot {
   moduleBooster       Boolean @default(false) @map("module_booster")
   moduleReminders     Boolean @default(false) @map("module_reminders")
   moduleAntinuke      Boolean @default(false) @map("module_antinuke")
+  moduleBackup        Boolean @default(false) @map("module_backup")
 
   // Paramètres spécifiques aux modules (JSON pour plus de flexibilité)
   config Json? @default("{}") // ex: { welcomeChannel: "123", ticketCategory: "456" }
@@ -96,10 +97,26 @@ model DiscordBot {
   birthdays       Birthday[]
   tempChannels    TempChannel[]
   reminders       Reminder[]
+  serverBackups   ServerBackup[]
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("discord_bots")
+}
+
+model ServerBackup {
+  id        String   @id @default(cuid())
+  botId     String   @map("bot_id")
+  guildId   String   @map("guild_id")
+  name      String?
+  createdBy String   @map("created_by")
+  snapshot  Json
+  createdAt DateTime @default(now()) @map("created_at")
+
+  bot DiscordBot @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  @@index([botId, guildId])
+  @@map("server_backups")
 }
 
 model Reminder {

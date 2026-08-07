@@ -44,6 +44,7 @@ import { useToast } from "@/components/ui/use-toast";
 import {
   Activity,
   AlarmClock,
+  Archive,
   BarChart2,
   BookOpen,
   Bot,
@@ -252,6 +253,13 @@ function buildNav(botId: string) {
           title: "Anti-Nuke",
           url: `/dashboard/bot/${botId}/antinuke`,
           icon: ShieldAlert,
+          exact: false,
+          pro: true,
+        },
+        {
+          title: "Sauvegardes",
+          url: `/dashboard/bot/${botId}/backup`,
+          icon: Archive,
           exact: false,
           pro: true,
         },

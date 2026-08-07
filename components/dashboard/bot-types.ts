@@ -308,6 +308,7 @@ export interface BotConfig {
   moduleBooster: boolean;
   moduleReminders: boolean;
   moduleAntinuke: boolean;
+  moduleBackup: boolean;
   moduleReactionRoles: boolean;
   moduleAutoresponse: boolean;
   moduleEconomy: boolean;
