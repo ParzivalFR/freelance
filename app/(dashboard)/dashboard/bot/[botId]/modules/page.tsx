@@ -1,12 +1,21 @@
 "use client";
 
-import { Activity, AlarmClock, Archive, BarChart2, Bug, Cake, ClipboardList, Clock, Coins, Gem, Gift, Lightbulb, Megaphone, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Rocket, Save, ScrollText, Shield, ShieldAlert, ShieldCheck, Sparkles, Star, Ticket, UserPlus, Users2, Volume2 } from "lucide-react";
+import { Activity, AlarmClock, Archive, BarChart2, Bug, Cake, Check, ClipboardList, Clock, Coins, Gem, Gift, Lightbulb, Loader2, Megaphone, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Rocket, ScrollText, Shield, ShieldAlert, ShieldCheck, Sparkles, Star, Ticket, UserPlus, Users2, Volume2 } from "lucide-react";
 import { ModuleToggle, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useToast } from "@/components/ui/use-toast";
+import type { BotConfig } from "@/components/dashboard/bot-types";
+
+interface ModuleDef {
+  key: keyof BotConfig;
+  icon: React.ReactNode;
+  label: string;
+  description: string;
+  href: string;
+}
 
 export default function BotModulesPage() {
-  const { config, saving, saved, update, save } = useBotConfig();
+  const { config, saving, saved, updateAndSave } = useBotConfig();
   const { toast } = useToast();
 
   if (!config) return <LoadingScreen />;
@@ -14,343 +23,98 @@ export default function BotModulesPage() {
   const base = `/dashboard/bot/${config.id}`;
   const isPro = config.plan === "PRO" || config.plan === "MANAGED";
 
+  const toggle = async (key: keyof BotConfig) => {
+    if (saving) return;
+    const result = await updateAndSave(key, !config[key]);
+    if (!result.ok) {
+      toast({ title: "Erreur lors de la sauvegarde", description: result.error ?? "Une erreur est survenue.", variant: "destructive" });
+    }
+  };
+
+  const freeModules: ModuleDef[] = [
+    { key: "moduleWelcome", icon: <MessageSquare className="size-3.5" />, label: "welcome", description: "Messages de bienvenue, goodbye, auto-rôle, image dynamique", href: `${base}/welcome` },
+    { key: "moduleModeration", icon: <Shield className="size-3.5" />, label: "moderation", description: "/ban /kick /warn /timeout /softban /massban + AutoMod", href: `${base}/moderation` },
+    { key: "moduleLog", icon: <ScrollText className="size-3.5" />, label: "logs", description: "Logs centralisés et configurables de tous les événements", href: `${base}/logs` },
+    { key: "moduleLevel", icon: <Star className="size-3.5" />, label: "xp & levels", description: "/rank /leaderboard · XP message + vocal · Rôles par niveau", href: `${base}/levels` },
+    { key: "moduleReactionRoles", icon: <MousePointerClick className="size-3.5" />, label: "reaction roles", description: "Panels avec boutons pour auto-assigner des rôles", href: `${base}/reaction-roles` },
+    { key: "moduleStatus", icon: <Radio className="size-3.5" />, label: "statut bot", description: "Présence Discord : Joue à, Regarde, Écoute — rotation automatique", href: `${base}/status` },
+    { key: "moduleHoneypot", icon: <Bug className="size-3.5" />, label: "honeypot", description: "Salon-piège anti-spam : softban auto, MP de prévention, restauration des rôles", href: `${base}/honeypot` },
+    { key: "moduleAnnounceCommand", icon: <Megaphone className="size-3.5" />, label: "annonce", description: "/annonce — publier une annonce (texte ou embed) dans un salon, réservé au staff", href: `${base}/announce` },
+    { key: "moduleReminders", icon: <AlarmClock className="size-3.5" />, label: "rappels", description: "/remind add|list|delete — rappels personnels pour chaque membre", href: `${base}/reminders` },
+    { key: "moduleBooster", icon: <Gem className="size-3.5" />, label: "booster", description: "Attribue automatiquement un rôle aux membres qui boostent le serveur", href: `${base}/booster` },
+  ];
+
+  const proModules: ModuleDef[] = [
+    { key: "moduleTickets", icon: <Ticket className="size-3.5" />, label: "tickets", description: "Système de tickets avancé avec transcripts HTML", href: `${base}/tickets` },
+    { key: "moduleSurvey", icon: <BarChart2 className="size-3.5" />, label: "survey", description: "Sondages avancés (choix multiple, classé Borda, pondéré, récurrent)", href: `${base}/polls` },
+    { key: "moduleMonitor", icon: <Activity className="size-3.5" />, label: "monitor", description: "Surveillance HTTP / TCP / PING / PostgreSQL / MySQL + SSH", href: `${base}/monitor` },
+    { key: "moduleGiveaway", icon: <Gift className="size-3.5" />, label: "giveaway", description: "Concours avec conditions, modes de tirage et re-roll", href: `${base}/giveaway` },
+    { key: "moduleVerification", icon: <ShieldCheck className="size-3.5" />, label: "vérification", description: "Panel de vérification avec CAPTCHA optionnel", href: `${base}/verification` },
+    { key: "moduleTempchannels", icon: <Volume2 className="size-3.5" />, label: "temp channels", description: "Salons vocaux temporaires créés automatiquement", href: `${base}/tempchannels` },
+    { key: "moduleStarboard", icon: <Star className="size-3.5" />, label: "starboard", description: "Reposte les messages les plus réactés dans un salon dédié", href: `${base}/starboard` },
+    { key: "moduleAutoresponse", icon: <MessageSquareReply className="size-3.5" />, label: "auto-réponses", description: "Réponses automatiques selon des triggers configurables", href: `${base}/autoresponse` },
+    { key: "moduleEconomy", icon: <Coins className="size-3.5" />, label: "economy", description: "/balance /daily /work /pay /slots /coinflip /rob", href: `${base}/economy` },
+    { key: "moduleApplications", icon: <ClipboardList className="size-3.5" />, label: "candidatures", description: "Formulaires de candidature avec review staff", href: `${base}/applications` },
+    { key: "moduleBirthday", icon: <Cake className="size-3.5" />, label: "anniversaires", description: "/birthday set/show/list — célébration automatique", href: `${base}/birthday` },
+    { key: "moduleSuggestions", icon: <Lightbulb className="size-3.5" />, label: "suggestions", description: "/suggest — votes pour/contre, accepter/refuser", href: `${base}/suggestions` },
+    { key: "moduleAfk", icon: <Moon className="size-3.5" />, label: "afk", description: "/afk — notification automatique si mentionné", href: `${base}/afk` },
+    { key: "moduleScheduler", icon: <Clock className="size-3.5" />, label: "messages programmés", description: "/schedule add — daily / weekly / monthly / datetime", href: `${base}/scheduler` },
+    { key: "moduleAibuild", icon: <Sparkles className="size-3.5" />, label: "ai build server", description: "/build-server — l'IA génère ton serveur complet (catégories, salons, rôles)", href: `${base}/aibuild` },
+    { key: "moduleQuests", icon: <Rocket className="size-3.5" />, label: "quêtes", description: "/mission poster — salons bénévoles & contrats, nom de commande personnalisable", href: `${base}/quests` },
+    { key: "moduleProfiles", icon: <ClipboardList className="size-3.5" />, label: "profils", description: "/profil creer|voir — registre de profils membres, nom de commande personnalisable", href: `${base}/profiles` },
+    { key: "moduleTeams", icon: <Users2 className="size-3.5" />, label: "projets", description: "/projet poster|clore — recherche de coéquipiers, nom de commande personnalisable", href: `${base}/teams` },
+    { key: "moduleInvites", icon: <UserPlus className="size-3.5" />, label: "invitations", description: "/invites voir|classement|ajouter|retirer|reset — tracker complet avec détection de faux comptes", href: `${base}/invites` },
+    { key: "moduleAntinuke", icon: <ShieldAlert className="size-3.5" />, label: "anti-nuke", description: "Détecte et bloque un compte (même admin) qui supprime des salons/rôles ou bannit en masse", href: `${base}/antinuke` },
+    { key: "moduleBackup", icon: <Archive className="size-3.5" />, label: "sauvegardes", description: "/backup create|list|restore|delete — snapshot de la structure du serveur (rôles, salons)", href: `${base}/backup` },
+  ];
+
   return (
     <div className="space-y-6 px-5 py-6 md:px-7 lg:px-8">
-      <PageHeader
-        icon={<Puzzle className="size-4" />}
-        title="Modules"
-        subtitle="Active ou désactive les fonctionnalités de ton bot"
-        status={config.status}
-      />
-
-      <div className="space-y-3">
-
-        {/* ─── FREE ─── */}
-        <p className="font-mono text-[9px] uppercase tracking-widest text-green-500/70 pt-2">— modules gratuits —</p>
-
-        <ModuleToggle
-          icon={<MessageSquare className="size-3.5" />}
-          label="welcome"
-          description="Messages de bienvenue, goodbye, auto-rôle, image dynamique"
-          enabled={config.moduleWelcome}
-          onToggle={() => update("moduleWelcome", !config.moduleWelcome)}
-          configHref={`${base}/welcome`}
+      <div className="flex items-center justify-between gap-3">
+        <PageHeader
+          icon={<Puzzle className="size-4" />}
+          title="Modules"
+          subtitle="Active ou désactive les fonctionnalités de ton bot — sauvegarde automatique"
+          status={config.status}
         />
-
-        <ModuleToggle
-          icon={<Shield className="size-3.5" />}
-          label="moderation"
-          description="/ban /kick /warn /timeout /softban /massban + AutoMod"
-          enabled={config.moduleModeration}
-          onToggle={() => update("moduleModeration", !config.moduleModeration)}
-          configHref={`${base}/moderation`}
-        />
-
-        <ModuleToggle
-          icon={<ScrollText className="size-3.5" />}
-          label="logs"
-          description="Logs centralisés et configurables de tous les événements"
-          enabled={config.moduleLog}
-          onToggle={() => update("moduleLog", !config.moduleLog)}
-          configHref={`${base}/logs`}
-        />
-
-        <ModuleToggle
-          icon={<Star className="size-3.5" />}
-          label="xp & levels"
-          description="/rank /leaderboard · XP message + vocal · Rôles par niveau"
-          enabled={config.moduleLevel}
-          onToggle={() => update("moduleLevel", !config.moduleLevel)}
-          configHref={`${base}/levels`}
-        />
-
-        <ModuleToggle
-          icon={<MousePointerClick className="size-3.5" />}
-          label="reaction roles"
-          description="Panels avec boutons pour auto-assigner des rôles"
-          enabled={config.moduleReactionRoles}
-          onToggle={() => update("moduleReactionRoles", !config.moduleReactionRoles)}
-          configHref={`${base}/reaction-roles`}
-        />
-
-        <ModuleToggle
-          icon={<Radio className="size-3.5" />}
-          label="statut bot"
-          description="Présence Discord : Joue à, Regarde, Écoute — rotation automatique"
-          enabled={config.moduleStatus}
-          onToggle={() => update("moduleStatus", !config.moduleStatus)}
-          configHref={`${base}/status`}
-        />
-
-        <ModuleToggle
-          icon={<Bug className="size-3.5" />}
-          label="honeypot"
-          description="Salon-piège anti-spam : softban auto, MP de prévention, restauration des rôles"
-          enabled={config.moduleHoneypot}
-          onToggle={() => update("moduleHoneypot", !config.moduleHoneypot)}
-          configHref={`${base}/honeypot`}
-        />
-
-        <ModuleToggle
-          icon={<Megaphone className="size-3.5" />}
-          label="annonce"
-          description="/annonce — publier une annonce (texte ou embed) dans un salon, réservé au staff"
-          enabled={config.moduleAnnounceCommand}
-          onToggle={() => update("moduleAnnounceCommand", !config.moduleAnnounceCommand)}
-          configHref={`${base}/announce`}
-        />
-
-        <ModuleToggle
-          icon={<AlarmClock className="size-3.5" />}
-          label="rappels"
-          description="/remind add|list|delete — rappels personnels pour chaque membre"
-          enabled={config.moduleReminders}
-          onToggle={() => update("moduleReminders", !config.moduleReminders)}
-          configHref={`${base}/reminders`}
-        />
-
-        {/* ─── PRO ─── */}
-        <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70 pt-4">— modules pro —</p>
-
-        <ModuleToggle
-          icon={<Ticket className="size-3.5" />}
-          label="tickets"
-          description="Système de tickets avancé avec transcripts HTML"
-          enabled={config.moduleTickets}
-          onToggle={() => update("moduleTickets", !config.moduleTickets)}
-          configHref={`${base}/tickets`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<BarChart2 className="size-3.5" />}
-          label="survey"
-          description="Sondages avancés (choix multiple, classé Borda, pondéré, récurrent)"
-          enabled={config.moduleSurvey}
-          onToggle={() => update("moduleSurvey", !config.moduleSurvey)}
-          configHref={`${base}/polls`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Activity className="size-3.5" />}
-          label="monitor"
-          description="Surveillance HTTP / TCP / PING / PostgreSQL / MySQL + SSH"
-          enabled={config.moduleMonitor}
-          onToggle={() => update("moduleMonitor", !config.moduleMonitor)}
-          configHref={`${base}/monitor`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Gift className="size-3.5" />}
-          label="giveaway"
-          description="Concours avec conditions, modes de tirage et re-roll"
-          enabled={config.moduleGiveaway}
-          onToggle={() => update("moduleGiveaway", !config.moduleGiveaway)}
-          configHref={`${base}/giveaway`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<ShieldCheck className="size-3.5" />}
-          label="vérification"
-          description="Panel de vérification avec CAPTCHA optionnel"
-          enabled={config.moduleVerification}
-          onToggle={() => update("moduleVerification", !config.moduleVerification)}
-          configHref={`${base}/verification`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Volume2 className="size-3.5" />}
-          label="temp channels"
-          description="Salons vocaux temporaires créés automatiquement"
-          enabled={config.moduleTempchannels}
-          onToggle={() => update("moduleTempchannels", !config.moduleTempchannels)}
-          configHref={`${base}/tempchannels`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Star className="size-3.5" />}
-          label="starboard"
-          description="Reposte les messages les plus réactés dans un salon dédié"
-          enabled={config.moduleStarboard}
-          onToggle={() => update("moduleStarboard", !config.moduleStarboard)}
-          configHref={`${base}/starboard`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<MessageSquareReply className="size-3.5" />}
-          label="auto-réponses"
-          description="Réponses automatiques selon des triggers configurables"
-          enabled={config.moduleAutoresponse}
-          onToggle={() => update("moduleAutoresponse", !config.moduleAutoresponse)}
-          configHref={`${base}/autoresponse`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Coins className="size-3.5" />}
-          label="economy"
-          description="/balance /daily /work /pay /slots /coinflip /rob"
-          enabled={config.moduleEconomy}
-          onToggle={() => update("moduleEconomy", !config.moduleEconomy)}
-          configHref={`${base}/economy`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<ClipboardList className="size-3.5" />}
-          label="candidatures"
-          description="Formulaires de candidature avec review staff"
-          enabled={config.moduleApplications}
-          onToggle={() => update("moduleApplications", !config.moduleApplications)}
-          configHref={`${base}/applications`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Cake className="size-3.5" />}
-          label="anniversaires"
-          description="/birthday set/show/list — célébration automatique"
-          enabled={config.moduleBirthday}
-          onToggle={() => update("moduleBirthday", !config.moduleBirthday)}
-          configHref={`${base}/birthday`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Lightbulb className="size-3.5" />}
-          label="suggestions"
-          description="/suggest — votes pour/contre, accepter/refuser"
-          enabled={config.moduleSuggestions}
-          onToggle={() => update("moduleSuggestions", !config.moduleSuggestions)}
-          configHref={`${base}/suggestions`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Moon className="size-3.5" />}
-          label="afk"
-          description="/afk — notification automatique si mentionné"
-          enabled={config.moduleAfk}
-          onToggle={() => update("moduleAfk", !config.moduleAfk)}
-          configHref={`${base}/afk`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Clock className="size-3.5" />}
-          label="messages programmés"
-          description="/schedule add — daily / weekly / monthly / datetime"
-          enabled={config.moduleScheduler}
-          onToggle={() => update("moduleScheduler", !config.moduleScheduler)}
-          configHref={`${base}/scheduler`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Sparkles className="size-3.5" />}
-          label="ai build server"
-          description="/build-server — l'IA génère ton serveur complet (catégories, salons, rôles)"
-          enabled={config.moduleAibuild}
-          onToggle={() => update("moduleAibuild", !config.moduleAibuild)}
-          configHref={`${base}/aibuild`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Rocket className="size-3.5" />}
-          label="quêtes"
-          description="/mission poster — salons bénévoles & contrats, nom de commande personnalisable"
-          enabled={config.moduleQuests}
-          onToggle={() => update("moduleQuests", !config.moduleQuests)}
-          configHref={`${base}/quests`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<ClipboardList className="size-3.5" />}
-          label="profils"
-          description="/profil creer|voir — registre de profils membres, nom de commande personnalisable"
-          enabled={config.moduleProfiles}
-          onToggle={() => update("moduleProfiles", !config.moduleProfiles)}
-          configHref={`${base}/profiles`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Users2 className="size-3.5" />}
-          label="projets"
-          description="/projet poster|clore — recherche de coéquipiers, nom de commande personnalisable"
-          enabled={config.moduleTeams}
-          onToggle={() => update("moduleTeams", !config.moduleTeams)}
-          configHref={`${base}/teams`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<UserPlus className="size-3.5" />}
-          label="invitations"
-          description="/invites voir|classement|ajouter|retirer|reset — tracker complet avec détection de faux comptes"
-          enabled={config.moduleInvites}
-          onToggle={() => update("moduleInvites", !config.moduleInvites)}
-          configHref={`${base}/invites`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Gem className="size-3.5" />}
-          label="booster"
-          description="Attribue automatiquement un rôle aux membres qui boostent le serveur"
-          enabled={config.moduleBooster}
-          onToggle={() => update("moduleBooster", !config.moduleBooster)}
-          configHref={`${base}/booster`}
-        />
-
-        <ModuleToggle
-          icon={<ShieldAlert className="size-3.5" />}
-          label="anti-nuke"
-          description="Détecte et bloque un compte (même admin) qui supprime des salons/rôles ou bannit en masse"
-          enabled={config.moduleAntinuke}
-          onToggle={() => update("moduleAntinuke", !config.moduleAntinuke)}
-          configHref={`${base}/antinuke`}
-          locked={!isPro}
-        />
-
-        <ModuleToggle
-          icon={<Archive className="size-3.5" />}
-          label="sauvegardes"
-          description="/backup create|list|restore|delete — snapshot de la structure du serveur (rôles, salons)"
-          enabled={config.moduleBackup}
-          onToggle={() => update("moduleBackup", !config.moduleBackup)}
-          configHref={`${base}/backup`}
-          locked={!isPro}
-        />
-
+        <div className="flex items-center gap-1.5 font-mono text-[10px] text-muted-foreground/60 shrink-0">
+          {saving && <Loader2 className="size-3 animate-spin" />}
+          {saved && !saving && <Check className="size-3 text-green-500" />}
+          {saving ? "sauvegarde…" : saved ? "enregistré" : ""}
+        </div>
       </div>
 
-      <div className="flex justify-end">
-        <button
-          onClick={async () => {
-            const result = await save();
-            if (!result.ok) {
-              toast({
-                title: "Erreur lors de la sauvegarde",
-                description: result.error ?? "Une erreur est survenue.",
-                variant: "destructive",
-              });
-            }
-          }}
-          disabled={saving}
-          className="flex items-center gap-2 rounded-lg border border-dashed px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-muted-foreground transition hover:bg-muted hover:text-foreground disabled:opacity-40"
-        >
-          <Save className="size-3.5" />
-          {saved ? "✓ saved" : saving ? "saving..." : "save_config"}
-        </button>
+      <div className="space-y-3">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-green-500/70 pt-2">— modules gratuits —</p>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {freeModules.map((m) => (
+            <ModuleToggle
+              key={m.key}
+              icon={m.icon}
+              label={m.label}
+              description={m.description}
+              enabled={Boolean(config[m.key])}
+              onToggle={() => toggle(m.key)}
+              configHref={m.href}
+            />
+          ))}
+        </div>
+
+        <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70 pt-4">— modules pro —</p>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {proModules.map((m) => (
+            <ModuleToggle
+              key={m.key}
+              icon={m.icon}
+              label={m.label}
+              description={m.description}
+              enabled={Boolean(config[m.key])}
+              onToggle={() => toggle(m.key)}
+              configHref={m.href}
+              locked={!isPro}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

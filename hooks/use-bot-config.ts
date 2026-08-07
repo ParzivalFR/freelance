@@ -80,5 +80,46 @@ export function useBotConfig() {
     }
   }, [config, fetchConfig]);
 
-  return { config, setConfig, saving, saved, saveError, isDirty, update, updateModuleConfig, save };
+  // Sauvegarde immédiate d'un seul champ (ex: toggle de module) — construit le
+  // payload explicitement au lieu de passer par update()+save() qui liraient
+  // "config" depuis une closure périmée (React n'a pas encore re-rendu entre
+  // les deux appels synchrones).
+  const updateAndSave = useCallback(
+    async (key: keyof BotConfig, value: unknown): Promise<{ ok: boolean; error?: string }> => {
+      if (!config) return { ok: false, error: "Config non chargée" };
+      const next = { ...config, [key]: value };
+      setConfig(next);
+      setSaving(true);
+      setSaveError(null);
+      try {
+        const res = await fetch("/api/bot/config", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(next),
+        });
+        if (res.ok) {
+          const data = await res.json();
+          setConfig({ ...data, config: data.config ?? {}, workerCommand: null });
+          setSaved(true);
+          setTimeout(() => setSaved(false), 1500);
+          return { ok: true };
+        } else {
+          const errData = await res.json().catch(() => ({}));
+          const errorMsg = (errData as { error?: string }).error ?? `Erreur ${res.status}`;
+          setSaveError(errorMsg);
+          fetchConfig();
+          return { ok: false, error: errorMsg };
+        }
+      } catch {
+        const errorMsg = "Erreur réseau";
+        setSaveError(errorMsg);
+        return { ok: false, error: errorMsg };
+      } finally {
+        setSaving(false);
+      }
+    },
+    [config, fetchConfig]
+  );
+
+  return { config, setConfig, saving, saved, saveError, isDirty, update, updateModuleConfig, save, updateAndSave };
 }
