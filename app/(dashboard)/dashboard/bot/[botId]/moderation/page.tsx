@@ -209,6 +209,7 @@ export default function ModerationPage() {
                 { key: "automodAntiSpam",       label: "anti-spam",         desc: "Messages répétés rapidement" },
                 { key: "automodAntiDuplicate",   label: "anti-duplicate",    desc: "Messages identiques consécutifs" },
                 { key: "automodAntiLinks",       label: "anti-liens",        desc: "Bloque les URLs non autorisées" },
+                { key: "automodAntiInvite",      label: "anti-invitations",  desc: "Bloque les liens discord.gg vers d'autres serveurs" },
                 { key: "automodAntiMentionSpam", label: "anti-mention spam", desc: "Trop de mentions dans un message" },
                 { key: "automodAntiCaps",        label: "anti-caps",         desc: "Messages en majuscules excessives" },
               ].map(({ key, label, desc }) => (
@@ -236,6 +237,15 @@ export default function ModerationPage() {
                 onChange={(v) => updateModuleConfig("automodAllowedDomains", v)}
                 placeholder="discord.com, youtube.com"
               />
+              <CyberInput
+                label="codes_invitation_autorisés (virgule-séparés)"
+                value={config.config.automodInviteWhitelist ?? ""}
+                onChange={(v) => updateModuleConfig("automodInviteWhitelist", v)}
+                placeholder="monserveur, serveur-partenaire"
+              />
+              <p className="font-mono text-[9px] text-muted-foreground/50 -mt-2">
+                Pense à ajouter le code de TON propre serveur ici, sinon vos propres invitations seront aussi bloquées.
+              </p>
               <div className="space-y-1.5">
                 <CyberLabel>action_automod</CyberLabel>
                 <div className="flex gap-1.5">

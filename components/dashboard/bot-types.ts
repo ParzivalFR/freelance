@@ -53,6 +53,8 @@ export interface ModuleConfig {
   automodBadWords?: string;
   automodAntiLinks?: boolean;
   automodAllowedDomains?: string;
+  automodAntiInvite?: boolean;
+  automodInviteWhitelist?: string;
   automodAntiMentionSpam?: boolean;
   automodAntiCaps?: boolean;
   automodAction?: string;
