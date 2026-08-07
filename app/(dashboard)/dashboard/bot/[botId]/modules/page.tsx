@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, BarChart2, Bug, Cake, ClipboardList, Clock, Coins, Gem, Gift, Lightbulb, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Rocket, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, UserPlus, Users2, Volume2 } from "lucide-react";
+import { Activity, BarChart2, Bug, Cake, ClipboardList, Clock, Coins, Gem, Gift, Lightbulb, Megaphone, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Rocket, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, UserPlus, Users2, Volume2 } from "lucide-react";
 import { ModuleToggle, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useToast } from "@/components/ui/use-toast";
@@ -89,6 +89,15 @@ export default function BotModulesPage() {
           enabled={config.moduleHoneypot}
           onToggle={() => update("moduleHoneypot", !config.moduleHoneypot)}
           configHref={`${base}/honeypot`}
+        />
+
+        <ModuleToggle
+          icon={<Megaphone className="size-3.5" />}
+          label="annonce"
+          description="/annonce — publier une annonce (texte ou embed) dans un salon, réservé au staff"
+          enabled={config.moduleAnnounceCommand}
+          onToggle={() => update("moduleAnnounceCommand", !config.moduleAnnounceCommand)}
+          configHref={`${base}/announce`}
         />
 
         {/* ─── PRO ─── */}

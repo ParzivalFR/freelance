@@ -14,6 +14,14 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: "botId manquant" }, { status: 400 });
   }
 
+  const bot = await prisma.discordBot.findFirst({
+    where: { id: botId, userId: session.user.id },
+    select: { id: true },
+  });
+  if (!bot) {
+    return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
+  }
+
   const logs = await prisma.botLog.findMany({
     where: { botId },
     orderBy: { createdAt: "desc" },

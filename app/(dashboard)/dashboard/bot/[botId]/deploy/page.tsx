@@ -301,7 +301,7 @@ export default function BotDeployPage() {
             </p>
           </div>
           <a
-            href="/api/bot/download"
+            href={`/api/bot/download?botId=${config.id}`}
             download
             className="flex w-full items-center justify-center gap-2 rounded-xl border border-blue-500/30 bg-blue-500/10 px-4 py-3.5 font-mono text-xs font-bold uppercase tracking-wider text-blue-400 transition hover:bg-blue-500/20"
           >
