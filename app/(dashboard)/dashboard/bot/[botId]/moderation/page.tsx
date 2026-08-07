@@ -267,19 +267,19 @@ export default function ModerationPage() {
                 <CyberInput
                   label="spam_max_messages"
                   value={String(config.config.spamMaxMessages ?? "")}
-                  onChange={(v) => updateModuleConfig("spamMaxMessages", v ? Number(v) : undefined)}
+                  onChange={(v) => updateModuleConfig("spamMaxMessages", v ? Math.max(1, Number(v)) : undefined)}
                   placeholder="5"
                 />
                 <CyberInput
                   label="spam_window_secondes"
                   value={String(config.config.spamWindowSeconds ?? "")}
-                  onChange={(v) => updateModuleConfig("spamWindowSeconds", v ? Number(v) : undefined)}
+                  onChange={(v) => updateModuleConfig("spamWindowSeconds", v ? Math.max(1, Number(v)) : undefined)}
                   placeholder="5"
                 />
                 <CyberInput
                   label="duplicate_min_length"
                   value={String(config.config.duplicateMinLength ?? "")}
-                  onChange={(v) => updateModuleConfig("duplicateMinLength", v ? Number(v) : undefined)}
+                  onChange={(v) => updateModuleConfig("duplicateMinLength", v ? Math.max(1, Number(v)) : undefined)}
                   placeholder="10"
                 />
               </div>

@@ -44,7 +44,7 @@ export default function StarboardPage() {
           <CyberInput
             label="seuil_reactions"
             value={String(config.config.starboardThreshold ?? "")}
-            onChange={(v) => updateModuleConfig("starboardThreshold", v === "" ? undefined : Number(v))}
+            onChange={(v) => updateModuleConfig("starboardThreshold", v === "" ? undefined : Math.max(1, Number(v)))}
             placeholder="3"
           />
         </div>

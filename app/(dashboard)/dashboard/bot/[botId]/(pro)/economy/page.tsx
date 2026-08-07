@@ -198,13 +198,13 @@ export default function EconomyPage() {
               <CyberInput
                 label="work_gain_min"
                 value={String(config.config.workMin ?? "")}
-                onChange={(v) => updateModuleConfig("workMin", v ? Number(v) : undefined)}
+                onChange={(v) => updateModuleConfig("workMin", v ? Math.max(0, Number(v)) : undefined)}
                 placeholder="50"
               />
               <CyberInput
                 label="work_gain_max"
                 value={String(config.config.workMax ?? "")}
-                onChange={(v) => updateModuleConfig("workMax", v ? Number(v) : undefined)}
+                onChange={(v) => updateModuleConfig("workMax", v ? Math.max(config.config.workMin ?? 0, Number(v)) : undefined)}
                 placeholder="200"
               />
               <CyberInput
