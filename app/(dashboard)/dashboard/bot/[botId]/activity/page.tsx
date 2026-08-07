@@ -166,7 +166,7 @@ export default function BotActivityPage() {
             { k: "bot_name", v: config.name },
             { k: "prefix", v: config.prefix },
             { k: "plan", v: config.plan ?? "FREE" },
-            { k: "token", v: config.token ? "CONFIGURÉ" : "MANQUANT" },
+            { k: "token", v: config.hasToken ? "CONFIGURÉ" : "MANQUANT" },
           ].map(({ k, v }) => (
             <div key={k}>
               <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/50">{k}</p>
