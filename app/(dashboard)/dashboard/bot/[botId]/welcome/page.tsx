@@ -327,6 +327,13 @@ export default function WelcomePage() {
           {config.config.goodbyeEnabled && (
             <>
               <ChannelSelect botId={botId} value={config.config.goodbyeChannelId ?? ""} onChange={(v) => updateModuleConfig("goodbyeChannelId", v)} label="salon_de_depart" filter="text" />
+              <div className="flex items-center justify-between">
+                <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">envoyer_en_embed</p>
+                <Switch
+                  checked={config.config.goodbyeUseEmbed ?? false}
+                  onCheckedChange={(v) => updateModuleConfig("goodbyeUseEmbed", v)}
+                />
+              </div>
               <CyberInput label="message_de_depart" value={config.config.goodbyeMessage ?? ""} onChange={(v) => updateModuleConfig("goodbyeMessage", v)} placeholder="Au revoir {username} ! Placeholders: {username} {server} {memberCount}" />
             </>
           )}
