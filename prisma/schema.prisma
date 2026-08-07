@@ -68,6 +68,8 @@ model DiscordBot {
   moduleAnnounceCommand Boolean @default(false) @map("module_announce_command")
   moduleInvites       Boolean @default(false) @map("module_invites")
   moduleBooster       Boolean @default(false) @map("module_booster")
+  moduleReminders     Boolean @default(false) @map("module_reminders")
+  moduleAntinuke      Boolean @default(false) @map("module_antinuke")
 
   // Paramètres spécifiques aux modules (JSON pour plus de flexibilité)
   config Json? @default("{}") // ex: { welcomeChannel: "123", ticketCategory: "456" }
@@ -93,10 +95,27 @@ model DiscordBot {
   refundRequests  RefundRequest[]
   birthdays       Birthday[]
   tempChannels    TempChannel[]
+  reminders       Reminder[]
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("discord_bots")
+}
+
+model Reminder {
+  id        String   @id @default(cuid())
+  botId     String   @map("bot_id")
+  guildId   String   @map("guild_id")
+  channelId String   @map("channel_id")
+  userId    String   @map("user_id")
+  message   String
+  remindAt  DateTime @map("remind_at")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  bot DiscordBot @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  @@index([remindAt])
+  @@map("reminders")
 }
 
 model TempChannel {

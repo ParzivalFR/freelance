@@ -56,7 +56,7 @@ export async function PATCH(request: Request) {
 
   try {
     const body = await request.json();
-    const { id, name, token, prefix, moduleWelcome, moduleModeration, moduleTickets, moduleLevel, moduleLog, moduleSurvey, moduleMonitor, moduleGiveaway, moduleVerification, moduleTempchannels, moduleStarboard, moduleReactionRoles, moduleAutoresponse, moduleEconomy, moduleApplications, moduleBirthday, moduleSuggestions, moduleAfk, moduleScheduler, moduleAibuild, moduleStatus, moduleHoneypot, moduleQuests, moduleProfiles, moduleTeams, moduleAnnounceCommand, moduleInvites, moduleBooster, config, status, workerCommand } = body;
+    const { id, name, token, prefix, moduleWelcome, moduleModeration, moduleTickets, moduleLevel, moduleLog, moduleSurvey, moduleMonitor, moduleGiveaway, moduleVerification, moduleTempchannels, moduleStarboard, moduleReactionRoles, moduleAutoresponse, moduleEconomy, moduleApplications, moduleBirthday, moduleSuggestions, moduleAfk, moduleScheduler, moduleAibuild, moduleStatus, moduleHoneypot, moduleQuests, moduleProfiles, moduleTeams, moduleAnnounceCommand, moduleInvites, moduleBooster, moduleReminders, moduleAntinuke, config, status, workerCommand } = body;
 
     const VALID_COMMANDS = ["START", "STOP", "RESTART", null];
     if (workerCommand !== undefined && !VALID_COMMANDS.includes(workerCommand)) {
@@ -92,6 +92,7 @@ export async function PATCH(request: Request) {
       ["moduleQuests", moduleQuests], ["moduleProfiles", moduleProfiles],
       ["moduleTeams", moduleTeams], ["moduleAnnounceCommand", moduleAnnounceCommand],
       ["moduleInvites", moduleInvites], ["moduleBooster", moduleBooster],
+      ["moduleReminders", moduleReminders], ["moduleAntinuke", moduleAntinuke],
     ] as const;
     const moduleChanged = MODULE_FLAGS.some(
       ([key, val]) => val !== undefined && val !== (existing as Record<string, unknown>)[key]
@@ -106,7 +107,7 @@ export async function PATCH(request: Request) {
       moduleGiveaway, moduleVerification, moduleTempchannels, moduleStarboard,
       moduleAutoresponse, moduleEconomy, moduleApplications,
       moduleBirthday, moduleSuggestions, moduleAfk, moduleScheduler, moduleAibuild,
-      moduleQuests, moduleProfiles, moduleTeams, moduleInvites,
+      moduleQuests, moduleProfiles, moduleTeams, moduleInvites, moduleAntinuke,
     };
     if (!isPro) {
       for (const [key, value] of Object.entries(PRO_MODULES)) {
@@ -154,6 +155,8 @@ export async function PATCH(request: Request) {
         ...(moduleAnnounceCommand !== undefined && { moduleAnnounceCommand }),
         ...(moduleInvites !== undefined && { moduleInvites }),
         ...(moduleBooster !== undefined && { moduleBooster }),
+        ...(moduleReminders !== undefined && { moduleReminders }),
+        ...(moduleAntinuke !== undefined && { moduleAntinuke }),
         ...(config !== undefined && { config }),
         ...(status !== undefined && { status }),
         ...(workerCommand !== undefined && { workerCommand }),

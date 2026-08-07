@@ -1,6 +1,6 @@
 "use client";
 
-import { Activity, BarChart2, Bug, Cake, ClipboardList, Clock, Coins, Gem, Gift, Lightbulb, Megaphone, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Rocket, Save, ScrollText, Shield, ShieldCheck, Sparkles, Star, Ticket, UserPlus, Users2, Volume2 } from "lucide-react";
+import { Activity, AlarmClock, BarChart2, Bug, Cake, ClipboardList, Clock, Coins, Gem, Gift, Lightbulb, Megaphone, MessageSquare, MessageSquareReply, Moon, MousePointerClick, Puzzle, Radio, Rocket, Save, ScrollText, Shield, ShieldAlert, ShieldCheck, Sparkles, Star, Ticket, UserPlus, Users2, Volume2 } from "lucide-react";
 import { ModuleToggle, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useToast } from "@/components/ui/use-toast";
@@ -98,6 +98,15 @@ export default function BotModulesPage() {
           enabled={config.moduleAnnounceCommand}
           onToggle={() => update("moduleAnnounceCommand", !config.moduleAnnounceCommand)}
           configHref={`${base}/announce`}
+        />
+
+        <ModuleToggle
+          icon={<AlarmClock className="size-3.5" />}
+          label="rappels"
+          description="/remind add|list|delete — rappels personnels pour chaque membre"
+          enabled={config.moduleReminders}
+          onToggle={() => update("moduleReminders", !config.moduleReminders)}
+          configHref={`${base}/reminders`}
         />
 
         {/* ─── PRO ─── */}
@@ -300,6 +309,16 @@ export default function BotModulesPage() {
           enabled={config.moduleBooster}
           onToggle={() => update("moduleBooster", !config.moduleBooster)}
           configHref={`${base}/booster`}
+        />
+
+        <ModuleToggle
+          icon={<ShieldAlert className="size-3.5" />}
+          label="anti-nuke"
+          description="Détecte et bloque un compte (même admin) qui supprime des salons/rôles ou bannit en masse"
+          enabled={config.moduleAntinuke}
+          onToggle={() => update("moduleAntinuke", !config.moduleAntinuke)}
+          configHref={`${base}/antinuke`}
+          locked={!isPro}
         />
 
       </div>

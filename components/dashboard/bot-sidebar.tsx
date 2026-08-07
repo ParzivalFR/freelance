@@ -43,6 +43,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import {
   Activity,
+  AlarmClock,
   BarChart2,
   BookOpen,
   Bot,
@@ -70,6 +71,7 @@ import {
   RotateCcw,
   ScrollText,
   Shield,
+  ShieldAlert,
   Star,
   Ticket,
   Trash2,
@@ -238,6 +240,20 @@ function buildNav(botId: string) {
           icon: Gem,
           exact: false,
           pro: false,
+        },
+        {
+          title: "Rappels",
+          url: `/dashboard/bot/${botId}/reminders`,
+          icon: AlarmClock,
+          exact: false,
+          pro: false,
+        },
+        {
+          title: "Anti-Nuke",
+          url: `/dashboard/bot/${botId}/antinuke`,
+          icon: ShieldAlert,
+          exact: false,
+          pro: true,
         },
         {
           title: "Logs",

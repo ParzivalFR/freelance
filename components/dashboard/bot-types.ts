@@ -247,6 +247,13 @@ export interface ModuleConfig {
   honeypotEmbedFooter?: string;
   honeypotEmbedChannelId?: string;
   honeypotEmbedMessageId?: string;
+  // Anti-Nuke
+  antinukeEnabled?: boolean;
+  antinukeMaxActions?: number;
+  antinukeWindowSeconds?: number;
+  antinukeAction?: "strip_roles" | "kick" | "ban";
+  antinukeLogChannelId?: string;
+  antinukeWhitelistRoleId?: string;
   // Général
   guildId?: string;
 }
@@ -299,6 +306,8 @@ export interface BotConfig {
   moduleAnnounceCommand: boolean;
   moduleInvites: boolean;
   moduleBooster: boolean;
+  moduleReminders: boolean;
+  moduleAntinuke: boolean;
   moduleReactionRoles: boolean;
   moduleAutoresponse: boolean;
   moduleEconomy: boolean;
