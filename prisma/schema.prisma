@@ -92,10 +92,25 @@ model DiscordBot {
   monitors        Monitor[]
   refundRequests  RefundRequest[]
   birthdays       Birthday[]
+  tempChannels    TempChannel[]
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@map("discord_bots")
+}
+
+model TempChannel {
+  id        String   @id @default(cuid())
+  botId     String   @map("bot_id")
+  guildId   String   @map("guild_id")
+  channelId String   @map("channel_id")
+  ownerId   String   @map("owner_id")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  bot DiscordBot @relation(fields: [botId], references: [id], onDelete: Cascade)
+
+  @@unique([botId, channelId])
+  @@map("temp_channels")
 }
 
 model Infraction {
@@ -712,18 +727,20 @@ model AutoResponse {
 // ─── Birthdays ───────────────────────────────────────────────────────────────
 
 model Birthday {
-  id        String   @id @default(cuid())
-  botId     String   @map("bot_id")
-  guildId   String   @map("guild_id")
-  userId    String   @map("user_id")
-  day       Int
-  month     Int
-  createdAt DateTime @default(now()) @map("created_at")
+  id           String    @id @default(cuid())
+  botId        String    @map("bot_id")
+  guildId      String    @map("guild_id")
+  userId       String    @map("user_id")
+  day          Int
+  month        Int
+  roleRemoveAt DateTime? @map("role_remove_at")
+  createdAt    DateTime  @default(now()) @map("created_at")
 
   bot DiscordBot @relation(fields: [botId], references: [id], onDelete: Cascade)
 
   @@unique([botId, guildId, userId])
   @@index([month, day])
+  @@index([roleRemoveAt])
   @@map("birthdays")
 }
 
