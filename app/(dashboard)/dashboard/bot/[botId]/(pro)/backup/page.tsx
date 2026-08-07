@@ -2,10 +2,20 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { Archive, Trash2 } from "lucide-react";
-import { PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
+import { Archive, Plus, RefreshCw, RotateCcw, Trash2 } from "lucide-react";
+import { PageHeader, LoadingScreen, CyberInput } from "@/components/dashboard/cyber-ui";
 import { useBotConfig } from "@/hooks/use-bot-config";
 import { useToast } from "@/components/ui/use-toast";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 interface BackupSummary {
   id: string;
@@ -24,6 +34,10 @@ export default function BackupPage() {
   const { toast } = useToast();
 
   const [backups, setBackups] = useState<BackupSummary[] | null>(null);
+  const [name, setName] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [restoringId, setRestoringId] = useState<string | null>(null);
+  const [confirmRestore, setConfirmRestore] = useState<BackupSummary | null>(null);
 
   async function load() {
     const res = await fetch(`/api/bot/backup?botId=${botId}`);
@@ -34,6 +48,27 @@ export default function BackupPage() {
     if (botId) load();
   }, [botId]);
 
+  async function create() {
+    setCreating(true);
+    try {
+      const res = await fetch("/api/bot/backup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ botId, name: name.trim() || undefined }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast({ title: "Erreur", description: data.error ?? "Création impossible.", variant: "destructive" });
+        return;
+      }
+      toast({ title: "Sauvegarde créée", description: `${data.roleCount} rôles, ${data.categoryCount} catégories, ${data.channelCount} salons.` });
+      setName("");
+      load();
+    } finally {
+      setCreating(false);
+    }
+  }
+
   async function remove(id: string) {
     const res = await fetch(`/api/bot/backup?id=${id}&botId=${botId}`, { method: "DELETE" });
     if (!res.ok) {
@@ -43,6 +78,26 @@ export default function BackupPage() {
     }
     setBackups((prev) => prev?.filter((b) => b.id !== id) ?? null);
     toast({ title: "Sauvegarde supprimée" });
+  }
+
+  async function restore(id: string) {
+    setConfirmRestore(null);
+    setRestoringId(id);
+    try {
+      const res = await fetch("/api/bot/backup/restore", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ botId, backupId: id }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast({ title: "Erreur", description: data.error ?? "Restauration impossible.", variant: "destructive" });
+        return;
+      }
+      toast({ title: "Restauration terminée", description: `${data.roles} rôles, ${data.categories} catégories, ${data.channels} salons recréés.` });
+    } finally {
+      setRestoringId(null);
+    }
   }
 
   if (!config || backups === null) return <LoadingScreen />;
@@ -56,12 +111,22 @@ export default function BackupPage() {
         status={config.status}
       />
 
-      <div className="rounded-xl border border-dashed bg-card p-4 space-y-1">
-        <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">créer / restaurer</p>
-        <p className="font-mono text-[10px] text-muted-foreground/70">
-          /backup create [nom] — /backup restore [id] — /backup delete [id]
-        </p>
-        <p className="font-mono text-[9px] text-muted-foreground/50 pt-1">
+      <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
+        <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">nouvelle sauvegarde</p>
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <CyberInput label="nom (optionnel)" value={name} onChange={setName} placeholder="ex: avant migration" />
+          </div>
+          <button
+            onClick={create}
+            disabled={creating}
+            className="flex items-center gap-1.5 self-end rounded-lg border border-dashed px-4 py-2.5 font-mono text-xs font-bold text-blue-400 hover:bg-blue-500/10 disabled:opacity-40"
+          >
+            {creating ? <RefreshCw className="size-3 animate-spin" /> : <Plus className="size-3" />}
+            créer
+          </button>
+        </div>
+        <p className="font-mono text-[9px] text-muted-foreground/50">
           La restauration recrée la structure sans rien supprimer de l&apos;existant — pensée pour reconstruire après un nuke, pas comme un &quot;retour en arrière&quot; strict.
         </p>
       </div>
@@ -83,12 +148,40 @@ export default function BackupPage() {
                 {new Date(b.createdAt).toLocaleString("fr-FR")} · {b.roleCount} rôles · {b.categoryCount} catégories · {b.channelCount} salons
               </p>
             </div>
-            <button onClick={() => remove(b.id)} className="text-red-400 hover:text-red-300 shrink-0">
-              <Trash2 className="size-3.5" />
-            </button>
+            <div className="flex items-center gap-3 shrink-0">
+              <button
+                onClick={() => setConfirmRestore(b)}
+                disabled={restoringId === b.id}
+                className="flex items-center gap-1.5 rounded-lg border border-dashed px-3 py-1.5 font-mono text-[10px] text-blue-400 hover:bg-blue-500/10 disabled:opacity-40"
+              >
+                {restoringId === b.id ? <RefreshCw className="size-3 animate-spin" /> : <RotateCcw className="size-3" />}
+                {restoringId === b.id ? "restauration…" : "restaurer"}
+              </button>
+              <button onClick={() => remove(b.id)} className="text-red-400 hover:text-red-300">
+                <Trash2 className="size-3.5" />
+              </button>
+            </div>
           </div>
         ))}
       </div>
+
+      <AlertDialog open={!!confirmRestore} onOpenChange={(open) => !open && setConfirmRestore(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Restaurer &quot;{confirmRestore?.name || confirmRestore?.id.slice(0, 8)}&quot; ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Ça va recréer {confirmRestore?.roleCount} rôle(s), {confirmRestore?.categoryCount} catégorie(s) et {confirmRestore?.channelCount} salon(s) sur ton serveur Discord.
+              Ça ne supprime rien de l&apos;existant — si la structure actuelle ressemble déjà à cette sauvegarde, tu vas te retrouver avec des doublons.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={() => confirmRestore && restore(confirmRestore.id)}>
+              Confirmer la restauration
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
