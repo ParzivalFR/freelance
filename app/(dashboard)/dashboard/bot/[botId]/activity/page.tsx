@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { Activity, Terminal } from "lucide-react";
 import { PageHeader, StatCard, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import type { BotConfig } from "@/components/dashboard/bot-types";
+import { ALL_MODULES } from "@/components/dashboard/module-list";
 import { useBotSocket, type BotLogEvent } from "@/hooks/use-bot-socket";
 
 type LogEntry = {
@@ -65,17 +66,7 @@ export default function BotActivityPage() {
 
   if (!config) return <LoadingScreen />;
 
-  const activeModules = [
-    config.moduleWelcome,
-    config.moduleModeration,
-    config.moduleTickets,
-  ].filter(Boolean).length;
-
-  const modulesEnabled = [
-    config.moduleWelcome && "Welcome",
-    config.moduleModeration && "Modération",
-    config.moduleTickets && "Tickets",
-  ].filter(Boolean) as string[];
+  const activeModules = ALL_MODULES.filter((m) => config[m.key]);
 
   return (
     <div className="space-y-6 px-5 py-6 md:px-7 lg:px-8">
@@ -96,9 +87,9 @@ export default function BotActivityPage() {
         />
         <StatCard
           label="modules_actifs"
-          value={`${activeModules} / 3`}
-          sub={activeModules > 0 ? modulesEnabled.join(", ") : "Aucun module activé"}
-          accent={activeModules > 0}
+          value={`${activeModules.length} / ${ALL_MODULES.length}`}
+          sub={activeModules.length > 0 ? activeModules.map((m) => m.label).join(", ") : "Aucun module activé"}
+          accent={activeModules.length > 0}
         />
         <StatCard
           label="infractions_totales"
@@ -112,35 +103,27 @@ export default function BotActivityPage() {
       <div className="rounded-xl border border-dashed bg-card">
         <div className="border-b border-dashed px-4 py-3">
           <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-            &gt; modules_status
+            &gt; modules_actifs ({activeModules.length})
           </span>
         </div>
-        <div className="divide-y divide-dashed">
-          {[
-            { key: "moduleWelcome", label: "Welcome", desc: "Messages de bienvenue", enabled: config.moduleWelcome },
-            { key: "moduleModeration", label: "Modération", desc: "/ban /kick /warn + AutoMod", enabled: config.moduleModeration },
-            { key: "moduleTickets", label: "Tickets", desc: "Système de tickets avancé", enabled: config.moduleTickets },
-          ].map(({ label, desc, enabled }) => (
-            <div key={label} className="flex items-center gap-3 px-4 py-3">
-              <div
-                className={`size-2 shrink-0 rounded-full ${
-                  enabled ? "bg-green-500" : "bg-muted-foreground/20"
-                }`}
-              />
-              <div className="min-w-0 flex-1">
-                <p className="font-mono text-xs font-semibold text-foreground">{label}</p>
-                <p className="font-mono text-[10px] text-muted-foreground/60">{desc}</p>
+        {activeModules.length === 0 ? (
+          <p className="px-4 py-6 text-center font-mono text-[10px] text-muted-foreground/50">
+            Aucun module activé — va sur la page Modules pour en activer.
+          </p>
+        ) : (
+          <div className="divide-y divide-dashed">
+            {activeModules.map((m) => (
+              <div key={m.key} className="flex items-center gap-3 px-4 py-3">
+                <div className="size-2 shrink-0 rounded-full bg-green-500" />
+                <div className="min-w-0 flex-1">
+                  <p className="font-mono text-xs font-semibold text-foreground">{m.label}</p>
+                  <p className="font-mono text-[10px] text-muted-foreground/60">{m.description}</p>
+                </div>
+                <span className="font-mono text-[9px] uppercase tracking-widest text-green-500">ACTIF</span>
               </div>
-              <span
-                className={`font-mono text-[9px] uppercase tracking-widest ${
-                  enabled ? "text-green-500" : "text-muted-foreground/30"
-                }`}
-              >
-                {enabled ? "ACTIF" : "INACTIF"}
-              </span>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Terminal live */}
@@ -148,17 +131,17 @@ export default function BotActivityPage() {
         <div className="flex items-center gap-2 border-b border-dashed px-4 py-3">
           <Terminal className="size-3.5 text-muted-foreground/50" />
           <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground">
-            logs_live
+            logs_activité
           </span>
           <div className="ml-auto flex items-center gap-2">
             <div className={`size-1.5 rounded-full ${connected ? "animate-pulse bg-green-500" : "bg-muted-foreground/30"}`} />
-            <span className="font-mono text-[9px] text-muted-foreground/50">{connected ? "connecté" : "hors ligne"}</span>
+            <span className="font-mono text-[9px] text-muted-foreground/50">{connected ? "live" : "historique"}</span>
             <button onClick={() => setLogs([])} className="ml-2 font-mono text-[9px] text-muted-foreground/40 hover:text-muted-foreground">effacer</button>
           </div>
         </div>
         <div ref={scrollRef} className="h-64 overflow-y-auto p-4 space-y-0.5">
           {logs.length === 0 ? (
-            <p className="font-mono text-[10px] text-muted-foreground/30">En attente de logs...</p>
+            <p className="font-mono text-[10px] text-muted-foreground/30">Aucune activité enregistrée pour le moment.</p>
           ) : (
             logs.map((log, i) => (
               <p key={i} className={`font-mono text-[10px] ${
