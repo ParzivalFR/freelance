@@ -1,32 +1,30 @@
 {
-  "theme_color": "#060714",
-  "background_color": "#060714",
+  "theme_color": "#7158ff",
+  "background_color": "#0A0A0F",
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "name": "Gael Richard - D\u00e9veloppeur Freelance",
-  "description": "Propulsez votre pr\u00e9sence sur le web. Des solutions sur mesure pour vos projets web, d\u00e9velopp\u00e9es avec passion et expertise avec une attention particuli\u00e8re pour l'exp\u00e9rience utilisateur.",
+  "name": "Gael Richard - Développeur Freelance",
+  "description": "Développeur web freelance basé en France. Sites vitrines, applications web, logiciels desktop et apps mobiles sur-mesure.",
   "short_name": "Gael Richard",
   "icons": [
     {
-      "src": "/icon-192x192.png",
+      "src": "/icon/192",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     },
     {
-      "src": "/icon-256x256.png",
-      "sizes": "256x256",
-      "type": "image/png"
-    },
-    {
-      "src": "/icon-384x384.png",
-      "sizes": "384x384",
-      "type": "image/png"
-    },
-    {
-      "src": "/icon-512x512.png",
+      "src": "/icon/512",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon/512",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
