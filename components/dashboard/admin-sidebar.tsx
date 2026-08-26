@@ -25,7 +25,6 @@ import {
   RefreshCcw,
   Search,
   Settings,
-  Shield,
   Users,
 } from "lucide-react";
 import Link from "next/link";
@@ -74,26 +73,26 @@ export function AdminSidebar({
 
   return (
     <Sidebar {...props}>
-      <SidebarHeader className="border-b border-dashed px-4 py-4">
-        <div className="flex items-center gap-3">
-          <div className="flex size-9 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 ring-1 ring-blue-500/20">
-            <Shield className="size-4" />
+      <SidebarHeader className="border-b px-4 py-4">
+        <Link href="/admin" className="flex items-center gap-3">
+          <div className="flex size-9 items-center justify-center rounded-xl bg-[#7158ff] text-white ring-4 ring-[#7158ff]/20">
+            <span className="font-[family-name:var(--font-display)] text-sm leading-none">G</span>
           </div>
           <div className="min-w-0">
-            <p className="truncate font-mono text-sm font-bold text-foreground">
-              GAEL-DEV
+            <p className="truncate font-[family-name:var(--font-display)] text-lg uppercase leading-none text-foreground">
+              Gael-Dev
             </p>
-            <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
-              admin_panel
+            <p className="font-[family-name:var(--font-handwriting)] text-sm leading-tight text-[#7158ff]">
+              Espace admin
             </p>
           </div>
-        </div>
+        </Link>
       </SidebarHeader>
 
       <SidebarContent>
         {NAV.map((group) => (
           <SidebarGroup key={group.label}>
-            <SidebarGroupLabel className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
+            <SidebarGroupLabel className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground/60">
               {group.label}
             </SidebarGroupLabel>
             <SidebarGroupContent className="px-2">
@@ -110,10 +109,10 @@ export function AdminSidebar({
                       <SidebarMenuButton
                         asChild
                         isActive={isActive}
-                        className="font-mono text-xs data-[active=true]:border data-[active=true]:border-blue-500/30 data-[active=true]:bg-blue-500/10 data-[active=true]:text-blue-500"
+                        className="rounded-xl text-sm font-medium data-[active=true]:bg-[#7158ff]/10 data-[active=true]:font-semibold data-[active=true]:text-[#7158ff]"
                       >
                         <Link href={item.url}>
-                          <item.icon className="size-3.5" />
+                          <item.icon className="size-4" />
                           <span>{item.title}</span>
                         </Link>
                       </SidebarMenuButton>
@@ -126,20 +125,20 @@ export function AdminSidebar({
         ))}
       </SidebarContent>
 
-      <SidebarFooter className="border-t border-dashed p-2">
+      <SidebarFooter className="border-t p-2">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="font-mono text-xs">
+            <SidebarMenuButton asChild className="rounded-xl text-sm font-medium">
               <Link href="/dashboard/bot">
-                <Bot className="size-3.5" />
+                <Bot className="size-4" />
                 <span>Dashboard bots</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
           <SidebarMenuItem>
-            <SidebarMenuButton asChild className="font-mono text-xs text-muted-foreground">
+            <SidebarMenuButton asChild className="rounded-xl text-sm font-medium text-muted-foreground">
               <Link href="/">
-                <ArrowLeft className="size-3.5" />
+                <ArrowLeft className="size-4" />
                 <span>Retour au site</span>
               </Link>
             </SidebarMenuButton>

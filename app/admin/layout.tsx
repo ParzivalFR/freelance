@@ -36,13 +36,13 @@ export default async function AdminLayout({
     <SidebarProvider>
       <AdminSidebar />
       <SidebarInset>
-        <header className="flex h-14 shrink-0 items-center gap-3 border-b border-dashed px-4 md:px-6">
+        <header className="flex h-14 shrink-0 items-center gap-3 border-b px-4 md:px-6">
           <SidebarTrigger className="-ms-1" />
           <div className="ml-auto flex items-center gap-3">
             <Link
               href="/"
               target="_blank"
-              className="flex items-center gap-1.5 rounded-lg border border-dashed px-3 py-1.5 font-mono text-[10px] uppercase tracking-wider text-muted-foreground transition hover:bg-muted hover:text-foreground"
+              className="flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-[#7158ff]/40 hover:text-[#7158ff]"
             >
               <ExternalLink className="size-3" />
               Voir le site
