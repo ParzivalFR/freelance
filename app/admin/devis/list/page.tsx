@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
+import { EmptyState } from '@/components/admin/empty-state';
+import { PageHeader } from '@/components/admin/page-header';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -17,7 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { FileText, Search, Eye, Download, Calendar, Euro, ExternalLink, User, Building2, MapPin, Phone, Mail, Send, Check, X, Clock, Receipt, Trash2 } from 'lucide-react';
+import { FileText, Search, Eye, Download, Calendar, Euro, ExternalLink, User, Building2, Loader2, MapPin, Phone, Mail, Send, Check, X, Clock, Receipt, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import Link from 'next/link';
 
@@ -281,148 +283,129 @@ export default function DevisListPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-center">
-          <div className="animate-spin rounded-full size-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p>Chargement des devis...</p>
-        </div>
+      <div className="flex min-h-[400px] items-center justify-center gap-2 text-sm text-muted-foreground">
+        <Loader2 className="size-5 animate-spin text-[#7158ff]" />
+        Chargement des devis…
       </div>
     );
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Mes Devis</h1>
-          <p className="text-muted-foreground">
-            Gérez tous vos devis depuis cette interface
-          </p>
-        </div>
-        <Link href="/admin/devis">
-          <Button>
-            <FileText className="size-4 mr-2" />
-            Nouveau devis
+    <div className="mx-auto max-w-6xl space-y-10">
+      <PageHeader
+        eyebrow="Vos propositions"
+        title="De"
+        titleAccent="vis"
+        description="Tous les devis générés, du brouillon au devis accepté. Le PDF reste téléchargeable à tout moment."
+        actions={
+          <Button asChild className="ring-4 ring-[#7158ff]/20">
+            <Link href="/admin/devis">
+              <FileText className="mr-2 size-4" />
+              Nouveau devis
+            </Link>
           </Button>
-        </Link>
+        }
+      />
+
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+          <Input
+            placeholder="Rechercher par numéro, client…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            className="pl-10"
+          />
+        </div>
+        <Select value={statusFilter} onValueChange={setStatusFilter}>
+          <SelectTrigger className="w-full sm:w-52">
+            <SelectValue placeholder="Filtrer par statut" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">Tous les statuts</SelectItem>
+            <SelectItem value="draft">Brouillons</SelectItem>
+            <SelectItem value="sent">Envoyés</SelectItem>
+            <SelectItem value="accepted">Acceptés</SelectItem>
+            <SelectItem value="rejected">Refusés</SelectItem>
+            <SelectItem value="expired">Expirés</SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
-      {/* Filtres */}
-      <Card>
-        <CardContent className="pt-6">
-          <div className="flex gap-4">
-            <div className="flex-1">
-              <div className="relative">
-                <Search className="size-4 absolute left-3 top-3 text-muted-foreground" />
-                <Input
-                  placeholder="Rechercher par numéro, client..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-48">
-                <SelectValue placeholder="Filtrer par statut" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Tous les statuts</SelectItem>
-                <SelectItem value="draft">Brouillons</SelectItem>
-                <SelectItem value="sent">Envoyés</SelectItem>
-                <SelectItem value="accepted">Acceptés</SelectItem>
-                <SelectItem value="rejected">Refusés</SelectItem>
-                <SelectItem value="expired">Expirés</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Liste des devis */}
-      <div className="grid gap-4">
-        {filteredDevis.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <FileText className="size-12 text-muted-foreground mb-4" />
-              <h3 className="text-lg font-semibold mb-2">Aucun devis trouvé</h3>
-              <p className="text-muted-foreground text-center max-w-md">
-                {search || statusFilter !== 'all' 
-                  ? "Aucun devis ne correspond à vos critères de recherche."
-                  : "Vous n'avez pas encore créé de devis."}
-              </p>
-              {(!search && statusFilter === 'all') && (
-                <Link href="/admin/devis" className="mt-4">
-                  <Button>
-                    <FileText className="size-4 mr-2" />
-                    Créer votre premier devis
-                  </Button>
+      {filteredDevis.length === 0 ? (
+        <EmptyState
+          icon={FileText}
+          title="Aucun devis trouvé"
+          description={
+            search || statusFilter !== "all"
+              ? "Aucun devis ne correspond à vos critères. Modifiez la recherche ou retirez le filtre."
+              : "Vous n'avez pas encore créé de devis. Le générateur produit le PDF prêt à envoyer."
+          }
+          action={
+            !search && statusFilter === "all" ? (
+              <Button asChild>
+                <Link href="/admin/devis">
+                  <FileText className="mr-2 size-4" />
+                  Créer votre premier devis
                 </Link>
-              )}
-            </CardContent>
-          </Card>
-        ) : (
-          filteredDevis.map((devis) => (
-            <Card key={devis.id} className="hover:shadow-md transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="bg-blue-50 p-3 rounded-lg">
-                      <FileText className="size-6 text-blue-600" />
+              </Button>
+            ) : undefined
+          }
+        />
+      ) : (
+        <div className="space-y-3">
+          {filteredDevis.map((devis) => (
+            <div
+              key={devis.id}
+              className="rounded-2xl border bg-card p-5 transition-colors hover:border-[#7158ff]/40"
+            >
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div className="flex min-w-0 flex-1 items-start gap-4">
+                  <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#7158ff]/10 text-[#7158ff]">
+                    <FileText className="size-5" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="mb-2 flex flex-wrap items-center gap-2">
+                      <h3 className="text-base font-semibold text-foreground">
+                        {devis.devisNumber}
+                      </h3>
+                      <Badge
+                        className={`${statusColors[devis.status as keyof typeof statusColors]} text-white`}
+                      >
+                        {statusLabels[devis.status as keyof typeof statusLabels]}
+                      </Badge>
                     </div>
-                    <div>
-                      <div className="flex items-center gap-3 mb-1">
-                        <h3 className="font-semibold text-lg">{devis.devisNumber}</h3>
-                        <Badge 
-                          className={`${statusColors[devis.status as keyof typeof statusColors]} text-white`}
-                        >
-                          {statusLabels[devis.status as keyof typeof statusLabels]}
-                        </Badge>
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        <p className="font-medium">{devis.clientFirstName} {devis.clientLastName}</p>
-                        {devis.clientCompany && (
-                          <p>{devis.clientCompany}</p>
-                        )}
-                        <p>{devis.clientEmail}</p>
-                      </div>
+                    <div className="grid grid-cols-1 gap-x-6 gap-y-1 text-sm text-muted-foreground md:grid-cols-2">
+                      <p className="font-medium text-foreground">
+                        {devis.clientFirstName} {devis.clientLastName}
+                      </p>
+                      <p>{devis.clientEmail}</p>
+                      {devis.clientCompany && <p>{devis.clientCompany}</p>}
+                      <p className="flex items-center gap-1.5">
+                        <Calendar className="size-3.5 shrink-0" />
+                        Créé le {formatDate(devis.createdAt)} · valable jusqu&apos;au{" "}
+                        {formatDate(devis.validUntil)}
+                      </p>
                     </div>
                   </div>
+                </div>
 
-                  <div className="text-right">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Euro className="size-4 text-muted-foreground" />
-                      <span className="text-lg font-semibold">
-                        {formatCurrency(devis.total)}
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        {devis.tvaApplicable ? 'TTC' : 'HT'}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Calendar className="size-3" />
-                      <span>Créé le {formatDate(devis.createdAt)}</span>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      Valid jusqu'au {formatDate(devis.validUntil)}
-                    </div>
-                  </div>
-
+                <div className="flex shrink-0 flex-col items-end gap-3">
+                  <p className="flex items-baseline gap-1.5">
+                    <span className="text-xl font-bold tracking-tight text-foreground">
+                      {formatCurrency(devis.total)}
+                    </span>
+                    <span className="text-xs text-muted-foreground">
+                      {devis.tvaApplicable ? "TTC" : "HT"}
+                    </span>
+                  </p>
                   <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleViewDevis(devis)}
-                    >
-                      <Eye className="size-4 mr-2" />
+                    <Button variant="outline" size="sm" onClick={() => handleViewDevis(devis)}>
+                      <Eye className="mr-1.5 size-4" />
                       Voir
                     </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleDownloadPDF(devis)}
-                    >
-                      <Download className="size-4 mr-2" />
+                    <Button variant="outline" size="sm" onClick={() => handleDownloadPDF(devis)}>
+                      <Download className="mr-1.5 size-4" />
                       PDF
                     </Button>
                     <Button
@@ -432,34 +415,31 @@ export default function DevisListPage() {
                         setDevisToDelete(devis);
                         setIsDeleteDialogOpen(true);
                       }}
-                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      className="text-red-600 hover:text-red-700"
                     >
                       <Trash2 className="size-4" />
                     </Button>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          ))
-        )}
-      </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
-      {/* Pagination simple */}
       {filteredDevis.length > 0 && (
-        <div className="flex justify-center gap-2">
-          <Button 
-            variant="outline" 
-            onClick={() => setPage(p => Math.max(1, p - 1))}
+        <div className="flex items-center justify-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
           >
             Précédent
           </Button>
-          <span className="flex items-center px-4 py-2 text-sm">
-            Page {page}
-          </span>
-          <Button 
-            variant="outline" 
-            onClick={() => setPage(p => p + 1)}
+          <span className="px-4 text-sm text-muted-foreground">Page {page}</span>
+          <Button
+            variant="outline"
+            onClick={() => setPage((p) => p + 1)}
             disabled={devis.length < 10}
           >
             Suivant
@@ -588,7 +568,7 @@ export default function DevisListPage() {
 
               {/* Informations client et entreprise */}
               <div className="grid md:grid-cols-2 gap-6">
-                <Card>
+                <Card className="rounded-2xl">
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <User className="size-5" />
@@ -627,7 +607,7 @@ export default function DevisListPage() {
                   </CardContent>
                 </Card>
 
-                <Card>
+                <Card className="rounded-2xl">
                   <CardHeader>
                     <CardTitle className="text-lg flex items-center gap-2">
                       <Building2 className="size-5" />
@@ -659,7 +639,7 @@ export default function DevisListPage() {
               </div>
 
               {/* Prestations */}
-              <Card>
+              <Card className="rounded-2xl">
                 <CardHeader>
                   <CardTitle className="text-lg">Prestations</CardTitle>
                 </CardHeader>
@@ -702,7 +682,7 @@ export default function DevisListPage() {
 
               {/* Notes */}
               {selectedDevis.notes && (
-                <Card>
+                <Card className="rounded-2xl">
                   <CardHeader>
                     <CardTitle className="text-lg">Notes</CardTitle>
                   </CardHeader>

@@ -1,8 +1,10 @@
 "use client";
 
+import { EmptyState } from "@/components/admin/empty-state";
+import { PageHeader } from "@/components/admin/page-header";
+import { StatCard } from "@/components/admin/stat-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -11,19 +13,11 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { CheckCircle, RotateCw, XCircle } from "lucide-react";
+import { CheckCircle, Clock, Loader2, ReceiptText, RotateCw, XCircle } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 
 interface RefundRequest {
@@ -118,127 +112,131 @@ export default function AdminRefundsPage() {
   };
 
   const pending = requests.filter((r) => r.status === "PENDING").length;
+  const approved = requests.filter((r) => r.status === "APPROVED").length;
+  const denied = requests.filter((r) => r.status === "DENIED").length;
 
   return (
-    <div className="space-y-6">
-      <div className="border-b border-border/40 pb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Demandes de remboursement</h1>
-            <p className="mt-2 text-muted-foreground">
-              {pending > 0 ? (
-                <span className="text-yellow-600">{pending} demande(s) en attente</span>
-              ) : (
-                "Aucune demande en attente"
-              )}
-            </p>
-          </div>
-          <Button variant="outline" size="sm" onClick={fetchRequests} disabled={loading}>
+    <div className="mx-auto max-w-6xl space-y-10">
+      <PageHeader
+        eyebrow="Service après-vente"
+        title="Rembour"
+        titleAccent="sements"
+        description="Chaque demande déclenche (ou non) un remboursement Stripe et la désactivation du bot concerné. Vérifiez la raison avant de trancher."
+        actions={
+          <Button variant="outline" onClick={fetchRequests} disabled={loading}>
             <RotateCw className={`mr-2 size-4 ${loading ? "animate-spin" : ""}`} />
             Actualiser
           </Button>
-        </div>
+        }
+      />
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <StatCard
+          label="En attente"
+          value={pending}
+          sub={pending > 0 ? "À traiter maintenant" : "Rien à traiter"}
+          icon={Clock}
+          highlight={pending > 0}
+        />
+        <StatCard label="Approuvées" value={approved} sub="Remboursements effectués" icon={CheckCircle} />
+        <StatCard label="Refusées" value={denied} sub="Demandes rejetées" icon={XCircle} />
       </div>
 
-      <Card>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Client</TableHead>
-                <TableHead>Bot</TableHead>
-                <TableHead>Plan</TableHead>
-                <TableHead>Raison</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Date</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
-                    Chargement…
-                  </TableCell>
-                </TableRow>
-              ) : requests.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="py-8 text-center text-muted-foreground">
-                    Aucune demande de remboursement
-                  </TableCell>
-                </TableRow>
-              ) : (
-                requests.map((r) => {
-                  const status = statusConfig[r.status] ?? statusConfig.PENDING;
-                  return (
-                    <TableRow key={r.id}>
-                      <TableCell>
-                        <div className="font-medium">{r.user.name ?? "—"}</div>
-                        <div className="text-xs text-muted-foreground">{r.user.email}</div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="font-medium">{r.bot.name}</div>
-                        <div className="font-mono text-xs text-muted-foreground">{r.bot.id.slice(0, 8)}…</div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">{r.bot.plan ?? "—"}</Badge>
-                      </TableCell>
-                      <TableCell className="max-w-xs">
-                        <p className="line-clamp-2 text-sm text-muted-foreground">{r.reason}</p>
-                        {r.adminNote && (
-                          <p className="mt-1 text-xs italic text-muted-foreground/60">Note : {r.adminNote}</p>
-                        )}
-                        {r.stripeRefundId && (
-                          <p className="mt-1 font-mono text-[10px] text-green-600">↳ {r.stripeRefundId}</p>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={status.classes}>{status.label}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-xs">
-                          {format(new Date(r.createdAt), "dd MMM yyyy", { locale: fr })}
-                        </div>
-                        {r.processedAt && (
-                          <div className="text-xs text-muted-foreground">
-                            traité {format(new Date(r.processedAt), "dd MMM", { locale: fr })}
-                          </div>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        {r.status === "PENDING" && (
-                          <div className="flex justify-end gap-2">
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-green-600 hover:text-green-600 border-green-200 hover:bg-green-50"
-                              disabled={!!processing}
-                              onClick={() => openAction(r.id, "approve")}
-                            >
-                              <CheckCircle className="mr-1.5 size-3.5" />
-                              Approuver
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="text-red-600 hover:text-red-600 border-red-200 hover:bg-red-50"
-                              disabled={!!processing}
-                              onClick={() => openAction(r.id, "deny")}
-                            >
-                              <XCircle className="mr-1.5 size-3.5" />
-                              Refuser
-                            </Button>
-                          </div>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+      {loading ? (
+        <div className="flex items-center justify-center gap-2 rounded-2xl border border-dashed bg-card p-12 text-sm text-muted-foreground">
+          <Loader2 className="size-4 animate-spin text-[#7158ff]" />
+          Chargement des demandes…
+        </div>
+      ) : requests.length === 0 ? (
+        <EmptyState
+          icon={ReceiptText}
+          title="Aucune demande de remboursement"
+          description="Les demandes envoyées depuis le dashboard client apparaîtront ici, avec la raison invoquée."
+        />
+      ) : (
+        <div className="space-y-3">
+          {requests.map((r) => {
+            const status = statusConfig[r.status] ?? statusConfig.PENDING;
+            const isPending = r.status === "PENDING";
+            return (
+              <div
+                key={r.id}
+                className={`rounded-2xl border bg-card p-5 transition-colors hover:border-[#7158ff]/40 ${
+                  isPending ? "border-[#7158ff]/40 ring-4 ring-[#7158ff]/10" : ""
+                }`}
+              >
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-2 flex flex-wrap items-center gap-2">
+                      <h3 className="text-base font-semibold text-foreground">
+                        {r.user.name ?? r.user.email ?? "Client inconnu"}
+                      </h3>
+                      <Badge className={status.classes}>{status.label}</Badge>
+                      <Badge variant="outline">{r.bot.plan ?? "sans plan"}</Badge>
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-x-6 gap-y-1 text-sm text-muted-foreground md:grid-cols-2">
+                      <p>{r.user.email ?? "—"}</p>
+                      <p>
+                        Bot : {r.bot.name}{" "}
+                        <span className="font-mono text-xs">({r.bot.id.slice(0, 8)}…)</span>
+                      </p>
+                      <p>
+                        Demandé le{" "}
+                        {format(new Date(r.createdAt), "dd MMMM yyyy", { locale: fr })}
+                      </p>
+                      {r.processedAt && (
+                        <p>
+                          Traité le{" "}
+                          {format(new Date(r.processedAt), "dd MMMM yyyy", { locale: fr })}
+                        </p>
+                      )}
+                    </div>
+
+                    <p className="mt-3 rounded-xl bg-muted/50 p-3 text-sm text-foreground">
+                      {r.reason}
+                    </p>
+
+                    {r.adminNote && (
+                      <p className="mt-2 text-xs italic text-muted-foreground">
+                        Votre note : {r.adminNote}
+                      </p>
+                    )}
+                    {r.stripeRefundId && (
+                      <p className="mt-2 font-mono text-xs text-green-600 dark:text-green-400">
+                        Stripe : {r.stripeRefundId}
+                      </p>
+                    )}
+                  </div>
+
+                  {isPending && (
+                    <div className="flex shrink-0 flex-col gap-2">
+                      <Button
+                        size="sm"
+                        disabled={!!processing}
+                        onClick={() => openAction(r.id, "approve")}
+                      >
+                        <CheckCircle className="mr-1.5 size-4" />
+                        Approuver
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="text-red-600 hover:text-red-600"
+                        disabled={!!processing}
+                        onClick={() => openAction(r.id, "deny")}
+                      >
+                        <XCircle className="mr-1.5 size-4" />
+                        Refuser
+                      </Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       <Dialog open={!!actionTarget} onOpenChange={(open) => !open && setActionTarget(null)}>
         <DialogContent>

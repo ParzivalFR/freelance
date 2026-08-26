@@ -1,238 +1,138 @@
+import { PageHeader, SectionTitle } from "@/components/admin/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { 
-  Mail, 
-  Edit3, 
-  Eye, 
-  Copy,
+import { prisma } from "@/lib/prisma";
+import {
+  BellRing,
+  CheckCircle2,
+  FileText,
+  Mail,
   MessageSquare,
-  UserPlus,
-  CheckCircle,
-  AlertCircle
+  Send,
 } from "lucide-react";
+import Link from "next/link";
+import { SmtpCheck } from "./smtp-check";
 
-export default function EmailTemplatesPage() {
-  // Templates d'email prédéfinis
-  const emailTemplates = [
-    {
-      id: 1,
-      name: "Demande de témoignage",
-      description: "Email envoyé automatiquement pour demander un témoignage après un projet",
-      category: "Témoignages",
-      status: "active",
-      lastModified: "2024-01-15",
-      icon: MessageSquare,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50 dark:bg-blue-950/20"
-    },
-    {
-      id: 2,
-      name: "Bienvenue nouveau client",
-      description: "Email de bienvenue envoyé lors de l'inscription d'un nouveau client",
-      category: "Onboarding",
-      status: "active",
-      lastModified: "2024-01-10",
-      icon: UserPlus,
-      color: "text-green-600",
-      bgColor: "bg-green-50 dark:bg-green-950/20"
-    },
-    {
-      id: 3,
-      name: "Confirmation de projet",
-      description: "Email de confirmation envoyé quand un projet est accepté",
-      category: "Projets",
-      status: "active",
-      lastModified: "2024-01-08",
-      icon: CheckCircle,
-      color: "text-purple-600",
-      bgColor: "bg-purple-50 dark:bg-purple-950/20"
-    },
-    {
-      id: 4,
-      name: "Relance témoignage",
-      description: "Email de relance pour les témoignages non complétés",
-      category: "Témoignages",
-      status: "draft",
-      lastModified: "2024-01-05",
-      icon: AlertCircle,
-      color: "text-orange-600",
-      bgColor: "bg-orange-50 dark:bg-orange-950/20"
-    }
-  ];
+/**
+ * Inventaire des emails réellement envoyés par le site. Rien n'est édité ici :
+ * le contenu vit dans le code, cette page sert à savoir ce qui part, quand,
+ * et où le modifier.
+ */
+const emails = [
+  {
+    name: "Nouveau message de contact",
+    icon: BellRing,
+    recipient: "Vous",
+    trigger: "À chaque envoi du formulaire de contact de la landing.",
+    source: "app/api/contact/route.ts",
+  },
+  {
+    name: "Accusé de réception",
+    icon: CheckCircle2,
+    recipient: "Le visiteur",
+    trigger: "Envoyé dans la foulée, pour confirmer que le message est bien passé.",
+    source: "app/api/contact/route.ts",
+  },
+  {
+    name: "Demande de témoignage",
+    icon: MessageSquare,
+    recipient: "Le client",
+    trigger:
+      "Manuel, depuis la page Témoignages : contient le lien unique de dépôt d'avis.",
+    source: "lib/email-templates/testimonial-request.ts",
+    link: { href: "/admin/testimonials", label: "Envoyer un témoignage" },
+  },
+  {
+    name: "Envoi de devis",
+    icon: FileText,
+    recipient: "Le client",
+    trigger: "Manuel, depuis le générateur de devis : le PDF est joint à l'email.",
+    source: "lib/email.ts",
+    link: { href: "/admin/devis", label: "Créer un devis" },
+  },
+];
 
-  const categories = ["Tous", "Témoignages", "Onboarding", "Projets"];
+export default async function EmailTemplatesPage() {
+  const [testimonialTokens, usedTokens] = await Promise.all([
+    prisma.testimonialToken.count({ where: { emailSentAt: { not: null } } }).catch(() => 0),
+    prisma.testimonialToken.count({ where: { isUsed: true } }).catch(() => 0),
+  ]);
+
+  const senderAddress = process.env.EMAIL_USER ?? null;
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="border-b border-border/40 pb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Templates Email</h1>
-            <p className="mt-2 text-muted-foreground">
-              Gérez vos modèles d'emails automatisés
-            </p>
-          </div>
-          <Button>
-            <Mail className="mr-2 size-4" />
-            Nouveau template
-          </Button>
+    <div className="mx-auto max-w-6xl space-y-10">
+      <PageHeader
+        eyebrow="Ce qui part de votre boîte"
+        title="E"
+        titleAccent="mails"
+        description="Les quatre emails que le site envoie réellement, avec leur déclencheur et le fichier où en modifier le contenu."
+        actions={<SmtpCheck />}
+      />
+
+      <div className="rounded-2xl border bg-card p-5">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+          <span className="flex items-center gap-2 text-muted-foreground">
+            <Send className="size-4 text-[#7158ff]" />
+            Expéditeur :
+            <span className="font-medium text-foreground">
+              {senderAddress ?? "non configuré (EMAIL_USER manquant)"}
+            </span>
+          </span>
+          <span className="text-muted-foreground">
+            Liens de témoignage envoyés :{" "}
+            <span className="font-medium text-foreground">{testimonialTokens}</span>
+            {testimonialTokens > 0 && ` · ${usedTokens} complété${usedTokens > 1 ? "s" : ""}`}
+          </span>
         </div>
       </div>
 
-      {/* Filtres */}
-      <div className="flex flex-wrap gap-2">
-        {categories.map((category) => (
-          <Button
-            key={category}
-            variant={category === "Tous" ? "default" : "outline"}
-            size="sm"
-            className="h-8"
-          >
-            {category}
-          </Button>
-        ))}
-      </div>
-
-      {/* Templates Grid */}
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {emailTemplates.map((template) => (
-          <Card key={template.id} className="relative overflow-hidden border shadow-sm">
-            <div className={`absolute inset-0 ${template.bgColor}`}></div>
-            <CardHeader className="relative">
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className={`rounded-lg bg-white p-2 shadow-sm ${template.color}`}>
-                    <template.icon className="size-5" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-base font-semibold">
-                      {template.name}
-                    </CardTitle>
-                    <div className="mt-1 flex items-center gap-2">
-                      <Badge 
-                        variant={template.status === 'active' ? 'default' : 'secondary'}
-                        className="text-xs"
-                      >
-                        {template.status === 'active' ? 'Actif' : 'Brouillon'}
-                      </Badge>
-                      <span className="text-xs text-muted-foreground">
-                        {template.category}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent className="relative">
-              <p className="text-sm text-muted-foreground">
-                {template.description}
-              </p>
-              <div className="mt-4 flex items-center justify-between">
-                <span className="text-xs text-muted-foreground">
-                  Modifié le {new Date(template.lastModified).toLocaleDateString('fr-FR')}
-                </span>
-                <div className="flex items-center gap-1">
-                  <Button size="sm" variant="ghost" className="size-8 p-0">
-                    <Eye className="size-4" />
-                  </Button>
-                  <Button size="sm" variant="ghost" className="size-8 p-0">
-                    <Edit3 className="size-4" />
-                  </Button>
-                  <Button size="sm" variant="ghost" className="size-8 p-0">
-                    <Copy className="size-4" />
-                  </Button>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Statistiques des emails */}
       <div className="space-y-4">
-        <h2 className="text-xl font-semibold">Statistiques d'envoi</h2>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          <Card className="border shadow-sm">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Emails envoyés
-              </CardTitle>
-              <Mail className="size-4 text-blue-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold tracking-tight">1,847</div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                Ce mois-ci
-              </p>
-            </CardContent>
-          </Card>
+        <SectionTitle>Les emails envoyés</SectionTitle>
+        <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+          {emails.map((email) => (
+            <div
+              key={email.name}
+              className="flex flex-col rounded-2xl border bg-card p-5 transition-colors hover:border-[#7158ff]/40"
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#7158ff]/10 text-[#7158ff]">
+                  <email.icon className="size-4.5" />
+                </div>
+                <div className="min-w-0">
+                  <h3 className="text-base font-semibold text-foreground">{email.name}</h3>
+                  <Badge variant="outline" className="mt-1">
+                    Destinataire : {email.recipient}
+                  </Badge>
+                </div>
+              </div>
 
-          <Card className="border shadow-sm">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Taux d'ouverture
-              </CardTitle>
-              <Eye className="size-4 text-green-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold tracking-tight">67.2%</div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                +2.1% vs mois dernier
-              </p>
-            </CardContent>
-          </Card>
+              <p className="mt-4 text-sm text-muted-foreground">{email.trigger}</p>
 
-          <Card className="border shadow-sm">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Taux de clic
-              </CardTitle>
-              <Copy className="size-4 text-purple-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold tracking-tight">24.8%</div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                +1.3% vs mois dernier
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card className="border shadow-sm">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                Désabonnements
-              </CardTitle>
-              <AlertCircle className="size-4 text-orange-600" />
-            </CardHeader>
-            <CardContent>
-              <div className="text-3xl font-bold tracking-tight">0.8%</div>
-              <p className="mt-1 text-xs text-muted-foreground">
-                -0.2% vs mois dernier
-              </p>
-            </CardContent>
-          </Card>
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t pt-4">
+                <code className="truncate font-mono text-xs text-muted-foreground">
+                  {email.source}
+                </code>
+                {email.link && (
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={email.link.href}>{email.link.label}</Link>
+                  </Button>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* Note d'information */}
-      <Card className="border-l-4 border-l-blue-500 bg-blue-50/50 dark:bg-blue-950/20">
-        <CardContent className="pt-6">
-          <div className="flex items-start gap-3">
-            <Mail className="mt-0.5 size-5 text-blue-600" />
-            <div>
-              <h3 className="font-semibold text-blue-900 dark:text-blue-100">
-                Templates automatisés
-              </h3>
-              <p className="mt-1 text-sm text-blue-700 dark:text-blue-200">
-                Les templates actifs sont automatiquement envoyés selon vos règles configurées. 
-                Vous pouvez les modifier à tout moment sans affecter les emails déjà programmés.
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="flex items-start gap-3 rounded-2xl border border-dashed bg-card p-5">
+        <Mail className="mt-0.5 size-5 shrink-0 text-[#7158ff]" />
+        <p className="text-sm text-muted-foreground">
+          Le contenu de ces emails est écrit en dur dans le code, pas en base : pas d&apos;éditeur
+          ici, mais aucun risque qu&apos;un template parte vide ou à moitié rempli. Le bouton
+          ci-dessus ouvre juste la connexion SMTP pour vérifier que les identifiants passent —
+          il n&apos;envoie rien.
+        </p>
+      </div>
     </div>
   );
 }

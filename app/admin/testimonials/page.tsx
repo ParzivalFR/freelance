@@ -1,24 +1,25 @@
-import { Suspense } from "react";
+import { PageHeader } from "@/components/admin/page-header";
+import { Skeleton } from "@/components/ui/skeleton";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 import TestimonialTokenManager from "./testimonial-token-manager";
-import { Skeleton } from "@/components/ui/skeleton";
 
 export default async function TestimonialsAdminPage() {
   const session = await auth();
-  
+
   if (!session?.user?.email) {
     redirect("/signin");
   }
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold">Gestion des Témoignages</h1>
-        <p className="text-muted-foreground">
-          Générez des liens uniques pour collecter des avis clients
-        </p>
-      </div>
+    <div className="mx-auto max-w-6xl space-y-10">
+      <PageHeader
+        eyebrow="La parole aux clients"
+        title="Témoi"
+        titleAccent="gnages"
+        description="Générez un lien unique par client : il dépose son avis lui-même, vous n'avez plus qu'à le publier."
+      />
 
       <Suspense fallback={<TestimonialsSkeleton />}>
         <TestimonialTokenManager />
@@ -31,10 +32,10 @@ function TestimonialsSkeleton() {
   return (
     <div className="space-y-6">
       <div className="grid gap-4 md:grid-cols-2">
-        <Skeleton className="h-32" />
-        <Skeleton className="h-32" />
+        <Skeleton className="h-32 rounded-2xl" />
+        <Skeleton className="h-32 rounded-2xl" />
       </div>
-      <Skeleton className="h-64" />
+      <Skeleton className="h-64 rounded-2xl" />
     </div>
   );
 }

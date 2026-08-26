@@ -10,9 +10,11 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { EmptyState } from "@/components/admin/empty-state";
+import { PageHeader } from "@/components/admin/page-header";
+import { StatCard } from "@/components/admin/stat-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,19 +22,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { useToast } from "@/components/ui/use-toast";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import {
   Bot,
+  Loader2,
   MoreHorizontal,
   Power,
   RefreshCw,
@@ -160,183 +155,156 @@ export default function AdminBotsPage() {
     ].filter(Boolean) as string[];
 
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="border-b border-border/40 pb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Bots Discord</h1>
-            <p className="mt-2 text-muted-foreground">Gestion de tous les bots clients</p>
-          </div>
-          <Button variant="outline" size="sm" onClick={fetchBots} disabled={loading}>
+    <div className="mx-auto max-w-6xl space-y-10">
+      <PageHeader
+        eyebrow="Le parc hébergé"
+        title="Bots "
+        titleAccent="Discord"
+        description="Tous les bots créés par vos clients. Les contrôles start/stop/restart ne s'appliquent qu'aux plans Pro et Géré, les seuls réellement hébergés chez vous."
+        actions={
+          <Button variant="outline" onClick={fetchBots} disabled={loading}>
             <RotateCw className={`mr-2 size-4 ${loading ? "animate-spin" : ""}`} />
             Actualiser
           </Button>
-        </div>
+        }
+      />
+
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <StatCard label="Total bots" value={stats.total} sub="Tous plans confondus" icon={Bot} />
+        <StatCard label="Gérés" value={stats.managed} sub="Hébergés sur le VPS" icon={Power} />
+        <StatCard label="Livraison" value={stats.rar} sub="Archives téléchargées" icon={Square} />
+        <StatCard
+          label="En ligne"
+          value={stats.online}
+          sub={`${Math.max(stats.managed - stats.online, 0)} hors ligne`}
+          icon={RefreshCw}
+        />
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {[
-          { label: "Total bots",      value: stats.total,   icon: Bot,       color: "text-blue-600" },
-          { label: "Gérés (MANAGED)", value: stats.managed, icon: Power,     color: "text-green-600" },
-          { label: "Livraison (ZIP)", value: stats.rar,     icon: Square,    color: "text-purple-600" },
-          { label: "En ligne",        value: stats.online,  icon: RefreshCw, color: "text-emerald-600" },
-        ].map(({ label, value, icon: Icon, color }) => (
-          <Card key={label}>
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">{label}</CardTitle>
-              <Icon className={`size-4 ${color}`} />
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{value}</div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Recherche */}
       <div className="relative max-w-sm">
         <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
         <Input
-          placeholder="Rechercher par nom, email..."
+          placeholder="Rechercher par nom de bot ou email…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="pl-10"
         />
       </div>
 
-      {/* Tableau */}
-      <Card>
-        <CardContent className="p-0">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Bot</TableHead>
-                <TableHead>Client</TableHead>
-                <TableHead>Plan</TableHead>
-                <TableHead>Statut</TableHead>
-                <TableHead>Modules</TableHead>
-                <TableHead>Heartbeat</TableHead>
-                <TableHead>Créé le</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {loading ? (
-                <TableRow>
-                  <TableCell colSpan={8} className="py-8 text-center text-muted-foreground">
-                    Chargement...
-                  </TableCell>
-                </TableRow>
-              ) : filtered.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={8} className="py-8 text-center text-muted-foreground">
-                    Aucun bot trouvé
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filtered.map((bot) => {
-                  const status = statusConfig[bot.status] ?? statusConfig.OFFLINE;
-                  const plan = bot.plan ? planConfig[bot.plan] : null;
-                  const modules = activeModules(bot);
-                  const isManaged = bot.plan === "PRO" || bot.plan === "MANAGED";
+      {loading ? (
+        <div className="flex items-center justify-center gap-2 rounded-2xl border border-dashed bg-card p-12 text-sm text-muted-foreground">
+          <Loader2 className="size-4 animate-spin text-[#7158ff]" />
+          Chargement des bots…
+        </div>
+      ) : filtered.length === 0 ? (
+        <EmptyState
+          icon={Bot}
+          title={search ? "Aucun bot ne correspond" : "Aucun bot pour le moment"}
+          description={
+            search
+              ? "Essayez avec le nom du bot ou l'adresse email du client."
+              : "Les bots créés par vos clients depuis le générateur apparaîtront ici."
+          }
+        />
+      ) : (
+        <div className="space-y-3">
+          {filtered.map((bot) => {
+            const status = statusConfig[bot.status] ?? statusConfig.OFFLINE;
+            const plan = bot.plan ? planConfig[bot.plan] : null;
+            const modules = activeModules(bot);
+            const isManaged = bot.plan === "PRO" || bot.plan === "MANAGED";
 
-                  return (
-                    <TableRow key={bot.id}>
-                      <TableCell>
-                        <div className="font-medium">{bot.name}</div>
-                        <div className="font-mono text-xs text-muted-foreground">
-                          prefix: {bot.prefix}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <div className="text-sm font-medium">{bot.user.name ?? "—"}</div>
-                        <div className="text-xs text-muted-foreground">{bot.user.email}</div>
-                      </TableCell>
-                      <TableCell>
-                        {plan ? (
-                          <Badge className={plan.classes}>{plan.label}</Badge>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">Sans plan</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <Badge className={status.classes}>{status.label}</Badge>
-                      </TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1">
-                          {modules.length > 0 ? modules.map((m) => (
-                            <Badge key={m} variant="outline" className="text-[10px]">{m}</Badge>
-                          )) : (
-                            <span className="text-xs text-muted-foreground">Aucun</span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        {bot.lastHeartbeatAt ? (
-                          <span className="text-xs">
-                            {format(new Date(bot.lastHeartbeatAt), "dd MMM HH:mm", { locale: fr })}
-                          </span>
-                        ) : (
-                          <span className="text-xs text-muted-foreground">Jamais</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        <span className="text-xs text-muted-foreground">
-                          {format(new Date(bot.createdAt), "dd MMM yyyy", { locale: fr })}
-                        </span>
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="sm" disabled={!!sending}>
-                              <MoreHorizontal className="size-4" />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            {isManaged && (
-                              <>
-                                {(bot.status === "OFFLINE" || bot.status === "ERROR") ? (
-                                  <DropdownMenuItem onClick={() => sendCommand(bot.id, "START")}>
-                                    <Power className="mr-2 size-4 text-green-500" />
-                                    Démarrer
-                                  </DropdownMenuItem>
-                                ) : (
-                                  <DropdownMenuItem onClick={() => sendCommand(bot.id, "STOP")}>
-                                    <Square className="mr-2 size-4 text-red-500" />
-                                    Arrêter
-                                  </DropdownMenuItem>
-                                )}
-                                <DropdownMenuItem onClick={() => sendCommand(bot.id, "RESTART")}>
-                                  <RotateCw className="mr-2 size-4 text-blue-500" />
-                                  Redémarrer
-                                </DropdownMenuItem>
-                              </>
-                            )}
-                            {!isManaged && (
-                              <DropdownMenuItem disabled className="text-xs text-muted-foreground">
-                                Contrôles réservés au plan Pro/Géré
-                              </DropdownMenuItem>
-                            )}
-                            <DropdownMenuItem
-                              className="text-red-600 focus:text-red-600"
-                              onClick={() => setDeleteTarget(bot)}
-                            >
-                              <Trash2 className="mr-2 size-4" />
-                              Supprimer
+            return (
+              <div
+                key={bot.id}
+                className="rounded-2xl border bg-card p-5 transition-colors hover:border-[#7158ff]/40"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-4">
+                  <div className="min-w-0 flex-1">
+                    <div className="mb-2 flex flex-wrap items-center gap-2">
+                      <h3 className="text-base font-semibold text-foreground">{bot.name}</h3>
+                      <Badge className={status.classes}>{status.label}</Badge>
+                      {plan ? (
+                        <Badge className={plan.classes}>{plan.label}</Badge>
+                      ) : (
+                        <Badge variant="outline">Sans plan</Badge>
+                      )}
+                    </div>
+
+                    <div className="grid grid-cols-1 gap-x-6 gap-y-1 text-sm text-muted-foreground md:grid-cols-2">
+                      <p>
+                        {bot.user.name ?? "Client sans nom"} · {bot.user.email ?? "—"}
+                      </p>
+                      <p>Préfixe : {bot.prefix}</p>
+                      <p>
+                        Créé le {format(new Date(bot.createdAt), "dd MMMM yyyy", { locale: fr })}
+                      </p>
+                      <p>
+                        Dernier signe de vie :{" "}
+                        {bot.lastHeartbeatAt
+                          ? format(new Date(bot.lastHeartbeatAt), "dd MMM à HH:mm", { locale: fr })
+                          : "jamais"}
+                      </p>
+                    </div>
+
+                    <div className="mt-3 flex flex-wrap gap-1.5">
+                      {modules.length > 0 ? (
+                        modules.map((m) => (
+                          <Badge key={m} variant="outline" className="text-[11px]">
+                            {m}
+                          </Badge>
+                        ))
+                      ) : (
+                        <span className="text-xs text-muted-foreground">Aucun module activé</span>
+                      )}
+                    </div>
+                  </div>
+
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="outline" size="sm" disabled={!!sending} className="shrink-0">
+                        <MoreHorizontal className="size-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {isManaged ? (
+                        <>
+                          {bot.status === "OFFLINE" || bot.status === "ERROR" ? (
+                            <DropdownMenuItem onClick={() => sendCommand(bot.id, "START")}>
+                              <Power className="mr-2 size-4 text-green-500" />
+                              Démarrer
                             </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  );
-                })
-              )}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+                          ) : (
+                            <DropdownMenuItem onClick={() => sendCommand(bot.id, "STOP")}>
+                              <Square className="mr-2 size-4 text-red-500" />
+                              Arrêter
+                            </DropdownMenuItem>
+                          )}
+                          <DropdownMenuItem onClick={() => sendCommand(bot.id, "RESTART")}>
+                            <RotateCw className="mr-2 size-4 text-blue-500" />
+                            Redémarrer
+                          </DropdownMenuItem>
+                        </>
+                      ) : (
+                        <DropdownMenuItem disabled className="text-xs text-muted-foreground">
+                          Contrôles réservés aux plans Pro / Géré
+                        </DropdownMenuItem>
+                      )}
+                      <DropdownMenuItem
+                        className="text-red-600 focus:text-red-600"
+                        onClick={() => setDeleteTarget(bot)}
+                      >
+                        <Trash2 className="mr-2 size-4" />
+                        Supprimer
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
 
       {/* AlertDialog suppression */}
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>

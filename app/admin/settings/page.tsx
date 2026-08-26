@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/admin/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -99,28 +100,26 @@ export default function AdminSettingsPage() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <Loader2 className="size-8 animate-spin text-muted-foreground" />
+      <div className="flex min-h-[400px] items-center justify-center gap-2 text-sm text-muted-foreground">
+        <Loader2 className="size-5 animate-spin text-[#7158ff]" />
+        Chargement des paramètres…
       </div>
     );
   }
 
   return (
-    <div className="space-y-6 pb-8">
-      {/* Header */}
-      <div className="border-b border-border/40 pb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Paramètres</h1>
-            <p className="mt-2 text-muted-foreground">
-              Configurez les paramètres de votre application
-            </p>
-          </div>
-          <Button onClick={handleSave} disabled={saving}>
+    <div className="mx-auto max-w-4xl space-y-8">
+      <PageHeader
+        eyebrow="Réglages du site"
+        title="Para"
+        titleAccent="mètres"
+        description="Vos coordonnées, les notifications et les intégrations qui alimentent la landing et le générateur de bots."
+        actions={
+          <Button onClick={handleSave} disabled={saving} className="ring-4 ring-[#7158ff]/20">
             {saving ? (
               <>
                 <Loader2 className="mr-2 size-4 animate-spin" />
-                Enregistrement...
+                Enregistrement…
               </>
             ) : (
               <>
@@ -129,13 +128,13 @@ export default function AdminSettingsPage() {
               </>
             )}
           </Button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Profil & Contact */}
-      <Card>
+      <Card className="rounded-2xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 [&>svg]:text-[#7158ff]">
             <User className="size-5" />
             Profil & Contact
           </CardTitle>
@@ -197,9 +196,9 @@ export default function AdminSettingsPage() {
       </Card>
 
       {/* Liens sociaux */}
-      <Card>
+      <Card className="rounded-2xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 [&>svg]:text-[#7158ff]">
             <Globe className="size-5" />
             Liens sociaux
           </CardTitle>
@@ -241,9 +240,9 @@ export default function AdminSettingsPage() {
       </Card>
 
       {/* Informations Business */}
-      <Card>
+      <Card className="rounded-2xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 [&>svg]:text-[#7158ff]">
             <Building2 className="size-5" />
             Informations Business
           </CardTitle>
@@ -315,9 +314,9 @@ export default function AdminSettingsPage() {
       </Card>
 
       {/* SEO & Branding */}
-      <Card>
+      <Card className="rounded-2xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 [&>svg]:text-[#7158ff]">
             <Palette className="size-5" />
             SEO & Branding
           </CardTitle>
@@ -388,9 +387,9 @@ export default function AdminSettingsPage() {
       </Card>
 
       {/* Notifications */}
-      <Card>
+      <Card className="rounded-2xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 [&>svg]:text-[#7158ff]">
             <Bell className="size-5" />
             Notifications
           </CardTitle>
