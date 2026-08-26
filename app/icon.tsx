@@ -1,18 +1,26 @@
 import { ImageResponse } from "next/og";
+import { loadDisplayFont } from "@/lib/og-font";
 
-// Icônes PNG pour le manifest PWA (Android/Chrome n'acceptent pas toujours le
-// SVG). Le favicon des navigateurs desktop reste app/icon.svg, plus net.
+// Même marque que la navbar : "GR" + point violet, dans la police display.
+// 32 = favicon d'onglet, 192/512 = manifest PWA. Tout est généré en PNG plutôt
+// qu'en SVG, car un favicon SVG n'a pas accès aux polices du site et
+// retomberait sur une graisse système différente.
 export const contentType = "image/png";
 
+const SIZES = [32, 192, 512] as const;
+
 export function generateImageMetadata() {
-  return [
-    { id: "192", size: { width: 192, height: 192 }, contentType: "image/png" },
-    { id: "512", size: { width: 512, height: 512 }, contentType: "image/png" },
-  ];
+  return SIZES.map((size) => ({
+    id: String(size),
+    size: { width: size, height: size },
+    contentType: "image/png",
+  }));
 }
 
-export default function Icon({ id }: { id: string }) {
-  const dimension = id === "512" ? 512 : 192;
+// Next.js 16 fournit `id` sous forme de Promise.
+export default async function Icon({ id }: { id: Promise<string> }) {
+  const dimension = Number(await id) || 192;
+  const font = await loadDisplayFont();
 
   return new ImageResponse(
     (
@@ -23,16 +31,23 @@ export default function Icon({ id }: { id: string }) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#7158ff",
-          color: "#ffffff",
-          fontSize: dimension * 0.52,
+          background: "#0A0A0F",
+          color: "#F4F4F6",
+          fontFamily: font ? "Black Han Sans" : "sans-serif",
+          fontSize: dimension * 0.42,
           fontWeight: 900,
-          letterSpacing: -(dimension * 0.035),
+          letterSpacing: -(dimension * 0.02),
         }}
       >
-        GR
+        GR<span style={{ color: "#7158ff" }}>.</span>
       </div>
     ),
-    { width: dimension, height: dimension }
+    {
+      width: dimension,
+      height: dimension,
+      ...(font
+        ? { fonts: [{ name: "Black Han Sans", data: font, style: "normal" as const, weight: 400 as const }] }
+        : {}),
+    }
   );
 }
