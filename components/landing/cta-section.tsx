@@ -130,7 +130,7 @@ export default function CallToActionSection() {
                 Un projet en tete ?
               </h2>
               <p className="mt-3 max-w-sm text-sm text-muted-foreground">
-                Décris-moi ton idée — je te réponds sous 24h avec un retour
+                Décrivez-moi votre idée — je vous réponds sous 24h avec un retour
                 honnête et une estimation claire.
               </p>
               <button

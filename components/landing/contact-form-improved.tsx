@@ -161,7 +161,7 @@ export default function ContactFormImproved() {
                 <span className="text-[#7158ff]">Ecrivons-la.</span>
               </p>
               <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                Que ce soit une landing page, une appli web ou une refonte complète — dis-moi ce que tu as en tête. Pas de jargon, pas de prise de tête.
+                Que ce soit une landing page, une appli web ou une refonte complète — dites-moi ce que vous avez en tête. Pas de jargon, pas de prise de tête.
               </p>
             </div>
 

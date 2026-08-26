@@ -11,7 +11,7 @@ const botPlans = [
   {
     id: "free",
     name: "Free",
-    description: "Lance ton bot gratuitement et découvre la plateforme.",
+    description: "Lancez votre bot gratuitement et découvrez la plateforme.",
     price: "0€",
     priceNote: "pour toujours",
     icon: BotIcon,
@@ -49,7 +49,7 @@ const botPlans = [
   {
     id: "zip",
     name: "Livraison .zip",
-    description: "Reçois les fichiers de ton bot configuré, tu héberges toi-même.",
+    description: "Recevez les fichiers de votre bot configuré, vous hébergez vous-même.",
     price: "49€",
     priceNote: "une seule fois",
     icon: ServerIcon,
@@ -77,10 +77,10 @@ export default function BotPricingSection() {
           </p>
           <h2 className="mt-1 font-[family-name:var(--font-display)] text-[clamp(2rem,5vw,3.5rem)] uppercase leading-none text-foreground">
             Un bot puissant,{" "}
-            <span className="text-[#7158ff]">au prix que tu veux</span>
+            <span className="text-[#7158ff]">au prix que vous voulez</span>
           </h2>
           <p className="mt-6 text-lg leading-8 text-black/80 dark:text-white sm:text-xl">
-            Commence gratuitement, passe Pro quand tu es prêt.
+            Commencez gratuitement, passez Pro quand vous êtes prêt.
           </p>
         </div>
 

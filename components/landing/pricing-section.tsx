@@ -18,7 +18,7 @@ const services = [
   {
     id: "landing",
     name: "Landing Page",
-    description: "Une page claire et efficace pour te faire connaître en ligne.",
+    description: "Une page claire et efficace pour vous faire connaître en ligne.",
     dailyRate: 150,
     projectRate: 350,
     isMostPopular: false,
@@ -33,7 +33,7 @@ const services = [
   {
     id: "site-vitrine",
     name: "Site Vitrine",
-    description: "Un vrai site pour présenter ton activité, tes services, ton équipe.",
+    description: "Un vrai site pour présenter votre activité, vos services, votre équipe.",
     dailyRate: 150,
     projectRate: 800,
     isMostPopular: true,

@@ -13,7 +13,7 @@ const faqs = [
   {
     question: "Combien coute un site web ?",
     answer:
-      "Ça dépend du projet — une landing page simple commence à 1 200€, une application web complète peut dépasser 5 000€. Je fournis toujours un devis détaillé et gratuit avant de commencer.",
+      "Une landing page démarre à 350€, un site vitrine complet à 800€, et une application web sur-mesure est chiffrée sur devis. Dans tous les cas, je fournis un devis détaillé et gratuit avant de commencer.",
   },
   {
     question: "Quel est le delai de livraison ?",
@@ -23,12 +23,12 @@ const faqs = [
   {
     question: "Comment se deroule un projet ?",
     answer:
-      "Brief → devis → maquette → développement → révisions → livraison. Tu es impliqué à chaque étape. Je travaille en cycles courts avec des points réguliers pour rester aligné sur ta vision.",
+      "Brief → devis → maquette → développement → révisions → livraison. Vous êtes impliqué à chaque étape : je travaille en cycles courts avec des points réguliers pour rester aligné sur votre vision.",
   },
   {
     question: "Puis-je modifier mon site moi-meme ?",
     answer:
-      "Oui. Selon tes besoins, j'intègre un CMS (Notion, Sanity, ou autre) pour que tu puisses gérer ton contenu en autonomie totale, sans toucher au code.",
+      "Oui. Selon vos besoins, j'intègre un CMS (Notion, Sanity, ou autre) pour que vous puissiez gérer votre contenu en autonomie totale, sans toucher au code.",
   },
   {
     question: "Proposez-vous de la maintenance ?",
@@ -38,7 +38,7 @@ const faqs = [
   {
     question: "Les devis sont-ils gratuits ?",
     answer:
-      "Totalement gratuits et sans engagement. Contacte-moi avec ton idée, je te réponds sous 24h avec une estimation claire et honnête.",
+      "Totalement gratuits et sans engagement. Contactez-moi avec votre idée, je vous réponds sous 24h avec une estimation claire et honnête.",
   },
   {
     question: "Quels modes de paiement acceptez-vous ?",
@@ -48,7 +48,7 @@ const faqs = [
   {
     question: "Travaillez-vous avec des associations ?",
     answer:
-      "Oui — j'offre 1 site vitrine complet tous les 6 mois à une association à but non lucratif. Contacte-moi pour candidater.",
+      "Oui — j'offre 1 site vitrine complet tous les 6 mois à une association à but non lucratif. Contactez-moi pour candidater.",
   },
 ];
 
@@ -73,7 +73,7 @@ export function FAQ() {
               Questions frequentes
             </h2>
             <p className="mt-4 text-lg text-muted-foreground">
-              Tout ce que tu veux savoir avant de te lancer.
+              Tout ce que vous voulez savoir avant de vous lancer.
             </p>
           </motion.div>
 

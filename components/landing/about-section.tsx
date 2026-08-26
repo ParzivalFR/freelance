@@ -67,11 +67,13 @@ export default function AboutSection() {
               <strong className="text-foreground">Next.js + Tailwind CSS</strong>,
               mais je peux aussi livrer un logiciel desktop avec{" "}
               <strong className="text-foreground">Electron</strong> ou une app mobile avec{" "}
-              <strong className="text-foreground">Expo</strong> selon ton besoin.
+              <strong className="text-foreground">Expo</strong> selon votre besoin.
             </p>
             <p>
-              Ce que je ne fais pas :{" "}
-              <strong className="text-foreground">le design</strong>. Je code ce que tu imagines — si tu n'as pas de maquette, on peut trouver un designer ensemble.
+              Et pas besoin d'arriver avec une maquette : je m'occupe de{" "}
+              <strong className="text-foreground">tout, du design au développement</strong>.
+              Vous avez déjà une idée précise en tête ? Encore mieux — on peut
+              aussi la travailler ensemble avec un(e) designer.
             </p>
 
             <div className="pt-2">
