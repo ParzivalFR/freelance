@@ -1,5 +1,6 @@
 "use client";
 
+import { PageHeader, SectionTitle } from "@/components/admin/page-header";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -281,18 +282,12 @@ export default function ProspectionPage() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-10">
-      <div>
-        <p className="font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
-          Trouver des clients
-        </p>
-        <h1 className="mt-1 font-[family-name:var(--font-display)] text-[clamp(1.8rem,4vw,2.8rem)] uppercase leading-none text-foreground">
-          Pros<span className="text-[#7158ff]">pection</span>
-        </h1>
-        <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
-          Recherchez les entreprises autour de vous via la base Sirene (INSEE), repérez celles qui n&apos;ont pas
-          encore de site web, et ajoutez-les à votre CRM en un clic.
-        </p>
-      </div>
+      <PageHeader
+        eyebrow="Trouver des clients"
+        title="Pros"
+        titleAccent="pection"
+        description="Recherchez les entreprises autour de vous via la base Sirene (INSEE), repérez celles qui n'ont pas encore de site web, et ajoutez-les à votre CRM en un clic."
+      />
 
       {/* Filtres */}
       <div className="rounded-2xl border bg-card p-6">
@@ -412,9 +407,7 @@ export default function ProspectionPage() {
           <>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <p className="font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
-                  Résultats
-                </p>
+                <SectionTitle>Résultats</SectionTitle>
                 <p className="text-sm text-muted-foreground">
                   {visibleResults.length} affichée{visibleResults.length > 1 ? "s" : ""} sur {filtered.length}
                   {totalAvailable > allResults.length && ` · ${totalAvailable.toLocaleString("fr-FR")} dans la base`}

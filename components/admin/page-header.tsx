@@ -29,7 +29,14 @@ export function PageHeader({
         <p className="font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
           {eyebrow}
         </p>
-        <h1 className="mt-1 font-[family-name:var(--font-display)] text-[clamp(1.8rem,4vw,2.8rem)] uppercase leading-none text-foreground">
+        {/*
+          Black Han Sans dessine ses capitales accentuées (È, É, À…) jusqu'à
+          0.90em au-dessus de la ligne de base, alors que la police déclare une
+          ascendante de 0.79em. L'accent déborde donc de la boîte de ligne et
+          vient toucher l'accroche au-dessus. Le padding réserve ce dépassement,
+          en em pour suivre le clamp de la taille de police.
+        */}
+        <h1 className="mt-1 pt-[0.14em] font-[family-name:var(--font-display)] text-[clamp(1.8rem,4vw,2.8rem)] uppercase leading-none text-foreground">
           {title}
           {titleAccent && <span className="text-[#7158ff]">{titleAccent}</span>}
         </h1>

@@ -1,3 +1,4 @@
+import { PageHeader, SectionTitle } from "@/components/admin/page-header";
 import { prisma } from "@/lib/prisma";
 import { getPlausibleStats } from "@/lib/plausible";
 import { Bot, FileText, FolderOpen, MessageSquare, RefreshCcw, TrendingUp, Users } from "lucide-react";
@@ -72,14 +73,7 @@ export default async function AdminDashboard() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-10">
-      <div>
-        <p className="font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
-          Bienvenue Gael
-        </p>
-        <h1 className="mt-1 font-[family-name:var(--font-display)] text-[clamp(1.8rem,4vw,2.8rem)] uppercase leading-none text-foreground">
-          Vue d&apos;<span className="text-[#7158ff]">ensemble</span>
-        </h1>
-      </div>
+      <PageHeader eyebrow="Bienvenue Gael" title="Vue d'" titleAccent="ensemble" />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
@@ -102,9 +96,7 @@ export default async function AdminDashboard() {
       </div>
 
       <div className="space-y-4">
-        <p className="font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
-          Accès rapide
-        </p>
+        <SectionTitle>Accès rapide</SectionTitle>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {quickLinks.map((link) => (
             <Link
