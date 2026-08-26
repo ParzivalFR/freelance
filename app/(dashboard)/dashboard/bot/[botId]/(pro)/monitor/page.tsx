@@ -230,6 +230,7 @@ export default function MonitorPage() {
     title: "",
     useEmbed: true,
     showResponseTime: true,
+    showTargets: false,
     emojiUp: "",
     emojiDown: "",
     emojiPending: "",
@@ -281,6 +282,7 @@ export default function MonitorPage() {
             title: c.statusBoardTitle ?? "",
             useEmbed: c.statusBoardUseEmbed !== false,
             showResponseTime: c.statusBoardShowResponseTime !== false,
+            showTargets: c.statusBoardShowTargets === true,
             emojiUp: c.statusBoardEmojiUp ?? "",
             emojiDown: c.statusBoardEmojiDown ?? "",
             emojiPending: c.statusBoardEmojiPending ?? "",
@@ -309,6 +311,7 @@ export default function MonitorPage() {
             statusBoardTitle: boardForm.title,
             statusBoardUseEmbed: boardForm.useEmbed,
             statusBoardShowResponseTime: boardForm.showResponseTime,
+            statusBoardShowTargets: boardForm.showTargets,
             ...(boardForm.emojiUp && { statusBoardEmojiUp: boardForm.emojiUp }),
             ...(boardForm.emojiDown && { statusBoardEmojiDown: boardForm.emojiDown }),
             ...(boardForm.emojiPending && { statusBoardEmojiPending: boardForm.emojiPending }),
@@ -617,7 +620,20 @@ export default function MonitorPage() {
               >
                 {boardForm.showResponseTime ? "temps rép. ✓" : "temps rép. ✗"}
               </button>
+              <button
+                type="button"
+                onClick={() => setBoardForm((f) => ({ ...f, showTargets: !f.showTargets }))}
+                className={`rounded border px-3 py-1.5 font-mono text-[9px] uppercase tracking-widest transition ${boardForm.showTargets ? "border-amber-500/40 bg-amber-500/10 text-amber-400" : "border-dashed text-muted-foreground hover:text-foreground"}`}
+              >
+                {boardForm.showTargets ? "cibles visibles ⚠" : "cibles masquées ✓"}
+              </button>
             </div>
+
+            <p className="font-mono text-[10px] leading-relaxed text-muted-foreground">
+              {boardForm.showTargets
+                ? "⚠ L'IP ou l'URL de chaque service sera écrite en clair dans le salon. À n'activer que sur des adresses publiques, et jamais dans un salon ouvert à tous."
+                : "Les adresses (IP, hostnames, URL) ne sont pas écrites dans le salon — seul le nom du monitor est affiché."}
+            </p>
 
             <button
               onClick={saveBoard}

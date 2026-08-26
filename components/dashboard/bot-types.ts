@@ -141,6 +141,8 @@ export interface ModuleConfig {
   statusBoardTitle?: string;
   statusBoardUseEmbed?: boolean;
   statusBoardShowResponseTime?: boolean;
+  /** Écrit l'IP/URL de chaque monitor dans le salon. Masqué par défaut. */
+  statusBoardShowTargets?: boolean;
   statusBoardEmojiUp?: string;
   statusBoardEmojiDown?: string;
   statusBoardEmojiPending?: string;
