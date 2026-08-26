@@ -1,6 +1,5 @@
 "use client";
 
-import { TeamSwitcher } from "@/components/dashboard/team-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -14,8 +13,10 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import {
+  ArrowLeft,
   BarChart3,
   Bot,
+  FilePlus,
   FileText,
   FolderOpen,
   LayoutDashboard,
@@ -24,95 +25,47 @@ import {
   RefreshCcw,
   Search,
   Settings,
+  Shield,
   Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import * as React from "react";
 
-// Data for the sidebar
-const data = {
-  teams: [
-    {
-      name: "Freelance Portfolio",
-      logo: "https://raw.githubusercontent.com/origin-space/origin-images/refs/heads/main/exp2/logo-01_upxvqe.png",
-    },
-  ],
-  navMain: [
-    {
-      title: "Administration",
-      url: "#",
-      items: [
-        {
-          title: "Dashboard",
-          url: "/admin",
-          icon: LayoutDashboard,
-        },
-        {
-          title: "Projets",
-          url: "/admin/projects",
-          icon: FolderOpen,
-        },
-        {
-          title: "Témoignages",
-          url: "/admin/testimonials",
-          icon: MessageSquare,
-        },
-        {
-          title: "Clients",
-          url: "/admin/clients",
-          icon: Users,
-        },
-        {
-          title: "Devis",
-          url: "/admin/devis",
-          icon: FileText,
-        },
-        {
-          title: "Liste des devis",
-          url: "/admin/devis/list",
-          icon: FileText,
-        },
-        {
-          title: "Bots Discord",
-          url: "/admin/bots",
-          icon: Bot,
-        },
-        {
-          title: "Remboursements",
-          url: "/admin/refunds",
-          icon: RefreshCcw,
-        },
-        {
-          title: "Analytics",
-          url: "/admin/analytics",
-          icon: BarChart3,
-        },
-        {
-          title: "Prospection",
-          url: "/admin/prospection",
-          icon: Search,
-        },
-      ],
-    },
-    {
-      title: "Configuration",
-      url: "#",
-      items: [
-        {
-          title: "Paramètres",
-          url: "/admin/settings",
-          icon: Settings,
-        },
-        {
-          title: "Email Templates",
-          url: "/admin/email-templates",
-          icon: Mail,
-        },
-      ],
-    },
-  ],
-};
+const NAV = [
+  {
+    label: "Activité",
+    items: [
+      { title: "Dashboard", url: "/admin", icon: LayoutDashboard },
+      { title: "Analytics", url: "/admin/analytics", icon: BarChart3 },
+      { title: "Prospection", url: "/admin/prospection", icon: Search },
+    ],
+  },
+  {
+    label: "Contenu",
+    items: [
+      { title: "Projets", url: "/admin/projects", icon: FolderOpen },
+      { title: "Témoignages", url: "/admin/testimonials", icon: MessageSquare },
+    ],
+  },
+  {
+    label: "Business",
+    items: [
+      { title: "Clients", url: "/admin/clients", icon: Users },
+      { title: "Devis", url: "/admin/devis/list", icon: FileText },
+      { title: "Nouveau devis", url: "/admin/devis", icon: FilePlus },
+      { title: "Bots Discord", url: "/admin/bots", icon: Bot },
+      { title: "Remboursements", url: "/admin/refunds", icon: RefreshCcw },
+    ],
+  },
+  {
+    label: "Configuration",
+    items: [
+      { title: "Paramètres", url: "/admin/settings", icon: Settings },
+      { title: "Email Templates", url: "/admin/email-templates", icon: Mail },
+    ],
+  },
+];
 
 export function AdminSidebar({
   ...props
@@ -120,79 +73,78 @@ export function AdminSidebar({
   const pathname = usePathname();
 
   return (
-    <Sidebar {...props} className="dark border-none!">
-      <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+    <Sidebar {...props}>
+      <SidebarHeader className="border-b border-dashed px-4 py-4">
+        <div className="flex items-center gap-3">
+          <div className="flex size-9 items-center justify-center rounded-xl bg-blue-500/10 text-blue-500 ring-1 ring-blue-500/20">
+            <Shield className="size-4" />
+          </div>
+          <div className="min-w-0">
+            <p className="truncate font-mono text-sm font-bold text-foreground">
+              GAEL-DEV
+            </p>
+            <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+              admin_panel
+            </p>
+          </div>
+        </div>
       </SidebarHeader>
+
       <SidebarContent>
-        {/* Main Navigation */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="uppercase text-sidebar-foreground/70">
-            {data.navMain[0]?.title}
-          </SidebarGroupLabel>
-          <SidebarGroupContent className="px-2">
-            <SidebarMenu>
-              {data.navMain[0]?.items.map((item) => {
-                const isActive = pathname === item.url;
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      className="group/menu-button text-sidebar-foreground/80 hover:text-sidebar-foreground/90 hover:bg-white/5 data-[active=true]:shadow-lg h-9 gap-3 rounded-md font-medium data-[active=true]:border data-[active=true]:border-white/20 data-[active=true]:bg-white/10 data-[active=true]:text-white data-[active=true]:shadow-white/10 data-[active=true]:backdrop-blur-md data-[active=true]:hover:bg-white/15 [&>svg]:size-auto"
-                      isActive={isActive}
-                    >
-                      <Link href={item.url}>
-                        {item.icon && (
-                          <item.icon
-                            className="text-sidebar-foreground/70 group-hover/menu-button:text-sidebar-foreground/80 group-data-[active=true]/menu-button:text-white"
-                            size={22}
-                            aria-hidden="true"
-                          />
-                        )}
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {NAV.map((group) => (
+          <SidebarGroup key={group.label}>
+            <SidebarGroupLabel className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground/60">
+              {group.label}
+            </SidebarGroupLabel>
+            <SidebarGroupContent className="px-2">
+              <SidebarMenu>
+                {group.items.map((item) => {
+                  // Exact pour les URLs qui sont préfixes d'autres entrées
+                  // (/admin, /admin/devis), préfixe pour les pages à sous-routes.
+                  const isActive =
+                    item.url === "/admin" || item.url === "/admin/devis"
+                      ? pathname === item.url
+                      : pathname.startsWith(item.url);
+                  return (
+                    <SidebarMenuItem key={item.title}>
+                      <SidebarMenuButton
+                        asChild
+                        isActive={isActive}
+                        className="font-mono text-xs data-[active=true]:border data-[active=true]:border-blue-500/30 data-[active=true]:bg-blue-500/10 data-[active=true]:text-blue-500"
+                      >
+                        <Link href={item.url}>
+                          <item.icon className="size-3.5" />
+                          <span>{item.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  );
+                })}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        ))}
       </SidebarContent>
-      <SidebarFooter>
-        {/* Secondary Navigation */}
-        <SidebarGroup>
-          <SidebarGroupLabel className="uppercase text-sidebar-foreground/70">
-            {data.navMain[1]?.title}
-          </SidebarGroupLabel>
-          <SidebarGroupContent className="px-2">
-            <SidebarMenu>
-              {data.navMain[1]?.items.map((item) => {
-                const isActive = pathname === item.url;
-                return (
-                  <SidebarMenuItem key={item.title}>
-                    <SidebarMenuButton
-                      asChild
-                      className="group/menu-button text-sidebar-foreground/80 hover:text-sidebar-foreground/90 hover:bg-white/5 data-[active=true]:shadow-lg h-9 gap-3 rounded-md font-medium data-[active=true]:border data-[active=true]:border-white/20 data-[active=true]:bg-white/10 data-[active=true]:text-white data-[active=true]:shadow-white/10 data-[active=true]:backdrop-blur-md data-[active=true]:hover:bg-white/15 [&>svg]:size-auto"
-                      isActive={isActive}
-                    >
-                      <Link href={item.url}>
-                        {item.icon && (
-                          <item.icon
-                            className="text-sidebar-foreground/70 group-hover/menu-button:text-sidebar-foreground/80 group-data-[active=true]/menu-button:text-white"
-                            size={22}
-                            aria-hidden="true"
-                          />
-                        )}
-                        <span>{item.title}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                );
-              })}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+
+      <SidebarFooter className="border-t border-dashed p-2">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild className="font-mono text-xs">
+              <Link href="/dashboard/bot">
+                <Bot className="size-3.5" />
+                <span>Dashboard bots</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+          <SidebarMenuItem>
+            <SidebarMenuButton asChild className="font-mono text-xs text-muted-foreground">
+              <Link href="/">
+                <ArrowLeft className="size-3.5" />
+                <span>Retour au site</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       </SidebarFooter>
     </Sidebar>
   );
