@@ -146,42 +146,6 @@ async function geocodeAddress(address: string): Promise<{
   }
 }
 
-// Fonction pour vérifier si une entreprise a un site web
-async function checkWebsite(
-  companyName: string,
-  city: string
-): Promise<boolean> {
-  try {
-    // Test des domaines évidents
-    const cleanName = companyName
-      .toLowerCase()
-      .replace(/[^a-z0-9]/g, "")
-      .substring(0, 20);
-
-    const domains = [
-      `${cleanName}.fr`,
-      `${cleanName}.com`,
-      `${cleanName}${city.toLowerCase().replace(/[^a-z]/g, "")}.fr`,
-    ];
-
-    for (const domain of domains) {
-      try {
-        const response = await fetch(`http://${domain}`, {
-          method: "HEAD",
-          signal: AbortSignal.timeout(3000),
-        });
-        if (response.ok) return true;
-      } catch {
-        // Continue avec le domaine suivant
-      }
-    }
-
-    return false;
-  } catch {
-    return false;
-  }
-}
-
 export async function POST(request: NextRequest) {
   try {
     if (!await requireAdmin()) return unauthorizedResponse();
@@ -213,12 +177,8 @@ export async function POST(request: NextRequest) {
       sireneQuery += ` OR libelleCommuneEtablissement:"${baseCoords.cityName}"`;
     }
 
-    // Recherche spécifique pour Montoir-de-Bretagne si c'est la ville recherchée
-    if (location.toLowerCase().includes("montoir")) {
-      sireneQuery += ` OR libelleCommuneEtablissement:"MONTOIR-DE-BRETAGNE"`;
-      sireneQuery += ` OR codePostalEtablissement:44550`;
-      // AJOUT: Recherche DIRECTE par SIREN pour être sûr de trouver votre entreprise
-      sireneQuery += ` OR siren:930448600`;
+    if (baseCoords.postalCode) {
+      sireneQuery += ` OR codePostalEtablissement:${baseCoords.postalCode}`;
     }
 
     sireneQuery += ")"; // Fermer la parenthèse ouverte
@@ -268,26 +228,10 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Requête à l'API Sirene - Augmenter la limite pour récupérer plus de résultats
+    // 1000 = maximum accepté par l'API Sirene sur un seul appel
     const sireneUrl = `https://api.insee.fr/api-sirene/3.11/siret?q=${encodeURIComponent(
       sireneQuery
-    )}&nombre=5000`;
-
-    // Debug temporaire
-    console.log("🔍 REQUÊTE SIRENE:", sireneQuery);
-    console.log("🔍 URL COMPLÈTE:", sireneUrl);
-    console.log("🔍 VILLE RECHERCHÉE:", location);
-    console.log("🔍 COORDONNÉES BASE:", baseCoords);
-
-    // Test spécifique pour Montoir-de-Bretagne - requête très simple
-    if (location.toLowerCase().includes("montoir")) {
-      const testQuery = `libelleCommuneEtablissement:"MONTOIR-DE-BRETAGNE"`;
-      const testUrl = `https://api.insee.fr/api-sirene/3.11/siret?q=${encodeURIComponent(
-        testQuery
-      )}&nombre=50`;
-      console.log("🧪 REQUÊTE TEST MONTOIR:", testQuery);
-      console.log("🧪 URL TEST MONTOIR:", testUrl);
-    }
+    )}&nombre=1000`;
 
     let sireneData: SireneResponse;
 
@@ -309,123 +253,40 @@ export async function POST(request: NextRequest) {
         }
 
         sireneData = await sireneResponse.json();
-        console.log("🔍 RÉSULTATS API SIRENE:", sireneData.header);
-        console.log(
-          "🔍 NOMBRE D'ÉTABLISSEMENTS REÇUS:",
-          sireneData.etablissements?.length || 0
-        );
       } catch (error) {
         console.error("Erreur API Sirene:", error);
-        // Fallback sur données de test
-        sireneData = {
-          header: {
-            statut: 200,
-            message: "Test data (API error)",
-            total: 0,
-            debut: 0,
-            nombre: 0,
+        return NextResponse.json(
+          {
+            error: "L'API Sirene est injoignable",
+            details: error instanceof Error ? error.message : "Erreur inconnue",
           },
-          etablissements: [],
-        };
+          { status: 502 }
+        );
       }
     } else {
-      // Pas de clé API - données de test
-      sireneData = {
-        header: {
-          statut: 200,
-          message: "Test data (no API key)",
-          total: 0,
-          debut: 0,
-          nombre: 0,
-        },
-        etablissements: [],
-      };
+      // Mieux vaut une erreur explicite que des résultats fictifs qui
+      // laisseraient croire que la recherche a fonctionné.
+      return NextResponse.json(
+        { error: "Clé API Sirene manquante (SIRENE_API_KEY non configurée)" },
+        { status: 503 }
+      );
     }
 
     // CORRECTION 3: Traitement des résultats avec calcul de distance GPS précis
     const results = [];
     const radiusKm = parseInt(radius);
 
-    // Debug spécifique pour rechercher une entreprise par SIREN (remplacez par votre SIREN)
-    if (sireneData.etablissements?.length > 0) {
-      console.log("🔍 RECHERCHE DANS LES RÉSULTATS...");
-      console.log(
-        "🔍 PREMIERS SIRENS TROUVÉS:",
-        sireneData.etablissements.slice(0, 5).map((e) => e.siren)
-      );
-
-      // Chercher spécifiquement votre entreprise
-      const myCompany = sireneData.etablissements.find(
-        (e) => e.siren === "930448600"
-      );
-      if (myCompany) {
-        console.log("🎯 VOTRE ENTREPRISE TROUVÉE:", myCompany);
-        console.log("🎯 ADRESSE:", myCompany.adresseEtablissement);
-        console.log("🎯 UNITÉ LÉGALE:", myCompany.uniteLegale);
-      } else {
-        console.log(
-          "❌ VOTRE ENTREPRISE (SIREN 930448600) PAS TROUVÉE DANS LES RÉSULTATS"
-        );
-        console.log(
-          "❌ TOTAL RÉSULTATS REÇUS:",
-          sireneData.etablissements.length
-        );
-      }
+    if (!sireneData.etablissements || sireneData.etablissements.length === 0) {
+      return NextResponse.json({
+        success: true,
+        total: 0,
+        totalAvailable: sireneData.header?.total || 0,
+        baseCoords,
+        results: [],
+      });
     }
 
-    if (!sireneData.etablissements || sireneData.etablissements.length === 0) {
-      // Données de test pour démonstration
-      const testCompanies = [
-        {
-          siren: "123456789",
-          siret: "12345678901234",
-          uniteLegale: {
-            denominationUniteLegale: `Boulangerie ${baseCoords.cityName}`,
-            activitePrincipaleUniteLegale: "1071C",
-            dateCreationUniteLegale: "2024-01-15",
-            categorieEntreprise: "PME",
-            etatAdministratifUniteLegale: "A",
-          },
-          adresseEtablissement: {
-            numeroVoieEtablissement: "12",
-            typeVoieEtablissement: "RUE",
-            libelleVoieEtablissement: "DE LA PAIX",
-            codePostalEtablissement: baseCoords.postalCode,
-            libelleCommuneEtablissement: baseCoords.cityName,
-            coordonneeLambertAbscisseEtablissement: "",
-            coordonneeLambertOrdonneeEtablissement: "",
-          },
-          periodesEtablissement: [
-            {
-              dateFin: null,
-              dateDebut: "2024-01-15",
-              etatAdministratifEtablissement: "A",
-            },
-          ],
-        },
-      ];
-
-      for (const etablissement of testCompanies) {
-        const distance = Math.random() * radiusKm * 0.8;
-
-        results.push({
-          siren: etablissement.siren,
-          siret: etablissement.siret,
-          name:
-            etablissement.uniteLegale.denominationUniteLegale +
-            " (Test - pas de clé API)",
-          address: `${etablissement.adresseEtablissement.numeroVoieEtablissement} ${etablissement.adresseEtablissement.typeVoieEtablissement} ${etablissement.adresseEtablissement.libelleVoieEtablissement}`,
-          city: etablissement.adresseEtablissement.libelleCommuneEtablissement,
-          postalCode:
-            etablissement.adresseEtablissement.codePostalEtablissement,
-          activity: etablissement.uniteLegale.activitePrincipaleUniteLegale,
-          creationDate: etablissement.uniteLegale.dateCreationUniteLegale,
-          status: "Active",
-          hasWebsite: false,
-          distance: Math.round(distance * 10) / 10,
-        });
-      }
-    } else {
+    {
       // Traitement des vraies données API
       for (const etablissement of sireneData.etablissements) {
         let distance = 0;
@@ -440,8 +301,12 @@ export async function POST(request: NextRequest) {
             .coordonneeLambertOrdonneeEtablissement
         );
 
+        // Distance exacte si l'INSEE fournit les coordonnées, sinon estimée
+        // depuis le centre de la commune — jamais inventée : le drapeau
+        // distanceApprox permet de l'afficher honnêtement côté interface.
+        let distanceApprox = false;
+
         if (lambertX && lambertY && lambertX > 0 && lambertY > 0) {
-          // Conversion Lambert vers GPS et calcul de distance précis
           const coords = lambertToGPS(lambertX, lambertY);
           distance = calculateDistance(
             baseCoords.lat,
@@ -450,45 +315,28 @@ export async function POST(request: NextRequest) {
             coords.lon
           );
         } else {
-          // Fallback sur estimation par code postal
+          distanceApprox = true;
           const etablissementPostalCode =
-            etablissement.adresseEtablissement.codePostalEtablissement;
-          if (etablissementPostalCode === baseCoords.postalCode) {
-            distance = Math.random() * 5; // Même code postal = 0-5km
+            etablissement.adresseEtablissement.codePostalEtablissement || "";
+          const sameCity =
+            etablissement.adresseEtablissement.libelleCommuneEtablissement?.toUpperCase() ===
+            baseCoords.cityName;
+
+          if (sameCity || etablissementPostalCode === baseCoords.postalCode) {
+            distance = 0;
           } else if (
             etablissementPostalCode.substring(0, 2) ===
             baseCoords.postalCode.substring(0, 2)
           ) {
-            // Même département, estimation basée sur différence de codes postaux
-            const baseCode = parseInt(baseCoords.postalCode);
-            const etabCode = parseInt(etablissementPostalCode);
-            const codeDiff = Math.abs(etabCode - baseCode);
-            distance = Math.min(codeDiff * 0.5, radiusKm - 1); // Distance approximative
+            // Même département : on ne sait pas où exactement, on garde
+            // l'établissement mais sans prétendre connaître la distance.
+            distance = Math.min(radiusKm, 30);
           } else {
-            distance = radiusKm + 10; // Autre département = probablement trop loin
+            distance = radiusKm + 10; // Hors département : exclu par le filtre
           }
         }
 
-        // Debug spécial pour votre entreprise
-        if (etablissement.siren === "930448600") {
-          console.log("🎯 VOTRE ENTREPRISE - CALCUL DISTANCE:");
-          console.log("🎯 Coordonnées Lambert:", lambertX, lambertY);
-          console.log("🎯 Distance calculée:", distance, "km");
-          console.log("🎯 Rayon demandé:", radiusKm, "km");
-          console.log("🎯 Sera incluse:", distance <= radiusKm ? "OUI" : "NON");
-
-          // CORRECTION TEMPORAIRE: Forcer une distance correcte pour votre entreprise
-          if (location.toLowerCase().includes("montoir")) {
-            distance = 0.1; // Forcer à 0.1 km pour Montoir-de-Bretagne
-            console.log("🔧 DISTANCE FORCÉE À 0.1 KM POUR MONTOIR-DE-BRETAGNE");
-          }
-        }
-
-        // Filtre par rayon - CORRECTION 5: Ne plus exclure automatiquement
         if (distance <= radiusKm) {
-          // Vérification simple du site web (désactivée pour performance)
-          const hasWebsite = false;
-
           // Construction du nom pour les personnes physiques vs morales
           let companyName = etablissement.uniteLegale.denominationUniteLegale;
           if (
@@ -524,8 +372,8 @@ export async function POST(request: NextRequest) {
               etablissement.uniteLegale.etatAdministratifUniteLegale === "A"
                 ? "Active"
                 : "Inactive",
-            hasWebsite,
             distance: Math.round(distance * 10) / 10,
+            distanceApprox,
           });
         }
       }
@@ -534,32 +382,12 @@ export async function POST(request: NextRequest) {
     // Tri par distance
     results.sort((a, b) => a.distance - b.distance);
 
-    console.log("📊 RÉSULTATS FINAUX ENVOYÉS AU CLIENT:");
-    console.log("📊 Nombre de résultats:", results.length);
-    console.log(
-      "📊 Premiers résultats:",
-      results.slice(0, 3).map((r) => `${r.name} (${r.siren}) - ${r.distance}km`)
-    );
-
-    // Vérifier si votre entreprise est dans les résultats finaux
-    const myCompanyInResults = results.find((r) => r.siren === "930448600");
-    if (myCompanyInResults) {
-      console.log(
-        "✅ VOTRE ENTREPRISE DANS LES RÉSULTATS FINAUX:",
-        myCompanyInResults.name,
-        myCompanyInResults.distance + "km"
-      );
-    } else {
-      console.log("❌ VOTRE ENTREPRISE PAS DANS LES RÉSULTATS FINAUX");
-    }
-
     return NextResponse.json({
       success: true,
       total: results.length,
       totalAvailable: sireneData.header?.total || 0,
-      query: sireneQuery,
       baseCoords,
-      results: results, // Retourner TOUS les résultats filtrés, la pagination sera côté client
+      results,
     });
   } catch (error) {
     console.error("Erreur API prospection:", error);

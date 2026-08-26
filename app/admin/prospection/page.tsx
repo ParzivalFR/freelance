@@ -2,7 +2,6 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -12,15 +11,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useToast } from "@/components/ui/use-toast";
 import {
   Building2,
+  Check,
   ChevronDown,
   Download,
+  ExternalLink,
   Globe,
+  Loader2,
   MapPin,
   Plus,
   Search,
+  Sparkles,
 } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
@@ -33,8 +36,9 @@ interface Company {
   activity: string;
   creationDate: string;
   status: string;
-  hasWebsite?: boolean;
-  distance?: number;
+  distance: number;
+  distanceApprox?: boolean;
+  website?: string | null; // undefined = pas encore vérifié
 }
 
 interface City {
@@ -45,534 +49,510 @@ interface City {
   display: string;
 }
 
+const PAGE_SIZE = 30;
+
 export default function ProspectionPage() {
+  const { toast } = useToast();
+
   const [isSearching, setIsSearching] = useState(false);
-  const [searchResults, setSearchResults] = useState<Company[]>([]);
   const [allResults, setAllResults] = useState<Company[]>([]);
-  const [visibleResults, setVisibleResults] = useState(50);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
   const [totalAvailable, setTotalAvailable] = useState(0);
+  const [hasSearched, setHasSearched] = useState(false);
+  const [addedSirens, setAddedSirens] = useState<Set<string>>(new Set());
+  const [addingSiren, setAddingSiren] = useState<string | null>(null);
+  const [isCheckingSites, setIsCheckingSites] = useState(false);
+  const [onlyWithoutSite, setOnlyWithoutSite] = useState(false);
 
   const [filters, setFilters] = useState({
     location: "",
     radius: "25",
-    sector: "",
-    createdSince: "",
-    companySize: "",
+    sector: "all",
+    createdSince: "all",
+    companySize: "all",
   });
 
-  // États pour l'autocomplétion des villes
   const [citySuggestions, setCitySuggestions] = useState<City[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [isLoadingCities, setIsLoadingCities] = useState(false);
   const suggestionTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
 
-  // Fonction pour rechercher les villes
   const searchCities = async (query: string) => {
     if (query.length < 2) {
       setCitySuggestions([]);
       setShowSuggestions(false);
       return;
     }
-
     setIsLoadingCities(true);
     try {
-      const response = await fetch(
-        `/api/admin/cities?q=${encodeURIComponent(query)}`
-      );
+      const response = await fetch(`/api/admin/cities?q=${encodeURIComponent(query)}`);
       if (response.ok) {
         const data = await response.json();
         setCitySuggestions(data.cities || []);
         setShowSuggestions(true);
       }
-    } catch (error) {
-      console.error("Erreur recherche villes:", error);
+    } catch {
+      // Suggestions indisponibles — la saisie libre reste possible
     } finally {
       setIsLoadingCities(false);
     }
   };
 
-  // Gérer la saisie dans le champ localisation
   const handleLocationChange = (value: string) => {
     setFilters({ ...filters, location: value });
-
-    // Debouncer la recherche
-    if (suggestionTimeoutRef.current) {
-      clearTimeout(suggestionTimeoutRef.current);
-    }
-
-    suggestionTimeoutRef.current = setTimeout(() => {
-      searchCities(value);
-    }, 300);
+    if (suggestionTimeoutRef.current) clearTimeout(suggestionTimeoutRef.current);
+    suggestionTimeoutRef.current = setTimeout(() => searchCities(value), 300);
   };
 
-  // Sélectionner une ville
-  const selectCity = (city: City) => {
-    setFilters({ ...filters, location: city.display });
-    setShowSuggestions(false);
-    setCitySuggestions([]);
-  };
-
-  // Fermer les suggestions si on clique ailleurs
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        suggestionsRef.current &&
-        !suggestionsRef.current.contains(event.target as Node)
-      ) {
+      if (suggestionsRef.current && !suggestionsRef.current.contains(event.target as Node)) {
         setShowSuggestions(false);
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const handleSearch = async () => {
     if (!filters.location.trim()) {
-      alert("Veuillez saisir une localisation");
+      toast({ title: "Localisation manquante", description: "Saisissez une ville pour lancer la recherche.", variant: "destructive" });
       return;
     }
 
     setIsSearching(true);
-
     try {
       const response = await fetch("/api/admin/prospection", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(filters),
       });
-
-      if (!response.ok) {
-        throw new Error("Erreur lors de la recherche");
-      }
-
       const data = await response.json();
 
-      if (data.success) {
-        const resultsToSet = data.results || [];
-        
-        // Debug côté client
-        console.log('📱 RÉSULTATS REÇUS CÔTÉ CLIENT:');
-        console.log('📱 Nombre:', resultsToSet.length);
-        console.log('📱 Premiers:', resultsToSet.slice(0, 3));
-        
-        // Chercher votre entreprise
-        const myCompany = resultsToSet.find((r: Company) => r.siren === '930448600');
-        if (myCompany) {
-          console.log('✅ VOTRE ENTREPRISE REÇUE CÔTÉ CLIENT:', myCompany);
-        } else {
-          console.log('❌ VOTRE ENTREPRISE PAS REÇUE CÔTÉ CLIENT');
-        }
-        
-        setAllResults(resultsToSet);
-        setSearchResults(resultsToSet.slice(0, 50)); // Afficher les 50 premiers
-        setVisibleResults(50);
-        setTotalAvailable(data.totalAvailable || 0);
-      } else {
-        throw new Error(data.error || "Erreur inconnue");
+      if (!response.ok || !data.success) {
+        toast({
+          title: "Recherche impossible",
+          description: data.error ?? "L'API Sirene n'a pas répondu.",
+          variant: "destructive",
+        });
+        return;
       }
-    } catch (error) {
-      console.error("Erreur de recherche:", error);
-      alert(
-        "Erreur lors de la recherche. Vérifiez votre connexion et réessayez."
-      );
-      setSearchResults([]);
-      setAllResults([]);
-      setTotalAvailable(0);
+
+      const results: Company[] = data.results || [];
+      setAllResults(results);
+      setVisibleCount(PAGE_SIZE);
+      setTotalAvailable(data.totalAvailable || 0);
+      setHasSearched(true);
+      setOnlyWithoutSite(false);
+
+      if (results.length === 0) {
+        toast({ title: "Aucun résultat", description: "Élargissez le rayon ou retirez des filtres." });
+      } else {
+        toast({ title: `${results.length} entreprise${results.length > 1 ? "s" : ""} trouvée${results.length > 1 ? "s" : ""}` });
+        setTimeout(() => resultsRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+      }
+    } catch {
+      toast({ title: "Erreur réseau", description: "Vérifiez votre connexion et réessayez.", variant: "destructive" });
     } finally {
       setIsSearching(false);
     }
   };
 
-  const loadMoreResults = () => {
-    const newVisibleCount = Math.min(visibleResults + 20, allResults.length);
-    setSearchResults(allResults.slice(0, newVisibleCount));
-    setVisibleResults(newVisibleCount);
-  };
+  // Teste les domaines probables des entreprises affichées pour repérer
+  // celles qui n'ont pas de site — le coeur de la prospection.
+  const detectWebsites = async () => {
+    const toCheck = allResults.slice(0, visibleCount).filter((c) => c.website === undefined);
+    if (toCheck.length === 0) {
+      toast({ title: "Déjà vérifié", description: "Les entreprises affichées ont toutes été analysées." });
+      return;
+    }
 
-  const exportToCsv = () => {
-    const csvContent = [
-      [
-        "Nom",
-        "Adresse",
-        "Ville",
-        "Secteur",
-        "Date création",
-        "A un site",
-        "Distance",
-      ],
-      ...searchResults.map((company) => [
-        company.name,
-        company.address,
-        company.city,
-        company.activity,
-        company.creationDate,
-        company.hasWebsite ? "Oui" : "Non",
-        `${company.distance} km`,
-      ]),
-    ]
-      .map((row) => row.join(","))
-      .join("\n");
-
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "prospects.csv";
-    a.click();
-  };
-
-  const addToClients = async (company: Company) => {
+    setIsCheckingSites(true);
     try {
-      const response = await fetch("/api/admin/clients", {
+      const response = await fetch("/api/admin/prospection/check-website", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          firstName: company.name.split(" ")[0] || company.name,
-          lastName: company.name.split(" ").slice(1).join(" ") || "Entreprise",
-          email: `contact@${company.name
-            .toLowerCase()
-            .replace(/[^a-z0-9]/g, "")}.fr`,
-          phone: "",
-          address: `${company.address}, ${company.postalCode} ${company.city}`,
-          company: company.name,
-          website: "",
-          isProfessional: true,
-          status: "prospect",
-          subject: "Création site vitrine - Prospection automatique",
-          internalNote: `Prospect trouvé via recherche automatique.\nSecteur: ${company.activity}\nCréée le: ${company.creationDate}\nDistance: ${company.distance}km\nSIREN: ${company.siren}`,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ companies: toCheck.map((c) => ({ siren: c.siren, name: c.name })) }),
       });
-
-      if (response.ok) {
-        alert(`${company.name} ajouté aux clients !`);
-      } else {
-        throw new Error("Erreur lors de l'ajout");
+      const data = await response.json();
+      if (!response.ok) {
+        toast({ title: "Détection impossible", description: data.error ?? "Réessayez.", variant: "destructive" });
+        return;
       }
-    } catch (error) {
-      console.error("Erreur ajout client:", error);
-      alert("Erreur lors de l'ajout au CRM");
+
+      const bySiren = new Map<string, string | null>(
+        (data.results as { siren: string; website: string | null }[]).map((r) => [r.siren, r.website])
+      );
+      setAllResults((prev) =>
+        prev.map((c) => (bySiren.has(c.siren) ? { ...c, website: bySiren.get(c.siren) ?? null } : c))
+      );
+
+      const withoutSite = [...bySiren.values()].filter((w) => w === null).length;
+      toast({
+        title: "Détection terminée",
+        description: `${withoutSite} entreprise${withoutSite > 1 ? "s" : ""} sans site détecté sur ${bySiren.size} analysée${bySiren.size > 1 ? "s" : ""}.`,
+      });
+    } finally {
+      setIsCheckingSites(false);
     }
   };
 
+  const escapeCsv = (value: string) => `"${String(value ?? "").replace(/"/g, '""')}"`;
+
+  const exportToCsv = () => {
+    const rows = [
+      ["Nom", "Adresse", "Code postal", "Ville", "Code NAF", "Date de création", "Site web", "Distance (km)", "SIREN"],
+      ...visibleResults.map((c) => [
+        c.name,
+        c.address,
+        c.postalCode,
+        c.city,
+        c.activity,
+        c.creationDate,
+        c.website === undefined ? "Non vérifié" : (c.website ?? "Aucun détecté"),
+        c.distanceApprox ? `~${c.distance}` : String(c.distance),
+        c.siren,
+      ]),
+    ];
+    const csv = rows.map((row) => row.map(escapeCsv).join(";")).join("\n");
+    const blob = new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `prospects-${filters.location.replace(/[^a-zA-Z0-9]/g, "-").toLowerCase()}.csv`;
+    a.click();
+    window.URL.revokeObjectURL(url);
+  };
+
+  const addToClients = async (company: Company) => {
+    setAddingSiren(company.siren);
+    try {
+      const response = await fetch("/api/admin/clients", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          firstName: company.name,
+          lastName: "",
+          // Volontairement vide : un email inventé finirait en bounce et
+          // abîmerait la réputation d'envoi. À compléter après contact.
+          email: "",
+          phone: "",
+          address: `${company.address}, ${company.postalCode} ${company.city}`,
+          company: company.name,
+          website: company.website ?? "",
+          isProfessional: true,
+          status: "prospect",
+          subject: "Prospection — création de site",
+          internalNote: [
+            `Prospect trouvé via la recherche Sirene.`,
+            `SIREN : ${company.siren}`,
+            `Secteur (NAF) : ${company.activity}`,
+            `Créée le : ${company.creationDate}`,
+            `Distance : ${company.distanceApprox ? "~" : ""}${company.distance} km`,
+            company.website === undefined
+              ? `Site web : non vérifié`
+              : company.website
+                ? `Site web détecté : ${company.website}`
+                : `Aucun site détecté`,
+          ].join("\n"),
+        }),
+      });
+
+      if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        toast({ title: "Ajout impossible", description: data.error ?? "Réessayez.", variant: "destructive" });
+        return;
+      }
+
+      setAddedSirens((prev) => new Set(prev).add(company.siren));
+      toast({ title: "Prospect ajouté", description: `${company.name} est dans vos clients (email à compléter).` });
+    } catch {
+      toast({ title: "Erreur réseau", description: "Impossible d'ajouter au CRM.", variant: "destructive" });
+    } finally {
+      setAddingSiren(null);
+    }
+  };
+
+  const filtered = onlyWithoutSite ? allResults.filter((c) => c.website === null) : allResults;
+  const visibleResults = filtered.slice(0, visibleCount);
+  const withoutSiteCount = allResults.filter((c) => c.website === null).length;
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="border-b border-border/40 pb-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="flex items-center gap-3 text-3xl font-bold tracking-tight">
-              <Search className="size-8 text-blue-600" />
-              Prospection d'Entreprises
-            </h1>
-            <p className="mt-2 text-muted-foreground">
-              Trouvez de nouveaux prospects pour vos sites vitrines
-            </p>
+    <div className="mx-auto max-w-6xl space-y-10">
+      <div>
+        <p className="font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
+          Trouver des clients
+        </p>
+        <h1 className="mt-1 font-[family-name:var(--font-display)] text-[clamp(1.8rem,4vw,2.8rem)] uppercase leading-none text-foreground">
+          Pros<span className="text-[#7158ff]">pection</span>
+        </h1>
+        <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
+          Recherchez les entreprises autour de vous via la base Sirene (INSEE), repérez celles qui n&apos;ont pas
+          encore de site web, et ajoutez-les à votre CRM en un clic.
+        </p>
+      </div>
+
+      {/* Filtres */}
+      <div className="rounded-2xl border bg-card p-6">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="relative space-y-2" ref={suggestionsRef}>
+            <Label>Ville de référence</Label>
+            <div className="relative">
+              <Input
+                placeholder="Ex : Saint-Nazaire"
+                value={filters.location}
+                onChange={(e) => handleLocationChange(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                className="pr-8"
+              />
+              <div className="absolute right-2 top-1/2 -translate-y-1/2">
+                {isLoadingCities ? (
+                  <Loader2 className="size-4 animate-spin text-[#7158ff]" />
+                ) : (
+                  <ChevronDown className="size-4 text-muted-foreground" />
+                )}
+              </div>
+            </div>
+
+            {showSuggestions && citySuggestions.length > 0 && (
+              <div className="shadow-lg absolute z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-xl border bg-background p-1">
+                {citySuggestions.map((city, index) => (
+                  <button
+                    type="button"
+                    key={`${city.code}-${index}`}
+                    className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm hover:bg-muted"
+                    onClick={() => {
+                      setFilters({ ...filters, location: city.display });
+                      setShowSuggestions(false);
+                      setCitySuggestions([]);
+                    }}
+                  >
+                    <MapPin className="size-4 shrink-0 text-muted-foreground" />
+                    <span>{city.display}</span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
-          <div className="flex items-center gap-2">
-            <Badge
-              variant="outline"
-              className="border-green-200 text-green-600"
+
+          <div className="space-y-2">
+            <Label>Rayon</Label>
+            <Select value={filters.radius} onValueChange={(v) => setFilters({ ...filters, radius: v })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                {["5", "10", "25", "50", "100"].map((r) => (
+                  <SelectItem key={r} value={r}>{r} km</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Secteur d&apos;activité</Label>
+            <Select value={filters.sector} onValueChange={(v) => setFilters({ ...filters, sector: v })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Tous secteurs</SelectItem>
+                <SelectItem value="restaurants">Restaurants</SelectItem>
+                <SelectItem value="commerce">Commerce de détail</SelectItem>
+                <SelectItem value="artisans">Artisans / BTP</SelectItem>
+                <SelectItem value="services">Services aux entreprises</SelectItem>
+                <SelectItem value="sante">Santé</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Créée depuis</Label>
+            <Select value={filters.createdSince} onValueChange={(v) => setFilters({ ...filters, createdSince: v })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toutes périodes</SelectItem>
+                <SelectItem value="1month">1 mois</SelectItem>
+                <SelectItem value="3months">3 mois</SelectItem>
+                <SelectItem value="6months">6 mois</SelectItem>
+                <SelectItem value="1year">1 an</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-2">
+            <Label>Taille</Label>
+            <Select value={filters.companySize} onValueChange={(v) => setFilters({ ...filters, companySize: v })}>
+              <SelectTrigger><SelectValue /></SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Toutes tailles</SelectItem>
+                <SelectItem value="tpe">TPE (1-9 salariés)</SelectItem>
+                <SelectItem value="pme">PME (10-249 salariés)</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="flex items-end">
+            <Button
+              onClick={handleSearch}
+              disabled={isSearching || !filters.location.trim()}
+              className="w-full ring-4 ring-[#7158ff]/20"
             >
-              API Sirene connectée
-            </Badge>
+              {isSearching ? (
+                <><Loader2 className="mr-2 size-4 animate-spin" />Recherche…</>
+              ) : (
+                <><Search className="mr-2 size-4" />Rechercher</>
+              )}
+            </Button>
           </div>
         </div>
       </div>
 
-      <Tabs defaultValue="search" className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="search">Recherche</TabsTrigger>
-          <TabsTrigger value="results">
-            Résultats ({searchResults.length})
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="search" className="space-y-6">
-          {/* Filtres de recherche */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <MapPin className="size-5" />
-                Critères de Recherche
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              <div className="relative space-y-2" ref={suggestionsRef}>
-                <Label>Localisation de base</Label>
-                <div className="relative">
-                  <Input
-                    placeholder="Votre ville (ex: Reims)"
-                    value={filters.location}
-                    onChange={(e) => handleLocationChange(e.target.value)}
-                    className="pr-8"
-                  />
-                  <div className="absolute right-2 top-1/2 -translate-y-1/2">
-                    {isLoadingCities ? (
-                      <div className="size-4 animate-spin rounded-full border-b-2 border-blue-600"></div>
-                    ) : (
-                      <ChevronDown className="size-4 text-muted-foreground" />
-                    )}
-                  </div>
-                </div>
-
-                {/* Suggestions dropdown */}
-                {showSuggestions && citySuggestions.length > 0 && (
-                  <div className="shadow-lg absolute z-50 mt-1 max-h-48 w-full overflow-y-auto rounded-md border border-border bg-background">
-                    {citySuggestions.map((city, index) => (
-                      <div
-                        key={`${city.code}-${index}`}
-                        className="flex cursor-pointer items-center gap-2 px-3 py-2 hover:bg-muted"
-                        onClick={() => selectCity(city)}
-                      >
-                        <MapPin className="size-4 text-muted-foreground" />
-                        <span>{city.display}</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
+      {/* Résultats */}
+      <div ref={resultsRef} className="space-y-4">
+        {hasSearched && allResults.length > 0 && (
+          <>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <p className="font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
+                  Résultats
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  {visibleResults.length} affichée{visibleResults.length > 1 ? "s" : ""} sur {filtered.length}
+                  {totalAvailable > allResults.length && ` · ${totalAvailable.toLocaleString("fr-FR")} dans la base`}
+                </p>
               </div>
-
-              <div className="space-y-2">
-                <Label>Rayon de recherche</Label>
-                <Select
-                  value={filters.radius}
-                  onValueChange={(value) =>
-                    setFilters({ ...filters, radius: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5 km</SelectItem>
-                    <SelectItem value="10">10 km</SelectItem>
-                    <SelectItem value="25">25 km</SelectItem>
-                    <SelectItem value="50">50 km</SelectItem>
-                    <SelectItem value="100">100 km</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Secteur d'activité</Label>
-                <Select
-                  value={filters.sector}
-                  onValueChange={(value) =>
-                    setFilters({ ...filters, sector: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Tous secteurs" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Tous secteurs</SelectItem>
-                    <SelectItem value="restaurants">Restaurants</SelectItem>
-                    <SelectItem value="commerce">Commerce de détail</SelectItem>
-                    <SelectItem value="artisans">Artisans</SelectItem>
-                    <SelectItem value="services">
-                      Services aux entreprises
-                    </SelectItem>
-                    <SelectItem value="sante">Santé</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Créées depuis</Label>
-                <Select
-                  value={filters.createdSince}
-                  onValueChange={(value) =>
-                    setFilters({ ...filters, createdSince: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Toutes périodes" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Toutes périodes</SelectItem>
-                    <SelectItem value="1month">1 mois</SelectItem>
-                    <SelectItem value="3months">3 mois</SelectItem>
-                    <SelectItem value="6months">6 mois</SelectItem>
-                    <SelectItem value="1year">1 an</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label>Taille d'entreprise</Label>
-                <Select
-                  value={filters.companySize}
-                  onValueChange={(value) =>
-                    setFilters({ ...filters, companySize: value })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Toutes tailles" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">Toutes tailles</SelectItem>
-                    <SelectItem value="micro">Micro-entreprise</SelectItem>
-                    <SelectItem value="tpe">TPE (1-9 salariés)</SelectItem>
-                    <SelectItem value="pme">PME (10-249 salariés)</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex items-end">
-                <Button
-                  onClick={handleSearch}
-                  disabled={isSearching || !filters.location}
-                  className="w-full"
-                >
-                  {isSearching ? (
-                    <>
-                      <div className="mr-2 size-4 animate-spin rounded-full border-b-2 border-white"></div>
-                      Recherche...
-                    </>
+              <div className="flex flex-wrap gap-2">
+                <Button variant="outline" onClick={detectWebsites} disabled={isCheckingSites}>
+                  {isCheckingSites ? (
+                    <><Loader2 className="mr-2 size-4 animate-spin" />Analyse…</>
                   ) : (
-                    <>
-                      <Search className="mr-2 size-4" />
-                      Rechercher
-                    </>
+                    <><Sparkles className="mr-2 size-4" />Détecter les sites web</>
                   )}
                 </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="results" className="space-y-6">
-          {searchResults.length > 0 && (
-            <div className="flex items-center justify-between">
-              <div className="text-sm text-muted-foreground">
-                <p>
-                  Affichage de {searchResults.length} sur {allResults.length}{" "}
-                  entreprises trouvées
-                </p>
-                {totalAvailable > allResults.length && (
-                  <p className="text-xs text-orange-600">
-                    ({totalAvailable.toLocaleString()} au total dans la base -
-                    limitées à {allResults.length} pour les performances)
-                  </p>
+                {withoutSiteCount > 0 && (
+                  <Button
+                    variant={onlyWithoutSite ? "default" : "outline"}
+                    onClick={() => setOnlyWithoutSite((v) => !v)}
+                  >
+                    Sans site ({withoutSiteCount})
+                  </Button>
                 )}
+                <Button variant="outline" onClick={exportToCsv}>
+                  <Download className="mr-2 size-4" />CSV
+                </Button>
               </div>
-              <Button variant="outline" onClick={exportToCsv}>
-                <Download className="mr-2 size-4" />
-                Exporter CSV
-              </Button>
             </div>
-          )}
 
-          {/* Résultats */}
-          <div className="grid grid-cols-1 gap-4">
-            {searchResults.map((company) => (
-              <Card
-                key={company.siren}
-                className="hover:shadow-md transition-shadow"
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between">
-                    <div className="flex-1">
-                      <div className="mb-2 flex items-center gap-3">
-                        <h3 className="text-lg font-semibold">
-                          {company.name}
-                        </h3>
-                        <Badge
-                          variant={
-                            company.hasWebsite ? "destructive" : "secondary"
-                          }
-                        >
-                          {company.hasWebsite ? (
-                            <>
-                              <Globe className="mr-1 size-3" />A un site
-                            </>
+            <div className="space-y-3">
+              {visibleResults.map((company) => {
+                const isAdded = addedSirens.has(company.siren);
+                return (
+                  <div
+                    key={company.siren}
+                    className="rounded-2xl border bg-card p-5 transition-colors hover:border-[#7158ff]/40"
+                  >
+                    <div className="flex flex-wrap items-start justify-between gap-4">
+                      <div className="min-w-0 flex-1">
+                        <div className="mb-2 flex flex-wrap items-center gap-2">
+                          <h3 className="text-base font-semibold text-foreground">{company.name}</h3>
+                          {company.website === undefined ? (
+                            <Badge variant="outline" className="text-muted-foreground">Site non vérifié</Badge>
+                          ) : company.website ? (
+                            <a
+                              href={company.website}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 rounded-full border border-orange-300 bg-orange-50 px-2.5 py-0.5 text-xs font-medium text-orange-700 dark:border-orange-900 dark:bg-orange-950/40 dark:text-orange-300"
+                            >
+                              <Globe className="size-3" />A déjà un site
+                            </a>
                           ) : (
-                            "Pas de site détecté"
+                            <Badge className="border-green-300 bg-green-50 text-green-700 hover:bg-green-50 dark:border-green-900 dark:bg-green-950/40 dark:text-green-300">
+                              Pas de site détecté
+                            </Badge>
                           )}
-                        </Badge>
-                        <Badge variant="outline">
-                          <MapPin className="mr-1 size-3" />
-                          {company.distance} km
-                        </Badge>
-                      </div>
-
-                      <div className="grid grid-cols-1 gap-4 text-sm text-muted-foreground md:grid-cols-2">
-                        <div>
-                          <p>
-                            <strong>Adresse:</strong> {company.address},{" "}
-                            {company.postalCode} {company.city}
-                          </p>
-                          <p>
-                            <strong>Activité:</strong> {company.activity}
-                          </p>
+                          <Badge variant="outline">
+                            <MapPin className="mr-1 size-3" />
+                            {company.distanceApprox ? "~" : ""}{company.distance} km
+                          </Badge>
                         </div>
-                        <div>
+
+                        <div className="grid grid-cols-1 gap-x-6 gap-y-1 text-sm text-muted-foreground md:grid-cols-2">
+                          <p>{company.address}, {company.postalCode} {company.city}</p>
+                          <p>Code NAF : {company.activity}</p>
                           <p>
-                            <strong>Créée le:</strong>{" "}
-                            {new Date(
-                              company.creationDate
-                            ).toLocaleDateString()}
+                            Créée le{" "}
+                            {company.creationDate
+                              ? new Date(company.creationDate).toLocaleDateString("fr-FR")
+                              : "—"}
                           </p>
-                          <p>
-                            <strong>SIREN:</strong> {company.siren}
-                          </p>
+                          <p>SIREN : {company.siren}</p>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="flex gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => addToClients(company)}
-                      >
-                        <Plus className="mr-1 size-4" />
-                        Ajouter aux clients
-                      </Button>
+                      <div className="flex shrink-0 flex-col gap-2">
+                        <Button
+                          size="sm"
+                          variant={isAdded ? "outline" : "default"}
+                          disabled={isAdded || addingSiren === company.siren}
+                          onClick={() => addToClients(company)}
+                        >
+                          {addingSiren === company.siren ? (
+                            <><Loader2 className="mr-1 size-4 animate-spin" />Ajout…</>
+                          ) : isAdded ? (
+                            <><Check className="mr-1 size-4" />Ajouté</>
+                          ) : (
+                            <><Plus className="mr-1 size-4" />Ajouter au CRM</>
+                          )}
+                        </Button>
+                        <a
+                          href={`https://www.google.com/search?q=${encodeURIComponent(`${company.name} ${company.city}`)}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-[#7158ff]/40 hover:text-[#7158ff]"
+                        >
+                          <ExternalLink className="size-3" />
+                          Google
+                        </a>
+                      </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                );
+              })}
+            </div>
 
-          {/* Bouton Voir plus */}
-          {searchResults.length > 0 && visibleResults < allResults.length && (
-            <div className="text-center">
+            {visibleCount < filtered.length && (
               <Button
                 variant="outline"
-                onClick={loadMoreResults}
-                className="w-full max-w-md"
+                onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+                className="w-full"
               >
                 <Plus className="mr-2 size-4" />
-                Voir plus ({Math.min(
-                  20,
-                  allResults.length - visibleResults
-                )}{" "}
-                entreprises supplémentaires)
+                Voir {Math.min(PAGE_SIZE, filtered.length - visibleCount)} de plus
               </Button>
-            </div>
-          )}
+            )}
+          </>
+        )}
 
-          {searchResults.length === 0 && (
-            <Card>
-              <CardContent className="p-12 text-center">
-                <Building2 className="mx-auto mb-4 size-12 text-muted-foreground" />
-                <h3 className="mb-2 text-lg font-semibold">Aucun résultat</h3>
-                <p className="text-muted-foreground">
-                  Lancez une recherche pour trouver des prospects
-                </p>
-              </CardContent>
-            </Card>
-          )}
-        </TabsContent>
-      </Tabs>
+        {hasSearched && allResults.length === 0 && (
+          <div className="rounded-2xl border border-dashed bg-card p-12 text-center">
+            <Building2 className="mx-auto mb-4 size-10 text-muted-foreground/50" />
+            <h3 className="mb-1 font-semibold">Aucune entreprise trouvée</h3>
+            <p className="text-sm text-muted-foreground">
+              Élargissez le rayon de recherche ou retirez des filtres.
+            </p>
+          </div>
+        )}
+
+        {!hasSearched && (
+          <div className="rounded-2xl border border-dashed bg-card p-12 text-center">
+            <Search className="mx-auto mb-4 size-10 text-muted-foreground/50" />
+            <h3 className="mb-1 font-semibold">Lancez une recherche</h3>
+            <p className="text-sm text-muted-foreground">
+              Saisissez une ville pour trouver des entreprises autour de vous.
+            </p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

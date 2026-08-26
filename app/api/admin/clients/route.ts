@@ -79,31 +79,32 @@ export async function POST(request: NextRequest) {
       internalNote,
     } = body;
 
-    // Validation basique
-    if (!firstName || !lastName || !email) {
+    if (!firstName) {
       return NextResponse.json(
-        { error: "Les champs prénom, nom et email sont obligatoires" },
+        { error: "Le prénom (ou le nom de l'entreprise) est obligatoire" },
         { status: 400 }
       );
     }
 
-    // Vérifier si l'email existe déjà
-    const existingClient = await prisma.client.findUnique({
-      where: { email },
-    });
-
-    if (existingClient) {
-      return NextResponse.json(
-        { error: "Un client avec cet email existe déjà" },
-        { status: 400 }
-      );
+    // Email facultatif (prospect pas encore contacté), mais unique s'il est fourni
+    const normalizedEmail = typeof email === "string" && email.trim() ? email.trim() : null;
+    if (normalizedEmail) {
+      const existingClient = await prisma.client.findUnique({
+        where: { email: normalizedEmail },
+      });
+      if (existingClient) {
+        return NextResponse.json(
+          { error: "Un client avec cet email existe déjà" },
+          { status: 400 }
+        );
+      }
     }
 
     const client = await prisma.client.create({
       data: {
         firstName,
-        lastName,
-        email,
+        lastName: lastName || "",
+        email: normalizedEmail,
         phone,
         address,
         company,

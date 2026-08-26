@@ -412,7 +412,9 @@ model Client {
   id             String    @id @default(cuid())
   firstName      String    @map("first_name")
   lastName       String    @map("last_name")
-  email          String    @unique
+  // Optionnel : un prospect issu de la prospection n'a pas encore d'email
+  // connu. Postgres autorise plusieurs NULL dans un index unique.
+  email          String?   @unique
   phone          String?
   address        String?
   company        String? // Nom de l'entreprise

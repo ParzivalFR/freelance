@@ -296,7 +296,9 @@ export default function AdminClientsPage() {
                       <div className="space-y-1">
                         <div className="flex items-center gap-2 text-sm">
                           <Mail className="size-3" />
-                          {client.email}
+                          {client.email || (
+                            <span className="italic text-muted-foreground">À compléter</span>
+                          )}
                         </div>
                         {client.phone && (
                           <div className="flex items-center gap-2 text-sm text-muted-foreground">
