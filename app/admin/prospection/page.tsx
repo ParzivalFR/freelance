@@ -21,7 +21,9 @@ import {
   ExternalLink,
   Globe,
   Loader2,
+  Mail,
   MapPin,
+  Phone,
   Plus,
   Search,
   Sparkles,
@@ -40,6 +42,10 @@ interface Company {
   distance: number;
   distanceApprox?: boolean;
   website?: string | null; // undefined = pas encore vérifié
+  phone?: string | null;
+  email?: string | null;
+  /** true une fois l'entreprise cherchée dans OpenStreetMap, trouvée ou non. */
+  enriched?: boolean;
 }
 
 interface City {
@@ -63,7 +69,11 @@ export default function ProspectionPage() {
   const [addedSirens, setAddedSirens] = useState<Set<string>>(new Set());
   const [addingSiren, setAddingSiren] = useState<string | null>(null);
   const [isCheckingSites, setIsCheckingSites] = useState(false);
+  const [isEnriching, setIsEnriching] = useState(false);
   const [onlyWithoutSite, setOnlyWithoutSite] = useState(false);
+  const [onlyWithPhone, setOnlyWithPhone] = useState(false);
+  // Centre géocodé de la recherche : Overpass en a besoin pour cadrer sa zone.
+  const [searchCenter, setSearchCenter] = useState<{ lat: number; lon: number } | null>(null);
 
   const [filters, setFilters] = useState({
     location: "",
@@ -147,6 +157,10 @@ export default function ProspectionPage() {
       setTotalAvailable(data.totalAvailable || 0);
       setHasSearched(true);
       setOnlyWithoutSite(false);
+      setOnlyWithPhone(false);
+      setSearchCenter(
+        data.baseCoords ? { lat: data.baseCoords.lat, lon: data.baseCoords.lon } : null
+      );
 
       if (results.length === 0) {
         toast({ title: "Aucun résultat", description: "Élargissez le rayon ou retirez des filtres." });
@@ -158,6 +172,80 @@ export default function ProspectionPage() {
       toast({ title: "Erreur réseau", description: "Vérifiez votre connexion et réessayez.", variant: "destructive" });
     } finally {
       setIsSearching(false);
+    }
+  };
+
+  // Complète les fiches avec les coordonnées OpenStreetMap (téléphone, site,
+  // email). Sirene n'en fournit aucune : c'est la seule source gratuite.
+  const enrichContacts = async () => {
+    const toEnrich = allResults.slice(0, visibleCount).filter((c) => !c.enriched);
+    if (toEnrich.length === 0) {
+      toast({ title: "Déjà complété", description: "Les fiches affichées ont toutes été cherchées." });
+      return;
+    }
+    if (!searchCenter) {
+      toast({
+        title: "Relancez la recherche",
+        description: "Le centre de la zone est inconnu, impossible d'interroger OpenStreetMap.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsEnriching(true);
+    try {
+      const response = await fetch("/api/admin/prospection/enrich", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          companies: toEnrich.map((c) => ({ siren: c.siren, name: c.name })),
+          center: searchCenter,
+          radius: Number(filters.radius),
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        toast({ title: "Enrichissement impossible", description: data.error ?? "Réessayez.", variant: "destructive" });
+        return;
+      }
+
+      type EnrichResult = {
+        siren: string;
+        phone: string | null;
+        email: string | null;
+        website: string | null;
+        found: boolean;
+      };
+      const bySiren = new Map<string, EnrichResult>(
+        (data.results as EnrichResult[]).map((r) => [r.siren, r])
+      );
+
+      setAllResults((prev) =>
+        prev.map((c) => {
+          const match = bySiren.get(c.siren);
+          if (!match) return c;
+          return {
+            ...c,
+            enriched: true,
+            phone: match.phone,
+            email: match.email,
+            // Un site trouvé dans OSM fait autorité ; sinon on garde ce que la
+            // détection de domaine avait éventuellement déjà établi.
+            website: match.website ?? c.website,
+          };
+        })
+      );
+
+      const found = [...bySiren.values()].filter((r) => r.found).length;
+      const withPhone = [...bySiren.values()].filter((r) => r.phone).length;
+      toast({
+        title: "Coordonnées récupérées",
+        description: `${found} fiche${found > 1 ? "s" : ""} complétée${found > 1 ? "s" : ""} sur ${bySiren.size} · ${withPhone} avec téléphone.`,
+      });
+    } catch {
+      toast({ title: "Erreur réseau", description: "OpenStreetMap est injoignable.", variant: "destructive" });
+    } finally {
+      setIsEnriching(false);
     }
   };
 
@@ -204,15 +292,17 @@ export default function ProspectionPage() {
 
   const exportToCsv = () => {
     const rows = [
-      ["Nom", "Adresse", "Code postal", "Ville", "Code NAF", "Date de création", "Site web", "Distance (km)", "SIREN"],
+      ["Nom", "Adresse", "Code postal", "Ville", "Téléphone", "Email", "Site web", "Code NAF", "Date de création", "Distance (km)", "SIREN"],
       ...visibleResults.map((c) => [
         c.name,
         c.address,
         c.postalCode,
         c.city,
+        c.phone ?? "",
+        c.email ?? "",
+        c.website === undefined ? "Non vérifié" : (c.website ?? "Aucun détecté"),
         c.activity,
         c.creationDate,
-        c.website === undefined ? "Non vérifié" : (c.website ?? "Aucun détecté"),
         c.distanceApprox ? `~${c.distance}` : String(c.distance),
         c.siren,
       ]),
@@ -236,10 +326,11 @@ export default function ProspectionPage() {
         body: JSON.stringify({
           firstName: company.name,
           lastName: "",
-          // Volontairement vide : un email inventé finirait en bounce et
-          // abîmerait la réputation d'envoi. À compléter après contact.
-          email: "",
-          phone: "",
+          // Jamais inventé : soit OpenStreetMap l'a fourni, soit on laisse
+          // vide. Un email devine finirait en bounce et abîmerait la
+          // réputation d'envoi du domaine.
+          email: company.email ?? "",
+          phone: company.phone ?? "",
           address: `${company.address}, ${company.postalCode} ${company.city}`,
           company: company.name,
           website: company.website ?? "",
@@ -257,6 +348,7 @@ export default function ProspectionPage() {
               : company.website
                 ? `Site web détecté : ${company.website}`
                 : `Aucun site détecté`,
+            company.phone ? `Téléphone : ${company.phone}` : `Téléphone : inconnu`,
           ].join("\n"),
         }),
       });
@@ -276,9 +368,12 @@ export default function ProspectionPage() {
     }
   };
 
-  const filtered = onlyWithoutSite ? allResults.filter((c) => c.website === null) : allResults;
+  const filtered = allResults.filter(
+    (c) => (!onlyWithoutSite || c.website === null) && (!onlyWithPhone || Boolean(c.phone))
+  );
   const visibleResults = filtered.slice(0, visibleCount);
   const withoutSiteCount = allResults.filter((c) => c.website === null).length;
+  const withPhoneCount = allResults.filter((c) => c.phone).length;
 
   return (
     <div className="mx-auto max-w-6xl space-y-10">
@@ -414,6 +509,13 @@ export default function ProspectionPage() {
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
+                <Button onClick={enrichContacts} disabled={isEnriching} className="ring-4 ring-[#7158ff]/20">
+                  {isEnriching ? (
+                    <><Loader2 className="mr-2 size-4 animate-spin" />Recherche…</>
+                  ) : (
+                    <><Phone className="mr-2 size-4" />Récupérer les coordonnées</>
+                  )}
+                </Button>
                 <Button variant="outline" onClick={detectWebsites} disabled={isCheckingSites}>
                   {isCheckingSites ? (
                     <><Loader2 className="mr-2 size-4 animate-spin" />Analyse…</>
@@ -427,6 +529,14 @@ export default function ProspectionPage() {
                     onClick={() => setOnlyWithoutSite((v) => !v)}
                   >
                     Sans site ({withoutSiteCount})
+                  </Button>
+                )}
+                {withPhoneCount > 0 && (
+                  <Button
+                    variant={onlyWithPhone ? "default" : "outline"}
+                    onClick={() => setOnlyWithPhone((v) => !v)}
+                  >
+                    Avec téléphone ({withPhoneCount})
                   </Button>
                 )}
                 <Button variant="outline" onClick={exportToCsv}>
@@ -480,6 +590,35 @@ export default function ProspectionPage() {
                           </p>
                           <p>SIREN : {company.siren}</p>
                         </div>
+
+                        {(company.phone || company.email) && (
+                          <div className="mt-3 flex flex-wrap items-center gap-2">
+                            {company.phone && (
+                              <a
+                                href={`tel:${company.phone.replace(/\s/g, "")}`}
+                                className="inline-flex items-center gap-1.5 rounded-full border border-[#7158ff]/40 bg-[#7158ff]/5 px-3 py-1 text-sm font-medium text-[#7158ff] transition-colors hover:bg-[#7158ff]/10"
+                              >
+                                <Phone className="size-3.5" />
+                                {company.phone}
+                              </a>
+                            )}
+                            {company.email && (
+                              <a
+                                href={`mailto:${company.email}`}
+                                className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm text-muted-foreground transition-colors hover:border-[#7158ff]/40 hover:text-[#7158ff]"
+                              >
+                                <Mail className="size-3.5" />
+                                {company.email}
+                              </a>
+                            )}
+                          </div>
+                        )}
+
+                        {company.enriched && !company.phone && !company.email && (
+                          <p className="mt-3 text-xs italic text-muted-foreground">
+                            Aucune coordonnée publique trouvée — à chercher à la main.
+                          </p>
+                        )}
                       </div>
 
                       <div className="flex shrink-0 flex-col gap-2">
