@@ -22,6 +22,8 @@ interface SireneEtablissement {
     libelleCommuneEtablissement: string;
     coordonneeLambertAbscisseEtablissement: string;
     coordonneeLambertOrdonneeEtablissement: string;
+    codePaysEtrangerEtablissement?: string | null;
+    libellePaysEtrangerEtablissement?: string | null;
   };
   periodesEtablissement: Array<{
     dateFin: string | null;
@@ -168,6 +170,12 @@ export async function POST(request: NextRequest) {
     // CORRECTION 1: Filtre de diffusion plus permissif pour inclure toutes les micro-entreprises
     // On ne filtre PAS par statutDiffusionUniteLegale pour récupérer le maximum d'entreprises
 
+    // Sirene recense aussi les etablissements etrangers d'entreprises
+    // immatriculees en France. Leurs codes postaux font 6 chiffres, donc
+    // `44*` attrapait des adresses chinoises (442000, 443000) ou bulgares.
+    // Cette negation les ecarte a la source.
+    sireneQuery += ` AND -codePaysEtrangerEtablissement:*`;
+
     // CORRECTION 2: Filtre géographique plus large - utiliser seulement le département
     const deptCode = baseCoords.postalCode.substring(0, 2);
     sireneQuery += ` AND (codePostalEtablissement:${deptCode}*`;
@@ -289,6 +297,17 @@ export async function POST(request: NextRequest) {
     {
       // Traitement des vraies données API
       for (const etablissement of sireneData.etablissements) {
+        // Filet de securite si la negation de la requete venait a changer de
+        // syntaxe : un code postal francais fait exactement 5 chiffres.
+        const postalCode =
+          etablissement.adresseEtablissement.codePostalEtablissement || "";
+        if (
+          etablissement.adresseEtablissement.codePaysEtrangerEtablissement ||
+          !/^\d{5}$/.test(postalCode)
+        ) {
+          continue;
+        }
+
         let distance = 0;
 
         // CORRECTION 4: Calcul de distance GPS précis si coordonnées Lambert disponibles
@@ -305,6 +324,7 @@ export async function POST(request: NextRequest) {
         // depuis le centre de la commune — jamais inventée : le drapeau
         // distanceApprox permet de l'afficher honnêtement côté interface.
         let distanceApprox = false;
+        let precision: "exact" | "commune" | "departement" = "exact";
 
         if (lambertX && lambertY && lambertX > 0 && lambertY > 0) {
           const coords = lambertToGPS(lambertX, lambertY);
@@ -316,21 +336,23 @@ export async function POST(request: NextRequest) {
           );
         } else {
           distanceApprox = true;
-          const etablissementPostalCode =
-            etablissement.adresseEtablissement.codePostalEtablissement || "";
+          const etablissementPostalCode = postalCode;
           const sameCity =
             etablissement.adresseEtablissement.libelleCommuneEtablissement?.toUpperCase() ===
             baseCoords.cityName;
 
           if (sameCity || etablissementPostalCode === baseCoords.postalCode) {
             distance = 0;
+            precision = "commune";
           } else if (
             etablissementPostalCode.substring(0, 2) ===
             baseCoords.postalCode.substring(0, 2)
           ) {
-            // Même département : on ne sait pas où exactement, on garde
-            // l'établissement mais sans prétendre connaître la distance.
+            // Même département : on ne sait pas où exactement. On garde
+            // l'établissement, mais `precision` empêche l'interface
+            // d'afficher un nombre de kilomètres qu'on n'a pas.
             distance = Math.min(radiusKm, 30);
+            precision = "departement";
           } else {
             distance = radiusKm + 10; // Hors département : exclu par le filtre
           }
@@ -374,6 +396,7 @@ export async function POST(request: NextRequest) {
                 : "Inactive",
             distance: Math.round(distance * 10) / 10,
             distanceApprox,
+            precision,
           });
         }
       }

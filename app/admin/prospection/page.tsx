@@ -41,6 +41,8 @@ interface Company {
   status: string;
   distance: number;
   distanceApprox?: boolean;
+  /** D'où vient la distance : GPS exact, centre de commune, ou simple département. */
+  precision?: "exact" | "commune" | "departement";
   website?: string | null; // undefined = pas encore vérifié
   phone?: string | null;
   email?: string | null;
@@ -303,7 +305,7 @@ export default function ProspectionPage() {
         c.website === undefined ? "Non vérifié" : (c.website ?? "Aucun détecté"),
         c.activity,
         c.creationDate,
-        c.distanceApprox ? `~${c.distance}` : String(c.distance),
+        c.precision === "exact" ? String(c.distance) : "",
         c.siren,
       ]),
     ];
@@ -342,7 +344,9 @@ export default function ProspectionPage() {
             `SIREN : ${company.siren}`,
             `Secteur (NAF) : ${company.activity}`,
             `Créée le : ${company.creationDate}`,
-            `Distance : ${company.distanceApprox ? "~" : ""}${company.distance} km`,
+            company.precision === "exact"
+              ? `Distance : ${company.distance} km`
+              : `Position exacte inconnue (${company.city}, ${company.postalCode})`,
             company.website === undefined
               ? `Site web : non vérifié`
               : company.website
@@ -575,7 +579,11 @@ export default function ProspectionPage() {
                           )}
                           <Badge variant="outline">
                             <MapPin className="mr-1 size-3" />
-                            {company.distanceApprox ? "~" : ""}{company.distance} km
+                            {company.precision === "departement"
+                              ? `Dép. ${company.postalCode.slice(0, 2)}`
+                              : company.precision === "commune"
+                                ? company.city
+                                : `${company.distance} km`}
                           </Badge>
                         </div>
 
