@@ -1,14 +1,15 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { EmptyState } from "@/components/admin/empty-state";
+import { SectionTitle } from "@/components/admin/page-header";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
-import { Copy, ExternalLink, Mail, Send } from "lucide-react";
+import { Copy, ExternalLink, Link as LinkIcon, Loader2, Send } from "lucide-react";
 
 interface TokenData {
   id: string;
@@ -130,15 +131,16 @@ export default function TestimonialTokenManager() {
 
   const isExpired = (expiresAt: string) => new Date() > new Date(expiresAt);
 
+  const activeCount = tokens.filter(
+    (t) => !t.isUsed && !isExpired(t.expiresAt)
+  ).length;
+
   return (
-    <div className="space-y-6">
-      {/* Formulaire de génération */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Générer un nouveau lien</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+    <div className="space-y-10">
+      <div className="space-y-4">
+        <SectionTitle>Générer un lien</SectionTitle>
+        <div className="rounded-2xl border bg-card p-6">
+          <form onSubmit={handleSubmit} className="space-y-5">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="clientName">Nom du client *</Label>
@@ -152,7 +154,7 @@ export default function TestimonialTokenManager() {
                   placeholder="John Doe"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="clientEmail">Email du client *</Label>
                 <Input
@@ -167,7 +169,7 @@ export default function TestimonialTokenManager() {
                 />
               </div>
             </div>
-            
+
             <div className="space-y-2">
               <Label htmlFor="projectName">Nom du projet (optionnel)</Label>
               <Input
@@ -180,7 +182,10 @@ export default function TestimonialTokenManager() {
               />
             </div>
 
-            <div className="flex items-center space-x-2">
+            <label
+              htmlFor="sendEmail"
+              className="flex cursor-pointer items-center gap-2.5 rounded-xl border bg-muted/40 p-3"
+            >
               <Checkbox
                 id="sendEmail"
                 checked={formData.sendEmail}
@@ -188,118 +193,133 @@ export default function TestimonialTokenManager() {
                   setFormData((prev) => ({ ...prev, sendEmail: !!checked }))
                 }
               />
-              <Label htmlFor="sendEmail" className="text-sm font-normal">
-                Envoyer automatiquement l'email au client
-              </Label>
-            </div>
+              <span className="text-sm text-muted-foreground">
+                Envoyer automatiquement l&apos;email au client
+              </span>
+            </label>
 
-            <Button type="submit" disabled={isGenerating} className="w-full">
-              {isGenerating ? "Génération en cours..." : 
-               formData.sendEmail ? "Générer et envoyer" : "Générer le lien"}
+            <Button
+              type="submit"
+              disabled={isGenerating}
+              className="w-full ring-4 ring-[#7158ff]/20"
+            >
+              {isGenerating
+                ? "Génération en cours…"
+                : formData.sendEmail
+                  ? "Générer et envoyer"
+                  : "Générer le lien"}
             </Button>
           </form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      {/* Liste des tokens */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Liens générés</CardTitle>
-        </CardHeader>
-        <CardContent>
-          {isLoading ? (
-            <div className="py-8 text-center">Chargement...</div>
-          ) : tokens.length === 0 ? (
-            <div className="py-8 text-center text-muted-foreground">
-              Aucun lien généré
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {tokens.map((token) => (
+      <div className="space-y-4">
+        <div className="flex flex-wrap items-baseline justify-between gap-2">
+          <SectionTitle>Liens générés</SectionTitle>
+          {tokens.length > 0 && (
+            <p className="text-sm text-muted-foreground">
+              {activeCount} lien{activeCount > 1 ? "s" : ""} encore valable
+              {activeCount > 1 ? "s" : ""} sur {tokens.length}
+            </p>
+          )}
+        </div>
+
+        {isLoading ? (
+          <div className="flex items-center justify-center gap-2 rounded-2xl border border-dashed bg-card p-12 text-sm text-muted-foreground">
+            <Loader2 className="size-4 animate-spin text-[#7158ff]" />
+            Chargement des liens…
+          </div>
+        ) : tokens.length === 0 ? (
+          <EmptyState
+            icon={LinkIcon}
+            title="Aucun lien généré"
+            description="Générez un lien ci-dessus : le client dépose son avis lui-même, sans compte à créer."
+          />
+        ) : (
+          <div className="space-y-3">
+            {tokens.map((token) => {
+              const expired = isExpired(token.expiresAt);
+              return (
                 <div
                   key={token.id}
-                  className="space-y-2 rounded-lg border p-4"
+                  className="rounded-2xl border bg-card p-5 transition-colors hover:border-[#7158ff]/40"
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="space-y-1">
-                      <div className="font-medium">{token.clientName}</div>
-                      <div className="text-sm text-muted-foreground">
-                        {token.clientEmail}
-                      </div>
-                      {token.projectName && (
-                        <div className="text-sm text-muted-foreground">
-                          Projet: {token.projectName}
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="flex flex-col items-end space-y-2">
-                      {token.isUsed ? (
-                        <Badge variant="secondary">Utilisé</Badge>
-                      ) : isExpired(token.expiresAt) ? (
-                        <Badge variant="destructive">Expiré</Badge>
-                      ) : (
-                        <Badge variant="default">Actif</Badge>
-                      )}
-                      
-                      <div className="text-right text-xs text-muted-foreground">
-                        Créé: {new Date(token.createdAt).toLocaleDateString()}
-                        <br />
-                        Expire: {new Date(token.expiresAt).toLocaleDateString()}
-                        {token.usedAt && (
-                          <>
-                            <br />
-                            Utilisé: {new Date(token.usedAt).toLocaleDateString()}
-                          </>
+                  <div className="flex flex-wrap items-start justify-between gap-4">
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-2 flex flex-wrap items-center gap-2">
+                        <h3 className="text-base font-semibold text-foreground">
+                          {token.clientName}
+                        </h3>
+                        {token.isUsed ? (
+                          <Badge className="border-green-300 bg-green-50 text-green-700 hover:bg-green-50 dark:border-green-900 dark:bg-green-950/40 dark:text-green-300">
+                            Avis déposé
+                          </Badge>
+                        ) : expired ? (
+                          <Badge variant="destructive">Expiré</Badge>
+                        ) : (
+                          <Badge variant="outline">En attente</Badge>
                         )}
                       </div>
+
+                      <div className="grid grid-cols-1 gap-x-6 gap-y-1 text-sm text-muted-foreground md:grid-cols-2">
+                        <p>{token.clientEmail}</p>
+                        {token.projectName && <p>Projet : {token.projectName}</p>}
+                        <p>
+                          Créé le {new Date(token.createdAt).toLocaleDateString("fr-FR")}
+                        </p>
+                        <p>
+                          {token.usedAt
+                            ? `Complété le ${new Date(token.usedAt).toLocaleDateString("fr-FR")}`
+                            : `Expire le ${new Date(token.expiresAt).toLocaleDateString("fr-FR")}`}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex shrink-0 flex-wrap gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          copyToClipboard(
+                            `${window.location.origin}/testimonial/${token.token}`
+                          )
+                        }
+                      >
+                        <Copy className="mr-1.5 size-4" />
+                        Copier
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          window.open(
+                            `${window.location.origin}/testimonial/${token.token}`,
+                            "_blank"
+                          )
+                        }
+                      >
+                        <ExternalLink className="mr-1.5 size-4" />
+                        Ouvrir
+                      </Button>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => sendEmailManually(token.id)}
+                        disabled={token.isUsed || expired}
+                      >
+                        <Send className="mr-1.5 size-4" />
+                        Relancer
+                      </Button>
                     </div>
                   </div>
-                  
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        copyToClipboard(
-                          `${window.location.origin}/testimonial/${token.token}`
-                        )
-                      }
-                    >
-                      <Copy className="mr-1 size-4" />
-                      Copier lien
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() =>
-                        window.open(
-                          `${window.location.origin}/testimonial/${token.token}`,
-                          "_blank"
-                        )
-                      }
-                    >
-                      <ExternalLink className="mr-1 size-4" />
-                      Ouvrir
-                    </Button>
-                    
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => sendEmailManually(token.id)}
-                      disabled={token.isUsed || isExpired(token.expiresAt)}
-                    >
-                      <Send className="mr-1 size-4" />
-                      Envoyer par email
-                    </Button>
-                  </div>
                 </div>
-              ))}
-            </div>
-          )}
-        </CardContent>
-      </Card>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

@@ -221,7 +221,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="grid gap-6 md:grid-cols-2">
           <div className="space-y-6">
-            <Card>
+            <Card className="rounded-2xl">
               <CardHeader>
                 <CardTitle>Informations générales</CardTitle>
               </CardHeader>
@@ -332,7 +332,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
                   control={form.control}
                   name="isPublished"
                   render={({ field }) => (
-                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                    <FormItem className="flex flex-row items-center justify-between rounded-xl border p-3">
                       <div className="space-y-0.5">
                         <FormLabel className="text-base">
                           Publier le projet
@@ -355,7 +355,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
           </div>
 
           <div className="space-y-6">
-            <Card>
+            <Card className="rounded-2xl">
               <CardHeader>
                 <CardTitle>Image du projet</CardTitle>
               </CardHeader>
@@ -407,7 +407,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="rounded-2xl">
               <CardHeader>
                 <CardTitle>Technologies</CardTitle>
               </CardHeader>

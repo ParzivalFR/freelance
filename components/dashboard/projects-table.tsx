@@ -15,11 +15,12 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Edit, ExternalLink, GripVertical, MoreHorizontal, Star, Trash2 } from "lucide-react";
+import { Edit, ExternalLink, FolderOpen, GripVertical, MoreHorizontal, Star, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
+import { EmptyState } from "@/components/admin/empty-state";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -271,20 +272,16 @@ export function ProjectsTable({ projects: initialProjects }: ProjectsTableProps)
 
   if (projects.length === 0) {
     return (
-      <Card className="p-8 text-center">
-        <div className="space-y-4">
-          <div className="mx-auto flex size-12 items-center justify-center rounded-xl bg-muted">
-            <GripVertical className="size-6 text-muted-foreground" />
-          </div>
-          <div>
-            <h3 className="text-lg font-semibold">Aucun projet</h3>
-            <p className="text-muted-foreground">Commencez par créer votre premier projet</p>
-          </div>
-          <Button asChild>
+      <EmptyState
+        icon={FolderOpen}
+        title="Aucun projet"
+        description="Ajoutez votre première réalisation : elle apparaîtra sur la landing, dans l'ordre défini ici."
+        action={
+          <Button asChild className="ring-4 ring-[#7158ff]/20">
             <Link href="/admin/projects/new">Créer un projet</Link>
           </Button>
-        </div>
-      </Card>
+        }
+      />
     );
   }
 
@@ -297,7 +294,7 @@ export function ProjectsTable({ projects: initialProjects }: ProjectsTableProps)
       )}
 
       {/* Desktop */}
-      <Card className="hidden lg:block">
+      <Card className="hidden overflow-hidden rounded-2xl lg:block">
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={projects.map((p) => p.id)} strategy={verticalListSortingStrategy}>
             <Table>
@@ -333,7 +330,7 @@ export function ProjectsTable({ projects: initialProjects }: ProjectsTableProps)
       {/* Mobile */}
       <div className="space-y-4 lg:hidden">
         {projects.map((project) => (
-          <Card key={project.id} className="p-4">
+          <Card key={project.id} className="rounded-2xl p-4 transition-colors hover:border-[#7158ff]/40">
             <div className="flex items-start gap-4">
               <div className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-muted">
                 <Image src={project.image} alt={project.title} fill className="object-cover" />

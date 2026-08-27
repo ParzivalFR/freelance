@@ -8,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Plus, Trash2, Download, FileText, Building, User } from 'lucide-react';
+import { Plus, Trash2, Download, Building, User } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface DevisItem {
@@ -200,15 +200,9 @@ const DevisGenerator: React.FC = () => {
   };
 
   return (
-    <div className="max-w-5xl mx-auto p-6 space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <FileText className="size-5" />
-            Générateur de Devis PDF
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-6">
+    <div className="space-y-6">
+      <Card className="rounded-2xl">
+        <CardContent className="space-y-6 pt-6">
           {/* Numéro de devis */}
           <div>
             <Label htmlFor="devisNumber">Numéro de devis *</Label>
@@ -221,9 +215,9 @@ const DevisGenerator: React.FC = () => {
           </div>
 
           {/* Informations entreprise */}
-          <Card>
+          <Card className="rounded-2xl">
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="text-lg flex items-center gap-2 [&>svg]:text-[#7158ff]">
                 <Building className="size-5" />
                 Informations Entreprise
               </CardTitle>
@@ -280,9 +274,9 @@ const DevisGenerator: React.FC = () => {
           </Card>
 
           {/* Informations client */}
-          <Card>
+          <Card className="rounded-2xl">
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
+              <CardTitle className="text-lg flex items-center gap-2 [&>svg]:text-[#7158ff]">
                 <User className="size-5" />
                 Informations Client
               </CardTitle>
@@ -348,7 +342,7 @@ const DevisGenerator: React.FC = () => {
           </Card>
 
           {/* Configuration TVA */}
-          <Card>
+          <Card className="rounded-2xl">
             <CardHeader>
               <CardTitle className="text-lg">Configuration TVA</CardTitle>
             </CardHeader>
@@ -380,7 +374,7 @@ const DevisGenerator: React.FC = () => {
           </Card>
 
           {/* Prestations */}
-          <Card>
+          <Card className="rounded-2xl">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="text-lg">Prestations</CardTitle>
               <Button onClick={addItem} size="sm" variant="outline">
@@ -481,7 +475,7 @@ const DevisGenerator: React.FC = () => {
               onClick={generatePDF}
               disabled={isGenerating}
               size="lg"
-              className="bg-blue-600 hover:bg-blue-700"
+              className="ring-4 ring-[#7158ff]/20"
             >
               {isGenerating ? (
                 'Génération...'

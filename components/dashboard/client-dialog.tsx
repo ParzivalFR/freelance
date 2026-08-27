@@ -165,16 +165,16 @@ export function ClientDialog({
   };
 
   const defaultTrigger = (
-    <Button>
+    <Button className="ring-4 ring-[#7158ff]/20">
       <Plus className="mr-2 size-4" />
-      Nouveau Client
+      Nouveau client
     </Button>
   );
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto rounded-2xl">
         <DialogHeader>
           <DialogTitle>
             {isEditing ? "Modifier le client" : "Nouveau client"}
@@ -306,7 +306,7 @@ export function ClientDialog({
                 control={form.control}
                 name="isProfessional"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <FormItem className="flex flex-row items-center justify-between rounded-xl border p-4">
                     <div className="space-y-0.5">
                       <FormLabel className="text-base">
                         Client professionnel
