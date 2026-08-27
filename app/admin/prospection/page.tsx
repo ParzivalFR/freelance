@@ -478,8 +478,8 @@ export default function ProspectionPage() {
               <SelectTrigger><SelectValue /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">Toutes tailles</SelectItem>
-                <SelectItem value="tpe">TPE (1-9 salariés)</SelectItem>
-                <SelectItem value="pme">PME (10-249 salariés)</SelectItem>
+                <SelectItem value="tpe">TPE — moins de 10 salariés</SelectItem>
+                <SelectItem value="pme">PME — 10 à 249 salariés</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -498,6 +498,15 @@ export default function ProspectionPage() {
             </Button>
           </div>
         </div>
+
+        {filters.companySize === "pme" && filters.createdSince !== "all" && (
+          <p className="mt-4 text-xs text-muted-foreground">
+            L&apos;INSEE publie les effectifs avec environ deux ans de retard : une
+            entreprise créée récemment n&apos;a pas encore d&apos;effectif déclaré, et ne
+            peut donc pas ressortir en PME. Choisissez « Toutes tailles » ou « TPE »
+            pour ces recherches.
+          </p>
+        )}
       </div>
 
       {/* Résultats */}

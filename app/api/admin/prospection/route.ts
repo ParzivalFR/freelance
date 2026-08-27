@@ -206,17 +206,23 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Filtre par taille d'entreprise - CORRIGÉ pour inclure les entreprises sans catégorie
+    // Filtre par taille d'entreprise.
+    //
+    // `categorieEntreprise` ne connait que PME, ETI et GE : la valeur "TPE"
+    // n'existe pas, la requete ne remontait donc jamais rien. La taille se lit
+    // en realite dans `trancheEffectifsUniteLegale`.
+    //
+    // NN (effectif non renseigne) est inclus dans le filtre "moins de 10
+    // salaries" et c'est deliberé : l'INSEE publie les effectifs avec environ
+    // deux ans de retard, si bien que 78 % des entreprises du fichier et la
+    // TOTALITE de celles creees dans l'annee sont a NN. Les exclure viderait
+    // le resultat — or une entreprise sans effectif declare est presque
+    // toujours une micro-entreprise, exactement la cible.
     if (companySize && companySize !== "all") {
-      if (companySize === "micro") {
-        // Les micro-entreprises peuvent avoir PME OU pas de catégorie (null)
-        // On ne filtre PAS pour inclure toutes les petites structures
-        // sireneQuery += ` AND (categorieEntreprise:PME OR NOT categorieEntreprise:*)`;
-        // Pour l'instant, on ne filtre pas pour récupérer toutes les micro-entreprises
-      } else if (companySize === "tpe") {
-        sireneQuery += ` AND categorieEntreprise:TPE`;
+      if (companySize === "tpe") {
+        sireneQuery += ` AND trancheEffectifsUniteLegale:(NN OR 00 OR 01 OR 02 OR 03)`;
       } else if (companySize === "pme") {
-        sireneQuery += ` AND categorieEntreprise:PME`;
+        sireneQuery += ` AND trancheEffectifsUniteLegale:(11 OR 12 OR 21 OR 22 OR 31)`;
       }
     }
 
