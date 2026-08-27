@@ -244,10 +244,11 @@ export default function BackupPage() {
       </AlertDialog>
 
       <Dialog open={!!viewing} onOpenChange={(open) => !open && setViewing(null)}>
-        <DialogContent className="max-h-[85vh] max-w-2xl overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="flex max-h-[85vh] max-w-2xl flex-col gap-0 overflow-hidden p-0">
+          <DialogHeader className="shrink-0 border-b px-6 py-5">
             <DialogTitle>{viewing?.name || `Sauvegarde ${viewing?.id.slice(0, 8)}`}</DialogTitle>
           </DialogHeader>
+          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
 
           {loadingSnapshot && (
             <p className="font-mono text-xs text-muted-foreground">Chargement…</p>
@@ -319,6 +320,7 @@ export default function BackupPage() {
               </div>
             </div>
           )}
+          </div>
         </DialogContent>
       </Dialog>
     </div>

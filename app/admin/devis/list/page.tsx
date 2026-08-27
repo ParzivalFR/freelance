@@ -449,8 +449,8 @@ export default function DevisListPage() {
 
       {/* Modal de détail du devis */}
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
+        <DialogContent className="flex max-w-4xl max-h-[90vh] flex-col gap-0 overflow-hidden rounded-2xl p-0">
+          <DialogHeader className="shrink-0 border-b px-6 py-5">
             <DialogTitle className="flex items-center justify-between">
               <span>Devis {selectedDevis?.devisNumber}</span>
               <div className="flex gap-2">
@@ -484,6 +484,7 @@ export default function DevisListPage() {
               </div>
             </DialogTitle>
           </DialogHeader>
+          <div className="min-h-0 flex-1 overflow-y-auto px-6 py-5">
           
           {selectedDevis && (
             <div className="space-y-6">
@@ -693,6 +694,7 @@ export default function DevisListPage() {
               )}
             </div>
           )}
+          </div>
         </DialogContent>
       </Dialog>
 

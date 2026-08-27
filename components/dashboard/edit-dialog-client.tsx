@@ -79,15 +79,20 @@ export function EditClientDialog({ client, children }: EditClientDialogProps) {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
-        <DialogHeader>
+      <DialogContent className="flex max-h-[90vh] max-w-2xl flex-col gap-0 overflow-hidden rounded-2xl p-0">
+        <DialogHeader className="shrink-0 border-b px-6 py-5">
           <DialogTitle>Modifier le client</DialogTitle>
           <DialogDescription>
             Modifiez les informations de {client.firstName} {client.lastName}
           </DialogDescription>
         </DialogHeader>
 
-        <form ref={formRef} action={dispatch} className="space-y-6">
+        <form
+          ref={formRef}
+          action={dispatch}
+          className="flex min-h-0 flex-1 flex-col"
+        >
+          <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-6 py-5">
           {/* Informations personnelles */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="space-y-2">
@@ -261,7 +266,9 @@ export function EditClientDialog({ client, children }: EditClientDialogProps) {
             </div>
           )}
 
-          <DialogFooter>
+          </div>
+
+          <DialogFooter className="shrink-0 gap-2 border-t px-6 py-4">
             <Button
               type="button"
               variant="outline"

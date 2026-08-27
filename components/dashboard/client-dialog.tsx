@@ -174,15 +174,19 @@ export function ClientDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{trigger || defaultTrigger}</DialogTrigger>
-      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto rounded-2xl">
-        <DialogHeader>
+      <DialogContent className="flex max-h-[90vh] max-w-2xl flex-col gap-0 overflow-hidden rounded-2xl p-0">
+        <DialogHeader className="shrink-0 border-b px-6 py-5">
           <DialogTitle>
             {isEditing ? "Modifier le client" : "Nouveau client"}
           </DialogTitle>
         </DialogHeader>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form
+            onSubmit={form.handleSubmit(onSubmit)}
+            className="flex min-h-0 flex-1 flex-col"
+          >
+            <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-6 py-5">
             {/* Informations personnelles */}
             <div className="space-y-4">
               <h3 className="text-sm font-medium text-muted-foreground">
@@ -397,8 +401,9 @@ export function ClientDialog({
               />
             </div>
 
-            {/* Actions */}
-            <div className="flex justify-end space-x-2 pt-4">
+            </div>
+
+            <div className="flex shrink-0 justify-end gap-2 border-t px-6 py-4">
               <Button
                 type="button"
                 variant="outline"
