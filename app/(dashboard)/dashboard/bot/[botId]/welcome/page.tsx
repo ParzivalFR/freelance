@@ -258,12 +258,27 @@ export default function WelcomePage() {
             />
           </div>
           {config.config.useWelcomeImage && (
-            <CyberInput
-              label="image_de_fond (url)"
-              value={config.config.welcomeImageBackground ?? ""}
-              onChange={(v) => updateModuleConfig("welcomeImageBackground", v)}
-              placeholder="https://i.imgur.com/9Bi2OzJ.jpeg"
-            />
+            <>
+              <CyberInput
+                label="image_de_fond (url)"
+                value={config.config.welcomeImageBackground ?? ""}
+                onChange={(v) => updateModuleConfig("welcomeImageBackground", v)}
+                placeholder="https://i.imgur.com/9Bi2OzJ.jpeg"
+              />
+              {/^https?:\/\/(cdn|media)\.discordapp\./i.test(
+                config.config.welcomeImageBackground ?? ""
+              ) && (
+                <p className="font-mono text-[9px] leading-relaxed text-amber-400">
+                  ⚠ lien_discord_temporaire — ces URL sont signées et expirent au bout de
+                  quelques heures. La carte fonctionnera aujourd&apos;hui puis s&apos;arrêtera
+                  seule. Hébergez l&apos;image ailleurs (imgur, votre serveur…).
+                </p>
+              )}
+              <p className="font-mono text-[9px] text-muted-foreground/60">
+                png ou jpeg uniquement · le webp est refusé · si le lien est mort, le fond par
+                défaut prend le relais
+              </p>
+            </>
           )}
         </div>
 
