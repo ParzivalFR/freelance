@@ -14,10 +14,10 @@ import {
 import { useToast } from "@/components/ui/use-toast";
 import {
   BACKGROUNDS,
-  CANVAS_HEIGHT,
-  CANVAS_WIDTH,
+  FORMATS,
   renderSocialCard,
   type BackgroundId,
+  type FormatId,
   type FrameId,
   type LayoutId,
 } from "@/lib/social-canvas";
@@ -32,6 +32,7 @@ interface Project {
 }
 
 const BACKGROUND_IDS = Object.keys(BACKGROUNDS) as BackgroundId[];
+const FORMAT_IDS = Object.keys(FORMATS) as FormatId[];
 
 const FRAMES: { id: FrameId; label: string; hint: string }[] = [
   { id: "navigateur", label: "Navigateur", hint: "Pour un site web" },
@@ -48,11 +49,15 @@ export default function SocialGeneratorPage() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const displayProbe = useRef<HTMLSpanElement>(null);
   const bodyProbe = useRef<HTMLSpanElement>(null);
+  const handProbe = useRef<HTMLSpanElement>(null);
   const imageRef = useRef<HTMLImageElement | null>(null);
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [title, setTitle] = useState("");
   const [subtitle, setSubtitle] = useState("");
+  const [badge, setBadge] = useState("");
+  const [note, setNote] = useState("");
+  const [format, setFormat] = useState<FormatId>("post");
   const [background, setBackground] = useState<BackgroundId>("violet");
   const [frame, setFrame] = useState<FrameId>("navigateur");
   const [layout, setLayout] = useState<LayoutId>("titre-haut");
@@ -74,18 +79,22 @@ export default function SocialGeneratorPage() {
 
   const draw = useCallback(() => {
     const canvas = canvasRef.current;
-    if (!canvas || !displayProbe.current || !bodyProbe.current) return;
+    if (!canvas || !displayProbe.current || !bodyProbe.current || !handProbe.current) return;
     renderSocialCard(canvas, {
       image: imageRef.current,
+      format,
       title,
       subtitle,
+      badge,
+      note,
       background,
       frame,
       layout,
       displayFont: getComputedStyle(displayProbe.current).fontFamily,
       bodyFont: getComputedStyle(bodyProbe.current).fontFamily,
+      handFont: getComputedStyle(handProbe.current).fontFamily,
     });
-  }, [title, subtitle, background, frame, layout]);
+  }, [title, subtitle, badge, note, format, background, frame, layout]);
 
   useEffect(() => {
     if (fontsReady) draw();
@@ -139,12 +148,13 @@ export default function SocialGeneratorPage() {
       {/* Sondes cachées : servent uniquement à résoudre les noms de police. */}
       <span ref={displayProbe} aria-hidden className="pointer-events-none absolute opacity-0 font-[family-name:var(--font-display)]" />
       <span ref={bodyProbe} aria-hidden className="pointer-events-none absolute opacity-0 font-[family-name:var(--font-body)]" />
+      <span ref={handProbe} aria-hidden className="pointer-events-none absolute opacity-0 font-[family-name:var(--font-handwriting)]" />
 
       <PageHeader
         eyebrow="Alimenter Instagram"
         title="Visuels "
         titleAccent="projets"
-        description="Déposez une capture, choisissez trois réglages, récupérez le visuel 1080 × 1350 aux couleurs du site. Pas de rotation 3D ni de reflet : la capture reste lisible en vignette."
+        description="Déposez une capture, réglez en quelques clics, récupérez le visuel aux couleurs du site — post, story ou carré. Le décor se pose derrière la capture, jamais dessus : elle reste nette et lisible en vignette."
         actions={
           <Button onClick={download} disabled={!hasImage} className="ring-4 ring-[#7158ff]/20">
             <Download className="mr-2 size-4" />
@@ -171,12 +181,7 @@ export default function SocialGeneratorPage() {
               className="sr-only"
               onChange={(e) => handleFile(e.target.files?.[0])}
             />
-            <canvas
-              ref={canvasRef}
-              width={CANVAS_WIDTH}
-              height={CANVAS_HEIGHT}
-              className="block h-auto w-full"
-            />
+            <canvas ref={canvasRef} className="block h-auto w-full" />
             {!hasImage && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/85 text-center">
                 {fontsReady ? (
@@ -235,6 +240,51 @@ export default function SocialGeneratorPage() {
           </div>
 
           <div className="space-y-2">
+            <Label htmlFor="social-badge">Pastille</Label>
+            <Input
+              id="social-badge"
+              value={badge}
+              onChange={(e) => setBadge(e.target.value)}
+              placeholder="Sur l'App Store"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="social-note">Annotation manuscrite</Label>
+            <Input
+              id="social-note"
+              value={note}
+              onChange={(e) => setNote(e.target.value)}
+              placeholder="essaie-moi, je suis vivante !"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label>Format</Label>
+            <div className="flex gap-2">
+              {FORMAT_IDS.map((id) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setFormat(id)}
+                  className={`flex-1 rounded-xl border p-3 text-left transition-colors ${
+                    format === id
+                      ? "border-[#7158ff] ring-4 ring-[#7158ff]/15"
+                      : "hover:border-[#7158ff]/40"
+                  }`}
+                >
+                  <span className="block text-xs font-semibold text-foreground">
+                    {FORMATS[id].label}
+                  </span>
+                  <span className="block text-[11px] text-muted-foreground">
+                    {FORMATS[id].hint}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="space-y-2">
             <Label>Fond</Label>
             <div className="flex gap-2">
               {BACKGROUND_IDS.map((id) => (
@@ -250,7 +300,9 @@ export default function SocialGeneratorPage() {
                 >
                   <span
                     className="mb-1.5 block h-8 w-full rounded-lg border"
-                    style={{ background: BACKGROUNDS[id].fill }}
+                    style={{
+                      background: `linear-gradient(135deg, ${BACKGROUNDS[id].from}, ${BACKGROUNDS[id].to})`,
+                    }}
                   />
                   {BACKGROUNDS[id].label}
                 </button>
