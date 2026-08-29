@@ -263,7 +263,7 @@ export default function WelcomePage() {
                 label="image_de_fond (url)"
                 value={config.config.welcomeImageBackground ?? ""}
                 onChange={(v) => updateModuleConfig("welcomeImageBackground", v)}
-                placeholder="https://i.imgur.com/9Bi2OzJ.jpeg"
+                placeholder="https://gael-dev.fr/welcome-background.png"
               />
               {/^https?:\/\/(cdn|media)\.discordapp\./i.test(
                 config.config.welcomeImageBackground ?? ""
