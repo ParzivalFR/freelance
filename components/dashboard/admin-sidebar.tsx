@@ -19,6 +19,7 @@ import {
   FilePlus,
   FileText,
   FolderOpen,
+  Image as ImageIcon,
   LayoutDashboard,
   Mail,
   MessageSquare,
@@ -45,6 +46,7 @@ const NAV = [
     items: [
       { title: "Projets", url: "/admin/projects", icon: FolderOpen },
       { title: "Témoignages", url: "/admin/testimonials", icon: MessageSquare },
+      { title: "Visuels réseaux", url: "/admin/social", icon: ImageIcon },
     ],
   },
   {
