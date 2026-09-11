@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { DASHBOARD_CHANNEL_TYPES } from "@/lib/discord-channel-types";
 import { prisma } from "@/lib/prisma";
 import { decryptIfNeeded } from "@/lib/monitor-crypto";
 import { NextResponse } from "next/server";
@@ -51,7 +52,7 @@ export async function GET(request: Request) {
   const rawRoles = await rolesRes.json() as { id: string; name: string; color: number }[];
 
   const channels = rawChannels
-    .filter((c) => c.type === 0 || c.type === 2 || c.type === 4 || c.type === 15)
+    .filter((c) => DASHBOARD_CHANNEL_TYPES.includes(c.type))
     .map((c) => ({ id: c.id, name: c.name, type: c.type }));
 
   const roles = rawRoles

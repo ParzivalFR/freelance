@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { MENTIONABLE_CHANNEL_TYPES } from "@/lib/discord-channel-types";
 import { AnimatePresence, motion } from "framer-motion";
 import { AtSign, ChevronDown, ChevronUp, Crown, Eye, EyeOff, Hash, Settings } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
@@ -206,7 +207,7 @@ export function CyberTextarea({
               icon={<Hash className="size-2.5" />}
               title="salon"
               items={(data?.channels ?? [])
-                .filter((c) => c.type === 0 || c.type === 15)
+                .filter((c) => MENTIONABLE_CHANNEL_TYPES.includes(c.type))
                 .map((c) => ({ id: c.id, label: c.name }))}
               onPick={(id) => insertMention(`<#${id}>`)}
             />

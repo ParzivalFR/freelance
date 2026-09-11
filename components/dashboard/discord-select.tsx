@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { CHANNEL_TYPE, MESSAGE_CHANNEL_TYPES, channelIcon } from "@/lib/discord-channel-types";
 
 interface DiscordChannel {
   id: string;
@@ -79,10 +80,10 @@ export function ChannelSelect({
   const { data, loading, error } = useDiscordData(botId);
 
   const channels = (data?.channels ?? []).filter((c) => {
-    if (filter === "text") return c.type === 0;
-    if (filter === "voice") return c.type === 2;
-    if (filter === "category") return c.type === 4;
-    if (filter === "forum") return c.type === 15;
+    if (filter === "text") return MESSAGE_CHANNEL_TYPES.includes(c.type);
+    if (filter === "voice") return c.type === CHANNEL_TYPE.VOICE;
+    if (filter === "category") return c.type === CHANNEL_TYPE.CATEGORY;
+    if (filter === "forum") return c.type === CHANNEL_TYPE.FORUM;
     return true;
   });
 
@@ -132,7 +133,7 @@ export function ChannelSelect({
         )}
         {channels.map((c) => (
           <option key={c.id} value={c.id}>
-            {c.type === 2 ? "🔊 " : c.type === 4 ? "📁 " : "# "}{c.name}
+            {channelIcon(c.type)}{c.name}
           </option>
         ))}
       </select>
