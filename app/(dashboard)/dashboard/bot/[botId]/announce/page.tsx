@@ -16,7 +16,8 @@ export default function AnnouncePage() {
   const botId = params?.botId as string;
   const { config, update, save: saveCommandToggle, saving: savingToggle } = useBotConfig();
 
-  const [action, setAction] = useState<"new" | "edit">("new");
+  // "copy" : reprend une annonce existante et l'envoie comme nouveau message ailleurs.
+  const [action, setAction] = useState<"new" | "edit" | "copy">("new");
   const [channelId, setChannelId] = useState("");
   const [messageLink, setMessageLink] = useState("");
   const [messageId, setMessageId] = useState("");
@@ -33,7 +34,7 @@ export default function AnnouncePage() {
   if (!config) return <LoadingScreen />;
 
   const hasContent = mode === "text" ? !!content.trim() : !!(embedTitle.trim() || embedDescription.trim());
-  const canSend = action === "new" ? !!channelId && hasContent : !!messageId && hasContent;
+  const canSend = action === "edit" ? !!messageId && hasContent : !!channelId && hasContent;
 
   // Parse un lien de message Discord → { channelId, messageId }
   const parseMessageLink = (link: string): { channelId: string; messageId: string } | null => {
@@ -55,7 +56,9 @@ export default function AnnouncePage() {
         toast.error(data.error ?? "Impossible de charger le message");
         return;
       }
-      setChannelId(parsed.channelId);
+      // En duplication, le salon d'origine n'est pas la destination : on
+      // laisse l'utilisateur choisir où envoyer la copie.
+      if (action === "edit") setChannelId(parsed.channelId);
       setMessageId(parsed.messageId);
       if (data.mode === "embed") {
         setMode("embed");
@@ -69,7 +72,11 @@ export default function AnnouncePage() {
         setMode("text");
         setContent(data.content ?? "");
       }
-      toast.success("Annonce chargée ! Modifie puis enregistre.");
+      toast.success(
+        action === "copy"
+          ? "Annonce chargée ! Choisis le salon de destination puis envoie."
+          : "Annonce chargée ! Modifie puis enregistre."
+      );
     } finally {
       setLoading(false);
     }
@@ -94,7 +101,7 @@ export default function AnnouncePage() {
           : undefined;
 
       const res = await fetch(`/api/bot/${botId}/announce`, {
-        method: action === "new" ? "POST" : "PATCH",
+        method: action === "edit" ? "PATCH" : "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           channelId,
@@ -113,6 +120,9 @@ export default function AnnouncePage() {
       if (action === "new") {
         toast.success("Message envoyé avec succès !");
         resetForm();
+      } else if (action === "copy") {
+        // Formulaire conservé : on peut enchaîner l'envoi vers d'autres salons.
+        toast.success("Copie envoyée ! Choisis un autre salon pour la renvoyer.");
       } else {
         toast.success("Annonce modifiée avec succès !");
       }
@@ -165,12 +175,19 @@ export default function AnnouncePage() {
         {/* Action */}
         <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
           <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— action —</p>
-          <div className="grid grid-cols-2 gap-2">
-            {([["new", "✚ Nouvelle annonce"], ["edit", "✎ Modifier une annonce"]] as const).map(([a, label]) => (
+          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+            {([["new", "✚ Nouvelle annonce"], ["edit", "✎ Modifier une annonce"], ["copy", "⧉ Dupliquer une annonce"]] as const).map(([a, label]) => (
               <button
                 key={a}
                 type="button"
-                onClick={() => setAction(a)}
+                onClick={() => {
+                  // Repartir d'un salon et d'un message vierges évite d'envoyer
+                  // par erreur la copie dans le salon d'origine.
+                  setAction(a);
+                  setChannelId("");
+                  setMessageId("");
+                  setMessageLink("");
+                }}
                 className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 font-mono text-[10px] uppercase tracking-widest transition ${
                   action === a
                     ? "border-blue-500/40 bg-blue-500/10 text-blue-400"
@@ -183,21 +200,12 @@ export default function AnnouncePage() {
           </div>
         </div>
 
-        {/* Salon cible OU message à modifier */}
-        {action === "new" ? (
+        {/* Annonce existante à charger (modification ou duplication) */}
+        {action !== "new" && (
           <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
-            <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— salon cible —</p>
-            <ChannelSelect
-              botId={botId}
-              label="channel_id"
-              value={channelId}
-              onChange={setChannelId}
-              filter="text"
-            />
-          </div>
-        ) : (
-          <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
-            <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— annonce à modifier —</p>
+            <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
+              {action === "edit" ? "— annonce à modifier —" : "— annonce à dupliquer —"}
+            </p>
             <div className="space-y-1.5">
               <p className="font-mono text-[9px] font-bold uppercase tracking-widest text-muted-foreground">lien_du_message</p>
               <div className="flex gap-2">
@@ -218,12 +226,31 @@ export default function AnnouncePage() {
                 </button>
               </div>
               <p className="font-mono text-[9px] text-muted-foreground/50">
-                Clic droit sur le message → <span className="text-foreground">Copier le lien du message</span>. Le bot ne peut modifier que ses propres messages.
+                Clic droit sur le message → <span className="text-foreground">Copier le lien du message</span>.{" "}
+                {action === "edit"
+                  ? "Le bot ne peut modifier que ses propres messages."
+                  : "N'importe quel message que le bot peut lire, même s'il ne l'a pas envoyé. Tu peux ajuster le contenu avant l'envoi."}
               </p>
               {messageId && (
                 <p className="font-mono text-[9px] text-green-500/70">✓ Message chargé (ID {messageId})</p>
               )}
             </div>
+          </div>
+        )}
+
+        {/* Salon de destination (nouvelle annonce ou copie) */}
+        {action !== "edit" && (
+          <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
+            <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">
+              {action === "copy" ? "— salon de destination —" : "— salon cible —"}
+            </p>
+            <ChannelSelect
+              botId={botId}
+              label="channel_id"
+              value={channelId}
+              onChange={setChannelId}
+              filter="text"
+            />
           </div>
         )}
 
@@ -399,8 +426,12 @@ export default function AnnouncePage() {
           >
             <Send className="size-3.5" />
             {sending
-              ? action === "new" ? "envoi_en_cours..." : "modification..."
-              : action === "new" ? "envoyer_maintenant" : "enregistrer_les_modifications"}
+              ? action === "edit" ? "modification..." : "envoi_en_cours..."
+              : action === "edit"
+                ? "enregistrer_les_modifications"
+                : action === "copy"
+                  ? "envoyer_la_copie"
+                  : "envoyer_maintenant"}
           </button>
         </div>
       </div>
