@@ -48,8 +48,10 @@ function buildPayload(
   if (embed.footer?.trim()) embedPayload.footer = { text: embed.footer.trim() };
   if (embed.imageUrl?.trim()) embedPayload.image = { url: embed.imageUrl.trim() };
 
-  // Sur une édition, il faut vider le content s'il ne reste qu'un embed
-  return { payload: { content: "", embeds: [embedPayload] } };
+  // Le texte au-dessus de l'embed est le seul endroit où une mention notifie
+  // réellement : Discord ne pingue jamais une mention placée dans un embed.
+  // Chaîne vide si rien n'est saisi, pour vider l'ancien texte lors d'une édition.
+  return { payload: { content: content?.trim() ?? "", embeds: [embedPayload] } };
 }
 
 // ─── POST : envoyer une nouvelle annonce ────────────────────────────────────────
@@ -73,6 +75,7 @@ export async function POST(request: Request, { params }: { params: Promise<{ bot
 
   const built = buildPayload(mode, content, embed);
   if ("error" in built) return NextResponse.json({ error: built.error }, { status: 400 });
+  built.payload.allowed_mentions = { parse: ["roles", "users", "everyone"] };
 
   const res = await fetch(`${DISCORD_API}/channels/${channelId}/messages`, {
     method: "POST",
@@ -115,6 +118,7 @@ export async function PATCH(request: Request, { params }: { params: Promise<{ bo
 
   // En mode texte on retire l'embed existant
   if (mode === "text") built.payload.embeds = [];
+  built.payload.allowed_mentions = { parse: ["roles", "users", "everyone"] };
 
   const res = await fetch(`${DISCORD_API}/channels/${channelId}/messages/${messageId}`, {
     method: "PATCH",
@@ -168,6 +172,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ botI
   if (firstEmbed) {
     return NextResponse.json({
       mode: "embed",
+      content: message.content ?? "",
       embed: {
         title: firstEmbed.title ?? "",
         description: firstEmbed.description ?? "",

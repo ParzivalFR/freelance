@@ -59,6 +59,7 @@ export default function AnnouncePage() {
       setMessageId(parsed.messageId);
       if (data.mode === "embed") {
         setMode("embed");
+        setContent(data.content ?? "");
         setEmbedTitle(data.embed.title ?? "");
         setEmbedDescription(data.embed.description ?? "");
         setEmbedColor(data.embed.color ?? DEFAULT_COLOR);
@@ -99,7 +100,7 @@ export default function AnnouncePage() {
           channelId,
           ...(action === "edit" && { messageId }),
           mode,
-          content: mode === "text" ? content : undefined,
+          content,
           embed: embedPayload,
         }),
       });
@@ -262,6 +263,16 @@ export default function AnnouncePage() {
         ) : (
           <div className="rounded-xl border border-dashed bg-card p-4 space-y-3">
             <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">— embed —</p>
+            <CyberTextarea
+              label="texte au-dessus de l'embed (optionnel)"
+              value={content}
+              onChange={setContent}
+              placeholder="@Annonces nouvelle mise à jour !"
+              botId={botId}
+            />
+            <p className="-mt-1 font-mono text-[9px] text-muted-foreground/60">
+              C&apos;est ici qu&apos;il faut mentionner un rôle : Discord ne notifie jamais une mention placée dans l&apos;embed.
+            </p>
             <CyberInput
               label="titre"
               value={embedTitle}
@@ -349,6 +360,10 @@ export default function AnnouncePage() {
               !embedTitle.trim() && !embedDescription.trim() ? (
                 <p className="text-[#a3a6aa] text-[11px] italic">Aucun contenu d'embed rédigé…</p>
               ) : (
+                <>
+                {content.trim() && (
+                  <p className="mb-2 text-[#dcddde] text-sm whitespace-pre-line">{content}</p>
+                )}
                 <div
                   className="rounded overflow-hidden"
                   style={{ borderLeft: `4px solid ${previewColor}` }}
@@ -369,6 +384,7 @@ export default function AnnouncePage() {
                     )}
                   </div>
                 </div>
+                </>
               )
             )}
           </div>
