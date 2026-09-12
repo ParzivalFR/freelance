@@ -26,9 +26,9 @@ function Message({ title, text }: { title: string; text: string }) {
           Écrivez-moi à{" "}
           <a
             className="text-[#7158ff] underline"
-            href="mailto:contact@gael-dev.fr"
+            href="mailto:hello@gael-dev.fr"
           >
-            contact@gael-dev.fr
+            hello@gael-dev.fr
           </a>{" "}
           et je vous renvoie un lien.
         </p>
