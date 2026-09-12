@@ -17,7 +17,8 @@ function Message({ title, text }: { title: string; text: string }) {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-background px-6">
       <div className="w-full max-w-md text-center">
-        <h1 className="font-[family-name:var(--font-display)] pt-[0.14em] text-3xl uppercase leading-none text-foreground">
+        {/* Titre sans capitale accentuee : voir brief-form.tsx. */}
+        <h1 className="font-[family-name:var(--font-display)] pt-[0.14em] text-3xl uppercase leading-[1.25] text-foreground">
           {title}
         </h1>
         <p className="mt-4 text-sm text-muted-foreground">{text}</p>
@@ -45,7 +46,7 @@ export default async function BriefPage({ params }: PageProps) {
   if (brief.status === "submitted") {
     return (
       <Message
-        title="Déjà envoyé"
+        title="Tout est bon"
         text="J'ai bien reçu vos réponses, merci ! Je reviens vers vous très vite avec une proposition."
       />
     );
@@ -54,7 +55,7 @@ export default async function BriefPage({ params }: PageProps) {
   if (new Date() > brief.expiresAt) {
     return (
       <Message
-        title="Lien expiré"
+        title="Lien trop ancien"
         text="Ce lien n'est plus valable. Pas d'inquiétude, il suffit d'en demander un nouveau."
       />
     );

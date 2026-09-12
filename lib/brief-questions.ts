@@ -22,6 +22,16 @@ export interface BriefQuestion {
   options?: string[];
   placeholder?: string;
   required?: boolean;
+  /**
+   * N'affiche la question que si une réponse précédente le justifie. Poser
+   * « qu'est-ce qui ne vous convient pas sur votre site ? » à quelqu'un qui
+   * n'a pas de site, c'est le meilleur moyen de le perdre.
+   */
+  showIf?: {
+    question: string;
+    equals?: string[];
+    notEquals?: string[];
+  };
 }
 
 export interface BriefSection {
@@ -117,15 +127,17 @@ export const BRIEF_SECTIONS: BriefSection[] = [
       },
       {
         id: "site_actuel_url",
-        label: "Si oui, quelle est son adresse ?",
-        hint: "Laissez vide si vous n'en avez pas.",
+        label: "Quelle est son adresse ?",
+        hint: "Le lien de votre site ou de votre page.",
         type: "text",
+        showIf: { question: "site_actuel", notEquals: ["Non, rien du tout"] },
         placeholder: "exemple.fr ou le lien de votre page Facebook",
       },
       {
         id: "site_actuel_probleme",
         label: "Qu'est-ce qui ne vous convient pas aujourd'hui ?",
         type: "long",
+        showIf: { question: "site_actuel", notEquals: ["Non, rien du tout"] },
         placeholder: "Ce qui vous dérange, même si c'est juste une impression",
       },
     ],
@@ -305,9 +317,10 @@ export const BRIEF_SECTIONS: BriefSection[] = [
       },
       {
         id: "delai_detail",
-        label: "Si vous avez une date imposée, laquelle et pourquoi ?",
+        label: "Quelle est cette date, et pourquoi ?",
         hint: "Une ouverture, un salon, une saison…",
         type: "text",
+        showIf: { question: "delai", equals: ["J'ai une date imposée"] },
         placeholder: "Exemple : avant l'ouverture de la boutique le 15 mars",
       },
       {
@@ -346,4 +359,23 @@ export const BRIEF_QUESTIONS: BriefQuestion[] = BRIEF_SECTIONS.flatMap(
 
 export function findQuestion(id: string): BriefQuestion | undefined {
   return BRIEF_QUESTIONS.find((question) => question.id === id);
+}
+
+/** Une question conditionnelle ne s'affiche que si sa condition est remplie. */
+export function isVisible(
+  question: BriefQuestion,
+  answers: Record<string, string | string[] | undefined>,
+): boolean {
+  const condition = question.showIf;
+  if (!condition) return true;
+
+  const raw = answers[condition.question];
+  const value = Array.isArray(raw) ? raw.join(", ") : (raw ?? "");
+
+  // Tant que la question dont on dépend n'a pas de réponse, on n'affiche rien :
+  // mieux vaut une question en moins qu'une question hors sujet.
+  if (!value) return false;
+  if (condition.equals) return condition.equals.includes(value);
+  if (condition.notEquals) return !condition.notEquals.includes(value);
+  return true;
 }
