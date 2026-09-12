@@ -102,16 +102,20 @@ export default function BriefForm({
     setAnswers((current) => ({ ...current, [id]: value }));
   }, []);
 
+  // `goNext` est appelé depuis un setTimeout après un choix, pour laisser voir
+  // la réponse avant d'avancer. Sans cette référence toujours à jour, il
+  // relirait l'état figé au moment du clic — donc sans la réponse qui vient
+  // d'être donnée — et refuserait d'avancer sur une question obligatoire.
+  const answersRef = useRef(answers);
+  answersRef.current = answers;
+
   /** Une question obligatoire sans réponse bloque l'avancée. */
-  const isAnswered = useCallback(
-    (question: BriefQuestion) => {
-      const value = answers[question.id];
-      return Array.isArray(value)
-        ? value.length > 0
-        : Boolean(value && String(value).trim());
-    },
-    [answers],
-  );
+  const isAnswered = useCallback((question: BriefQuestion) => {
+    const value = answersRef.current[question.id];
+    return Array.isArray(value)
+      ? value.length > 0
+      : Boolean(value && String(value).trim());
+  }, []);
 
   const goNext = useCallback(() => {
     if (step && step.question.required && !isAnswered(step.question)) {
