@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import {
+  CheckCheck,
   ClipboardList,
   Copy,
   Hourglass,
@@ -119,6 +120,23 @@ export default function BriefManager() {
       await load();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Envoi impossible.");
+    } finally {
+      setBusyId(null);
+    }
+  }
+
+  /** Le lien a été transmis à la main : on l'enregistre sans rien envoyer. */
+  async function markSent(brief: Brief) {
+    setBusyId(brief.id);
+    try {
+      const response = await fetch(`/api/admin/briefs/${brief.id}`, {
+        method: "PATCH",
+      });
+      if (!response.ok) throw new Error();
+      toast.success("Marqué comme envoyé.");
+      await load();
+    } catch {
+      toast.error("Impossible de mettre à jour la fiche.");
     } finally {
       setBusyId(null);
     }
@@ -316,6 +334,18 @@ export default function BriefManager() {
                               <Copy className="mr-2 size-3.5" />
                               Copier le lien
                             </Button>
+                            {!brief.emailSentAt && (
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                disabled={busyId === brief.id}
+                                onClick={() => markSent(brief)}
+                                title="Vous avez envoyé le lien vous-même"
+                              >
+                                <CheckCheck className="mr-2 size-3.5" />
+                                Déjà envoyé
+                              </Button>
+                            )}
                             <Button
                               size="sm"
                               variant="outline"

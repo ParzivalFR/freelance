@@ -39,6 +39,30 @@ export async function POST(
   return NextResponse.json(updated);
 }
 
+/**
+ * Marque le lien comme transmis sans envoyer d'email : le cas où l'invitation
+ * a été écrite à la main, pour que la fiche cesse d'afficher « pas encore
+ * envoyé ».
+ */
+export async function PATCH(
+  _request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+  if (!(await requireAdmin())) return unauthorizedResponse();
+
+  const { id } = await params;
+  const brief = await prisma.brief.findUnique({ where: { id } });
+  if (!brief) {
+    return NextResponse.json({ error: "Brief introuvable." }, { status: 404 });
+  }
+
+  const updated = await prisma.brief.update({
+    where: { id },
+    data: { emailSentAt: brief.emailSentAt ?? new Date() },
+  });
+  return NextResponse.json(updated);
+}
+
 export async function DELETE(
   _request: Request,
   { params }: { params: Promise<{ id: string }> },
