@@ -14,14 +14,14 @@ datasource db {
 }
 
 model User {
-  id            String          @id @default(cuid())
-  name          String?
-  email         String          @unique
-  emailVerified DateTime?
-  image         String?
-  role          String          @default("CLIENT") // ADMIN | CLIENT
-  accounts      Account[]
-  sessions      Session[]
+  id             String          @id @default(cuid())
+  name           String?
+  email          String          @unique
+  emailVerified  DateTime?
+  image          String?
+  role           String          @default("CLIENT") // ADMIN | CLIENT
+  accounts       Account[]
+  sessions       Session[]
   discordBots    DiscordBot[]
   refundRequests RefundRequest[]
   // Optional for WebAuthn support
@@ -40,64 +40,64 @@ model DiscordBot {
   status String  @default("OFFLINE") // OFFLINE, STARTING, ONLINE, ERROR
 
   // Configuration des modules
-  moduleModeration Boolean @default(false) @map("module_moderation")
-  moduleTickets    Boolean @default(false) @map("module_tickets")
-  moduleWelcome    Boolean @default(false) @map("module_welcome")
-  moduleLevel      Boolean @default(false) @map("module_level")
-  moduleLog        Boolean @default(false) @map("module_log")
-  moduleSurvey     Boolean @default(false) @map("module_survey")
-  moduleMonitor    Boolean @default(false) @map("module_monitor")
-  moduleGiveaway      Boolean @default(false) @map("module_giveaway")
-  moduleReactionRoles Boolean @default(false) @map("module_reaction_roles")
-  moduleEconomy       Boolean @default(false) @map("module_economy")
-  moduleAutoresponse  Boolean @default(false) @map("module_autoresponse")
-  moduleBirthday      Boolean @default(false) @map("module_birthday")
-  moduleApplications  Boolean @default(false) @map("module_applications")
-  moduleSuggestions   Boolean @default(false) @map("module_suggestions")
-  moduleAfk           Boolean @default(false) @map("module_afk")
-  moduleScheduler     Boolean @default(false) @map("module_scheduler")
-  moduleAibuild       Boolean @default(false) @map("module_aibuild")
-  moduleVerification  Boolean @default(false) @map("module_verification")
-  moduleTempchannels  Boolean @default(false) @map("module_tempchannels")
-  moduleStarboard     Boolean @default(false) @map("module_starboard")
-  moduleStatus        Boolean @default(false) @map("module_status")
-  moduleHoneypot      Boolean @default(false) @map("module_honeypot")
-  moduleQuests        Boolean @default(false) @map("module_quests")
-  moduleProfiles      Boolean @default(false) @map("module_profiles")
-  moduleTeams         Boolean @default(false) @map("module_teams")
+  moduleModeration      Boolean @default(false) @map("module_moderation")
+  moduleTickets         Boolean @default(false) @map("module_tickets")
+  moduleWelcome         Boolean @default(false) @map("module_welcome")
+  moduleLevel           Boolean @default(false) @map("module_level")
+  moduleLog             Boolean @default(false) @map("module_log")
+  moduleSurvey          Boolean @default(false) @map("module_survey")
+  moduleMonitor         Boolean @default(false) @map("module_monitor")
+  moduleGiveaway        Boolean @default(false) @map("module_giveaway")
+  moduleReactionRoles   Boolean @default(false) @map("module_reaction_roles")
+  moduleEconomy         Boolean @default(false) @map("module_economy")
+  moduleAutoresponse    Boolean @default(false) @map("module_autoresponse")
+  moduleBirthday        Boolean @default(false) @map("module_birthday")
+  moduleApplications    Boolean @default(false) @map("module_applications")
+  moduleSuggestions     Boolean @default(false) @map("module_suggestions")
+  moduleAfk             Boolean @default(false) @map("module_afk")
+  moduleScheduler       Boolean @default(false) @map("module_scheduler")
+  moduleAibuild         Boolean @default(false) @map("module_aibuild")
+  moduleVerification    Boolean @default(false) @map("module_verification")
+  moduleTempchannels    Boolean @default(false) @map("module_tempchannels")
+  moduleStarboard       Boolean @default(false) @map("module_starboard")
+  moduleStatus          Boolean @default(false) @map("module_status")
+  moduleHoneypot        Boolean @default(false) @map("module_honeypot")
+  moduleQuests          Boolean @default(false) @map("module_quests")
+  moduleProfiles        Boolean @default(false) @map("module_profiles")
+  moduleTeams           Boolean @default(false) @map("module_teams")
   moduleAnnounceCommand Boolean @default(false) @map("module_announce_command")
-  moduleInvites       Boolean @default(false) @map("module_invites")
-  moduleBooster       Boolean @default(false) @map("module_booster")
-  moduleReminders     Boolean @default(false) @map("module_reminders")
-  moduleAntinuke      Boolean @default(false) @map("module_antinuke")
-  moduleBackup        Boolean @default(false) @map("module_backup")
+  moduleInvites         Boolean @default(false) @map("module_invites")
+  moduleBooster         Boolean @default(false) @map("module_booster")
+  moduleReminders       Boolean @default(false) @map("module_reminders")
+  moduleAntinuke        Boolean @default(false) @map("module_antinuke")
+  moduleBackup          Boolean @default(false) @map("module_backup")
 
   // Paramètres spécifiques aux modules (JSON pour plus de flexibilité)
   config Json? @default("{}") // ex: { welcomeChannel: "123", ticketCategory: "456" }
 
   // Paiement
-  plan                   String?   @map("plan")
-  stripeSessionId        String?   @map("stripe_session_id")
-  stripeSubscriptionId   String?   @map("stripe_subscription_id")
-  paidAt                 DateTime? @map("paid_at")
-  planEndsAt             DateTime? @map("plan_ends_at") // Date de fin après annulation
+  plan                 String?   @map("plan")
+  stripeSessionId      String?   @map("stripe_session_id")
+  stripeSubscriptionId String?   @map("stripe_subscription_id")
+  paidAt               DateTime? @map("paid_at")
+  planEndsAt           DateTime? @map("plan_ends_at") // Date de fin après annulation
 
   lastHeartbeatAt DateTime? @map("last_heartbeat_at")
   workerCommand   String?   @map("worker_command") // START | STOP | RESTART
 
-  createdAt    DateTime     @default(now()) @map("created_at")
-  updatedAt    DateTime     @updatedAt @map("updated_at")
-  infractions     Infraction[]
-  giveaways       Giveaway[]
-  userLevels      UserLevel[]
-  levelRewards    LevelReward[]
-  polls           Poll[]
-  monitors        Monitor[]
-  refundRequests  RefundRequest[]
-  birthdays       Birthday[]
-  tempChannels    TempChannel[]
-  reminders       Reminder[]
-  serverBackups   ServerBackup[]
+  createdAt      DateTime        @default(now()) @map("created_at")
+  updatedAt      DateTime        @updatedAt @map("updated_at")
+  infractions    Infraction[]
+  giveaways      Giveaway[]
+  userLevels     UserLevel[]
+  levelRewards   LevelReward[]
+  polls          Poll[]
+  monitors       Monitor[]
+  refundRequests RefundRequest[]
+  birthdays      Birthday[]
+  tempChannels   TempChannel[]
+  reminders      Reminder[]
+  serverBackups  ServerBackup[]
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
@@ -150,15 +150,15 @@ model TempChannel {
 }
 
 model Infraction {
-  id           String    @id @default(cuid())
-  botId        String    @map("bot_id")
-  userId       String    @map("user_id")       // Discord user ID
-  moderatorId  String    @map("moderator_id")  // Discord moderator ID
-  type         String                           // warn | ban | kick | timeout
-  reason       String    @default("Aucune raison fournie")
-  duration     Int?                             // Pour les timeouts, en minutes
-  active       Boolean   @default(true)         // false = pardonné / expiré
-  createdAt    DateTime  @default(now()) @map("created_at")
+  id          String   @id @default(cuid())
+  botId       String   @map("bot_id")
+  userId      String   @map("user_id") // Discord user ID
+  moderatorId String   @map("moderator_id") // Discord moderator ID
+  type        String // warn | ban | kick | timeout
+  reason      String   @default("Aucune raison fournie")
+  duration    Int? // Pour les timeouts, en minutes
+  active      Boolean  @default(true) // false = pardonné / expiré
+  createdAt   DateTime @default(now()) @map("created_at")
 
   bot DiscordBot @relation(fields: [botId], references: [id], onDelete: Cascade)
 
@@ -176,7 +176,7 @@ model UserLevel {
   lastXpAt DateTime? @map("last_xp_at")
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt      @map("updated_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   bot DiscordBot @relation(fields: [botId], references: [id], onDelete: Cascade)
 
@@ -199,32 +199,32 @@ model LevelReward {
 // ─── Sondages ─────────────────────────────────────────────────────────────────
 
 model Poll {
-  id          String    @id @default(cuid())
-  botId       String    @map("bot_id")
-  guildId     String    @map("guild_id")
-  channelId   String    @map("channel_id")
-  messageId   String?   @map("message_id")   // Discord message ID once posted
-  threadId    String?   @map("thread_id")    // Discussion thread ID (auto_thread)
+  id        String  @id @default(cuid())
+  botId     String  @map("bot_id")
+  guildId   String  @map("guild_id")
+  channelId String  @map("channel_id")
+  messageId String? @map("message_id") // Discord message ID once posted
+  threadId  String? @map("thread_id") // Discussion thread ID (auto_thread)
 
   title       String
-  description String?   @db.Text
+  description String? @db.Text
 
   // MULTIPLE_CHOICE | YES_NO | RANKED
-  type        String    @default("MULTIPLE_CHOICE") @map("type")
+  type String @default("MULTIPLE_CHOICE") @map("type")
 
   // [{ id: string, label: string, emoji?: string }]
-  options     Json
+  options Json
 
   // Comportement
-  isAnonymous   Boolean @default(false) @map("is_anonymous")   // cache qui a voté
-  isBlind       Boolean @default(false) @map("is_blind")       // cache résultats avant fermeture
+  isAnonymous   Boolean @default(false) @map("is_anonymous") // cache qui a voté
+  isBlind       Boolean @default(false) @map("is_blind") // cache résultats avant fermeture
   allowMultiple Boolean @default(false) @map("allow_multiple") // plusieurs choix autorisés
-  allowChange   Boolean @default(true)  @map("allow_change")   // peut changer son vote
-  maxChoices    Int     @default(1)     @map("max_choices")     // nb max si allowMultiple
+  allowChange   Boolean @default(true) @map("allow_change") // peut changer son vote
+  maxChoices    Int     @default(1) @map("max_choices") // nb max si allowMultiple
 
   // Contrôle d'accès
   allowedRoleIds Json? @map("allowed_role_ids") // String[] — rôles autorisés à voter
-  roleWeights    Json? @map("role_weights")     // { [roleId]: number } — pondération par rôle
+  roleWeights    Json? @map("role_weights") // { [roleId]: number } — pondération par rôle
 
   // Seuil de révélation
   minVotes Int @default(0) @map("min_votes") // résultats cachés jusqu'à X votes
@@ -241,14 +241,14 @@ model Poll {
   recurInterval String? @map("recur_interval") // daily | weekly | monthly
 
   color       String?
-  colorClosed String?   @map("color_closed")
-  useEmbed    Boolean   @default(true)  @map("use_embed")
+  colorClosed String? @map("color_closed")
+  useEmbed    Boolean @default(true) @map("use_embed")
 
   // PENDING | ACTIVE | CLOSED
   status String @default("ACTIVE")
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt      @map("updated_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   bot   DiscordBot @relation(fields: [botId], references: [id], onDelete: Cascade)
   votes PollVote[]
@@ -265,8 +265,8 @@ model PollVote {
   // RANKED                 : [{ optionId: string, rank: number }, ...]
   choices Json
 
-  weight  Float    @default(1)           @map("weight")   // pondération via rôle
-  votedAt DateTime @default(now())       @map("voted_at")
+  weight  Float    @default(1) @map("weight") // pondération via rôle
+  votedAt DateTime @default(now()) @map("voted_at")
 
   poll Poll @relation(fields: [pollId], references: [id], onDelete: Cascade)
 
@@ -277,26 +277,26 @@ model PollVote {
 // ─── Giveaways ────────────────────────────────────────────────────────────────
 
 model Giveaway {
-  id          String  @id @default(cuid())
-  botId       String  @map("bot_id")
-  guildId     String  @map("guild_id")
-  channelId   String  @map("channel_id")
-  messageId   String? @map("message_id")
+  id        String  @id @default(cuid())
+  botId     String  @map("bot_id")
+  guildId   String  @map("guild_id")
+  channelId String  @map("channel_id")
+  messageId String? @map("message_id")
 
   title       String
   prize       String
   description String? @db.Text
 
   // RANDOM | WEIGHTED | FIRST
-  mode        String @default("RANDOM")
+  mode String @default("RANDOM")
 
   winnerCount Int @default(1) @map("winner_count")
 
   // Conditions d'entrée
-  requiredRoleIds Json?    @map("required_role_ids") // String[]
-  minLevel        Int?     @map("min_level")
-  mustBeBooster   Boolean  @default(false) @map("must_be_booster")
-  minDaysOnServer Int?     @map("min_days_on_server")
+  requiredRoleIds Json?   @map("required_role_ids") // String[]
+  minLevel        Int?    @map("min_level")
+  mustBeBooster   Boolean @default(false) @map("must_be_booster")
+  minDaysOnServer Int?    @map("min_days_on_server")
 
   // PENDING | ACTIVE | ENDED | CANCELLED
   status String @default("PENDING")
@@ -304,17 +304,17 @@ model Giveaway {
   startAt DateTime? @map("start_at")
   endAt   DateTime  @map("end_at")
 
-  winnerIds        Json? @map("winner_ids")         // String[] Discord user IDs
-  participants     Json? @map("participants")        // String[] Discord user IDs
+  winnerIds        Json? @map("winner_ids") // String[] Discord user IDs
+  participants     Json? @map("participants") // String[] Discord user IDs
   participantCount Int   @default(0) @map("participant_count")
 
   // Embed options
-  useEmbed    Boolean @default(true)  @map("use_embed")
-  embedColor  String? @map("embed_color")  // hex sans #, ex: "7158ff"
-  embedImage  String? @map("embed_image")  // URL image
+  useEmbed   Boolean @default(true) @map("use_embed")
+  embedColor String? @map("embed_color") // hex sans #, ex: "7158ff"
+  embedImage String? @map("embed_image") // URL image
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt      @map("updated_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
 
   bot DiscordBot @relation(fields: [botId], references: [id], onDelete: Cascade)
 
@@ -572,9 +572,9 @@ model Monitor {
   id             String    @id @default(cuid())
   botId          String    @map("bot_id")
   name           String
-  type           String    // HTTP | TCP | PING
-  target         String    // URL, host:port, or IP/hostname
-  interval       Int       @default(5)         // minutes: 1|5|15|30|60
+  type           String // HTTP | TCP | PING
+  target         String // URL, host:port, or IP/hostname
+  interval       Int       @default(5) // minutes: 1|5|15|30|60
   status         String    @default("PENDING") // PENDING | UP | DOWN
   lastCheckedAt  DateTime? @map("last_checked_at")
   responseTime   Int?      @map("response_time") // ms
@@ -583,7 +583,7 @@ model Monitor {
   sshConfig      String?   @map("ssh_config") // encrypted JSON
   active         Boolean   @default(true)
   createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt      @map("updated_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
 
   bot       DiscordBot        @relation(fields: [botId], references: [id], onDelete: Cascade)
   checks    MonitorCheck[]
@@ -595,7 +595,7 @@ model Monitor {
 model MonitorCheck {
   id           String   @id @default(cuid())
   monitorId    String   @map("monitor_id")
-  status       String   // UP | DOWN
+  status       String // UP | DOWN
   responseTime Int?     @map("response_time") // ms
   checkedAt    DateTime @default(now()) @map("checked_at")
 
@@ -678,7 +678,6 @@ model Settings {
   @@map("settings")
 }
 
-
 // ─── Bot Logs ─────────────────────────────────────────────────────────────────
 
 model BotLog {
@@ -737,25 +736,25 @@ model EconomyWallet {
 // ─── Auto-Réponses ────────────────────────────────────────────────────────────
 
 model AutoResponse {
-  id               String   @id @default(cuid())
-  botId            String   @map("bot_id")
-  guildId          String   @map("guild_id")
-  trigger          String
-  triggerType      String   @default("contains") @map("trigger_type")
-  response         String
-  responseType     String   @default("text") @map("response_type")
-  embedColor       String?  @map("embed_color")
-  embedTitle       String?  @map("embed_title")
-  caseSensitive    Boolean  @default(false) @map("case_sensitive")
-  cooldownSeconds  Int      @default(0) @map("cooldown_seconds")
-  allowedChannelIds Json    @default("[]") @map("allowed_channel_ids")
-  ignoredRoleIds   Json     @default("[]") @map("ignored_role_ids")
-  deleteOriginal   Boolean  @default(false) @map("delete_original")
-  replyToUser      Boolean  @default(true) @map("reply_to_user")
-  triggerCount     Int      @default(0) @map("trigger_count")
-  enabled          Boolean  @default(true)
-  createdAt        DateTime @default(now()) @map("created_at")
-  updatedAt        DateTime @updatedAt @map("updated_at")
+  id                String   @id @default(cuid())
+  botId             String   @map("bot_id")
+  guildId           String   @map("guild_id")
+  trigger           String
+  triggerType       String   @default("contains") @map("trigger_type")
+  response          String
+  responseType      String   @default("text") @map("response_type")
+  embedColor        String?  @map("embed_color")
+  embedTitle        String?  @map("embed_title")
+  caseSensitive     Boolean  @default(false) @map("case_sensitive")
+  cooldownSeconds   Int      @default(0) @map("cooldown_seconds")
+  allowedChannelIds Json     @default("[]") @map("allowed_channel_ids")
+  ignoredRoleIds    Json     @default("[]") @map("ignored_role_ids")
+  deleteOriginal    Boolean  @default(false) @map("delete_original")
+  replyToUser       Boolean  @default(true) @map("reply_to_user")
+  triggerCount      Int      @default(0) @map("trigger_count")
+  enabled           Boolean  @default(true)
+  createdAt         DateTime @default(now()) @map("created_at")
+  updatedAt         DateTime @updatedAt @map("updated_at")
 
   @@index([botId])
   @@index([guildId])
@@ -857,18 +856,18 @@ model ScheduledMessage {
 }
 
 model ServerGeneration {
-  id          String    @id @default(cuid())
-  botId       String    @map("bot_id")
-  guildId     String    @map("guild_id")
-  userId      String    @map("user_id")
-  serverType  String?   @map("server_type")
-  concept     String?
-  style       String?
-  complexity  String?
-  structure   Json      @default("{}")
-  status      String    @default("pending")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  appliedAt   DateTime? @map("applied_at")
+  id         String    @id @default(cuid())
+  botId      String    @map("bot_id")
+  guildId    String    @map("guild_id")
+  userId     String    @map("user_id")
+  serverType String?   @map("server_type")
+  concept    String?
+  style      String?
+  complexity String?
+  structure  Json      @default("{}")
+  status     String    @default("pending")
+  createdAt  DateTime  @default(now()) @map("created_at")
+  appliedAt  DateTime? @map("applied_at")
 
   @@index([botId])
   @@index([guildId])
@@ -908,23 +907,23 @@ model StarboardEntry {
 // ─── Quêtes ───────────────────────────────────────────────────────────────────
 
 model Quest {
-  id           String   @id @default(cuid())
-  botId          String   @map("bot_id")
-  guildId        String   @map("guild_id")
-  channelId      String   @map("channel_id")
-  messageId      String   @map("message_id")
-  userId         String   @map("user_id")
-  authorAvatar   String?  @map("author_avatar")
+  id             String  @id @default(cuid())
+  botId          String  @map("bot_id")
+  guildId        String  @map("guild_id")
+  channelId      String  @map("channel_id")
+  messageId      String  @map("message_id")
+  userId         String  @map("user_id")
+  authorAvatar   String? @map("author_avatar")
   type           String
-  nature         String   // benevole | remuneree
+  nature         String // benevole | remuneree
   title          String
-  description    String   @db.Text
+  description    String  @db.Text
   budget         String?
   deadline       String?
-  status         String   @default("open") // open | in_progress | closed
-  selectedUserId String?  @map("selected_user_id")
+  status         String  @default("open") // open | in_progress | closed
+  selectedUserId String? @map("selected_user_id")
 
-  createdAt    DateTime @default(now()) @map("created_at")
+  createdAt DateTime @default(now()) @map("created_at")
 
   applications QuestApplication[]
 
@@ -1029,20 +1028,20 @@ model InviteBonus {
 // ─── Projets d'équipe (générique, ex-"Guilde") ─────────────────────────────────
 
 model TeamProject {
-  id              String   @id @default(cuid())
-  botId           String   @map("bot_id")
-  guildId         String   @map("guild_id")
-  channelId       String   @map("channel_id")
-  messageId       String   @map("message_id")
-  userId          String   @map("user_id")
-  authorAvatar    String?  @map("author_avatar")
-  name            String
-  description     String   @db.Text
-  profilesNeeded  String?  @map("profiles_needed")
-  nature          String   // benevole | remuneree
-  status          String   @default("open") // open | in_progress | closed
-  selectedUserId  String?  @map("selected_user_id")
-  createdAt       DateTime @default(now()) @map("created_at")
+  id             String   @id @default(cuid())
+  botId          String   @map("bot_id")
+  guildId        String   @map("guild_id")
+  channelId      String   @map("channel_id")
+  messageId      String   @map("message_id")
+  userId         String   @map("user_id")
+  authorAvatar   String?  @map("author_avatar")
+  name           String
+  description    String   @db.Text
+  profilesNeeded String?  @map("profiles_needed")
+  nature         String // benevole | remuneree
+  status         String   @default("open") // open | in_progress | closed
+  selectedUserId String?  @map("selected_user_id")
+  createdAt      DateTime @default(now()) @map("created_at")
 
   members TeamMember[]
 
@@ -1065,3 +1064,35 @@ model TeamMember {
   @@map("team_members")
 }
 
+/// Questionnaire de cadrage envoyé à un prospect après le premier contact.
+/// Le lien porte un jeton unique : personne d'autre ne peut ouvrir le
+/// formulaire, et les réponses reviennent rattachées au bon prospect.
+model Brief {
+  id     String @id @default(cuid())
+  token  String @unique @default(cuid())
+  /// pending = lien créé, submitted = le prospect a répondu
+  status String @default("pending")
+
+  // Identité du prospect, pré-remplie pour lui éviter de la ressaisir
+  firstName String  @map("first_name")
+  lastName  String  @map("last_name")
+  email     String
+  phone     String?
+  company   String?
+  /// Rattachement optionnel à une fiche client existante
+  clientId  String? @map("client_id")
+
+  /// Réponses du questionnaire, en JSON pour pouvoir faire évoluer les
+  /// questions sans migration de base à chaque fois.
+  answers Json?
+
+  expiresAt   DateTime  @map("expires_at")
+  emailSentAt DateTime? @map("email_sent_at")
+  submittedAt DateTime? @map("submitted_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([status])
+  @@map("briefs")
+}

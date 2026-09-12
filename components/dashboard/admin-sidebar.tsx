@@ -16,6 +16,7 @@ import {
   ArrowLeft,
   BarChart3,
   Bot,
+  ClipboardList,
   FilePlus,
   FileText,
   FolderOpen,
@@ -53,6 +54,7 @@ const NAV = [
     label: "Business",
     items: [
       { title: "Clients", url: "/admin/clients", icon: Users },
+      { title: "Briefs client", url: "/admin/briefs", icon: ClipboardList },
       { title: "Devis", url: "/admin/devis/list", icon: FileText },
       { title: "Nouveau devis", url: "/admin/devis", icon: FilePlus },
       { title: "Bots Discord", url: "/admin/bots", icon: Bot },
