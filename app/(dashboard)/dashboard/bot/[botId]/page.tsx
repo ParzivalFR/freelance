@@ -7,6 +7,7 @@ import { FaDiscord } from "react-icons/fa";
 import { Terminal } from "lucide-react";
 import { StatCard, PageHeader, LoadingScreen } from "@/components/dashboard/cyber-ui";
 import type { BotConfig } from "@/components/dashboard/bot-types";
+import { OrphanCommandsBanner } from "@/components/dashboard/orphan-commands-banner";
 import { useBotSocket } from "@/hooks/use-bot-socket";
 import { useToast } from "@/components/ui/use-toast";
 import { Power, Square, RotateCw } from "lucide-react";
@@ -97,6 +98,8 @@ export default function BotOverviewPage() {
         subtitle="Moteur propriétaire — v1.0.0"
         status={config.status}
       />
+
+      <OrphanCommandsBanner botId={botId} />
 
       {/* Stat cards */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
