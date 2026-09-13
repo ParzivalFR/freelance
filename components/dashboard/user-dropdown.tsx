@@ -9,8 +9,9 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Activity, Clock, LogOut, Search, User } from "lucide-react";
+import { Activity, ArrowLeftRight, Clock, LogOut, Search, User } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
+import Link from "next/link";
 
 export function UserDropdown() {
   const { data: session } = useSession();
@@ -45,6 +46,19 @@ export function UserDropdown() {
             {session?.user?.email}
           </span>
         </DropdownMenuLabel>
+        {/* Seul un administrateur a deux espaces entre lesquels basculer. */}
+        {session?.user?.role === "ADMIN" && (
+          <DropdownMenuItem asChild className="gap-3 px-1">
+            <Link href="/espaces">
+              <ArrowLeftRight
+                size={20}
+                className="text-muted-foreground/70"
+                aria-hidden="true"
+              />
+              <span>Changer d&apos;espace</span>
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuItem className="gap-3 px-1">
           <Clock
             size={20}

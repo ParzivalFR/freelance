@@ -32,9 +32,10 @@ export async function proxy(request: NextRequest) {
     }
   }
 
-  // /signin — redirige vers le dashboard si déjà connecté
+  // /signin — déjà connecté : on passe par l'aiguillage, qui renvoie
+  // directement un client vers son espace et laisse le choix à l'admin.
   if (pathname.startsWith("/signin") && isLoggedIn) {
-    return NextResponse.redirect(new URL("/dashboard/bot", request.url));
+    return NextResponse.redirect(new URL("/espaces", request.url));
   }
 
   const requestHeaders = new Headers(request.headers);
