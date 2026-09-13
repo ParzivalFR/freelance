@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Activity, ArrowLeftRight, Clock, LogOut, Search, User } from "lucide-react";
+import { ArrowLeftRight, LogOut } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 
@@ -59,38 +59,6 @@ export function UserDropdown() {
             </Link>
           </DropdownMenuItem>
         )}
-        <DropdownMenuItem className="gap-3 px-1">
-          <Clock
-            size={20}
-            className="text-muted-foreground/70"
-            aria-hidden="true"
-          />
-          <span>Dashboard</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem className="gap-3 px-1">
-          <User
-            size={20}
-            className="text-muted-foreground/70"
-            aria-hidden="true"
-          />
-          <span>Profil</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem className="gap-3 px-1">
-          <Activity
-            size={20}
-            className="text-muted-foreground/70"
-            aria-hidden="true"
-          />
-          <span>Activité</span>
-        </DropdownMenuItem>
-        <DropdownMenuItem className="gap-3 px-1">
-          <Search
-            size={20}
-            className="text-muted-foreground/70"
-            aria-hidden="true"
-          />
-          <span>Historique</span>
-        </DropdownMenuItem>
         <DropdownMenuItem
           className="gap-3 px-1 text-red-600 focus:text-red-600"
           onClick={handleSignOut}

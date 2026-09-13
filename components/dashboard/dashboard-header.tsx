@@ -2,6 +2,9 @@
 
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
+import { ArrowLeftRight } from "lucide-react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const BREADCRUMBS: Record<string, string> = {
@@ -15,7 +18,9 @@ const BREADCRUMBS: Record<string, string> = {
 
 export function DashboardHeader() {
   const pathname = usePathname();
+  const { data: session } = useSession();
   const label = BREADCRUMBS[pathname] ?? "Dashboard";
+  const isAdmin = session?.user?.role === "ADMIN";
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-2 border-b">
@@ -30,6 +35,18 @@ export function DashboardHeader() {
           <span className="text-muted-foreground/30">/</span>
           <span className="text-blue-500">{label}</span>
         </div>
+
+        {/* Sans ce retour, un administrateur ne peut regagner /admin qu'en
+            tapant l'URL. Invisible pour un client, qui n'a qu'un espace. */}
+        {isAdmin && (
+          <Link
+            href="/espaces"
+            className="ml-auto flex shrink-0 items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-[#7158ff]/40 hover:text-[#7158ff]"
+          >
+            <ArrowLeftRight className="size-3" />
+            Changer d&apos;espace
+          </Link>
+        )}
       </div>
     </header>
   );
