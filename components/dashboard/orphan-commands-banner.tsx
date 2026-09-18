@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
-import { AlertTriangle, Loader2, Trash2 } from "lucide-react";
+import { AlertTriangle, Check, Loader2, Trash2 } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 
 /**
@@ -13,7 +13,9 @@ import { useToast } from "@/components/ui/use-toast";
  * n'a pas répondu ». Elles ne sont supprimables que par l'API, il n'existe pas
  * d'écran pour ça côté Discord.
  *
- * Rien ne s'affiche quand il n'y en a pas, ce qui est le cas le plus courant.
+ * Quand l'application est saine, ce qui est le cas courant, une seule ligne
+ * discrète le dit : un encart de la taille de l'alerte serait du bruit
+ * permanent pour un client qui n'a jamais eu le problème.
  */
 export function OrphanCommandsBanner({ botId }: { botId: string }) {
   const { toast } = useToast();
@@ -61,7 +63,23 @@ export function OrphanCommandsBanner({ botId }: { botId: string }) {
     }
   }
 
-  if (!commands || commands.length === 0) return null;
+  // Token absent, Discord injoignable : on n'affiche rien plutôt qu'une erreur
+  // technique que le client ne peut pas régler.
+  if (!commands) return null;
+
+  if (commands.length === 0) {
+    return (
+      <div className="flex items-center gap-2 rounded-xl border border-dashed bg-card px-4 py-2.5">
+        <Check className="size-3.5 shrink-0 text-emerald-500" />
+        <p className="font-mono text-[9px] uppercase tracking-widest text-muted-foreground">
+          commandes_orphelines
+        </p>
+        <p className="font-mono text-[11px] text-muted-foreground/60">
+          aucune — toutes les commandes de votre application répondent
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-4">
