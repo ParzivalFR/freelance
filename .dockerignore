@@ -1,0 +1,17 @@
+# Jamais de secrets dans l'image : le build autonome de Next recopie les
+# fichiers .env qu'il trouve. Les variables arrivent par Dokploy.
+.env
+.env.*
+
+node_modules
+.next
+.git
+.claude
+.vercel
+coverage
+*.log
+
+# Générés par le build, recréés dans l'image
+public/sw.js
+public/workbox-*.js
+public/sitemap*.xml

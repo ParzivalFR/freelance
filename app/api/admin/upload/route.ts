@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { randomUUID } from "crypto";
 import { requireAdmin, unauthorizedResponse } from "@/lib/require-admin";
 
@@ -15,11 +15,6 @@ const MAGIC_BYTES: Record<string, number[][]> = {
   "image/png": [[0x89, 0x50, 0x4E, 0x47]],
   "image/webp": [[0x52, 0x49, 0x46, 0x46]],
 };
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export async function POST(request: Request) {
   try {
@@ -62,7 +57,7 @@ export async function POST(request: Request) {
     const ext = MIME_TO_EXT[file.type];
     const fileName = `project_${randomUUID()}.${ext}`;
 
-    const { data, error } = await supabase.storage
+    const { data, error } = await getSupabaseAdmin().storage
       .from('bucket-oasis')
       .upload(`Images/${fileName}`, buffer, {
         contentType: file.type,
@@ -77,7 +72,7 @@ export async function POST(request: Request) {
       );
     }
 
-    const { data: { publicUrl } } = supabase.storage
+    const { data: { publicUrl } } = getSupabaseAdmin().storage
       .from('bucket-oasis')
       .getPublicUrl(`Images/${fileName}`);
 

@@ -1,9 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+import { getStripe } from "@/lib/stripe";
 
 const PRICES = {
   ZIP: process.env.STRIPE_PRICE_ZIP!,
@@ -30,7 +28,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Bot introuvable" }, { status: 404 });
   }
 
-  const checkoutSession = await stripe.checkout.sessions.create({
+  const checkoutSession = await getStripe().checkout.sessions.create({
     mode: plan === "PRO" ? "subscription" : "payment",
     line_items: [{ price: PRICES[plan as keyof typeof PRICES], quantity: 1 }],
     allow_promotion_codes: true,

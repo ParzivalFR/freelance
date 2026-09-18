@@ -1,10 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
+import { getSupabaseAdmin } from "@/lib/supabase-admin";
 import { NextResponse } from "next/server";
-
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-);
 
 export async function POST(request: Request) {
   const formData = await request.formData();
@@ -16,7 +11,7 @@ export async function POST(request: Request) {
 
   try {
     // Vérifier si le fichier existe déjà dans le bucket
-    const { data: existingFiles, error: listError } = await supabase.storage
+    const { data: existingFiles, error: listError } = await getSupabaseAdmin().storage
       .from(process.env.SUPABASE_BUCKET_NAME!)
       .list("avatars", {
         limit: 1,
@@ -30,14 +25,14 @@ export async function POST(request: Request) {
     let publicUrl: string;
     if (existingFiles && existingFiles.length > 0) {
       // Si le fichier existe, récupérer son URL publique
-      const { data: publicUrlData } = supabase.storage
+      const { data: publicUrlData } = getSupabaseAdmin().storage
         .from(process.env.SUPABASE_BUCKET_NAME!)
         .getPublicUrl(`avatars/${file.name}`);
 
       publicUrl = publicUrlData.publicUrl;
     } else {
       // Si le fichier n'existe pas, le télécharger
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      const { data: uploadData, error: uploadError } = await getSupabaseAdmin().storage
         .from(process.env.SUPABASE_BUCKET_NAME!)
         .upload(`avatars/${file.name}`, file);
 
@@ -45,7 +40,7 @@ export async function POST(request: Request) {
         throw uploadError;
       }
 
-      const { data: publicUrlData } = supabase.storage
+      const { data: publicUrlData } = getSupabaseAdmin().storage
         .from(process.env.SUPABASE_BUCKET_NAME!)
         .getPublicUrl(`avatars/${file.name}`);
 

@@ -1,9 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+import { getStripe } from "@/lib/stripe";
 
 export async function POST(
   _request: Request,
@@ -37,7 +35,7 @@ export async function POST(
   }
 
   // Annulation à la fin de la période en cours
-  const subscription = await stripe.subscriptions.update(bot.stripeSubscriptionId, {
+  const subscription = await getStripe().subscriptions.update(bot.stripeSubscriptionId, {
     cancel_at_period_end: true,
   });
 

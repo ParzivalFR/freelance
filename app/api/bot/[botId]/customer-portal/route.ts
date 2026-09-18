@@ -1,9 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+import { getStripe } from "@/lib/stripe";
 
 export async function POST(
   _request: Request,
@@ -31,12 +29,12 @@ export async function POST(
 
   try {
     if (bot.stripeSubscriptionId) {
-      const subscription = await stripe.subscriptions.retrieve(bot.stripeSubscriptionId);
+      const subscription = await getStripe().subscriptions.retrieve(bot.stripeSubscriptionId);
       customerId = typeof subscription.customer === "string"
         ? subscription.customer
         : subscription.customer.id;
     } else if (bot.stripeSessionId) {
-      const checkoutSession = await stripe.checkout.sessions.retrieve(bot.stripeSessionId);
+      const checkoutSession = await getStripe().checkout.sessions.retrieve(bot.stripeSessionId);
       customerId = typeof checkoutSession.customer === "string"
         ? checkoutSession.customer
         : (checkoutSession.customer?.id ?? null);
@@ -54,7 +52,7 @@ export async function POST(
 
   const returnUrl = `${process.env.NEXTAUTH_URL}/dashboard/bot/${botId}`;
 
-  const portalSession = await stripe.billingPortal.sessions.create({
+  const portalSession = await getStripe().billingPortal.sessions.create({
     customer: customerId,
     return_url: returnUrl,
   });

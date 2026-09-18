@@ -1,9 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
-import Stripe from "stripe";
-
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+import { getStripe } from "@/lib/stripe";
 
 async function requireAdmin() {
   const session = await auth();
@@ -53,7 +51,7 @@ export async function POST(
       let invoiceCustomerId: string | null = null;
 
       if (bot.stripeSubscriptionId) {
-        const subscription = await stripe.subscriptions.retrieve(bot.stripeSubscriptionId, {
+        const subscription = await getStripe().subscriptions.retrieve(bot.stripeSubscriptionId, {
           expand: ["latest_invoice.payment_intent"],
         });
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -67,7 +65,7 @@ export async function POST(
         }
 
         if (!paymentIntentId) {
-          const invoices = await stripe.invoices.list({
+          const invoices = await getStripe().invoices.list({
             subscription: bot.stripeSubscriptionId,
             status: "paid",
             limit: 1,
@@ -88,7 +86,7 @@ export async function POST(
 
       // Fallback: checkout session
       if (!paymentIntentId && bot.stripeSessionId) {
-        const checkoutSession = await stripe.checkout.sessions.retrieve(bot.stripeSessionId, {
+        const checkoutSession = await getStripe().checkout.sessions.retrieve(bot.stripeSessionId, {
           expand: ["payment_intent"],
         });
         const pi = checkoutSession.payment_intent;
@@ -105,7 +103,7 @@ export async function POST(
 
       // Fallback final: lister les charges du customer (Stripe API 2025 ne met plus payment_intent sur l'invoice pour les subscriptions Checkout)
       if (!paymentIntentId && !chargeId && invoiceCustomerId) {
-        const charges = await stripe.charges.list({
+        const charges = await getStripe().charges.list({
           customer: invoiceCustomerId,
           limit: 10,
         });
@@ -128,11 +126,11 @@ export async function POST(
         ? { payment_intent: paymentIntentId }
         : { charge: chargeId! };
 
-      const refund = await stripe.refunds.create(refundParams);
+      const refund = await getStripe().refunds.create(refundParams);
       stripeRefundId = refund.id;
 
       if (bot.stripeSubscriptionId) {
-        await stripe.subscriptions.cancel(bot.stripeSubscriptionId).catch(() => {});
+        await getStripe().subscriptions.cancel(bot.stripeSubscriptionId).catch(() => {});
       }
     } catch (e) {
       const stripeError = e instanceof Error ? e.message : String(e);
