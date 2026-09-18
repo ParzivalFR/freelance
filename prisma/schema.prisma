@@ -1096,3 +1096,22 @@ model Brief {
   @@index([status])
   @@map("briefs")
 }
+
+/// File d'attente des commandes envoyées par le dashboard au bot.
+///
+/// Remplace le passage par `DiscordBot.workerCommand` pour les commandes de
+/// modules (APP_POST_…, SUGGESTION_SYNC_…) : une seule case, partagée avec les
+/// ordres START/STOP/RESTART du superviseur, écrasée à chaque écriture et
+/// effacée par le superviseur avant lecture. Ici chaque commande est une ligne,
+/// traitée une fois, dans l'ordre. `workerCommand` ne sert plus qu'au
+/// superviseur.
+model BotCommand {
+  id         String    @id @default(cuid())
+  botId      String    @map("bot_id")
+  command    String
+  createdAt  DateTime  @default(now()) @map("created_at")
+  consumedAt DateTime? @map("consumed_at")
+
+  @@index([botId, consumedAt])
+  @@map("bot_commands")
+}

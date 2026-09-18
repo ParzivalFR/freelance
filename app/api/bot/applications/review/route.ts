@@ -33,9 +33,9 @@ export async function POST(request: Request) {
   });
 
   // Demande au bot d'appliquer (DM, rôle si accept)
-  await prisma.discordBot.update({
-    where: { id: submission.botId },
-    data: { workerCommand: `APP_REVIEW_${submissionId}_${action}` },
+  await prisma.botCommand.create({
+    data: { botId: submission.botId, command: `APP_REVIEW_${submissionId}_${action}` },
+    select: { id: true },
   });
 
   return NextResponse.json({ success: true });

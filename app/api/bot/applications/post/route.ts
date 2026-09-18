@@ -29,9 +29,9 @@ export async function POST(request: Request) {
     data: { channelId },
   });
 
-  await prisma.discordBot.update({
-    where: { id: form.botId },
-    data: { workerCommand: `APP_POST_${formId}` },
+  await prisma.botCommand.create({
+    data: { botId: form.botId, command: `APP_POST_${formId}` },
+    select: { id: true },
   });
 
   return NextResponse.json({ success: true, message: "Le bot va poster le formulaire d'ici quelques secondes." });
