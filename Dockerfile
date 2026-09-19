@@ -9,6 +9,17 @@ FROM base AS deps
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 RUN pnpm install --frozen-lockfile
 
+# ── Migrations ───────────────────────────────────────────────────────────────
+# Image du service `migrate` du compose : le CLI Prisma, le schéma et les
+# migrations, rien d'autre. Étape à part pour ne pas relancer `next build`
+# une seconde fois (le service n'a pas les mêmes arguments de build que `web`,
+# le cache de l'étape builder ne lui servait donc pas).
+FROM base AS migrator
+COPY --from=deps /app/node_modules ./node_modules
+COPY package.json prisma.config.ts ./
+COPY prisma ./prisma
+CMD ["pnpm", "prisma", "migrate", "deploy"]
+
 # ── Build ────────────────────────────────────────────────────────────────────
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules

@@ -3,13 +3,11 @@ services:
   # qu'après son succès : si une migration échoue, le déploiement s'arrête là
   # et l'ancien conteneur du site continue de tourner. `migrate deploy`
   # n'applique que ce qui manque et ne réinitialise jamais la base.
-  # Image = l'étape `builder` du Dockerfile (déjà construite pour `web`, donc
-  # tirée du cache) : c'est elle qui contient le CLI Prisma et les migrations.
+  # Image = l'étape `migrator` du Dockerfile (CLI Prisma + migrations).
   migrate:
     build:
       context: .
-      target: builder
-    command: ["pnpm", "prisma", "migrate", "deploy"]
+      target: migrator
     restart: "no"
     env_file:
       - path: .env
