@@ -21,7 +21,9 @@
 - Pour du dev rapide sans créer de fichier migration → `pnpm prisma db push`
 - Si une migration a été modifiée par erreur après application → la résoudre sans toucher aux données : `pnpm prisma migrate resolve --applied <nom_migration>`, puis créer une nouvelle migration
 - Après tout changement de schéma → régénérer le client : `pnpm prisma generate`
-- Ne jamais lancer `prisma migrate reset` sur la base de prod Supabase — cela supprime toutes les données
+- La prod est un Postgres sur le VPS, injoignable depuis le poste de dev. Le `.env` local pointe sur la base Docker `freelance-db-dev` (port 5456) : `migrate dev`, `db push` et `migrate reset` ne se lancent **que** contre `localhost`
+- En prod, les migrations passent toutes seules au déploiement : le service `migrate` du compose lance `prisma migrate deploy` avant le site. Donc : `migrate dev` en local → commit du dossier de migration → push. Pas de SQL manuel en prod
+- Ce schéma est le seul maître de la base, y compris pour les tables que seul bot-engine utilise (`event_locks`…) : une table absente d'ici serait supprimée par la prochaine migration
 
 ## Ajout d'un nouveau module bot
 
