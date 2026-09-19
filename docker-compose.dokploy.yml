@@ -1,4 +1,22 @@
 services:
+  # Applique les migrations Prisma en attente, puis s'arrête. `web` ne démarre
+  # qu'après son succès : si une migration échoue, le déploiement s'arrête là
+  # et l'ancien conteneur du site continue de tourner. `migrate deploy`
+  # n'applique que ce qui manque et ne réinitialise jamais la base.
+  # Image = l'étape `builder` du Dockerfile (déjà construite pour `web`, donc
+  # tirée du cache) : c'est elle qui contient le CLI Prisma et les migrations.
+  migrate:
+    build:
+      context: .
+      target: builder
+    command: ["pnpm", "prisma", "migrate", "deploy"]
+    restart: "no"
+    env_file:
+      - path: .env
+        required: false
+    networks:
+      - dokploy-network
+
   web:
     build:
       context: .
@@ -8,6 +26,9 @@ services:
         NEXT_PUBLIC_SOCKET_SECRET: ${NEXT_PUBLIC_SOCKET_SECRET}
         SITE_URL: ${SITE_URL}
     restart: unless-stopped
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
     # Toutes les variables saisies dans Dokploy arrivent dans le conteneur.
     # Le compose de bot-engine ne transmettait que DATABASE_URL : on évite de
     # reproduire ce piège ici.

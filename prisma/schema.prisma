@@ -334,8 +334,8 @@ model ReactionRolePanel {
   color       String?
   mode        String   @default("toggle")
   buttons     Json     @default("[]")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz(6) @default(now())
 
   @@index([botId])
   @@map("reaction_role_panels")
@@ -685,7 +685,7 @@ model BotLog {
   botId     String   @map("bot_id")
   message   String
   level     String   @default("info")
-  createdAt DateTime @default(now()) @map("created_at")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   @@index([botId])
   @@index([createdAt(sort: Desc)])
@@ -703,9 +703,9 @@ model Ticket {
   status    String    @default("open")
   claimedBy String?   @map("claimed_by")
   rating    Int?
-  closedAt  DateTime? @map("closed_at")
-  createdAt DateTime  @default(now()) @map("created_at")
-  updatedAt DateTime  @updatedAt @map("updated_at")
+  closedAt  DateTime? @map("closed_at") @db.Timestamptz(6)
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6) @default(now())
 
   @@index([botId])
   @@index([guildId, status])
@@ -722,11 +722,11 @@ model EconomyWallet {
   balance     BigInt    @default(0)
   bank        BigInt    @default(0)
   totalEarned BigInt    @default(0) @map("total_earned")
-  lastDaily   DateTime? @map("last_daily")
-  lastWeekly  DateTime? @map("last_weekly")
-  lastWork    DateTime? @map("last_work")
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
+  lastDaily   DateTime? @map("last_daily") @db.Timestamptz(6)
+  lastWeekly  DateTime? @map("last_weekly") @db.Timestamptz(6)
+  lastWork    DateTime? @map("last_work") @db.Timestamptz(6)
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(6) @default(now())
 
   @@unique([botId, guildId, userId])
   @@index([botId])
@@ -753,8 +753,8 @@ model AutoResponse {
   replyToUser       Boolean  @default(true) @map("reply_to_user")
   triggerCount      Int      @default(0) @map("trigger_count")
   enabled           Boolean  @default(true)
-  createdAt         DateTime @default(now()) @map("created_at")
-  updatedAt         DateTime @updatedAt @map("updated_at")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz(6) @default(now())
 
   @@index([botId])
   @@index([guildId])
@@ -771,7 +771,7 @@ model Birthday {
   day          Int
   month        Int
   roleRemoveAt DateTime? @map("role_remove_at")
-  createdAt    DateTime  @default(now()) @map("created_at")
+  createdAt    DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
 
   bot DiscordBot @relation(fields: [botId], references: [id], onDelete: Cascade)
 
@@ -797,7 +797,7 @@ model ApplicationForm {
   messageId       String?  @map("message_id")
   maxSubmissions  Int      @default(0) @map("max_submissions")
   enabled         Boolean  @default(true)
-  createdAt       DateTime @default(now()) @map("created_at")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   @@index([botId])
   @@map("application_forms")
@@ -812,8 +812,8 @@ model ApplicationSubmission {
   answers    Json      @default("[]")
   status     String    @default("pending")
   reviewerId String?   @map("reviewer_id")
-  reviewedAt DateTime? @map("reviewed_at")
-  createdAt  DateTime  @default(now()) @map("created_at")
+  reviewedAt DateTime? @map("reviewed_at") @db.Timestamptz(6)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
 
   @@index([formId])
   @@index([botId])
@@ -832,7 +832,7 @@ model Suggestion {
   messageId   String?  @map("message_id")
   response    String?
   respondedBy String?  @map("responded_by")
-  createdAt   DateTime @default(now()) @map("created_at")
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
 
   @@index([botId])
   @@map("suggestions")
@@ -845,10 +845,10 @@ model ScheduledMessage {
   channelId      String    @map("channel_id")
   content        String
   cronExpression String?   @map("cron_expression")
-  nextRun        DateTime? @map("next_run")
+  nextRun        DateTime? @map("next_run") @db.Timestamptz(6)
   isRecurring    Boolean   @default(false) @map("is_recurring")
   enabled        Boolean   @default(true)
-  createdAt      DateTime  @default(now()) @map("created_at")
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
 
   @@index([botId])
   @@index([nextRun])
@@ -866,11 +866,12 @@ model ServerGeneration {
   complexity String?
   structure  Json      @default("{}")
   status     String    @default("pending")
-  createdAt  DateTime  @default(now()) @map("created_at")
-  appliedAt  DateTime? @map("applied_at")
+  createdAt  DateTime  @default(now()) @map("created_at") @db.Timestamptz(6)
+  appliedAt  DateTime? @map("applied_at") @db.Timestamptz(6)
 
   @@index([botId])
   @@index([guildId])
+  @@index([createdAt(sort: Desc)], map: "sgen_created_at_idx")
   @@map("server_generations")
 }
 
@@ -1091,7 +1092,7 @@ model Brief {
   submittedAt DateTime? @map("submitted_at")
 
   createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  updatedAt DateTime @updatedAt @map("updated_at") @default(now())
 
   @@index([status])
   @@map("briefs")
@@ -1114,4 +1115,34 @@ model BotCommand {
 
   @@index([botId, consumedAt])
   @@map("bot_commands")
+}
+
+// Verrou inter-processus de bot-engine (un évènement Discord traité une seule
+// fois quand deux conteneurs se chevauchent). Le site ne s'en sert pas : le
+// modèle est déclaré ici parce que ce schéma est le seul maître des
+// migrations, et qu'une table absente du schéma serait supprimée par Prisma.
+model EventLock {
+  key       String   @id
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([createdAt])
+  @@map("event_locks")
+}
+
+// Historique des transferts du module économie. Table créée à la main, encore
+// inutilisée : déclarée pour la même raison que EventLock.
+model EconomyTransaction {
+  id          BigInt   @id @default(autoincrement())
+  botId       String   @map("bot_id")
+  guildId     String   @map("guild_id")
+  fromUserId  String?  @map("from_user_id")
+  toUserId    String   @map("to_user_id")
+  amount      BigInt
+  type        String
+  description String?
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+
+  @@index([botId], map: "et_bot_id_idx")
+  @@index([toUserId], map: "et_to_user_idx")
+  @@map("economy_transactions")
 }
