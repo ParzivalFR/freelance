@@ -19,9 +19,17 @@ services:
       # pas. Vercel le règle tout seul, derrière Traefik il faut l'autoriser.
       AUTH_TRUST_HOST: "true"
     # Pas de section `ports` : Traefik route en interne vers le port 3000.
+    # Réseau partagé de Dokploy : Traefik y route le trafic, et c'est par lui
+    # que le site joint la base Postgres hébergée sur le même VPS.
+    networks:
+      - dokploy-network
     # Plafond mémoire : le site partage le VPS avec bot-engine, il ne doit
     # jamais pouvoir l'étouffer.
     deploy:
       resources:
         limits:
           memory: 1g
+
+networks:
+  dokploy-network:
+    external: true
