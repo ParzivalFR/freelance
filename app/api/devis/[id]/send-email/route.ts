@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { auth } from '@/lib/auth';
+import { requireAdmin } from '@/lib/require-admin';
 import { generateDevisPDF } from '@/lib/pdf-generator';
 import { sendDevisEmail } from '@/lib/email';
 
@@ -9,9 +9,9 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const session = await auth();
+    const session = await requireAdmin();
     
-    if (!session?.user?.email) {
+    if (!session) {
       return NextResponse.json(
         { error: 'Non autorisé' },
         { status: 401 }

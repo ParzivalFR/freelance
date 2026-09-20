@@ -2,7 +2,6 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import { SessionProvider } from "next-auth/react";
 import { GeistSans } from "geist/font/sans";
@@ -84,7 +83,6 @@ export default function RootLayout({
         data-domain="gael-dev.fr"
         src="https://plausible.gael-dev.fr/js/script.js"
       />
-      <SpeedInsights />
       <body
         className={cn(
           "min-h-dvh bg-background font-sans antialiased flex flex-col",

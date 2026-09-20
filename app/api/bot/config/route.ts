@@ -111,8 +111,13 @@ export async function PATCH(request: Request) {
       moduleQuests, moduleProfiles, moduleTeams, moduleInvites, moduleAntinuke, moduleBackup,
     };
     if (!isPro) {
+      // Le dashboard renvoie tous les drapeaux à chaque enregistrement. On ne
+      // refuse que l'ACTIVATION d'un module PRO : un client dont l'abonnement
+      // s'est terminé garde ses anciens drapeaux à true (le bot, lui, ne charge
+      // pas ces modules sans plan), et doit pouvoir enregistrer le reste.
+      const current = existing as Record<string, unknown>;
       for (const [key, value] of Object.entries(PRO_MODULES)) {
-        if (value === true) {
+        if (value === true && current[key] !== true) {
           return NextResponse.json(
             { error: `Le module "${key}" nécessite un abonnement PRO.` },
             { status: 403 }

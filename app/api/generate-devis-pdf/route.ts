@@ -1,9 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { generateDevisPDF, type DevisPDFRequest } from '@/lib/pdf-generator';
 import { prisma } from '@/lib/prisma';
+import { requireAdmin, unauthorizedResponse } from '@/lib/require-admin';
 
 export async function POST(request: NextRequest) {
   try {
+    // Écrit en base et sert à l'envoi de mails : réservé à l'admin.
+    if (!(await requireAdmin())) return unauthorizedResponse();
+
     const data: DevisPDFRequest = await request.json();
 
     // Validation des données
@@ -65,71 +69,6 @@ export async function POST(request: NextRequest) {
         'Content-Disposition': `attachment; filename="devis-${data.devisNumber}.pdf"`,
         'Content-Length': pdfBuffer.length.toString(),
         'X-Devis-Id': savedDevis.id, // ID du devis sauvegardé
-      },
-    });
-  } catch (error) {
-    console.error('Erreur lors de la génération du PDF:', error);
-    return NextResponse.json(
-      { error: 'Erreur lors de la génération du PDF' },
-      { status: 500 }
-    );
-  }
-}
-
-export async function GET() {
-  // Exemple de données pour tester l'API
-  const sampleData: DevisPDFRequest = {
-    devisNumber: 'DEV-2024-001',
-    date: new Date().toLocaleDateString('fr-FR'),
-    validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toLocaleDateString('fr-FR'),
-    client: {
-      firstName: 'John',
-      lastName: 'Doe',
-      company: 'ACME Corp',
-      email: 'john@acme.com',
-      phone: '01 23 45 67 89',
-      address: '123 Rue Example\n75000 Paris',
-    },
-    companyInfo: {
-      name: 'Mon Entreprise',
-      address: '456 Avenue Business\n69000 Lyon',
-      phone: '04 12 34 56 78',
-      email: 'contact@mon-entreprise.fr',
-      siret: '12345678901234',
-    },
-    items: [
-      {
-        id: '1',
-        description: 'Développement site web vitrine responsive',
-        quantity: 1,
-        unitPrice: 2500,
-        total: 2500,
-      },
-      {
-        id: '2',
-        description: 'Formation utilisateur et documentation',
-        quantity: 2,
-        unitPrice: 500,
-        total: 1000,
-      },
-    ],
-    subtotal: 3500,
-    tvaRate: 20,
-    tvaAmount: 700,
-    total: 4200,
-    tvaApplicable: true,
-    notes: 'Livraison prévue sous 4 semaines. Formation incluse. Maintenance 1 an offerte.',
-  };
-
-  try {
-    const pdfBuffer = await generateDevisPDF(sampleData);
-
-    return new NextResponse(new Uint8Array(pdfBuffer), {
-      status: 200,
-      headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="devis-exemple.pdf"`,
-        'Content-Length': pdfBuffer.length.toString(),
       },
     });
   } catch (error) {

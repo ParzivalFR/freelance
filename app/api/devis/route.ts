@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { auth } from '@/lib/auth';
+import { requireAdmin } from '@/lib/require-admin';
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth();
+    const session = await requireAdmin();
     
-    if (!session?.user?.email) {
+    if (!session) {
       return NextResponse.json(
         { error: 'Non autorisé' },
         { status: 401 }
