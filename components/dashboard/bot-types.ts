@@ -117,6 +117,7 @@ export interface ModuleConfig {
   panelDescription?: string;
   panelColor?: string;
   panelImage?: string;
+  panelImageTop?: boolean;
   categories?: TicketCategory[];
   enableRating?: boolean;
   enableClaim?: boolean;
@@ -154,6 +155,7 @@ export interface ModuleConfig {
   verificationEmbedDescription?: string;
   verificationEmbedColor?: string;
   verificationEmbedImage?: string;
+  verificationImageTop?: boolean;
   verificationButtonLabel?: string;
   verificationButtonStyle?: string;
   verificationCaptchaMode?: boolean;

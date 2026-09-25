@@ -223,6 +223,17 @@ export default function TicketsPage() {
             placeholder="https://..."
           />
         </div>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="font-mono text-[10px] text-foreground">image en haut du panel</p>
+            <p className="font-mono text-[9px] text-muted-foreground/60">En bannière au-dessus du titre, sinon après le texte</p>
+          </div>
+          <Switch
+            checked={config.config.panelImageTop ?? false}
+            onCheckedChange={(v) => updateModuleConfig("panelImageTop", v)}
+            className="scale-75"
+          />
+        </div>
 
         {/* Catégories */}
         <p className="font-mono text-[9px] uppercase tracking-widest text-blue-500/70">

@@ -99,6 +99,17 @@ export default function VerificationPage() {
               placeholder="https://..."
             />
           </div>
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="font-mono text-[10px] text-foreground">image en haut du panel</p>
+              <p className="font-mono text-[9px] text-muted-foreground/60">En bannière au-dessus du titre, sinon après le texte</p>
+            </div>
+            <Switch
+              checked={config.config.verificationImageTop ?? false}
+              onCheckedChange={(v) => updateModuleConfig("verificationImageTop", v)}
+              className="scale-75"
+            />
+          </div>
           <CyberInput
             label="label du bouton"
             value={config.config.verificationButtonLabel ?? ""}

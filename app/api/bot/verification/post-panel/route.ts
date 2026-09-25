@@ -34,6 +34,8 @@ export async function POST(request: Request) {
     "Clique sur le bouton ci-dessous pour accepter les règles et accéder au serveur.";
   const buttonLabel = (cfg.verificationButtonLabel as string) || "✅ J'accepte les règles";
   const image = cfg.verificationEmbedImage as string | undefined;
+  const imageBlock = image ? [{ type: 12, items: [{ media: { url: image } }] }] : [];
+  const imageTop = cfg.verificationImageTop === true;
 
   const BUTTON_STYLES: Record<string, number> = { blue: 1, gray: 2, green: 3, red: 4 };
   const buttonStyle = BUTTON_STYLES[cfg.verificationButtonStyle as string] ?? 3;
@@ -43,10 +45,11 @@ export async function POST(request: Request) {
     type: 17,
     accent_color: color,
     components: [
+      ...(imageTop ? imageBlock : []),
       { type: 10, content: `## ${title}` },
       { type: 14, spacing: 1 },
       { type: 10, content: description },
-      ...(image ? [{ type: 12, items: [{ media: { url: image } }] }] : []),
+      ...(imageTop ? [] : imageBlock),
       { type: 14, spacing: 1 },
       {
         type: 1,
