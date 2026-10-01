@@ -1,295 +1,123 @@
-// components/site-nav.tsx
 "use client";
 
-import { cn } from "@/lib/utils";
-import { AnimatePresence, motion } from "framer-motion";
-import {
-  LayoutDashboard,
-  LogOut,
-  Menu,
-  Shield,
-  UserIcon,
-  X,
-} from "lucide-react";
+import { LayoutDashboard, LogOut, Menu, Shield, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
-import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
-import { ThemeToggle } from "./theme-toggle";
-
+import { useState } from "react";
 
 const links = [
-  { label: "Témoignages", href: "/#testimonials" },
-  { label: "Tarifs", href: "/#pricing" },
-  { label: "FAQ", href: "/#faq" },
+  { label: "Réalisations", href: "/#realisations" },
+  { label: "Ce que je fais", href: "/#services" },
+  { label: "À propos", href: "/#a-propos" },
+  { label: "Avis", href: "/#avis" },
 ];
-
-function UserMenu({
-  image,
-  name,
-  isAdmin,
-}: {
-  image?: string | null;
-  name?: string | null;
-  isAdmin: boolean;
-}) {
-  const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node))
-        setOpen(false);
-    };
-    document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
-  }, []);
-
-  return (
-    <div ref={ref} className="relative">
-      <button
-        onClick={() => setOpen((v) => !v)}
-        className="flex size-8 items-center justify-center overflow-hidden rounded-full border border-border transition-all hover:border-[#7158ff]/50 hover:ring-2 hover:ring-[#7158ff]/20"
-      >
-        {image ? (
-          <Image
-            src={image}
-            alt={name ?? "avatar"}
-            width={32}
-            height={32}
-            className="size-full object-cover"
-          />
-        ) : (
-          <div className="flex size-full items-center justify-center bg-[#7158ff]/15">
-            <UserIcon className="size-3.5 text-[#7158ff]" />
-          </div>
-        )}
-      </button>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -4 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -4 }}
-            transition={{ duration: 0.12 }}
-            className="absolute right-0 top-10 z-50 min-w-[160px] rounded-xl border border-border bg-background/95 p-1 shadow-lg shadow-black/10 backdrop-blur-lg"
-          >
-            {name && (
-              <p className="truncate px-3 py-1.5 font-mono text-[10px] text-muted-foreground">
-                {name}
-              </p>
-            )}
-            <Link
-              href="/dashboard/bot"
-              onClick={() => setOpen(false)}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted"
-            >
-              <LayoutDashboard className="size-3.5 text-muted-foreground" />
-              Dashboard
-            </Link>
-            {isAdmin && (
-              <Link
-                href="/admin"
-                onClick={() => setOpen(false)}
-                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground transition-colors hover:bg-muted"
-              >
-                <Shield className="size-3.5 text-[#7158ff]" />
-                Admin
-              </Link>
-            )}
-            <div className="my-1 border-t border-border" />
-            <button
-              onClick={() => signOut({ callbackUrl: "/" })}
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-500 transition-colors hover:bg-red-500/10"
-            >
-              <LogOut className="size-3.5" />
-              Déconnexion
-            </button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-}
 
 export default function SiteNav() {
   const { data: session } = useSession();
-  const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  const isAdmin = session?.user?.role === "ADMIN";
 
   return (
-    <>
-      <header className="fixed inset-x-0 top-0 z-50 flex justify-center px-4 pt-4">
-        {/* ── Desktop : pill flottante ── */}
-        <div
-          className={cn(
-            "hidden w-full max-w-2xl items-center justify-between rounded-full border px-5 py-2.5 transition-all duration-300 md:flex bg-background/95 backdrop-blur-lg",
-            scrolled ? "border-border shadow-lg" : "nav-frosted",
-          )}
+    <header className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur-md">
+      <div className="mx-auto flex max-w-[1120px] items-center justify-between gap-4 px-5 py-3">
+        <Link
+          href="/"
+          className="flex items-center gap-2.5 font-[family-name:var(--font-bricolage)] font-bold tracking-tight"
         >
-          <Link
-            href="/"
-            className="font-(family-name:--font-display) text-xl uppercase leading-none"
-          >
-            GR<span className="text-[#7158ff]">.</span>
-          </Link>
+          <span className="grid size-[34px] place-items-center rounded-full bg-primary font-[family-name:var(--font-jetbrains)] text-xs font-medium text-primary-foreground">
+            gr
+          </span>
+          <span className="hidden whitespace-nowrap min-[400px]:inline">Gaël Richard</span>
+        </Link>
 
-          <nav className="flex items-center gap-6">
-            {links.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="text-sm text-muted-foreground transition-colors hover:text-foreground"
-              >
-                {l.label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="flex items-center gap-2">
-            <ThemeToggle />
-            {session ? (
-              <UserMenu
-                image={session.user?.image}
-                name={session.user?.name}
-                isAdmin={session.user?.role === "ADMIN"}
-              />
-            ) : (
-              <Link
-                href="/signin"
-                className="rounded-full border border-border px-4 py-1.5 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
-              >
-                Connexion
-              </Link>
-            )}
+        <nav className="hidden items-center gap-7 text-[15px] font-medium text-muted-foreground md:flex">
+          {links.map((l) => (
             <Link
-              href="/#contact"
-              className="rounded-full bg-[#7158ff] px-4 py-1.5 text-sm font-semibold text-white transition-opacity hover:opacity-85"
+              key={l.href}
+              href={l.href}
+              className="transition-colors hover:text-foreground"
             >
-              Contact
+              {l.label}
             </Link>
-          </div>
-        </div>
+          ))}
+        </nav>
 
-        {/* ── Mobile : pill compacte ── */}
-        <div
-          className={cn(
-            "flex w-full items-center justify-between rounded-full border px-4 py-2.5 transition-all duration-300 md:hidden bg-background/95 backdrop-blur-lg",
-            scrolled ? "border-border shadow-lg" : "nav-frosted",
-          )}
-        >
+        <div className="flex items-center gap-2">
           <Link
-            href="/"
-            className="font-[family-name:var(--font-display)] text-xl uppercase leading-none"
+            href={session ? "/dashboard/bot" : "/signin"}
+            className="hidden rounded-full px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground md:block"
           >
-            GR<span className="text-[#7158ff]">.</span>
+            {session ? "Mon espace" : "Connexion"}
           </Link>
-
-          <div className="flex items-center gap-1">
-            <ThemeToggle />
-            <button
-              onClick={() => setOpen((p) => !p)}
-              className="rounded-full p-1.5 text-foreground transition-colors hover:bg-muted"
-            >
-              <AnimatePresence mode="wait" initial={false}>
-                <motion.div
-                  key={open ? "close" : "open"}
-                  initial={{ opacity: 0, rotate: -90, scale: 0.8 }}
-                  animate={{ opacity: 1, rotate: 0, scale: 1 }}
-                  exit={{ opacity: 0, rotate: 90, scale: 0.8 }}
-                  transition={{ duration: 0.15 }}
-                >
-                  {open ? (
-                    <X className="size-5" />
-                  ) : (
-                    <Menu className="size-5" />
-                  )}
-                </motion.div>
-              </AnimatePresence>
-            </button>
-          </div>
-        </div>
-      </header>
-
-      {/* Menu mobile animé */}
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95, y: -8 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -8 }}
-            transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed inset-x-4 top-[5.25rem] z-40 origin-top rounded-2xl border border-[#7158ff]/20 bg-background/95 px-3 py-3 shadow-lg shadow-[#7158ff]/5 backdrop-blur-lg md:hidden"
+          <Link
+            href="/#contact"
+            className="whitespace-nowrap rounded-full bg-primary px-[18px] py-2 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5"
           >
-            <nav className="flex flex-col gap-1">
-              {links.map((l) => (
+            Me contacter
+          </Link>
+          <button
+            onClick={() => setOpen((v) => !v)}
+            aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={open}
+            className="rounded-full p-2 md:hidden"
+          >
+            {open ? <X className="size-5" /> : <Menu className="size-5" />}
+          </button>
+        </div>
+      </div>
+
+      {open && (
+        <nav className="flex flex-col gap-1 border-t px-5 py-3 md:hidden">
+          {links.map((l) => (
+            <Link
+              key={l.href}
+              href={l.href}
+              onClick={() => setOpen(false)}
+              className="rounded-xl px-3 py-2.5 text-[15px] font-medium text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              {l.label}
+            </Link>
+          ))}
+          <div className="my-1 border-t" />
+          {session ? (
+            <>
+              <Link
+                href="/dashboard/bot"
+                onClick={() => setOpen(false)}
+                className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-[15px] text-muted-foreground hover:bg-muted hover:text-foreground"
+              >
+                <LayoutDashboard className="size-4" />
+                Mon espace
+              </Link>
+              {isAdmin && (
                 <Link
-                  key={l.href}
-                  href={l.href}
+                  href="/admin"
                   onClick={() => setOpen(false)}
-                  className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-[15px] text-muted-foreground hover:bg-muted hover:text-foreground"
                 >
-                  {l.label}
-                </Link>
-              ))}
-              {session ? (
-                <>
-                  <Link
-                    href="/dashboard/bot"
-                    onClick={() => setOpen(false)}
-                    className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                  >
-                    <LayoutDashboard className="size-3.5" />
-                    Dashboard
-                  </Link>
-                  {session.user?.role === "ADMIN" && (
-                    <Link
-                      href="/admin"
-                      onClick={() => setOpen(false)}
-                      className="flex items-center gap-2 rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                    >
-                      <Shield className="size-3.5 text-[#7158ff]" />
-                      Admin
-                    </Link>
-                  )}
-                  <button
-                    onClick={() => signOut({ callbackUrl: "/" })}
-                    className="flex w-full items-center gap-2 rounded-xl px-4 py-2.5 text-sm text-red-500 transition-colors hover:bg-red-500/10"
-                  >
-                    <LogOut className="size-3.5" />
-                    Déconnexion
-                  </button>
-                </>
-              ) : (
-                <Link
-                  href="/signin"
-                  onClick={() => setOpen(false)}
-                  className="block rounded-xl px-4 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                >
-                  Connexion
+                  <Shield className="size-4" />
+                  Admin
                 </Link>
               )}
-              <Link
-                href="/#contact"
-                onClick={() => setOpen(false)}
-                className="mt-1 block rounded-xl bg-[#7158ff] px-4 py-2.5 text-center text-sm font-semibold text-white transition-opacity hover:opacity-85"
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-left text-[15px] text-red-600 hover:bg-red-500/10"
               >
-                Me contacter
-              </Link>
-            </nav>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Spacer réduit sur mobile */}
-      <div className="h-14 md:h-16" />
-    </>
+                <LogOut className="size-4" />
+                Déconnexion
+              </button>
+            </>
+          ) : (
+            <Link
+              href="/signin"
+              onClick={() => setOpen(false)}
+              className="rounded-xl px-3 py-2.5 text-[15px] text-muted-foreground hover:bg-muted hover:text-foreground"
+            >
+              Connexion
+            </Link>
+          )}
+        </nav>
+      )}
+    </header>
   );
 }

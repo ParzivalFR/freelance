@@ -35,6 +35,7 @@ export async function POST(request: Request) {
       url,
       technologies,
       category,
+      label,
       isPublished,
       order,
     } = body;
@@ -68,6 +69,7 @@ export async function POST(request: Request) {
         url,
         technologies,
         category,
+        label: label || null,
         isPublished: isPublished ?? true,
         order: finalOrder,
       },

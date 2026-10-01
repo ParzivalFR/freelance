@@ -37,7 +37,7 @@ export default async function EditProjectPage({
         }
       />
 
-      <ProjectForm initialData={project} />
+      <ProjectForm initialData={{ ...project, label: project.label ?? undefined }} />
     </div>
   );
 }

@@ -439,6 +439,8 @@ model Project {
   url          String
   technologies String[] // Technologies utilisées (React, Next.js, etc.)
   category     String   @default("web") // web, mobile, design
+  // Libellé libre affiché au-dessus du titre sur la page d'accueil ("Site de festival")
+  label        String?
   isPublished  Boolean  @default(true)
   featured     Boolean  @default(false) @map("featured")
   order        Int      @default(0) // Pour l'ordre d'affichage

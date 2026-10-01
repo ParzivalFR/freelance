@@ -9,7 +9,7 @@ export default async function MarketingLayout({
   children,
 }: MarketingLayoutProps) {
   return (
-    <div className="w-full overflow-x-clip">
+    <div className="landing flex min-h-dvh w-full flex-col">
       <SiteNav />
       <main className="flex-1">{children}</main>
       <SiteFooter />

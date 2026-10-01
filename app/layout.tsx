@@ -6,7 +6,15 @@ import type { Metadata, Viewport } from "next";
 import { SessionProvider } from "next-auth/react";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
-import { Black_Han_Sans, Caveat, DM_Sans, Playfair_Display } from "next/font/google";
+import {
+  Black_Han_Sans,
+  Bricolage_Grotesque,
+  Caveat,
+  DM_Sans,
+  Instrument_Sans,
+  JetBrains_Mono,
+  Playfair_Display,
+} from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
 
@@ -29,6 +37,22 @@ const dmSans = DM_Sans({
 const playfair = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-serif",
+});
+
+// Polices de la page d'accueil (classe .landing dans globals.css)
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-bricolage",
+});
+
+const instrumentSans = Instrument_Sans({
+  subsets: ["latin"],
+  variable: "--font-instrument",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-jetbrains",
 });
 
 export const viewport: Viewport = {
@@ -91,7 +115,10 @@ export default function RootLayout({
           blackHanSans.variable,
           caveat.variable,
           dmSans.variable,
-          playfair.variable
+          playfair.variable,
+          bricolage.variable,
+          instrumentSans.variable,
+          jetbrainsMono.variable
         )}
       >
         <SessionProvider>

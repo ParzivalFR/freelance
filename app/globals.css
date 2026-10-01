@@ -341,3 +341,66 @@
     animation: none;
     mix-blend-mode: normal;
 }
+
+/* ── Pages publiques (accueil, mentions) ─────────────────────────────────────
+   Thème clair unique : on redéfinit les couleurs ici pour qu'elles ne suivent
+   pas le mode sombre du dashboard. Les --color-* sont redéclarées en dur car
+   celles de @theme sont résolues sur :root. */
+.landing {
+  color-scheme: light;
+  --color-background: #f5f4f1;
+  --color-foreground: #1e1f24;
+  --color-card: #ffffff;
+  --color-card-foreground: #1e1f24;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #1e1f24;
+  --color-primary: #1e1f24;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #ecebe7;
+  --color-secondary-foreground: #1e1f24;
+  --color-muted: #ecebe7;
+  --color-muted-foreground: #696a70;
+  --color-accent: #dedbf3;
+  --color-accent-foreground: #5b58a6;
+  --color-border: #e3e2de;
+  --color-input: #d9d7d1;
+  --color-ring: #5b58a6;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-instrument), system-ui, sans-serif;
+}
+
+.landing h1,
+.landing h2,
+.landing h3 {
+  font-family: var(--font-bricolage), system-ui, sans-serif;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+
+/* Mot posé sur une pastille lavande */
+.landing .hl {
+  background: var(--color-accent);
+  border-radius: 0.28em;
+  padding: 0 0.16em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+/* Étiquette façon commentaire de code */
+.landing .note {
+  display: inline-block;
+  font-family: var(--font-jetbrains), ui-monospace, monospace;
+  font-size: 0.82rem;
+  line-height: 1.2;
+  color: var(--color-accent-foreground);
+  background: var(--color-accent);
+  padding: 5px 10px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+
+.landing .note-comment::before {
+  content: "// ";
+  opacity: 0.55;
+}

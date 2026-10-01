@@ -39,6 +39,7 @@ const projectSchema = z.object({
   url: z.string().url("URL invalide"),
   image: z.string().optional(),
   category: z.string().min(1, "Sélectionnez une catégorie"),
+  label: z.string().max(40, "40 caractères maximum").optional(),
   technologies: z.array(z.string()).min(1, "Ajoutez au moins une technologie"),
   isPublished: z.boolean().default(true),
   order: z.number().min(0),
@@ -94,6 +95,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
       url: initialData?.url || "",
       image: initialData?.image || "",
       category: initialData?.category || "",
+      label: initialData?.label || "",
       technologies: initialData?.technologies || [],
       isPublished: initialData?.isPublished ?? true,
       order: initialData?.order || 0,
@@ -269,6 +271,20 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
                           placeholder="https://mon-projet.com"
                           {...field}
                         />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="label"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Libellé affiché sur l'accueil</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Site de festival" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>

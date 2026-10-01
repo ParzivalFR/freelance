@@ -44,6 +44,7 @@ export async function PUT(
       url,
       technologies,
       category,
+      label,
       isPublished,
       order,
     } = body;
@@ -70,7 +71,10 @@ export async function PUT(
 
     const project = await prisma.project.update({
       where: { id },
-      data: { title, description, image, url, technologies, category, isPublished, order },
+      data: {
+        title, description, image, url, technologies, category, isPublished, order,
+        ...(label !== undefined && { label: label || null }),
+      },
     });
 
     return NextResponse.json(project);
