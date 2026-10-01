@@ -51,7 +51,7 @@ export default function SiteNav() {
           </Link>
           <Link
             href="/#contact"
-            className="whitespace-nowrap rounded-full bg-primary px-[18px] py-2 text-sm font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5"
+            className="whitespace-nowrap rounded-full bg-primary px-[18px] py-2 text-sm font-semibold text-primary-foreground transition-opacity hover:opacity-85"
           >
             Me contacter
           </Link>

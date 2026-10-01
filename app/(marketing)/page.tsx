@@ -84,13 +84,13 @@ export default async function Page() {
           <div className="mt-8 flex flex-wrap items-center gap-3">
             <Link
               href="#contact"
-              className="rounded-full bg-primary px-6 py-3.5 font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5"
+              className="rounded-full bg-primary px-6 py-3.5 font-semibold text-primary-foreground transition-opacity hover:opacity-85"
             >
               Parlons de votre projet
             </Link>
             <Link
               href="#realisations"
-              className="rounded-full border bg-card px-6 py-3.5 font-semibold transition-transform hover:-translate-y-0.5"
+              className="rounded-full border bg-card px-6 py-3.5 font-semibold transition-colors hover:bg-muted"
             >
               Voir mes réalisations
             </Link>

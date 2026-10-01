@@ -266,7 +266,7 @@ export default function ContactSection() {
             <button
               type="submit"
               disabled={isMutating}
-              className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary font-semibold text-primary-foreground transition-transform hover:-translate-y-0.5 disabled:opacity-50"
+              className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-primary font-semibold text-primary-foreground transition-opacity hover:opacity-85 disabled:opacity-50"
             >
               {isMutating ? (
                 <>

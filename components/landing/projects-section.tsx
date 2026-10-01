@@ -75,7 +75,7 @@ function ProjectCard({ project, big }: { project: LandingProject; big: boolean }
       target="_blank"
       rel="noopener noreferrer"
       className={cn(
-        "group flex min-w-0 flex-col gap-5 overflow-hidden rounded-[28px] border bg-muted px-6 pt-6 md:px-8 md:pt-8",
+        "flex min-w-0 flex-col gap-5 overflow-hidden rounded-[28px] border bg-muted px-6 pt-6 transition-colors hover:border-foreground/30 md:px-8 md:pt-8",
         big && "md:col-span-2 md:grid md:grid-cols-[0.8fr_1.2fr] md:items-end md:gap-12",
       )}
     >
@@ -110,7 +110,7 @@ function ProjectCard({ project, big }: { project: LandingProject; big: boolean }
           src={project.image}
           alt={`Aperçu de ${project.title}`}
           host={host}
-          className="rounded-t-xl border-b-0 shadow-[0_-14px_44px_-28px_rgba(30,31,36,0.4)] transition-transform duration-300 group-hover:-translate-y-1.5"
+          className="rounded-t-xl border-b-0 shadow-[0_-14px_44px_-28px_rgba(30,31,36,0.4)]"
         />
       )}
     </a>
@@ -143,7 +143,7 @@ export default function ProjectsSection({ projects }: { projects: LandingProject
           <div className="mt-8 flex justify-center">
             <button
               onClick={() => setShowAll(true)}
-              className="rounded-full border bg-card px-6 py-3 font-semibold transition-transform hover:-translate-y-0.5"
+              className="rounded-full border bg-card px-6 py-3 font-semibold transition-colors hover:bg-muted"
             >
               Voir tous les projets ({projects.length})
             </button>

@@ -34,14 +34,14 @@ export default function ReviewsSection({ reviews }: { reviews: LandingReview[] }
               <button
                 onClick={() => slide(-1)}
                 aria-label="Avis précédents"
-                className="grid size-11 place-items-center rounded-full border bg-card transition-transform hover:-translate-y-0.5"
+                className="grid size-11 place-items-center rounded-full border bg-card transition-colors hover:bg-muted"
               >
                 <ArrowLeft className="size-4" />
               </button>
               <button
                 onClick={() => slide(1)}
                 aria-label="Avis suivants"
-                className="grid size-11 place-items-center rounded-full border bg-card transition-transform hover:-translate-y-0.5"
+                className="grid size-11 place-items-center rounded-full border bg-card transition-colors hover:bg-muted"
               >
                 <ArrowRight className="size-4" />
               </button>
