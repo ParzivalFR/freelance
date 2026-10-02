@@ -1,4 +1,5 @@
 import ContactSection from "@/components/landing/contact-section";
+import HeroFan from "@/components/landing/hero-fan";
 import ProjectsSection, { BrowserShot } from "@/components/landing/projects-section";
 import ReviewsSection from "@/components/landing/reviews-section";
 import { prisma } from "@/lib/prisma";
@@ -32,13 +33,6 @@ const services = [
   },
 ];
 
-// Position de chaque capture dans l'éventail du héros
-const fan = [
-  "left-0 top-[4%] w-[74%] -rotate-[5deg]",
-  "right-0 top-[30%] w-[66%] rotate-[4deg]",
-  "bottom-0 left-[10%] w-[58%] -rotate-2",
-];
-
 export default async function Page() {
   const [projects, reviews] = await Promise.all([
     prisma.project.findMany({
@@ -63,7 +57,10 @@ export default async function Page() {
     }),
   ]);
 
-  const heroShots = projects.filter((p) => p.image).slice(0, 3);
+  const heroShots = projects
+    .filter((p) => p.image)
+    .slice(0, 3)
+    .map(({ id, title, image, url }) => ({ id, title, image, url }));
 
   return (
     <>
@@ -98,26 +95,7 @@ export default async function Page() {
           </div>
         </div>
 
-        {heroShots.length > 0 && (
-          <div aria-hidden className="relative aspect-[1/0.92] w-full max-w-[520px] md:max-w-none">
-            {heroShots.map((p, i) => (
-              <div
-                key={p.id}
-                className={`absolute rounded-2xl bg-card p-2 shadow-[0_22px_50px_-26px_rgba(30,31,36,0.5)] ${fan[i]}`}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={p.image}
-                  alt=""
-                  className="block aspect-[16/10] w-full rounded-[10px] object-cover object-top"
-                />
-              </div>
-            ))}
-            <span className="note note-comment absolute bottom-[7%] right-0 z-10 -rotate-[5deg]">
-              tout est en ligne
-            </span>
-          </div>
-        )}
+        {heroShots.length > 0 && <HeroFan shots={heroShots} />}
       </section>
 
       <ProjectsSection projects={projects} />
