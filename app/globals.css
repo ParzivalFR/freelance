@@ -404,3 +404,11 @@
   content: "// ";
   opacity: 0.55;
 }
+
+/* Piste qui déborde jusqu'aux bords de l'écran mais démarre alignée sur la
+   colonne de contenu (1120px, gouttière 1.25rem). Le scroll-padding garde
+   cet alignement quand le défilement s'aimante sur une carte. */
+.landing .bleed-track {
+  padding-inline: max(1.25rem, calc((100% - 1120px) / 2 + 1.25rem));
+  scroll-padding-inline: max(1.25rem, calc((100% - 1120px) / 2 + 1.25rem));
+}

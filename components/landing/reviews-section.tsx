@@ -53,7 +53,7 @@ export default function ReviewsSection({ reviews }: { reviews: LandingReview[] }
       {/* La piste déborde jusqu'au bord de l'écran, alignée sur la colonne de contenu */}
       <div
         ref={track}
-        className="flex snap-x snap-mandatory gap-[18px] overflow-x-auto px-5 pb-2 [scrollbar-width:none] md:px-[max(1.25rem,calc((100vw-1120px)/2+1.25rem))] [&::-webkit-scrollbar]:hidden"
+        className="bleed-track flex snap-x snap-mandatory gap-[18px] overflow-x-auto pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {reviews.map((r) => (
           <figure
