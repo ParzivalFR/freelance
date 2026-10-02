@@ -3,7 +3,8 @@
 import { LayoutDashboard, LogOut, Menu, Shield, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 import { LogoMark } from "./logo";
 
 const links = [
@@ -16,25 +17,76 @@ const links = [
 export default function SiteNav() {
   const { data: session } = useSession();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [active, setActive] = useState("");
   const isAdmin = session?.user?.role === "ADMIN";
 
+  // Au défilement, la barre se resserre en pastille flottante.
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 40);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Le lien de la section traversée par le milieu de l'écran est mis en avant.
+  useEffect(() => {
+    const sections = links
+      .map((l) => document.getElementById(l.href.split("#")[1]))
+      .filter((el): el is HTMLElement => el !== null);
+    if (sections.length === 0) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) setActive(e.target.id);
+          else setActive((cur) => (cur === e.target.id ? "" : cur));
+        }
+      },
+      { rootMargin: "-50% 0px -50% 0px" }
+    );
+    sections.forEach((el) => observer.observe(el));
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <header className="sticky top-0 z-50 border-b bg-background/90 backdrop-blur-md">
-      <div className="mx-auto flex max-w-[1120px] items-center justify-between gap-4 px-5 py-3">
+    <header
+      className={cn(
+        "sticky top-0 z-50 px-3 transition-[padding] duration-300 ease-out",
+        scrolled ? "pt-3" : "pt-0"
+      )}
+    >
+      <div
+        className={cn(
+          "mx-auto flex items-center justify-between gap-4 rounded-full border transition-all duration-300 ease-out",
+          scrolled
+            ? "max-w-[820px] border-border bg-card/85 py-2 pl-4 pr-2 shadow-[0_10px_34px_-18px_rgba(30,31,36,0.45)] backdrop-blur-md"
+            : "max-w-[1120px] border-transparent px-2 py-4"
+        )}
+      >
         <Link
           href="/"
           className="flex items-center gap-2.5 font-[family-name:var(--font-bricolage)] font-bold tracking-tight"
         >
           <LogoMark className="size-8" />
-          <span className="hidden whitespace-nowrap min-[400px]:inline">Gaël Richard</span>
+          <span
+            className={cn(
+              "hidden overflow-hidden whitespace-nowrap transition-all duration-300 ease-out min-[400px]:inline-block",
+              scrolled ? "max-w-0 opacity-0 md:max-w-0" : "max-w-[10rem] opacity-100"
+            )}
+          >
+            Gaël Richard
+          </span>
         </Link>
 
-        <nav className="hidden items-center gap-7 text-[15px] font-medium text-muted-foreground md:flex">
+        <nav className="hidden items-center gap-1 text-[15px] font-medium text-muted-foreground md:flex">
           {links.map((l) => (
             <Link
               key={l.href}
               href={l.href}
-              className="transition-colors hover:text-foreground"
+              className={cn(
+                "rounded-full px-3.5 py-1.5 transition-colors hover:text-foreground",
+                active === l.href.split("#")[1] && "bg-accent text-accent-foreground"
+              )}
             >
               {l.label}
             </Link>
@@ -66,7 +118,7 @@ export default function SiteNav() {
       </div>
 
       {open && (
-        <nav className="flex flex-col gap-1 border-t px-5 py-3 md:hidden">
+        <nav className="mx-auto mt-2 flex max-w-[820px] flex-col gap-1 rounded-3xl border bg-card p-3 shadow-[0_10px_34px_-18px_rgba(30,31,36,0.45)] md:hidden">
           {links.map((l) => (
             <Link
               key={l.href}
