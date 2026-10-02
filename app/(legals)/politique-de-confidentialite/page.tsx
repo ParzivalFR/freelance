@@ -13,7 +13,7 @@ export default function PolitiqueConfidentialite() {
         </p>
 
         <div className="mb-10">
-          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-[#7158ff]">
+          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-accent-foreground">
             1. Collecte des données
           </h2>
           <p className="mb-4">
@@ -28,7 +28,7 @@ export default function PolitiqueConfidentialite() {
         </div>
 
         <div className="mb-10">
-          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-[#7158ff]">
+          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-accent-foreground">
             2. Finalité du traitement
           </h2>
           <p>
@@ -42,7 +42,7 @@ export default function PolitiqueConfidentialite() {
         </div>
 
         <div className="mb-10">
-          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-[#7158ff]">
+          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-accent-foreground">
             3. Conservation des données
           </h2>
           <p>
@@ -51,19 +51,19 @@ export default function PolitiqueConfidentialite() {
         </div>
 
         <div className="mb-10">
-          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-[#7158ff]">
+          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-accent-foreground">
             4. Vos droits
           </h2>
           <p>
             Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, de suppression et d'opposition au traitement de vos données. Pour exercer ce droit, contactez-nous à :{" "}
-            <Link href="mailto:gael_pro@ik.me" className="text-[#7158ff] hover:underline">
+            <Link href="mailto:gael_pro@ik.me" className="text-accent-foreground hover:underline">
               gael_pro@ik.me
             </Link>
           </p>
         </div>
 
         <div className="mb-10">
-          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-[#7158ff]">
+          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-accent-foreground">
             5. Cookies
           </h2>
           <p>

@@ -1,13 +1,24 @@
 import { ImageResponse } from "next/og";
-import { loadDisplayFont } from "@/lib/og-font";
 
-// iOS ignore les favicons SVG : on génère un vrai PNG pour l'écran d'accueil.
 export const size = { width: 180, height: 180 };
 export const contentType = "image/png";
 
-export default async function AppleIcon() {
-  const font = await loadDisplayFont();
+// Même signe que components/logo.tsx, sur fond encre. Généré en PNG : iOS et
+// le manifest PWA ignorent les favicons SVG.
+function Mark({ size }: { size: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none">
+      <path
+        d="M82 22 H36 Q20 22 20 38 V62 Q20 78 36 78 H82 V52 H70"
+        stroke="#ffffff"
+        strokeWidth="13"
+      />
+      <path d="M42.5 66 V41 H58" stroke="#dadfcf" strokeWidth="10" />
+    </svg>
+  );
+}
 
+export default function AppleIcon() {
   return new ImageResponse(
     (
       <div
@@ -17,22 +28,12 @@ export default async function AppleIcon() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#0A0A0F",
-          color: "#F4F4F6",
-          fontFamily: font ? "Black Han Sans" : "sans-serif",
-          fontSize: 76,
-          fontWeight: 900,
-          letterSpacing: -4,
+          background: "#1e1f24",
         }}
       >
-        GR<span style={{ color: "#7158ff" }}>.</span>
+        <Mark size={122} />
       </div>
     ),
-    {
-      ...size,
-      ...(font
-        ? { fonts: [{ name: "Black Han Sans", data: font, style: "normal" as const, weight: 400 as const }] }
-        : {}),
-    }
+    size
   );
 }

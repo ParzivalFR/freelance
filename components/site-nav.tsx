@@ -4,6 +4,7 @@ import { LayoutDashboard, LogOut, Menu, Shield, X } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useState } from "react";
+import { LogoMark } from "./logo";
 
 const links = [
   { label: "Réalisations", href: "/#realisations" },
@@ -24,9 +25,7 @@ export default function SiteNav() {
           href="/"
           className="flex items-center gap-2.5 font-[family-name:var(--font-bricolage)] font-bold tracking-tight"
         >
-          <span className="grid size-[34px] place-items-center rounded-full bg-primary font-[family-name:var(--font-jetbrains)] text-xs font-medium text-primary-foreground">
-            gr
-          </span>
+          <LogoMark className="size-8" />
           <span className="hidden whitespace-nowrap min-[400px]:inline">Gaël Richard</span>
         </Link>
 

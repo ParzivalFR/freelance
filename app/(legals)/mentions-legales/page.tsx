@@ -9,7 +9,7 @@ export default function MentionsLegales() {
         </h1>
 
         <div className="mb-10">
-          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-[#7158ff]">
+          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-accent-foreground">
             1. Éditeur du site
           </h2>
           <p className="mb-4">
@@ -23,7 +23,7 @@ export default function MentionsLegales() {
             <li><strong>SIREN :</strong> 930448600</li>
             <li>
               <strong>E-mail :</strong>{" "}
-              <Link href="mailto:gael_pro@ik.me" className="text-[#7158ff] hover:underline">
+              <Link href="mailto:gael_pro@ik.me" className="text-accent-foreground hover:underline">
                 gael_pro@ik.me
               </Link>
             </li>
@@ -31,7 +31,7 @@ export default function MentionsLegales() {
         </div>
 
         <div className="mb-10">
-          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-[#7158ff]">
+          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-accent-foreground">
             2. Hébergement et Services
           </h2>
           <p className="mb-4">Le site et ses données sont propulsés par les prestataires suivants :</p>
@@ -52,7 +52,7 @@ export default function MentionsLegales() {
         </div>
 
         <div className="mb-10">
-          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-[#7158ff]">
+          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-accent-foreground">
             3. Propriété intellectuelle
           </h2>
           <p>
@@ -64,7 +64,7 @@ export default function MentionsLegales() {
         </div>
 
         <div className="mb-10">
-          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-[#7158ff]">
+          <h2 className="mb-4 border-b pb-2 text-2xl font-semibold text-accent-foreground">
             4. Limitation de responsabilité
           </h2>
           <p>

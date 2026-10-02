@@ -360,11 +360,11 @@
   --color-secondary-foreground: #1e1f24;
   --color-muted: #ecebe7;
   --color-muted-foreground: #696a70;
-  --color-accent: #dedbf3;
-  --color-accent-foreground: #5b58a6;
+  --color-accent: #dadfcf;
+  --color-accent-foreground: #4a5a3a;
   --color-border: #e3e2de;
   --color-input: #d9d7d1;
-  --color-ring: #5b58a6;
+  --color-ring: #4a5a3a;
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-instrument), system-ui, sans-serif;
@@ -378,7 +378,7 @@
   text-wrap: balance;
 }
 
-/* Mot posé sur une pastille lavande */
+/* Mot posé sur une pastille kaki clair */
 .landing .hl {
   background: var(--color-accent);
   border-radius: 0.28em;
