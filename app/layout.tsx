@@ -33,36 +33,31 @@ export const viewport: Viewport = {
 
 // Metadata statique par défaut
 // Les métadonnées dynamiques seront gérées via generateMetadata() dans chaque page si nécessaire
+const title = "Gaël Richard · Développeur freelance";
+const description =
+  "Sites, applications et bots Discord sur mesure. Un seul interlocuteur, du premier croquis à la mise en ligne. Devis gratuit sous 24 h.";
+
 export const metadata: Metadata = {
-  title: "Gael Richard - Développeur Freelance",
+  metadataBase: new URL("https://gael-dev.fr"),
+  title,
+  description,
   manifest: "/manifest.json",
-  description:
-    "Propulsez votre présence sur le web. Des solutions sur mesure pour vos projets web, développées avec passion et expertise avec une attention particulière pour l'expérience utilisateur.",
   openGraph: {
     url: "https://gael-dev.fr",
     type: "website",
-    title: "Gael Richard - Développeur Freelance",
-    description:
-      "Propulsez votre présence sur le web. Des solutions sur mesure pour vos projets web, développées avec passion et expertise avec une attention particulière pour l'expérience utilisateur.",
-    images: [
-      {
-        url: "https://opengraph.b-cdn.net/production/images/5abe5dcf-a83d-46bc-95a0-9b65450a8d03.png?token=aQjQc1mAER4m7abNUzFtrqhVThtneu5kUzd7M_zfX5M&height=630&width=1200&expires=33263104817",
-        width: 1200,
-        height: 630,
-        alt: "Gael Richard - Développeur Freelance",
-      },
-    ],
+    siteName: "gael-dev.fr",
+    locale: "fr_FR",
+    title,
+    description,
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: title }],
   },
   twitter: {
+    card: "summary_large_image",
     creator: "@gaelprodev",
     site: "@gaelprodev",
-    card: "summary_large_image",
-    title: "Gael Richard - Développeur Freelance",
-    description:
-      "Propulsez votre présence sur le web. Des solutions sur mesure pour vos projets web, développées avec passion et expertise avec une attention particulière pour l'expérience utilisateur.",
-    images: [
-      "https://opengraph.b-cdn.net/production/images/5abe5dcf-a83d-46bc-95a0-9b65450a8d03.png?token=aQjQc1mAER4m7abNUzFtrqhVThtneu5kUzd7M_zfX5M&height=630&width=1200&expires=33263104817",
-    ],
+    title,
+    description,
+    images: ["/og.png"],
   },
 };
 

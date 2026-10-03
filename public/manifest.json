@@ -4,9 +4,9 @@
   "display": "standalone",
   "scope": "/",
   "start_url": "/",
-  "name": "Gael Richard - Développeur Freelance",
-  "description": "Développeur web freelance basé en France. Sites vitrines, applications web, logiciels desktop et apps mobiles sur-mesure.",
-  "short_name": "Gael Richard",
+  "name": "Gaël Richard · Développeur freelance",
+  "description": "Sites, applications et bots Discord sur mesure. Un seul interlocuteur, du premier croquis à la mise en ligne.",
+  "short_name": "Gaël Richard",
   "icons": [
     {
       "src": "/icon/192",
