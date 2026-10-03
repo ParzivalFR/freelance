@@ -70,14 +70,16 @@ export function BrowserShot({
 
 function ProjectCard({ project, big }: { project: LandingProject; big: boolean }) {
   const host = project.offline ? "" : hostOf(project.url);
-  // Un projet hors ligne reste visible comme réalisation, mais sans lien.
-  const Wrapper = project.offline ? "div" : "a";
+  // Sans lien quand le projet est hors ligne, ou en ligne mais à une adresse
+  // que le client ne souhaite pas voir publiée.
+  const linked = !project.offline && !!project.url;
+  const Wrapper = linked ? "a" : "div";
   return (
     <Wrapper
-      {...(!project.offline && { href: project.url || undefined, target: "_blank", rel: "noopener noreferrer" })}
+      {...(linked && { href: project.url, target: "_blank", rel: "noopener noreferrer" })}
       className={cn(
         "flex min-w-0 flex-col gap-5 overflow-hidden rounded-[28px] border bg-muted px-6 pt-6 md:px-8 md:pt-8",
-        !project.offline && "transition-colors hover:border-foreground/30",
+        linked && "transition-colors hover:border-foreground/30",
         big && "md:col-span-2 md:grid md:grid-cols-[0.8fr_1.2fr] md:items-end md:gap-12",
       )}
     >
@@ -112,7 +114,7 @@ function ProjectCard({ project, big }: { project: LandingProject; big: boolean }
         <BrowserShot
           src={project.image}
           alt={`Aperçu de ${project.title}`}
-          host={project.offline ? "plus en ligne" : host}
+          host={project.offline ? "plus en ligne" : host || "lien privé"}
           className={cn(
             "rounded-t-xl border-b-0 shadow-[0_-14px_44px_-28px_rgba(30,31,36,0.4)]",
             project.offline && "opacity-70 grayscale",

@@ -51,6 +51,7 @@ function Shot({
   return (
     <motion.a
       href={shot.url || undefined}
+      tabIndex={shot.url ? undefined : -1}
       target="_blank"
       rel="noopener noreferrer"
       aria-label={shot.title}

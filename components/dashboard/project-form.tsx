@@ -31,8 +31,7 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
-const projectSchema = z
-  .object({
+const projectSchema = z.object({
   title: z.string().min(3, "Le titre doit faire au moins 3 caractères"),
   description: z
     .string()
@@ -45,11 +44,6 @@ const projectSchema = z
   technologies: z.array(z.string()).min(1, "Ajoutez au moins une technologie"),
   isPublished: z.boolean().default(true),
   order: z.number().min(0),
-  })
-  // Un projet encore en ligne doit avoir une adresse
-  .refine((p) => p.offline || p.url !== "", {
-    message: "Indiquez l'adresse du site, ou cochez « plus en ligne »",
-    path: ["url"],
   });
 
 type ProjectFormData = z.infer<typeof projectSchema>;
@@ -274,7 +268,10 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel>
-                        URL du projet{form.watch("offline") ? " (facultative)" : " *"}
+                        URL du projet{" "}
+                        <span className="font-normal text-muted-foreground">
+                          (facultative : sans adresse, la carte affiche « lien privé »)
+                        </span>
                       </FormLabel>
                       <FormControl>
                         <Input
