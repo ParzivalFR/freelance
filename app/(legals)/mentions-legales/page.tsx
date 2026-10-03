@@ -33,7 +33,7 @@ export default function MentionsLegales() {
                 <li><strong>SIRET :</strong> 930 448 600 00013</li>
                 <li><strong>SIREN :</strong> 930 448 600</li>
                 <li>
-                  <strong>E-mail :</strong> <a href="mailto:gael_pro@ik.me">gael_pro@ik.me</a>
+                  <strong>E-mail :</strong> <a href="mailto:hello@gael-dev.fr">hello@gael-dev.fr</a>
                 </li>
               </ul>
             </>

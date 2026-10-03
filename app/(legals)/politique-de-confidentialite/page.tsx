@@ -98,7 +98,7 @@ export default function PolitiqueConfidentialite() {
             <p>
               Vous pouvez demander l'accès, la rectification, la suppression de vos données ou vous
               opposer à leur traitement. Écrivez à{" "}
-              <a href="mailto:gael_pro@ik.me">gael_pro@ik.me</a>, je réponds sous un mois. Vous pouvez
+              <a href="mailto:hello@gael-dev.fr">hello@gael-dev.fr</a>, je réponds sous un mois. Vous pouvez
               aussi saisir la CNIL si vous estimez que vos droits ne sont pas respectés.
             </p>
           ),

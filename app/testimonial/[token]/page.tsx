@@ -52,7 +52,7 @@ export default async function TestimonialPage({ params }: PageProps) {
           text="Il avait une date limite. Écrivez-moi et je vous en renvoie un nouveau tout de suite."
           action={
             <a
-              href="mailto:gael_pro@ik.me"
+              href="mailto:hello@gael-dev.fr"
               className="rounded-full bg-primary px-6 py-3.5 font-semibold text-primary-foreground transition-opacity hover:opacity-85"
             >
               Demander un nouveau lien
