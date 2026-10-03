@@ -37,7 +37,7 @@ export default async function Page() {
   const [projects, reviews] = await Promise.all([
     prisma.project.findMany({
       where: { isPublished: true },
-      orderBy: [{ featured: "desc" }, { order: "asc" }],
+      orderBy: [{ featured: "desc" }, { offline: "asc" }, { order: "asc" }],
       select: {
         id: true,
         title: true,
@@ -47,6 +47,7 @@ export default async function Page() {
         label: true,
         category: true,
         featured: true,
+        offline: true,
       },
     }),
     // Sans imgUrl : certaines photos sont stockées en base64 et pèseraient dans la page.
@@ -58,7 +59,7 @@ export default async function Page() {
   ]);
 
   const heroShots = projects
-    .filter((p) => p.image)
+    .filter((p) => p.image && !p.offline)
     .slice(0, 3)
     .map(({ id, title, image, url }) => ({ id, title, image, url }));
 

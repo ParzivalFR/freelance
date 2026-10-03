@@ -31,19 +31,26 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
-const projectSchema = z.object({
+const projectSchema = z
+  .object({
   title: z.string().min(3, "Le titre doit faire au moins 3 caractères"),
   description: z
     .string()
     .min(10, "La description doit faire au moins 10 caractères"),
-  url: z.string().url("URL invalide"),
+  url: z.string().url("URL invalide").or(z.literal("")),
+  offline: z.boolean().default(false),
   image: z.string().optional(),
   category: z.string().min(1, "Sélectionnez une catégorie"),
   label: z.string().max(40, "40 caractères maximum").optional(),
   technologies: z.array(z.string()).min(1, "Ajoutez au moins une technologie"),
   isPublished: z.boolean().default(true),
   order: z.number().min(0),
-});
+  })
+  // Un projet encore en ligne doit avoir une adresse
+  .refine((p) => p.offline || p.url !== "", {
+    message: "Indiquez l'adresse du site, ou cochez « plus en ligne »",
+    path: ["url"],
+  });
 
 type ProjectFormData = z.infer<typeof projectSchema>;
 
@@ -96,6 +103,7 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
       image: initialData?.image || "",
       category: initialData?.category || "",
       label: initialData?.label || "",
+      offline: initialData?.offline ?? false,
       technologies: initialData?.technologies || [],
       isPublished: initialData?.isPublished ?? true,
       order: initialData?.order || 0,
@@ -265,7 +273,9 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
                   name="url"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>URL du projet *</FormLabel>
+                      <FormLabel>
+                        URL du projet{form.watch("offline") ? " (facultative)" : " *"}
+                      </FormLabel>
                       <FormControl>
                         <Input
                           placeholder="https://mon-projet.com"
@@ -343,6 +353,24 @@ export function ProjectForm({ initialData }: ProjectFormProps) {
                     )}
                   />
                 </div>
+
+                <FormField
+                  control={form.control}
+                  name="offline"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-xl border p-3">
+                      <div className="space-y-0.5">
+                        <FormLabel className="text-base">Ce projet n'est plus en ligne</FormLabel>
+                        <div className="text-sm text-muted-foreground">
+                          Affiché sans lien, après les projets en ligne, avec la mention « Plus en ligne »
+                        </div>
+                      </div>
+                      <FormControl>
+                        <Switch checked={field.value} onCheckedChange={field.onChange} />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
 
                 <FormField
                   control={form.control}

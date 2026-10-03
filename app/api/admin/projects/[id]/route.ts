@@ -45,6 +45,7 @@ export async function PUT(
       technologies,
       category,
       label,
+      offline,
       isPublished,
       order,
     } = body;
@@ -74,6 +75,7 @@ export async function PUT(
       data: {
         title, description, image, url, technologies, category, isPublished, order,
         ...(label !== undefined && { label: label || null }),
+        ...(offline !== undefined && { offline: offline === true }),
       },
     });
 

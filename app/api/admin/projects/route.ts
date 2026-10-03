@@ -36,6 +36,7 @@ export async function POST(request: Request) {
       technologies,
       category,
       label,
+      offline,
       isPublished,
       order,
     } = body;
@@ -70,6 +71,7 @@ export async function POST(request: Request) {
         technologies,
         category,
         label: label || null,
+        offline: offline === true,
         isPublished: isPublished ?? true,
         order: finalOrder,
       },

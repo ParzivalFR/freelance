@@ -12,6 +12,7 @@ export type LandingProject = {
   label: string | null;
   category: string;
   featured: boolean;
+  offline: boolean;
 };
 
 const VISIBLE = 5;
@@ -68,20 +69,22 @@ export function BrowserShot({
 }
 
 function ProjectCard({ project, big }: { project: LandingProject; big: boolean }) {
-  const host = hostOf(project.url);
+  const host = project.offline ? "" : hostOf(project.url);
+  // Un projet hors ligne reste visible comme réalisation, mais sans lien.
+  const Wrapper = project.offline ? "div" : "a";
   return (
-    <a
-      href={project.url || undefined}
-      target="_blank"
-      rel="noopener noreferrer"
+    <Wrapper
+      {...(!project.offline && { href: project.url || undefined, target: "_blank", rel: "noopener noreferrer" })}
       className={cn(
-        "flex min-w-0 flex-col gap-5 overflow-hidden rounded-[28px] border bg-muted px-6 pt-6 transition-colors hover:border-foreground/30 md:px-8 md:pt-8",
+        "flex min-w-0 flex-col gap-5 overflow-hidden rounded-[28px] border bg-muted px-6 pt-6 md:px-8 md:pt-8",
+        !project.offline && "transition-colors hover:border-foreground/30",
         big && "md:col-span-2 md:grid md:grid-cols-[0.8fr_1.2fr] md:items-end md:gap-12",
       )}
     >
       <div className={cn(big && "md:pb-8")}>
-        <p className="text-sm font-semibold text-muted-foreground">
+        <p className="flex flex-wrap items-center gap-2 text-sm font-semibold text-muted-foreground">
           {project.label || categoryLabels[project.category] || "Projet"}
+          {project.offline && <span className="note note-comment">plus en ligne</span>}
         </p>
         <h3
           className={cn(
@@ -109,11 +112,14 @@ function ProjectCard({ project, big }: { project: LandingProject; big: boolean }
         <BrowserShot
           src={project.image}
           alt={`Aperçu de ${project.title}`}
-          host={host}
-          className="rounded-t-xl border-b-0 shadow-[0_-14px_44px_-28px_rgba(30,31,36,0.4)]"
+          host={project.offline ? "plus en ligne" : host}
+          className={cn(
+            "rounded-t-xl border-b-0 shadow-[0_-14px_44px_-28px_rgba(30,31,36,0.4)]",
+            project.offline && "opacity-70 grayscale",
+          )}
         />
       )}
-    </a>
+    </Wrapper>
   );
 }
 

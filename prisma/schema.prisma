@@ -441,6 +441,8 @@ model Project {
   category     String   @default("web") // web, mobile, design
   // Libellé libre affiché au-dessus du titre sur la page d'accueil ("Site de festival")
   label        String?
+  // Projet terminé ou abandonné : affiché sans lien, après les projets en ligne
+  offline      Boolean  @default(false)
   isPublished  Boolean  @default(true)
   featured     Boolean  @default(false) @map("featured")
   order        Int      @default(0) // Pour l'ordre d'affichage

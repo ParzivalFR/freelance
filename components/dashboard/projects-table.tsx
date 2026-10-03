@@ -49,6 +49,7 @@ type Project = {
   technologies: string[];
   category: string;
   isPublished: boolean;
+  offline?: boolean;
   featured?: boolean;
   order: number;
   createdAt: Date;
@@ -118,6 +119,7 @@ function SortableRow({
       </TableCell>
       <TableCell>
         <Badge variant="outline">{project.category}</Badge>
+        {project.offline && <Badge variant="secondary">Plus en ligne</Badge>}
       </TableCell>
       <TableCell>
         <div className="flex items-center gap-2">
@@ -155,12 +157,14 @@ function SortableRow({
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuItem asChild>
-              <a href={project.url} target="_blank" rel="noopener noreferrer" className="flex items-center">
-                <ExternalLink className="mr-2 size-4" />
-                Voir le site
-              </a>
-            </DropdownMenuItem>
+            {project.url && (
+              <DropdownMenuItem asChild>
+                <a href={project.url} target="_blank" rel="noopener noreferrer" className="flex items-center">
+                  <ExternalLink className="mr-2 size-4" />
+                  Voir le site
+                </a>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem asChild>
               <Link href={`/admin/projects/${project.id}`}>
                 <Edit className="mr-2 size-4" />
@@ -351,12 +355,14 @@ export function ProjectsTable({ projects: initialProjects }: ProjectsTableProps)
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                      <DropdownMenuItem asChild>
-                        <a href={project.url} target="_blank" rel="noopener noreferrer" className="flex items-center">
-                          <ExternalLink className="mr-2 size-4" />
-                          Voir le site
-                        </a>
-                      </DropdownMenuItem>
+                      {project.url && (
+                        <DropdownMenuItem asChild>
+                          <a href={project.url} target="_blank" rel="noopener noreferrer" className="flex items-center">
+                            <ExternalLink className="mr-2 size-4" />
+                            Voir le site
+                          </a>
+                        </DropdownMenuItem>
+                      )}
                       <DropdownMenuItem asChild>
                         <Link href={`/admin/projects/${project.id}`}>
                           <Edit className="mr-2 size-4" />
