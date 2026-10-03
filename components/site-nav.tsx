@@ -95,7 +95,7 @@ export default function SiteNav() {
 
         <div className="flex items-center gap-2">
           <Link
-            href={session ? "/dashboard/bot" : "/signin"}
+            href={session ? "/espaces" : "/signin"}
             className="hidden rounded-full px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground md:block"
           >
             {session ? "Mon espace" : "Connexion"}
@@ -133,7 +133,7 @@ export default function SiteNav() {
           {session ? (
             <>
               <Link
-                href="/dashboard/bot"
+                href="/espaces"
                 onClick={() => setOpen(false)}
                 className="flex items-center gap-2 rounded-xl px-3 py-2.5 text-[15px] text-muted-foreground hover:bg-muted hover:text-foreground"
               >
