@@ -146,9 +146,9 @@ export default function SocialGeneratorPage() {
   return (
     <div className="mx-auto max-w-6xl space-y-10">
       {/* Sondes cachées : servent uniquement à résoudre les noms de police. */}
-      <span ref={displayProbe} aria-hidden className="pointer-events-none absolute opacity-0 font-[family-name:var(--font-display)]" />
-      <span ref={bodyProbe} aria-hidden className="pointer-events-none absolute opacity-0 font-[family-name:var(--font-body)]" />
-      <span ref={handProbe} aria-hidden className="pointer-events-none absolute opacity-0 font-[family-name:var(--font-handwriting)]" />
+      <span ref={displayProbe} aria-hidden className="pointer-events-none absolute opacity-0 font-[family-name:var(--font-bricolage)]" />
+      <span ref={bodyProbe} aria-hidden className="pointer-events-none absolute opacity-0 font-[family-name:var(--font-instrument)]" />
+      <span ref={handProbe} aria-hidden className="pointer-events-none absolute opacity-0 font-[family-name:var(--font-jetbrains)]" />
 
       <PageHeader
         eyebrow="Alimenter Instagram"
@@ -156,7 +156,7 @@ export default function SocialGeneratorPage() {
         titleAccent="projets"
         description="Déposez une capture, réglez en quelques clics, récupérez le visuel aux couleurs du site — post, story ou carré. Le décor se pose derrière la capture, jamais dessus : elle reste nette et lisible en vignette."
         actions={
-          <Button onClick={download} disabled={!hasImage} className="ring-4 ring-[#7158ff]/20">
+          <Button onClick={download} disabled={!hasImage} className="ring-4 ring-brand/20">
             <Download className="mr-2 size-4" />
             Télécharger
           </Button>
@@ -173,7 +173,7 @@ export default function SocialGeneratorPage() {
               e.preventDefault();
               handleFile(e.dataTransfer.files?.[0]);
             }}
-            className="relative block cursor-pointer overflow-hidden rounded-2xl border bg-card transition-colors hover:border-[#7158ff]/40"
+            className="relative block cursor-pointer overflow-hidden rounded-2xl border bg-card transition-colors hover:border-brand/40"
           >
             <input
               type="file"
@@ -185,9 +185,9 @@ export default function SocialGeneratorPage() {
             {!hasImage && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 bg-background/85 text-center">
                 {fontsReady ? (
-                  <ImageUp className="size-10 text-[#7158ff]" />
+                  <ImageUp className="size-10 text-brand" />
                 ) : (
-                  <Loader2 className="size-8 animate-spin text-[#7158ff]" />
+                  <Loader2 className="size-8 animate-spin text-brand" />
                 )}
                 <p className="font-semibold text-foreground">Déposez votre capture</p>
                 <p className="max-w-xs text-sm text-muted-foreground">
@@ -269,8 +269,8 @@ export default function SocialGeneratorPage() {
                   onClick={() => setFormat(id)}
                   className={`flex-1 rounded-xl border p-3 text-left transition-colors ${
                     format === id
-                      ? "border-[#7158ff] ring-4 ring-[#7158ff]/15"
-                      : "hover:border-[#7158ff]/40"
+                      ? "border-brand ring-4 ring-brand/15"
+                      : "hover:border-brand/40"
                   }`}
                 >
                   <span className="block text-xs font-semibold text-foreground">
@@ -294,8 +294,8 @@ export default function SocialGeneratorPage() {
                   onClick={() => setBackground(id)}
                   className={`flex-1 rounded-xl border p-2 text-xs font-medium transition-colors ${
                     background === id
-                      ? "border-[#7158ff] ring-4 ring-[#7158ff]/15"
-                      : "hover:border-[#7158ff]/40"
+                      ? "border-brand ring-4 ring-brand/15"
+                      : "hover:border-brand/40"
                   }`}
                 >
                   <span
@@ -320,8 +320,8 @@ export default function SocialGeneratorPage() {
                   onClick={() => setFrame(f.id)}
                   className={`flex-1 rounded-xl border p-3 text-left transition-colors ${
                     frame === f.id
-                      ? "border-[#7158ff] ring-4 ring-[#7158ff]/15"
-                      : "hover:border-[#7158ff]/40"
+                      ? "border-brand ring-4 ring-brand/15"
+                      : "hover:border-brand/40"
                   }`}
                 >
                   <span className="block text-xs font-semibold text-foreground">{f.label}</span>
@@ -341,8 +341,8 @@ export default function SocialGeneratorPage() {
                   onClick={() => setLayout(l.id)}
                   className={`flex-1 rounded-xl border p-3 text-left transition-colors ${
                     layout === l.id
-                      ? "border-[#7158ff] ring-4 ring-[#7158ff]/15"
-                      : "hover:border-[#7158ff]/40"
+                      ? "border-brand ring-4 ring-brand/15"
+                      : "hover:border-brand/40"
                   }`}
                 >
                   <span className="block text-xs font-semibold text-foreground">{l.label}</span>

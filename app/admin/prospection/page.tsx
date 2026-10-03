@@ -403,7 +403,7 @@ export default function ProspectionPage() {
               />
               <div className="absolute right-2 top-1/2 -translate-y-1/2">
                 {isLoadingCities ? (
-                  <Loader2 className="size-4 animate-spin text-[#7158ff]" />
+                  <Loader2 className="size-4 animate-spin text-brand" />
                 ) : (
                   <ChevronDown className="size-4 text-muted-foreground" />
                 )}
@@ -488,7 +488,7 @@ export default function ProspectionPage() {
             <Button
               onClick={handleSearch}
               disabled={isSearching || !filters.location.trim()}
-              className="w-full ring-4 ring-[#7158ff]/20"
+              className="w-full ring-4 ring-brand/20"
             >
               {isSearching ? (
                 <><Loader2 className="mr-2 size-4 animate-spin" />Recherche…</>
@@ -522,7 +522,7 @@ export default function ProspectionPage() {
                 </p>
               </div>
               <div className="flex flex-wrap gap-2">
-                <Button onClick={enrichContacts} disabled={isEnriching} className="ring-4 ring-[#7158ff]/20">
+                <Button onClick={enrichContacts} disabled={isEnriching} className="ring-4 ring-brand/20">
                   {isEnriching ? (
                     <><Loader2 className="mr-2 size-4 animate-spin" />Recherche…</>
                   ) : (
@@ -564,7 +564,7 @@ export default function ProspectionPage() {
                 return (
                   <div
                     key={company.siren}
-                    className="rounded-2xl border bg-card p-5 transition-colors hover:border-[#7158ff]/40"
+                    className="rounded-2xl border bg-card p-5 transition-colors hover:border-brand/40"
                   >
                     <div className="flex flex-wrap items-start justify-between gap-4">
                       <div className="min-w-0 flex-1">
@@ -613,7 +613,7 @@ export default function ProspectionPage() {
                             {company.phone && (
                               <a
                                 href={`tel:${company.phone.replace(/\s/g, "")}`}
-                                className="inline-flex items-center gap-1.5 rounded-full border border-[#7158ff]/40 bg-[#7158ff]/5 px-3 py-1 text-sm font-medium text-[#7158ff] transition-colors hover:bg-[#7158ff]/10"
+                                className="inline-flex items-center gap-1.5 rounded-full border border-brand/40 bg-brand/5 px-3 py-1 text-sm font-medium text-brand transition-colors hover:bg-brand/10"
                               >
                                 <Phone className="size-3.5" />
                                 {company.phone}
@@ -622,7 +622,7 @@ export default function ProspectionPage() {
                             {company.email && (
                               <a
                                 href={`mailto:${company.email}`}
-                                className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm text-muted-foreground transition-colors hover:border-[#7158ff]/40 hover:text-[#7158ff]"
+                                className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-sm text-muted-foreground transition-colors hover:border-brand/40 hover:text-brand"
                               >
                                 <Mail className="size-3.5" />
                                 {company.email}
@@ -657,7 +657,7 @@ export default function ProspectionPage() {
                           href={`https://www.google.com/search?q=${encodeURIComponent(`${company.name} ${company.city}`)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center justify-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-[#7158ff]/40 hover:text-[#7158ff]"
+                          className="inline-flex items-center justify-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:border-brand/40 hover:text-brand"
                         >
                           <ExternalLink className="size-3" />
                           Google

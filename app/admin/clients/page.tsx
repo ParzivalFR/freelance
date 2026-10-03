@@ -218,7 +218,7 @@ export default function AdminClientsPage() {
 
       {loading ? (
         <div className="flex items-center justify-center gap-2 rounded-2xl border border-dashed bg-card p-12 text-sm text-muted-foreground">
-          <Loader2 className="size-4 animate-spin text-[#7158ff]" />
+          <Loader2 className="size-4 animate-spin text-brand" />
           Chargement des clients…
         </div>
       ) : clients.length === 0 ? (
@@ -240,7 +240,7 @@ export default function AdminClientsPage() {
           {clients.map((client) => (
             <div
               key={client.id}
-              className="rounded-2xl border bg-card p-5 transition-colors hover:border-[#7158ff]/40"
+              className="rounded-2xl border bg-card p-5 transition-colors hover:border-brand/40"
             >
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="min-w-0 flex-1">

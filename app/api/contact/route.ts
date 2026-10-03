@@ -103,7 +103,7 @@ export async function POST(request: Request) {
       ${projectType ? `<tr><td style="padding:4px 0"><strong>Type de projet</strong></td><td>${escapeHtml(projectType)}</td></tr>` : ""}
       ${budget ? `<tr><td style="padding:4px 0"><strong>Budget</strong></td><td>${escapeHtml(budget)}</td></tr>` : ""}
     </table>
-    <div style="background:#f9f9f9;padding:12px;border-left:5px solid #7158ff;margin-top:16px">
+    <div style="background:#f9f9f9;padding:12px;border-left:5px solid #4a5a3a;margin-top:16px">
       ${escapeHtmlMultiline(message)}
     </div>`;
 
@@ -116,11 +116,11 @@ export async function POST(request: Request) {
       to: destination,
       subject: `🚀 Nouveau message de ${fullName}${projectType ? ` — ${projectType}` : ""}`,
       html: `
-        <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#333;line-height:1.6;border:1px solid #7158ff;border-radius:8px;padding:24px">
-          <h2>🍀 Nouveau message de <span style="color:#7158ff">${escapeHtml(fullName)}</span></h2>
+        <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#333;line-height:1.6;border:1px solid #4a5a3a;border-radius:8px;padding:24px">
+          <h2>🍀 Nouveau message de <span style="color:#4a5a3a">${escapeHtml(fullName)}</span></h2>
           ${details}
           <p style="margin-top:24px">
-            <a href="${siteUrl}/admin/briefs" style="color:#7158ff">Lui envoyer un questionnaire de cadrage</a>
+            <a href="${siteUrl}/admin/briefs" style="color:#4a5a3a">Lui envoyer un questionnaire de cadrage</a>
           </p>
         </div>`,
     });
@@ -130,7 +130,7 @@ export async function POST(request: Request) {
       to: email,
       subject: "Votre message est bien arrivé",
       html: `
-        <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#333;line-height:1.6;border:1px solid #7158ff;border-radius:8px;padding:24px">
+        <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#333;line-height:1.6;border:1px solid #4a5a3a;border-radius:8px;padding:24px">
           <h2>Merci ${escapeHtml(firstName)} !</h2>
           <p>J'ai bien reçu votre message et je vous réponds sous 24 heures.</p>
           <p>Voici ce que vous venez de m'envoyer :</p>

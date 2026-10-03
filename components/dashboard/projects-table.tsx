@@ -277,7 +277,7 @@ export function ProjectsTable({ projects: initialProjects }: ProjectsTableProps)
         title="Aucun projet"
         description="Ajoutez votre première réalisation : elle apparaîtra sur la landing, dans l'ordre défini ici."
         action={
-          <Button asChild className="ring-4 ring-[#7158ff]/20">
+          <Button asChild className="ring-4 ring-brand/20">
             <Link href="/admin/projects/new">Créer un projet</Link>
           </Button>
         }
@@ -330,7 +330,7 @@ export function ProjectsTable({ projects: initialProjects }: ProjectsTableProps)
       {/* Mobile */}
       <div className="space-y-4 lg:hidden">
         {projects.map((project) => (
-          <Card key={project.id} className="rounded-2xl p-4 transition-colors hover:border-[#7158ff]/40">
+          <Card key={project.id} className="rounded-2xl p-4 transition-colors hover:border-brand/40">
             <div className="flex items-start gap-4">
               <div className="relative size-16 shrink-0 overflow-hidden rounded-xl bg-muted">
                 <Image src={project.image} alt={project.title} fill className="object-cover" />

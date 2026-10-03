@@ -201,7 +201,7 @@ export default function TestimonialTokenManager() {
             <Button
               type="submit"
               disabled={isGenerating}
-              className="w-full ring-4 ring-[#7158ff]/20"
+              className="w-full ring-4 ring-brand/20"
             >
               {isGenerating
                 ? "Génération en cours…"
@@ -226,7 +226,7 @@ export default function TestimonialTokenManager() {
 
         {isLoading ? (
           <div className="flex items-center justify-center gap-2 rounded-2xl border border-dashed bg-card p-12 text-sm text-muted-foreground">
-            <Loader2 className="size-4 animate-spin text-[#7158ff]" />
+            <Loader2 className="size-4 animate-spin text-brand" />
             Chargement des liens…
           </div>
         ) : tokens.length === 0 ? (
@@ -242,7 +242,7 @@ export default function TestimonialTokenManager() {
               return (
                 <div
                   key={token.id}
-                  className="rounded-2xl border bg-card p-5 transition-colors hover:border-[#7158ff]/40"
+                  className="rounded-2xl border bg-card p-5 transition-colors hover:border-brand/40"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="min-w-0 flex-1">

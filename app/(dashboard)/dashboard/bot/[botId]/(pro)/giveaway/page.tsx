@@ -143,7 +143,7 @@ function DateTimePicker({
           <PopoverTrigger asChild>
             <button
               type="button"
-              className="flex flex-1 items-center gap-2 rounded-lg border border-dashed bg-muted/30 px-3 py-1.5 font-mono text-[11px] text-foreground transition hover:border-[#7158ff]/40 focus:outline-none"
+              className="flex flex-1 items-center gap-2 rounded-lg border border-dashed bg-muted/30 px-3 py-1.5 font-mono text-[11px] text-foreground transition hover:border-brand/40 focus:outline-none"
             >
               <CalendarIcon className="size-3 shrink-0 text-muted-foreground" />
               {date ? format(date, "dd/MM/yyyy", { locale: fr }) : <span className="text-muted-foreground/50">jj/mm/aaaa</span>}
@@ -196,7 +196,7 @@ function toISO(date: Date | undefined, time: string): string | null {
 // ── Preview embed Discord ─────────────────────────────────────────────────────
 
 function EmbedPreview({ form }: { form: ReturnType<typeof makeDefaultForm> }) {
-  const color = form.embedColor ? `#${form.embedColor}` : "#7158ff";
+  const color = form.embedColor ? `#${form.embedColor}` : "#4a5a3a";
   const endISO = toISO(form.endDate, form.endTime);
   const endDate = endISO ? new Date(endISO) : null;
 
@@ -436,7 +436,7 @@ export default function GiveawayPage() {
             type="checkbox"
             checked={config.config.giveawayDmWinners ?? true}
             onChange={e => updateModuleConfig("giveawayDmWinners", e.target.checked)}
-            className="accent-[#7158ff]"
+            className="accent-brand"
           />
           <span className="font-mono text-[11px] text-foreground">DM automatique aux gagnants</span>
         </label>
@@ -453,7 +453,7 @@ export default function GiveawayPage() {
         </button>
         <button
           onClick={showForm ? closeForm : openCreate}
-          className="flex items-center gap-2 rounded-lg bg-[#7158ff] px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-white transition hover:opacity-85"
+          className="flex items-center gap-2 rounded-lg bg-brand px-4 py-2 font-mono text-xs font-bold uppercase tracking-wider text-white transition hover:opacity-85"
         >
           {showForm ? <X className="size-3.5" /> : <Plus className="size-3.5" />}
           {showForm ? "annuler" : "nouveau_giveaway"}
@@ -462,8 +462,8 @@ export default function GiveawayPage() {
 
       {/* Formulaire de création */}
       {showForm && (
-        <div className="space-y-3 rounded-xl border border-[#7158ff]/20 bg-[#7158ff]/5 p-4">
-          <p className="font-mono text-[9px] uppercase tracking-widest text-[#7158ff]/70">
+        <div className="space-y-3 rounded-xl border border-brand/20 bg-brand/5 p-4">
+          <p className="font-mono text-[9px] uppercase tracking-widest text-brand/70">
             {editingId ? "— modifier le giveaway —" : "— nouveau giveaway —"}
           </p>
 
@@ -491,8 +491,8 @@ export default function GiveawayPage() {
                     onClick={() => setForm(f => ({ ...f, mode: m }))}
                     className={`rounded border px-2 py-0.5 font-mono text-[9px] transition ${
                       form.mode === m
-                        ? "border-[#7158ff]/40 bg-[#7158ff]/15 text-[#7158ff]"
-                        : "border-dashed text-muted-foreground/50 hover:border-[#7158ff]/20"
+                        ? "border-brand/40 bg-brand/15 text-brand"
+                        : "border-dashed text-muted-foreground/50 hover:border-brand/20"
                     }`}
                   >
                     {MODE_LABELS[m].label}
@@ -539,7 +539,7 @@ export default function GiveawayPage() {
                 type="checkbox"
                 checked={form.mustBeBooster}
                 onChange={e => setForm(f => ({ ...f, mustBeBooster: e.target.checked }))}
-                className="accent-[#7158ff]"
+                className="accent-brand"
               />
               <span className="font-mono text-[11px] text-foreground">Booster uniquement</span>
             </label>
@@ -552,7 +552,7 @@ export default function GiveawayPage() {
               type="checkbox"
               checked={form.useEmbed}
               onChange={e => setForm(f => ({ ...f, useEmbed: e.target.checked }))}
-              className="accent-[#7158ff]"
+              className="accent-brand"
             />
             <span className="font-mono text-[11px] text-foreground">Utiliser un embed Discord</span>
           </label>
@@ -592,7 +592,7 @@ export default function GiveawayPage() {
             <button
               onClick={handleSubmit}
               disabled={submitting || !canCreate}
-              className="flex items-center gap-2 rounded-lg bg-[#7158ff] px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-white transition hover:opacity-85 disabled:opacity-40"
+              className="flex items-center gap-2 rounded-lg bg-brand px-5 py-2.5 font-mono text-xs font-bold uppercase tracking-wider text-white transition hover:opacity-85 disabled:opacity-40"
             >
               <Gift className="size-3.5" />
               {submitting
@@ -705,7 +705,7 @@ function GiveawayCard({
               onClick={() => onEdit(g)}
               disabled={!!actioning}
               title="Modifier"
-              className="rounded-lg border border-dashed p-1.5 text-muted-foreground/50 transition hover:border-[#7158ff]/30 hover:text-[#7158ff] disabled:opacity-30"
+              className="rounded-lg border border-dashed p-1.5 text-muted-foreground/50 transition hover:border-brand/30 hover:text-brand disabled:opacity-30"
             >
               <Pencil className="size-3" />
             </button>
@@ -744,7 +744,7 @@ function GiveawayCard({
               onClick={() => onAction(g.id, "reroll")}
               disabled={!!actioning}
               title="Re-roll"
-              className="rounded-lg border border-dashed p-1.5 text-muted-foreground/50 transition hover:border-[#7158ff]/30 hover:text-[#7158ff] disabled:opacity-30"
+              className="rounded-lg border border-dashed p-1.5 text-muted-foreground/50 transition hover:border-brand/30 hover:text-brand disabled:opacity-30"
             >
               <RotateCcw className="size-3" />
             </button>

@@ -25,8 +25,11 @@
   --shadow-*: initial;
   --shadow-pxl: rgba(100, 100, 100, 0.1) 0px 5px 15px 0px;
 
+  /* Couleur de marque (kaki), éclaircie en mode sombre pour rester lisible */
+  --color-brand: #4a5a3a;
+
   --font-sans:
-    var(--font-body), ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    var(--font-instrument), ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
 
   --font-mono:
@@ -266,6 +269,7 @@
   }
 
   .dark {
+    --color-brand: #9db38a;
     --background: 224 71.4% 4.1%;
     --foreground: 0 0% 98%;
 
@@ -378,29 +382,29 @@
   text-wrap: balance;
 }
 
-/* Mot posé sur une pastille kaki clair */
-.landing .hl {
-  background: var(--color-accent);
+/* Mot posé sur une pastille, et étiquette façon commentaire de code :
+   valables partout (accueil, admin, dashboard), dans la couleur de marque. */
+.hl {
+  background: color-mix(in srgb, var(--color-brand) 22%, transparent);
   border-radius: 0.28em;
   padding: 0 0.16em;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
 
-/* Étiquette façon commentaire de code */
-.landing .note {
+.note {
   display: inline-block;
   font-family: var(--font-jetbrains), ui-monospace, monospace;
   font-size: 0.82rem;
   line-height: 1.2;
-  color: var(--color-accent-foreground);
-  background: var(--color-accent);
+  color: var(--color-brand);
+  background: color-mix(in srgb, var(--color-brand) 14%, transparent);
   padding: 5px 10px;
   border-radius: 8px;
   white-space: nowrap;
 }
 
-.landing .note-comment::before {
+.note-comment::before {
   content: "// ";
   opacity: 0.55;
 }

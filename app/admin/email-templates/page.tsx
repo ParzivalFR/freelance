@@ -73,7 +73,7 @@ export default async function EmailTemplatesPage() {
       <div className="rounded-2xl border bg-card p-5">
         <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
           <span className="flex items-center gap-2 text-muted-foreground">
-            <Send className="size-4 text-[#7158ff]" />
+            <Send className="size-4 text-brand" />
             Expéditeur :
             <span className="font-medium text-foreground">
               {senderAddress ?? "non configuré (EMAIL_USER manquant)"}
@@ -93,10 +93,10 @@ export default async function EmailTemplatesPage() {
           {emails.map((email) => (
             <div
               key={email.name}
-              className="flex flex-col rounded-2xl border bg-card p-5 transition-colors hover:border-[#7158ff]/40"
+              className="flex flex-col rounded-2xl border bg-card p-5 transition-colors hover:border-brand/40"
             >
               <div className="flex items-start gap-3">
-                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-[#7158ff]/10 text-[#7158ff]">
+                <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-brand">
                   <email.icon className="size-4.5" />
                 </div>
                 <div className="min-w-0">
@@ -125,7 +125,7 @@ export default async function EmailTemplatesPage() {
       </div>
 
       <div className="flex items-start gap-3 rounded-2xl border border-dashed bg-card p-5">
-        <Mail className="mt-0.5 size-5 shrink-0 text-[#7158ff]" />
+        <Mail className="mt-0.5 size-5 shrink-0 text-brand" />
         <p className="text-sm text-muted-foreground">
           Le contenu de ces emails est écrit en dur dans le code, pas en base : pas d&apos;éditeur
           ici, mais aucun risque qu&apos;un template parte vide ou à moitié rempli. Le bouton

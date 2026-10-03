@@ -217,7 +217,7 @@ const DevisGenerator: React.FC = () => {
           {/* Informations entreprise */}
           <Card className="rounded-2xl">
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2 [&>svg]:text-[#7158ff]">
+              <CardTitle className="text-lg flex items-center gap-2 [&>svg]:text-brand">
                 <Building className="size-5" />
                 Informations Entreprise
               </CardTitle>
@@ -276,7 +276,7 @@ const DevisGenerator: React.FC = () => {
           {/* Informations client */}
           <Card className="rounded-2xl">
             <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2 [&>svg]:text-[#7158ff]">
+              <CardTitle className="text-lg flex items-center gap-2 [&>svg]:text-brand">
                 <User className="size-5" />
                 Informations Client
               </CardTitle>
@@ -475,7 +475,7 @@ const DevisGenerator: React.FC = () => {
               onClick={generatePDF}
               disabled={isGenerating}
               size="lg"
-              className="ring-4 ring-[#7158ff]/20"
+              className="ring-4 ring-brand/20"
             >
               {isGenerating ? (
                 'Génération...'

@@ -18,14 +18,14 @@ function Message({ title, text }: { title: string; text: string }) {
     <div className="flex min-h-dvh items-center justify-center bg-background px-6">
       <div className="w-full max-w-md text-center">
         {/* Titre sans capitale accentuee : voir brief-form.tsx. */}
-        <h1 className="font-[family-name:var(--font-display)] pt-[0.14em] text-3xl uppercase leading-[1.25] text-foreground">
+        <h1 className="font-[family-name:var(--font-bricolage)] text-3xl uppercase leading-[1.25] text-foreground">
           {title}
         </h1>
         <p className="mt-4 text-sm text-muted-foreground">{text}</p>
         <p className="mt-8 text-sm text-muted-foreground">
           Écrivez-moi à{" "}
           <a
-            className="text-[#7158ff] underline"
+            className="text-brand underline"
             href="mailto:hello@gael-dev.fr"
           >
             hello@gael-dev.fr

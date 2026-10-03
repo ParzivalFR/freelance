@@ -26,7 +26,7 @@ export function PageHeader({
   return (
     <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
-        <p className="font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff]">
+        <p className="note note-comment">
           {eyebrow}
         </p>
         {/*
@@ -36,9 +36,9 @@ export function PageHeader({
           vient toucher l'accroche au-dessus. Le padding réserve ce dépassement,
           en em pour suivre le clamp de la taille de police.
         */}
-        <h1 className="mt-1 pt-[0.14em] font-[family-name:var(--font-display)] text-[clamp(1.8rem,4vw,2.8rem)] uppercase leading-none text-foreground">
+        <h1 className="mt-1 font-[family-name:var(--font-bricolage)] text-[clamp(1.8rem,4vw,2.8rem)] uppercase leading-none text-foreground">
           {title}
-          {titleAccent && <span className="text-[#7158ff]">{titleAccent}</span>}
+          {titleAccent && <span className="text-brand">{titleAccent}</span>}
         </h1>
         {description && (
           <p className="mt-3 max-w-2xl text-sm text-muted-foreground">
@@ -61,7 +61,7 @@ export function SectionTitle({
 }) {
   return (
     <p
-      className={`font-[family-name:var(--font-handwriting)] text-2xl text-[#7158ff] ${className}`}
+      className={`note note-comment ${className}`}
     >
       {children}
     </p>

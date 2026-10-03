@@ -165,7 +165,7 @@ export function ClientDialog({
   };
 
   const defaultTrigger = (
-    <Button className="ring-4 ring-[#7158ff]/20">
+    <Button className="ring-4 ring-brand/20">
       <Plus className="mr-2 size-4" />
       Nouveau client
     </Button>

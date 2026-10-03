@@ -23,7 +23,7 @@ export default async function ProjectsPage() {
             : "Aucun projet pour le moment. Ajoutez votre première réalisation pour la voir apparaître sur la landing."
         }
         actions={
-          <Button asChild className="ring-4 ring-[#7158ff]/20">
+          <Button asChild className="ring-4 ring-brand/20">
             <Link href="/admin/projects/new">
               <Plus className="mr-2 size-4" />
               Nouveau projet

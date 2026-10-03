@@ -30,6 +30,7 @@ import {
   Users,
 } from "lucide-react";
 import Link from "next/link";
+import { LogoMark } from "@/components/logo";
 import { usePathname } from "next/navigation";
 import * as React from "react";
 
@@ -79,14 +80,12 @@ export function AdminSidebar({
     <Sidebar {...props}>
       <SidebarHeader className="border-b px-4 py-4">
         <Link href="/admin" className="flex items-center gap-3">
-          <div className="flex size-9 items-center justify-center rounded-xl bg-[#7158ff] text-white ring-4 ring-[#7158ff]/20">
-            <span className="font-[family-name:var(--font-display)] text-sm leading-none">G</span>
-          </div>
+          <LogoMark className="size-9 shrink-0" />
           <div className="min-w-0">
-            <p className="truncate font-[family-name:var(--font-display)] text-lg uppercase leading-none text-foreground">
-              Gael-Dev
+            <p className="truncate font-[family-name:var(--font-bricolage)] text-lg uppercase leading-none text-foreground">
+              Gaël Richard
             </p>
-            <p className="font-[family-name:var(--font-handwriting)] text-sm leading-tight text-[#7158ff]">
+            <p className="note note-comment">
               Espace admin
             </p>
           </div>
@@ -113,7 +112,7 @@ export function AdminSidebar({
                       <SidebarMenuButton
                         asChild
                         isActive={isActive}
-                        className="rounded-xl text-sm font-medium data-[active=true]:bg-[#7158ff]/10 data-[active=true]:font-semibold data-[active=true]:text-[#7158ff]"
+                        className="rounded-xl text-sm font-medium data-[active=true]:bg-brand/10 data-[active=true]:font-semibold data-[active=true]:text-brand"
                       >
                         <Link href={item.url}>
                           <item.icon className="size-4" />

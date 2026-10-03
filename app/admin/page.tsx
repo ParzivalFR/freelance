@@ -80,12 +80,12 @@ export default async function AdminDashboard() {
           <div
             key={stat.label}
             className={`rounded-2xl border bg-card p-5 ${
-              stat.highlight ? "border-[#7158ff]/40 ring-4 ring-[#7158ff]/10" : ""
+              stat.highlight ? "border-brand/40 ring-4 ring-brand/10" : ""
             }`}
           >
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-              <div className={`rounded-lg p-2 ${stat.highlight ? "bg-[#7158ff]/10 text-[#7158ff]" : "bg-muted/60 text-muted-foreground"}`}>
+              <div className={`rounded-lg p-2 ${stat.highlight ? "bg-brand/10 text-brand" : "bg-muted/60 text-muted-foreground"}`}>
                 <stat.icon className="size-4" />
               </div>
             </div>
@@ -102,9 +102,9 @@ export default async function AdminDashboard() {
             <Link
               key={link.href}
               href={link.href}
-              className="group flex items-center gap-4 rounded-2xl border bg-card p-4 transition-colors hover:border-[#7158ff]/40 hover:bg-[#7158ff]/[0.03]"
+              className="group flex items-center gap-4 rounded-2xl border bg-card p-4 transition-colors hover:border-brand/40 hover:bg-brand/[0.03]"
             >
-              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted/60 text-muted-foreground transition-colors group-hover:bg-[#7158ff]/10 group-hover:text-[#7158ff]">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-muted/60 text-muted-foreground transition-colors group-hover:bg-brand/10 group-hover:text-brand">
                 <link.icon className="size-4.5" />
               </div>
               <div className="min-w-0">

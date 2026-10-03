@@ -20,7 +20,7 @@ export function StatCard({
   return (
     <div
       className={`rounded-2xl border bg-card p-5 ${
-        highlight ? "border-[#7158ff]/40 ring-4 ring-[#7158ff]/10" : ""
+        highlight ? "border-brand/40 ring-4 ring-brand/10" : ""
       }`}
     >
       <div className="flex items-center justify-between gap-3">
@@ -28,7 +28,7 @@ export function StatCard({
         <div
           className={`rounded-lg p-2 ${
             highlight
-              ? "bg-[#7158ff]/10 text-[#7158ff]"
+              ? "bg-brand/10 text-brand"
               : "bg-muted/60 text-muted-foreground"
           }`}
         >

@@ -284,7 +284,7 @@ export default function DevisListPage() {
   if (loading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center gap-2 text-sm text-muted-foreground">
-        <Loader2 className="size-5 animate-spin text-[#7158ff]" />
+        <Loader2 className="size-5 animate-spin text-brand" />
         Chargement des devis…
       </div>
     );
@@ -298,7 +298,7 @@ export default function DevisListPage() {
         titleAccent="vis"
         description="Tous les devis générés, du brouillon au devis accepté. Le PDF reste téléchargeable à tout moment."
         actions={
-          <Button asChild className="ring-4 ring-[#7158ff]/20">
+          <Button asChild className="ring-4 ring-brand/20">
             <Link href="/admin/devis">
               <FileText className="mr-2 size-4" />
               Nouveau devis
@@ -357,11 +357,11 @@ export default function DevisListPage() {
           {filteredDevis.map((devis) => (
             <div
               key={devis.id}
-              className="rounded-2xl border bg-card p-5 transition-colors hover:border-[#7158ff]/40"
+              className="rounded-2xl border bg-card p-5 transition-colors hover:border-brand/40"
             >
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div className="flex min-w-0 flex-1 items-start gap-4">
-                  <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-[#7158ff]/10 text-[#7158ff]">
+                  <div className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-brand">
                     <FileText className="size-5" />
                   </div>
                   <div className="min-w-0">

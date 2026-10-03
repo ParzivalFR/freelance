@@ -144,7 +144,7 @@ export default function AdminRefundsPage() {
 
       {loading ? (
         <div className="flex items-center justify-center gap-2 rounded-2xl border border-dashed bg-card p-12 text-sm text-muted-foreground">
-          <Loader2 className="size-4 animate-spin text-[#7158ff]" />
+          <Loader2 className="size-4 animate-spin text-brand" />
           Chargement des demandes…
         </div>
       ) : requests.length === 0 ? (
@@ -161,8 +161,8 @@ export default function AdminRefundsPage() {
             return (
               <div
                 key={r.id}
-                className={`rounded-2xl border bg-card p-5 transition-colors hover:border-[#7158ff]/40 ${
-                  isPending ? "border-[#7158ff]/40 ring-4 ring-[#7158ff]/10" : ""
+                className={`rounded-2xl border bg-card p-5 transition-colors hover:border-brand/40 ${
+                  isPending ? "border-brand/40 ring-4 ring-brand/10" : ""
                 }`}
               >
                 <div className="flex flex-wrap items-start justify-between gap-4">

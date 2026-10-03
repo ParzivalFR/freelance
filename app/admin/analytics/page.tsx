@@ -201,7 +201,7 @@ export default async function AnalyticsPage() {
                 className="flex items-center justify-between gap-4 p-4"
               >
                 <div className="flex min-w-0 items-center gap-3">
-                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-[#7158ff]/10 text-xs font-semibold uppercase text-[#7158ff]">
+                  <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-brand/10 text-xs font-semibold uppercase text-brand">
                     {client.firstName?.[0]}
                     {client.lastName?.[0]}
                   </div>

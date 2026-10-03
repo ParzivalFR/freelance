@@ -6,38 +6,9 @@ import type { Metadata, Viewport } from "next";
 import { SessionProvider } from "next-auth/react";
 import { GeistSans } from "geist/font/sans";
 import { GeistMono } from "geist/font/mono";
-import {
-  Black_Han_Sans,
-  Bricolage_Grotesque,
-  Caveat,
-  DM_Sans,
-  Instrument_Sans,
-  JetBrains_Mono,
-  Playfair_Display,
-} from "next/font/google";
+import { Bricolage_Grotesque, Instrument_Sans, JetBrains_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-
-const blackHanSans = Black_Han_Sans({
-  weight: "400",
-  subsets: ["latin"],
-  variable: "--font-display",
-});
-
-const caveat = Caveat({
-  subsets: ["latin"],
-  variable: "--font-handwriting",
-});
-
-const dmSans = DM_Sans({
-  subsets: ["latin"],
-  variable: "--font-body",
-});
-
-const playfair = Playfair_Display({
-  subsets: ["latin"],
-  variable: "--font-serif",
-});
 
 // Polices de la page d'accueil (classe .landing dans globals.css)
 const bricolage = Bricolage_Grotesque({
@@ -112,10 +83,6 @@ export default function RootLayout({
           "min-h-dvh bg-background font-sans antialiased flex flex-col",
           GeistSans.variable,
           GeistMono.variable,
-          blackHanSans.variable,
-          caveat.variable,
-          dmSans.variable,
-          playfair.variable,
           bricolage.variable,
           instrumentSans.variable,
           jetbrainsMono.variable

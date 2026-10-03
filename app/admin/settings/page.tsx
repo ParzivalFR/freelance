@@ -101,7 +101,7 @@ export default function AdminSettingsPage() {
   if (loading) {
     return (
       <div className="flex min-h-[400px] items-center justify-center gap-2 text-sm text-muted-foreground">
-        <Loader2 className="size-5 animate-spin text-[#7158ff]" />
+        <Loader2 className="size-5 animate-spin text-brand" />
         Chargement des paramètres…
       </div>
     );
@@ -115,7 +115,7 @@ export default function AdminSettingsPage() {
         titleAccent="mètres"
         description="Vos coordonnées, les notifications et les intégrations qui alimentent la landing et le générateur de bots."
         actions={
-          <Button onClick={handleSave} disabled={saving} className="ring-4 ring-[#7158ff]/20">
+          <Button onClick={handleSave} disabled={saving} className="ring-4 ring-brand/20">
             {saving ? (
               <>
                 <Loader2 className="mr-2 size-4 animate-spin" />
@@ -134,7 +134,7 @@ export default function AdminSettingsPage() {
       {/* Profil & Contact */}
       <Card className="rounded-2xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 [&>svg]:text-[#7158ff]">
+          <CardTitle className="flex items-center gap-2 [&>svg]:text-brand">
             <User className="size-5" />
             Profil & Contact
           </CardTitle>
@@ -198,7 +198,7 @@ export default function AdminSettingsPage() {
       {/* Liens sociaux */}
       <Card className="rounded-2xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 [&>svg]:text-[#7158ff]">
+          <CardTitle className="flex items-center gap-2 [&>svg]:text-brand">
             <Globe className="size-5" />
             Liens sociaux
           </CardTitle>
@@ -242,7 +242,7 @@ export default function AdminSettingsPage() {
       {/* Informations Business */}
       <Card className="rounded-2xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 [&>svg]:text-[#7158ff]">
+          <CardTitle className="flex items-center gap-2 [&>svg]:text-brand">
             <Building2 className="size-5" />
             Informations Business
           </CardTitle>
@@ -316,7 +316,7 @@ export default function AdminSettingsPage() {
       {/* SEO & Branding */}
       <Card className="rounded-2xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 [&>svg]:text-[#7158ff]">
+          <CardTitle className="flex items-center gap-2 [&>svg]:text-brand">
             <Palette className="size-5" />
             SEO & Branding
           </CardTitle>
@@ -389,7 +389,7 @@ export default function AdminSettingsPage() {
       {/* Notifications */}
       <Card className="rounded-2xl">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 [&>svg]:text-[#7158ff]">
+          <CardTitle className="flex items-center gap-2 [&>svg]:text-brand">
             <Bell className="size-5" />
             Notifications
           </CardTitle>

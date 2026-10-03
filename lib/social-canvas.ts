@@ -12,7 +12,7 @@
  * lisible.
  */
 
-export const BRAND_PURPLE = "#7158ff";
+export const BRAND_KAKI = "#4a5a3a";
 export const BRAND_DARK = "#0A0A0F";
 
 export type FormatId = "post" | "story" | "carre";
@@ -75,7 +75,7 @@ export const BACKGROUNDS: Record<BackgroundId, Theme> = {
     dots: "rgba(255,255,255,0.09)",
     text: "#F4F4F6",
     muted: "rgba(244,244,246,0.62)",
-    accent: BRAND_PURPLE,
+    accent: BRAND_KAKI,
     edge: "rgba(255,255,255,0.16)",
     pillBg: "rgba(113,88,255,0.22)",
     pillText: "#C7B8FF",
@@ -89,7 +89,7 @@ export const BACKGROUNDS: Record<BackgroundId, Theme> = {
     dots: "rgba(10,10,15,0.09)",
     text: "#0A0A0F",
     muted: "rgba(10,10,15,0.58)",
-    accent: BRAND_PURPLE,
+    accent: BRAND_KAKI,
     edge: "rgba(10,10,15,0.10)",
     pillBg: "rgba(113,88,255,0.14)",
     pillText: "#4B32D6",

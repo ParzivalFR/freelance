@@ -85,7 +85,7 @@ export async function POST(
       })
       .filter(Boolean);
     if (lines.length === 0) return "";
-    return `<h3 style="color:#7158ff;margin:24px 0 8px">${escapeHtml(section.title)}</h3>${lines.join("")}`;
+    return `<h3 style="color:#4a5a3a;margin:24px 0 8px">${escapeHtml(section.title)}</h3>${lines.join("")}`;
   }).join("");
 
   try {
@@ -103,14 +103,14 @@ export async function POST(
       subject: `📋 Brief complété par ${fullName}${brief.company ? ` (${brief.company})` : ""}`,
       html: `
         <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#333;line-height:1.6">
-          <h2 style="color:#7158ff">Nouveau brief : ${escapeHtml(fullName)}</h2>
+          <h2 style="color:#4a5a3a">Nouveau brief : ${escapeHtml(fullName)}</h2>
           <p>
             ${escapeHtml(brief.email)}${brief.phone ? ` — ${escapeHtml(brief.phone)}` : ""}
             ${brief.company ? `<br>${escapeHtml(brief.company)}` : ""}
           </p>
           ${recap}
           <p style="margin-top:24px">
-            <a href="${siteUrl}/admin/briefs" style="color:#7158ff">Ouvrir dans l'administration</a>
+            <a href="${siteUrl}/admin/briefs" style="color:#4a5a3a">Ouvrir dans l'administration</a>
           </p>
         </div>`,
     });
@@ -121,10 +121,10 @@ export async function POST(
       subject: "Vos réponses sont bien arrivées",
       html: `
         <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#333;line-height:1.6">
-          <h2 style="color:#7158ff">Merci ${escapeHtml(brief.firstName)} !</h2>
+          <h2 style="color:#4a5a3a">Merci ${escapeHtml(brief.firstName)} !</h2>
           <p>J'ai bien reçu vos réponses. Je les lis attentivement et je reviens vers vous sous 24 heures avec une proposition claire et chiffrée.</p>
           <p>Si vous avez oublié quelque chose ou si un détail vous revient, répondez simplement à cet email.</p>
-          <p style="margin-top:24px">Gaël Richard<br><a href="${siteUrl}" style="color:#7158ff">gael-dev.fr</a></p>
+          <p style="margin-top:24px">Gaël Richard<br><a href="${siteUrl}" style="color:#4a5a3a">gael-dev.fr</a></p>
         </div>`,
     });
   } catch (error) {

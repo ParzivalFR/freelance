@@ -42,7 +42,7 @@ export default async function AdminLayout({
             <Link
               href="/"
               target="_blank"
-              className="flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-[#7158ff]/40 hover:text-[#7158ff]"
+              className="flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:border-brand/40 hover:text-brand"
             >
               <ExternalLink className="size-3" />
               Voir le site

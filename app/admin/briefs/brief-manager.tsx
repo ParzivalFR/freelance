@@ -247,7 +247,7 @@ export default function BriefManager() {
           <Button
             onClick={() => create(true)}
             disabled={creating}
-            className="bg-[#7158ff] hover:bg-[#5f47e0]"
+            className="bg-brand hover:bg-brand/90"
           >
             {creating ? (
               <Loader2 className="mr-2 size-4 animate-spin" />
@@ -287,7 +287,7 @@ export default function BriefManager() {
                   <div
                     key={brief.id}
                     className={`rounded-2xl border bg-card p-5 ${
-                      done ? "border-[#7158ff]/40" : ""
+                      done ? "border-brand/40" : ""
                     }`}
                   >
                     <div className="flex flex-wrap items-start justify-between gap-4">
@@ -319,7 +319,7 @@ export default function BriefManager() {
                         {done ? (
                           <Button
                             size="sm"
-                            className="bg-[#7158ff] hover:bg-[#5f47e0]"
+                            className="bg-brand hover:bg-brand/90"
                             onClick={() => setOpened(brief)}
                           >
                             Voir les réponses
