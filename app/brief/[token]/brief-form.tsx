@@ -183,10 +183,10 @@ export default function BriefForm({
           animate={{ opacity: 1, scale: 1 }}
           className="text-center"
         >
-          <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full bg-[#7158ff]/10">
-            <Check className="size-8 text-[#7158ff]" />
+          <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full bg-accent">
+            <Check className="size-8 text-accent-foreground" />
           </div>
-          <h1 className="font-[family-name:var(--font-display)] pt-[0.14em] text-3xl uppercase leading-[1.25] text-foreground">
+          <h1 className="font-[family-name:var(--font-bricolage)] text-3xl font-extrabold leading-[1.1] tracking-tight text-foreground">
             Merci {firstName} !
           </h1>
           <p className="mx-auto mt-4 max-w-md text-base text-muted-foreground">
@@ -202,12 +202,12 @@ export default function BriefForm({
   }
 
   return (
-    <div className="relative min-h-dvh overflow-hidden bg-background">
+    <div className="landing relative min-h-dvh overflow-hidden">
       {/* Progression : discrète mais toujours visible, c'est ce qui évite */}
       {/* l'abandon au milieu. */}
       <div className="fixed inset-x-0 top-0 z-20 h-1 bg-muted">
         <motion.div
-          className="h-full bg-[#7158ff]"
+          className="h-full bg-accent-foreground"
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.4, ease: "easeOut" }}
         />
@@ -289,7 +289,7 @@ export default function BriefForm({
 
 function Screen({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex min-h-dvh items-center justify-center px-6 py-20">
+    <div className="landing flex min-h-dvh items-center justify-center px-6 py-20">
       <div className="w-full max-w-xl">{children}</div>
     </div>
   );
@@ -317,10 +317,8 @@ function Welcome({
 
   return (
     <div>
-      <p className="font-[family-name:var(--font-handwriting)] text-3xl text-[#7158ff]">
-        Bonjour {firstName}
-      </p>
-      <h1 className="mt-2 pt-[0.14em] font-[family-name:var(--font-display)] text-[clamp(2rem,6vw,3rem)] uppercase leading-[1.25] text-foreground">
+      <span className="note note-comment">Bonjour {firstName}</span>
+      <h1 className="mt-2 font-[family-name:var(--font-bricolage)] text-[clamp(2rem,6vw,3rem)] font-extrabold leading-[1.1] tracking-tight text-foreground">
         Parlons de votre projet
       </h1>
       <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
@@ -336,7 +334,7 @@ function Welcome({
       <button
         type="button"
         onClick={onStart}
-        className="mt-10 inline-flex items-center rounded-lg bg-[#7158ff] px-7 py-3.5 text-base font-semibold text-white transition-colors hover:bg-[#5f47e0]"
+        className="mt-10 inline-flex items-center rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground transition-opacity hover:opacity-85"
       >
         Commencer
         <ArrowRight className="ml-2 size-4" />
@@ -425,7 +423,7 @@ function QuestionScreen({
   return (
     <div>
       <div className="mb-3 flex items-center gap-3 text-sm">
-        <span className="flex items-center gap-1 font-medium text-[#7158ff]">
+        <span className="flex items-center gap-1 font-medium text-accent-foreground">
           {position}
           <ArrowRight className="size-3" />
         </span>
@@ -462,7 +460,7 @@ function QuestionScreen({
                 onNext();
               }
             }}
-            className="w-full border-0 border-b-2 border-muted-foreground/30 bg-transparent pb-2 text-xl text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-[#7158ff]"
+            className="w-full border-0 border-b-2 border-muted-foreground/30 bg-transparent pb-2 text-xl text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-accent-foreground"
           />
         )}
 
@@ -473,7 +471,7 @@ function QuestionScreen({
             rows={3}
             placeholder={question.placeholder}
             onChange={(event) => onChange(event.target.value)}
-            className="w-full resize-none border-0 border-b-2 border-muted-foreground/30 bg-transparent pb-2 text-xl leading-relaxed text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-[#7158ff]"
+            className="w-full resize-none border-0 border-b-2 border-muted-foreground/30 bg-transparent pb-2 text-xl leading-relaxed text-foreground outline-none transition-colors placeholder:text-muted-foreground/50 focus:border-accent-foreground"
           />
         )}
 
@@ -493,16 +491,16 @@ function QuestionScreen({
                       ? pickChoice(option)
                       : toggleOption(option)
                   }
-                  className={`flex items-center gap-3 rounded-lg border-2 px-4 py-3.5 text-left text-base transition-all ${
+                  className={`flex items-center gap-3 rounded-xl border-2 px-4 py-3.5 text-left text-base transition-all ${
                     active
-                      ? "border-[#7158ff] bg-[#7158ff]/10 text-foreground"
-                      : "border-border bg-card text-foreground hover:border-[#7158ff]/50 hover:bg-[#7158ff]/5"
+                      ? "border-accent-foreground bg-accent text-foreground"
+                      : "border-border bg-card text-foreground hover:border-accent-foreground/50 hover:bg-accent/50"
                   }`}
                 >
                   <span
                     className={`flex size-6 shrink-0 items-center justify-center rounded border text-xs font-semibold ${
                       active
-                        ? "border-[#7158ff] bg-[#7158ff] text-white"
+                        ? "border-accent-foreground bg-accent-foreground text-white"
                         : "border-muted-foreground/30 text-muted-foreground"
                     }`}
                   >
@@ -524,7 +522,7 @@ function QuestionScreen({
         <button
           type="button"
           onClick={onNext}
-          className="inline-flex items-center rounded-lg bg-[#7158ff] px-6 py-3 text-base font-semibold text-white transition-colors hover:bg-[#5f47e0]"
+          className="inline-flex items-center rounded-full bg-primary px-6 py-3 text-base font-semibold text-primary-foreground transition-opacity hover:opacity-85"
         >
           {question.type === "multi" || question.type === "long"
             ? "Continuer"
@@ -551,15 +549,13 @@ function Summary({
 }) {
   return (
     <div>
-      <p className="font-[family-name:var(--font-handwriting)] text-3xl text-[#7158ff]">
-        C&apos;est tout !
-      </p>
+      <span className="note note-comment">C&apos;est tout !</span>
       {/*
         Titres sans capitale accentuee : Black Han Sans dessine ses accents plus
         haut que l'ascendante qu'elle declare, ils se font mordre par la ligne
         du dessus des qu'un titre passe a la ligne.
       */}
-      <h2 className="mt-2 pt-[0.14em] font-[family-name:var(--font-display)] text-[clamp(1.8rem,5vw,2.6rem)] uppercase leading-[1.25] text-foreground">
+      <h2 className="mt-2 font-[family-name:var(--font-bricolage)] text-[clamp(1.8rem,5vw,2.6rem)] font-extrabold leading-[1.1] tracking-tight text-foreground">
         Merci beaucoup
       </h2>
       <p className="mt-6 text-lg leading-relaxed text-muted-foreground">
@@ -572,7 +568,7 @@ function Summary({
           type="button"
           onClick={onSubmit}
           disabled={sending}
-          className="inline-flex items-center rounded-lg bg-[#7158ff] px-7 py-3.5 text-base font-semibold text-white transition-colors hover:bg-[#5f47e0] disabled:opacity-60"
+          className="inline-flex items-center rounded-full bg-primary px-7 py-3.5 text-base font-semibold text-primary-foreground transition-opacity hover:opacity-85 disabled:opacity-60"
         >
           {sending ? (
             <Loader2 className="mr-2 size-4 animate-spin" />

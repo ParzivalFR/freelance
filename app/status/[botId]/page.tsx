@@ -1,43 +1,8 @@
+import { PublicFrame } from "@/components/public-frame";
+import { getPublicStatus, type PublicStatus } from "@/lib/public-status";
 import { notFound } from "next/navigation";
 
-interface MonitorCheck {
-  status: string;
-  checkedAt: string;
-}
-
-interface Incident {
-  id: string;
-  startedAt: string;
-  resolvedAt: string | null;
-}
-
-interface PublicMonitor {
-  id: string;
-  name: string;
-  type: string;
-  status: string;
-  lastCheckedAt: string | null;
-  responseTime: number | null;
-  uptime7d: number | null;
-  uptime30d: number | null;
-  recentChecks: MonitorCheck[];
-  incidents: Incident[];
-}
-
-interface StatusData {
-  bot: { id: string; name: string };
-  globalStatus: "UP" | "DOWN" | "PENDING";
-  monitors: PublicMonitor[];
-}
-
-async function getStatusData(botId: string): Promise<StatusData | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
-  const res = await fetch(`${baseUrl}/api/public/status/${botId}`, {
-    next: { revalidate: 30 },
-  });
-  if (!res.ok) return null;
-  return res.json();
-}
+type MonitorCheck = PublicStatus["monitors"][number]["recentChecks"][number];
 
 function UptimeBar({ checks }: { checks: MonitorCheck[] }) {
   const slots = [...checks].reverse();
@@ -49,28 +14,28 @@ function UptimeBar({ checks }: { checks: MonitorCheck[] }) {
           title={`${c.status} — ${new Date(c.checkedAt).toLocaleString("fr-FR")}`}
           className={`h-5 flex-1 rounded-sm ${
             c.status === "UP"
-              ? "bg-emerald-500"
+              ? "bg-[#5e9a76]"
               : c.status === "DOWN"
-              ? "bg-red-500"
-              : "bg-zinc-600"
+              ? "bg-[#c2513f]"
+              : "bg-input"
           }`}
         />
       ))}
       {slots.length === 0 &&
         Array.from({ length: 30 }).map((_, i) => (
-          <div key={i} className="h-5 flex-1 rounded-sm bg-zinc-700" />
+          <div key={i} className="h-5 flex-1 rounded-sm bg-muted" />
         ))}
     </div>
   );
 }
 
 function StatusDot({ status }: { status: string }) {
-  if (status === "UP") return <span className="inline-block size-2.5 rounded-full bg-emerald-500" />;
-  if (status === "DOWN") return <span className="inline-block size-2.5 rounded-full bg-red-500" />;
-  return <span className="inline-block size-2.5 rounded-full bg-zinc-500" />;
+  if (status === "UP") return <span className="inline-block size-2.5 rounded-full bg-[#5e9a76]" />;
+  if (status === "DOWN") return <span className="inline-block size-2.5 rounded-full bg-[#c2513f]" />;
+  return <span className="inline-block size-2.5 rounded-full bg-input" />;
 }
 
-function formatDuration(startedAt: string, resolvedAt: string | null): string {
+function formatDuration(startedAt: Date, resolvedAt: Date | null): string {
   const start = new Date(startedAt).getTime();
   const end = resolvedAt ? new Date(resolvedAt).getTime() : Date.now();
   const mins = Math.floor((end - start) / 60_000);
@@ -80,13 +45,16 @@ function formatDuration(startedAt: string, resolvedAt: string | null): string {
   return `${Math.floor(hours / 24)}j`;
 }
 
+// Lue en base à chaque visite : pas de base disponible pendant le build Docker.
+export const dynamic = "force-dynamic";
+
 export default async function StatusPage({
   params,
 }: {
   params: Promise<{ botId: string }>;
 }) {
   const { botId } = await params;
-  const data = await getStatusData(botId);
+  const data = await getPublicStatus(botId);
   if (!data) notFound();
 
   const { bot, globalStatus, monitors } = data;
@@ -97,75 +65,63 @@ export default async function StatusPage({
     .slice(0, 10);
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-zinc-100 font-sans">
-      <div className="mx-auto max-w-3xl px-4 py-12">
-
-        {/* Header */}
-        <div className="mb-10 flex items-start justify-between">
+    <PublicFrame width="max-w-[760px]">
+      <div>
+        <div className="mb-10 flex flex-wrap items-start justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">{bot.name}</h1>
-            <p className="mt-1 text-sm text-zinc-400">Page de statut publique</p>
+            <span className="note note-comment">page de statut</span>
+            <h1 className="mt-4 text-[clamp(1.9rem,4.5vw,2.8rem)] font-extrabold leading-[1.08]">{bot.name}</h1>
           </div>
           <div
-            className={`flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold ${
+            className={`flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold ${
               globalStatus === "UP"
-                ? "bg-emerald-500/10 text-emerald-400"
+                ? "bg-[#dfeadf] text-[#2f5a40]"
                 : globalStatus === "DOWN"
-                ? "bg-red-500/10 text-red-400"
-                : "bg-zinc-700/50 text-zinc-400"
+                ? "bg-[#f2dcd8] text-[#8a2f22]"
+                : "bg-muted text-muted-foreground"
             }`}
           >
-            <span
-              className={`size-2 rounded-full ${
-                globalStatus === "UP"
-                  ? "bg-emerald-500"
-                  : globalStatus === "DOWN"
-                  ? "bg-red-500"
-                  : "bg-zinc-500"
-              }`}
-            />
+            <StatusDot status={globalStatus} />
             {globalStatus === "UP"
-              ? "Tous les services opérationnels"
+              ? "Tous les services fonctionnent"
               : globalStatus === "DOWN"
               ? "Incident en cours"
-              : "En attente"}
+              : "En attente de la première vérification"}
           </div>
         </div>
 
         {/* Monitors */}
         <section className="space-y-3">
-          <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
-            Services
-          </h2>
+          <h2 className="text-xl font-bold">Services</h2>
           {monitors.length === 0 && (
-            <p className="rounded-xl border border-zinc-800 p-6 text-center text-sm text-zinc-500">
-              Aucun monitor configuré.
+            <p className="rounded-2xl border bg-card p-6 text-sm text-muted-foreground">
+              Aucune surveillance configurée pour ce bot.
             </p>
           )}
           {monitors.map((m) => (
             <div
               key={m.id}
-              className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 space-y-3"
+              className="space-y-3 rounded-2xl border bg-card p-5"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <StatusDot status={m.status} />
                   <span className="font-medium text-sm">{m.name}</span>
-                  <span className="rounded bg-zinc-800 px-1.5 py-0.5 text-[10px] font-mono text-zinc-400 uppercase">
+                  <span className="rounded bg-muted px-1.5 py-0.5 font-[family-name:var(--font-jetbrains)] text-[10px] uppercase text-muted-foreground">
                     {m.type}
                   </span>
                 </div>
-                <div className="flex items-center gap-4 text-xs text-zinc-400">
+                <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
                   {m.uptime30d !== null && (
                     <span>
-                      <span className="text-zinc-300 font-semibold">{m.uptime30d}%</span>
-                      {" "}uptime 30j
+                      <span className="font-semibold text-foreground">{m.uptime30d}%</span>
+                      {" "}sur 30 jours
                     </span>
                   )}
                   {m.uptime7d !== null && (
                     <span>
-                      <span className="text-zinc-300 font-semibold">{m.uptime7d}%</span>
-                      {" "}uptime 7j
+                      <span className="font-semibold text-foreground">{m.uptime7d}%</span>
+                      {" "}sur 7 jours
                     </span>
                   )}
                   {m.responseTime !== null && (
@@ -176,8 +132,8 @@ export default async function StatusPage({
               {m.recentChecks.length > 0 && (
                 <div>
                   <UptimeBar checks={m.recentChecks} />
-                  <div className="mt-1 flex justify-between text-[10px] text-zinc-600">
-                    <span>30 derniers checks</span>
+                  <div className="mt-1 flex justify-between text-[11px] text-muted-foreground">
+                    <span>30 dernières vérifications</span>
                     {m.lastCheckedAt && (
                       <span>
                         Vérifié {new Date(m.lastCheckedAt).toLocaleString("fr-FR")}
@@ -193,25 +149,23 @@ export default async function StatusPage({
         {/* Incidents récents */}
         {allIncidents.length > 0 && (
           <section className="mt-10 space-y-3">
-            <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-500">
-              Incidents récents
-            </h2>
+            <h2 className="text-xl font-bold">Incidents récents</h2>
             <div className="space-y-2">
               {allIncidents.map((inc) => (
                 <div
                   key={inc.id}
-                  className="rounded-xl border border-zinc-800 bg-zinc-900 p-4 flex items-start justify-between gap-4"
+                  className="flex items-start justify-between gap-4 rounded-2xl border bg-card p-5"
                 >
                   <div>
                     <p className="text-sm font-medium">
                       {inc.resolvedAt ? (
-                        <span className="text-zinc-300">Résolu</span>
+                        <span>Résolu</span>
                       ) : (
-                        <span className="text-red-400">En cours</span>
+                        <span className="text-[#8a2f22]">En cours</span>
                       )}{" "}
-                      — {inc.monitorName}
+                      · {inc.monitorName}
                     </p>
-                    <p className="mt-0.5 text-xs text-zinc-500">
+                    <p className="mt-0.5 text-xs text-muted-foreground">
                       Débuté le {new Date(inc.startedAt).toLocaleString("fr-FR")}
                       {inc.resolvedAt && (
                         <> · Résolu le {new Date(inc.resolvedAt).toLocaleString("fr-FR")}</>
@@ -219,10 +173,10 @@ export default async function StatusPage({
                     </p>
                   </div>
                   <span
-                    className={`shrink-0 rounded px-2 py-0.5 text-xs font-mono ${
+                    className={`shrink-0 rounded px-2 py-0.5 font-[family-name:var(--font-jetbrains)] text-xs ${
                       inc.resolvedAt
-                        ? "bg-zinc-800 text-zinc-400"
-                        : "bg-red-500/10 text-red-400"
+                        ? "bg-muted text-muted-foreground"
+                        : "bg-[#f2dcd8] text-[#8a2f22]"
                     }`}
                   >
                     {formatDuration(inc.startedAt, inc.resolvedAt)}
@@ -233,11 +187,10 @@ export default async function StatusPage({
           </section>
         )}
 
-        {/* Footer */}
-        <footer className="mt-12 text-center text-xs text-zinc-600">
-          Propulsé par <span className="text-zinc-500">Fleetly</span>
-        </footer>
+        <p className="mt-12 text-xs text-muted-foreground">
+          Vérifications automatiques à intervalle régulier. Surveillance assurée par gael-dev.fr.
+        </p>
       </div>
-    </div>
+    </PublicFrame>
   );
 }
