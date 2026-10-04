@@ -49,3 +49,15 @@ Quand on ajoute un nouveau module au bot, **trois endroits doivent toujours êtr
 - [ ] `bot-types.ts` — champs de config ajoutés au type `ModuleConfig`
 - [ ] Schéma Prisma mis à jour si nouvelles tables nécessaires (`bot-engine/prisma/schema.prisma`)
 - [ ] Route API créée si le module expose des données (`app/api/bot/<module>/route.ts`)
+
+## Identité visuelle et conventions du site (octobre 2026)
+
+- Charte, logo, pages et règles de collaboration : lire `docs/etat-des-lieux-2026-10.md` avant tout travail sur les pages publiques ou l'admin
+- Couleur de marque : le jeton `brand` (kaki `#4a5a3a`, défini dans `app/globals.css`), jamais de couleur en dur ni de violet
+- Polices : `--font-bricolage` (titres), `--font-instrument` (texte), `--font-jetbrains` (étiquettes) ; classes `.hl` (mot sur pastille) et `.note note-comment` (étiquette `// …`)
+- Pages publiques toujours claires via la classe `.landing` ; le dashboard garde son mode sombre
+- Aucun mouvement au survol (pas de translate ni de scale), seulement un changement de teinte
+- Logo : `components/logo.tsx` (`LogoMark`), jamais de « GR. » texte
+- Contact public : `hello@gael-dev.fr`
+- Une page ne doit jamais appeler sa propre API par HTTP : partager la logique dans `lib/` (voir `lib/public-status.ts`)
+- Push seulement à la demande de Gaël ; `pnpm tsc --noEmit` avant chaque commit, `pnpm build` avant de pousser un changement touchant l'admin ou les routes serveur
