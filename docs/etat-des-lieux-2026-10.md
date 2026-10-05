@@ -136,6 +136,31 @@ est le contexte autour.
   pense l'arrêter). Le dashboard et bot-engine continuent de tourner pour les
   clients existants ; un client payant (Copilote, bot de Fleetly) est en PRO.
 
+- **E-mails** (refaits le 05/10) : tous passent par `lib/email-layout.ts`
+  (`emailLayout`, `emailHighlight`, `emailNote`, `emailButton`, `emailRows`,
+  `emailQuote`) : fond perle, carte blanche, logo `public/logo-email.png`
+  chargé depuis le site, étiquette `// …`, bouton pilule, pied de page
+  `hello@gael-dev.fr`. Concernés : contact (notification + accusé, `app/api/
+  contact/route.ts`), brief (invitation `lib/brief-mail.ts`, notification +
+  accusé `app/api/brief/[token]/route.ts`), demande d'avis
+  (`lib/email-templates/testimonial-request.ts`), envoi de devis
+  (`lib/email.ts`). Les modèles sont dans le code, pas en base : la page admin
+  « Email templates » ne fait que les lister. Deux transports SMTP
+  coexistent : `lib/mailer.ts` (`EMAIL_*`, Infomaniak) pour contact, brief et
+  avis ; `lib/email.ts` (`SMTP_*`) pour les devis. Tout nouvel e-mail doit
+  utiliser `emailLayout`, pas de HTML maison. Pas d'émoji dans les objets.
+- **PDF de devis** (`lib/pdf-generator.ts`, jsPDF, même signature
+  `generateDevisPDF`) : logo via `lib/pdf-logo.ts` (PNG base64), en-tête
+  « DEVIS » avec étiquette numéro/date, émetteur/destinataire, encart
+  validité/règlement/TVA (« non applicable (art. 293 B du CGI) » en
+  franchise), tableau à en-tête noir, bloc total, notes, cadre « Bon pour
+  accord », pied de page avec SIRET et numéro de page. Helvetica seulement :
+  les montants retirent l'espace fine insécable d'Intl, sinon elle sort en
+  « / ». Exemple dans `Developpement/identite-gael-dev/exemple-devis.pdf`.
+  Pour prévisualiser hors de l'app : compiler le fichier avec `tsc
+  --ignoreConfig`, l'exécuter avec `NODE_PATH=node_modules node`, rendre le
+  PDF avec pdf.js dans Chrome headless (pas de `pdftoppm` sur le poste).
+
 ## 5. bot-engine, ce qu'il faut savoir
 
 - Un process par bot, superviseur avec protection contre les boucles de
