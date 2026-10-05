@@ -197,8 +197,9 @@ est le contexte autour.
   vu à l'écran).
 - Mettre les bannières et l'avatar du pack sur LinkedIn, Malt, GitHub,
   Discord. Forcer le rafraîchissement de la carte Discord avec `?v=2`.
-- Les modèles d'e-mails stockés en base (admin → Email templates) peuvent
-  encore contenir du violet ou l'ancien « GR. » : à retoucher depuis l'admin.
+- E-mails et PDF de devis : refaits le 05/10 (`lib/email-layout.ts`, `lib/pdf-generator.ts`,
+  logo `public/logo-email.png` et `lib/pdf-logo.ts`). Les modèles d'e-mails sont dans
+  le code, pas en base : la page admin « Email templates » ne fait que les lister.
 - Rapatrier les images des projets hors du stockage Supabase (optionnel).
 - Audit de septembre, lots non traités : garde SSRF (modules monitor et
   welcome), Stripe (événements webhook, double abonnement, remboursement),
@@ -217,4 +218,4 @@ logo et kaki → `5404e99` carrousel → `4881be2` menu flottant → `1ab7437`
 héros 3D → `22a5338` connexion → `9e79eb3` légales et 404 → `4a18f4d` avis,
 brief, statut → `717f788` hello@ → `ae70c3f` admin et dashboard → `fdbacb9`
 plan de site → `f6e9d2b` favicon → `e169bff` image de partage → `a330f96` Mon
-espace → `c0d74fc` « plus en ligne » → `7fdc342` URL facultative.
+espace → `c0d74fc` « plus en ligne » → `7fdc342` URL facultative → `dabed07` e-mails et PDF.
