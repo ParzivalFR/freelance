@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf';
+import { PDF_LOGO_PNG } from './pdf-logo';
 
 interface DevisItem {
   id: string;
@@ -25,7 +26,7 @@ interface CompanyInfo {
   siret: string;
 }
 
-interface DevisPDFRequest {
+export interface DevisPDFRequest {
   devisNumber: string;
   date: string;
   validUntil: string;
@@ -40,372 +41,278 @@ interface DevisPDFRequest {
   notes?: string;
 }
 
+// Charte du site : perle, encre, kaki.
+const INK = [30, 31, 36] as const;
+const GREY = [105, 106, 112] as const;
+const LINE = [227, 226, 222] as const;
+const PEBBLE = [236, 235, 231] as const;
+const KAKI = [74, 90, 58] as const;
+const KAKI_LIGHT = [218, 223, 207] as const;
+const WHITE = [255, 255, 255] as const;
+
+const MARGIN = 16;
+
+// Helvetica n'a pas l'espace fine insécable qu'Intl insère dans « 1 325,00 € »
+const euros = (n: number) =>
+  new Intl.NumberFormat('fr-FR', { style: 'currency', currency: 'EUR' })
+    .format(n)
+    .replace(/[  ]/g, ' ');
+
 export function generateDevisPDF(data: DevisPDFRequest): Buffer {
   const doc = new jsPDF();
-  let yPos = 12;
-  const margin = 10;
-  const pageWidth = doc.internal.pageSize.width;
-  
-  // Palette sobre et moderne
-  const charcoal = [45, 45, 45] as const;      // Gris très foncé pour les titres
-  const darkGray = [75, 75, 75] as const;      // Gris foncé pour le texte principal
-  const mediumGray = [120, 120, 120] as const; // Gris moyen pour les infos secondaires
-  const lightGray = [240, 240, 240] as const;  // Gris très clair pour les fonds
-  const accent = [90, 90, 90] as const;        // Accent discret
-  
-  // === HEADER MODERNE ET SOBRE ===
-  // Titre DEVIS - sobre mais impactant
-  doc.setTextColor(...charcoal);
-  doc.setFontSize(18);
-  doc.setFont('helvetica', 'normal');
-  doc.text('DEVIS', margin, yPos);
-  
-  // Numéro en dessous, plus petit
-  doc.setFontSize(9);
-  doc.setTextColor(...mediumGray);
-  doc.text(`N° ${data.devisNumber}`, margin, yPos + 5);
-  
-  // Nom entreprise à droite - style moderne
-  doc.setTextColor(...charcoal);
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'normal');
-  const companyNameWidth = doc.getTextWidth(data.companyInfo.name);
-  doc.text(data.companyInfo.name, pageWidth - margin - companyNameWidth, yPos);
-  
-  // Date sous le nom d'entreprise
-  doc.setFontSize(8);
-  doc.setTextColor(...mediumGray);
-  const dateText = data.date;
-  const dateWidth = doc.getTextWidth(dateText);
-  doc.text(dateText, pageWidth - margin - dateWidth, yPos + 5);
-  
-  yPos += 12;
-  
-  // Ligne de séparation subtile
-  doc.setDrawColor(...lightGray);
-  doc.setLineWidth(0.3);
-  doc.line(margin, yPos, pageWidth - margin, yPos);
-  
-  yPos += 10;
-  
-  // === INFORMATIONS EN COLONNES MODERNES ===
-  const leftColX = margin;
-  const rightColX = pageWidth / 2 + 10;
-  
-  // Section ÉMETTEUR
-  doc.setTextColor(...accent);
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'bold');
-  doc.text('ÉMETTEUR', leftColX, yPos);
-  
-  doc.setTextColor(...darkGray);
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'normal');
-  yPos += 4;
-  
-  // Nom entreprise
-  doc.setFont('helvetica', 'bold');
-  doc.text(data.companyInfo.name, leftColX, yPos);
-  doc.setFont('helvetica', 'normal');
-  yPos += 3;
-  
-  // Adresse
-  const addressLines = data.companyInfo.address.split('\n');
-  addressLines.forEach(line => {
-    doc.text(line.trim(), leftColX, yPos);
-    yPos += 2.5;
-  });
-  
-  doc.text(data.companyInfo.phone, leftColX, yPos);
-  yPos += 2.5;
-  doc.text(data.companyInfo.email, leftColX, yPos);
-  yPos += 2.5;
-  
-  doc.setTextColor(...mediumGray);
-  doc.setFontSize(7);
-  doc.text(`SIRET ${data.companyInfo.siret}`, leftColX, yPos);
-  
-  // Section DESTINATAIRE (à droite)
-  let clientY = yPos - (addressLines.length + 4) * 2.5 - 4;
-  
-  doc.setTextColor(...accent);
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'bold');
-  doc.text('DESTINATAIRE', rightColX, clientY);
-  
-  doc.setTextColor(...darkGray);
-  doc.setFontSize(8);
-  doc.setFont('helvetica', 'normal');
-  clientY += 4;
-  
-  // Nom client
-  doc.setFont('helvetica', 'bold');
-  doc.text(`${data.client.firstName} ${data.client.lastName}`, rightColX, clientY);
-  doc.setFont('helvetica', 'normal');
-  clientY += 3;
-  
-  if (data.client.company) {
-    doc.text(data.client.company, rightColX, clientY);
-    clientY += 2.5;
-  }
-  
-  if (data.client.address) {
-    const clientAddressLines = data.client.address.split('\n');
-    clientAddressLines.forEach(line => {
-      doc.text(line.trim(), rightColX, clientY);
-      clientY += 2.5;
-    });
-  }
-  
-  doc.text(data.client.email, rightColX, clientY);
-  clientY += 2.5;
-  
-  if (data.client.phone) {
-    doc.text(data.client.phone, rightColX, clientY);
-  }
-  
-  yPos = Math.max(yPos, clientY) + 12;
-  
-  // === INFORMATIONS DU DEVIS - Card moderne ===
-  const cardY = yPos;
-  const cardHeight = 11;
-  const cardWidth = 70;
-  const cardX = pageWidth - margin - cardWidth;
-  
-  // Fond très subtil
-  doc.setFillColor(...lightGray);
-  doc.rect(cardX, cardY, cardWidth, cardHeight, 'F');
-  
-  // Bordure fine
-  doc.setDrawColor(220, 220, 220);
-  doc.setLineWidth(0.2);
-  doc.rect(cardX, cardY, cardWidth, cardHeight, 'S');
-  
-  doc.setTextColor(...mediumGray);
-  doc.setFontSize(7);
-  doc.setFont('helvetica', 'bold');
-  doc.text('ÉCHÉANCE', cardX + 3, cardY + 4);
-  doc.text('CONDITIONS', cardX + 3, cardY + 8);
-  
-  doc.setFont('helvetica', 'normal');
-  doc.setTextColor(...darkGray);
-  doc.text(data.validUntil, cardX + 28, cardY + 4);
-  doc.text('30 jours net', cardX + 28, cardY + 8);
-  
-  yPos += 18;
-  
-  // === TABLEAU MINIMALISTE ===
-  doc.setTextColor(...charcoal);
-  doc.setFontSize(9);
-  doc.setFont('helvetica', 'bold');
-  doc.text('Détail des prestations', margin, yPos);
-  yPos += 8;
-  
-  // En-tête tableau - style très sobre
-  const rowHeight = 7;
-  const colWidths = [105, 18, 28, 30];
-  let colX = margin;
-  
-  // Fond gris très clair pour l'en-tête
-  doc.setFillColor(...lightGray);
-  doc.rect(margin, yPos, pageWidth - 2 * margin, rowHeight, 'F');
-  
-  doc.setTextColor(...accent);
-  doc.setFontSize(7);
-  doc.setFont('helvetica', 'bold');
-  
-  doc.text('DESCRIPTION', colX + 2, yPos + 4);
-  colX += colWidths[0];
-  doc.text('QTÉ', colX + 2, yPos + 4);
-  colX += colWidths[1];
-  doc.text('PRIX UNIT.', colX + 2, yPos + 4);
-  colX += colWidths[2];
-  doc.text('TOTAL', colX + 2, yPos + 4);
-  
-  yPos += rowHeight;
-  
-  // Lignes du tableau
-  doc.setTextColor(...darkGray);
-  doc.setFont('helvetica', 'normal');
-  doc.setFontSize(6);
-  
-  data.items.forEach((item, index) => {
-    // Description avec gestion des lignes multiples
-    const description = doc.splitTextToSize(item.description, colWidths[0] - 4);
-    const itemHeight = Math.max(rowHeight, description.length * 2 + 1);
-    
-    // Vérifier si on a assez de place (incluant les totaux qui suivent)
-    if (yPos + itemHeight + 35 > doc.internal.pageSize.height - 10) {
-      doc.addPage();
-      yPos = 12;
-      
-      // Réafficher l'en-tête du tableau sur la nouvelle page
-      doc.setFillColor(...lightGray);
-      doc.rect(margin, yPos, pageWidth - 2 * margin, rowHeight, 'F');
-      
-      doc.setTextColor(...accent);
-      doc.setFontSize(7);
-      doc.setFont('helvetica', 'bold');
-      
-      colX = margin;
-      doc.text('DESCRIPTION', colX + 2, yPos + 4);
-      colX += colWidths[0];
-      doc.text('QTÉ', colX + 2, yPos + 4);
-      colX += colWidths[1];
-      doc.text('PRIX UNIT.', colX + 2, yPos + 4);
-      colX += colWidths[2];
-      doc.text('TOTAL', colX + 2, yPos + 4);
-      
-      yPos += rowHeight;
-      
-      // Remettre les styles pour les données
-      doc.setTextColor(...darkGray);
-      doc.setFont('helvetica', 'normal');
-      doc.setFontSize(6);
-    }
-    
-    // Alternance très subtile
-    if (index % 2 === 1) {
-      doc.setFillColor(252, 252, 252);
-      doc.rect(margin, yPos, pageWidth - 2 * margin, itemHeight, 'F');
-    }
-    
-    colX = margin;
-    
-    // Description (peut être sur plusieurs lignes)
-    doc.text(description, colX + 2, yPos + 4);
-    colX += colWidths[0];
-    
-    // Centrer verticalement les autres colonnes si la description fait plusieurs lignes
-    const verticalOffset = description.length > 1 ? Math.floor((itemHeight - 4) / 2) : 0;
-    
-    doc.text(item.quantity.toString(), colX + 2, yPos + 4 + verticalOffset);
-    colX += colWidths[1];
-    
-    doc.text(`${item.unitPrice.toFixed(2)} €`, colX + 2, yPos + 4 + verticalOffset);
-    colX += colWidths[2];
-    
-    doc.text(`${item.total.toFixed(2)} €`, colX + 2, yPos + 4 + verticalOffset);
-    
-    yPos += itemHeight;
-  });
-  
-  // Ligne de fermeture très fine
-  doc.setDrawColor(...mediumGray);
-  doc.setLineWidth(0.3);
-  doc.line(margin, yPos, pageWidth - margin, yPos);
-  
-  yPos += 25;
-  
-  // === TOTAUX ÉPURÉS ===
-  const totalAreaX = pageWidth - margin - 75;
-  
-  doc.setTextColor(...darkGray);
-  doc.setFontSize(10);
-  doc.setFont('helvetica', 'normal');
-  
-  // Sous-total
-  doc.text('Sous-total HT', totalAreaX, yPos);
-  const subtotalText = `${data.subtotal.toFixed(2)} €`;
-  const subtotalWidth = doc.getTextWidth(subtotalText);
-  doc.text(subtotalText, totalAreaX + 75 - subtotalWidth, yPos);
-  yPos += 6;
-  
-  // TVA
-  if (data.tvaApplicable) {
-    doc.text(`TVA (${data.tvaRate}%)`, totalAreaX, yPos);
-    const tvaText = `${data.tvaAmount.toFixed(2)} €`;
-    const tvaWidth = doc.getTextWidth(tvaText);
-    doc.text(tvaText, totalAreaX + 75 - tvaWidth, yPos);
-    yPos += 6;
-  }
-  
-  // Ligne fine
-  doc.setDrawColor(...mediumGray);
-  doc.setLineWidth(0.5);
-  doc.line(totalAreaX, yPos + 2, totalAreaX + 70, yPos + 2);
-  yPos += 10;
-  
-  // Total final - sobre mais visible
-  doc.setTextColor(...charcoal);
-  doc.setFontSize(11);
-  doc.setFont('helvetica', 'bold');
-  
-  const totalLabel = data.tvaApplicable ? 'TOTAL TTC' : 'TOTAL HT';
-  doc.text(totalLabel, totalAreaX, yPos);
-  
-  const totalText = `${data.total.toFixed(2)} €`;
-  const totalWidth = doc.getTextWidth(totalText);
-  doc.text(totalText, totalAreaX + 75 - totalWidth, yPos);
-  
-  yPos += 12;
-  
-  // === NOTES MODERNES ===
-  if (data.notes) {
-    // Vérifier s'il reste assez de place pour les notes
-    if (yPos + 20 > doc.internal.pageSize.height - 15) {
-      doc.addPage();
-      yPos = 12;
-    }
-    
-    doc.setTextColor(...charcoal);
+  const pageW = doc.internal.pageSize.width;
+  const pageH = doc.internal.pageSize.height;
+  const contentW = pageW - 2 * MARGIN;
+  const right = pageW - MARGIN;
+
+  const textRight = (text: string, x: number, y: number) =>
+    doc.text(text, x - doc.getTextWidth(text), y);
+
+  // Petite étiquette façon « // … », comme sur le site
+  const note = (text: string, x: number, y: number, alignRight = false) => {
+    doc.setFont('courier', 'normal');
     doc.setFontSize(8);
+    const label = `// ${text}`;
+    const w = doc.getTextWidth(label) + 5;
+    const bx = alignRight ? x - w : x;
+    doc.setFillColor(...KAKI_LIGHT);
+    doc.roundedRect(bx, y - 4, w, 6, 1.5, 1.5, 'F');
+    doc.setTextColor(...KAKI);
+    doc.text(label, bx + 2.5, y);
+    doc.setFont('helvetica', 'normal');
+  };
+
+  const footer = () => {
+    const y = pageH - 12;
+    doc.setDrawColor(...LINE);
+    doc.setLineWidth(0.3);
+    doc.line(MARGIN, y - 5, right, y - 5);
+    doc.setTextColor(...GREY);
+    doc.setFontSize(7.5);
+    doc.setFont('helvetica', 'normal');
+    doc.text(
+      `${data.companyInfo.name} · SIRET ${data.companyInfo.siret} · ${data.companyInfo.email}`,
+      MARGIN,
+      y,
+    );
+    textRight(`Devis ${data.devisNumber} · page ${doc.getNumberOfPages()}`, right, y);
+  };
+
+  const tableHeader = (y: number) => {
+    doc.setFillColor(...INK);
+    doc.roundedRect(MARGIN, y, contentW, 8, 2, 2, 'F');
+    doc.setTextColor(...WHITE);
+    doc.setFontSize(7.5);
     doc.setFont('helvetica', 'bold');
-    doc.text('Notes', margin, yPos);
-    yPos += 6;
-    
-    // Calculer la hauteur nécessaire pour les notes
-    const notes = doc.splitTextToSize(data.notes, pageWidth - 2 * margin - 6);
-    const notesHeight = Math.max(10, notes.length * 2.5 + 4);
-    
-    // Vérifier si les notes rentrent sur la page
-    if (yPos + notesHeight > doc.internal.pageSize.height - 15) {
-      doc.addPage();
-      yPos = 12;
-      
-      doc.setTextColor(...charcoal);
-      doc.setFontSize(8);
-      doc.setFont('helvetica', 'bold');
-      doc.text('Notes', margin, yPos);
-      yPos += 6;
-    }
-    
-    // Zone de notes avec bordure fine
-    doc.setFillColor(250, 250, 250);
-    doc.rect(margin, yPos - 1, pageWidth - 2 * margin, notesHeight, 'F');
-    
-    doc.setDrawColor(230, 230, 230);
-    doc.setLineWidth(0.2);
-    doc.rect(margin, yPos - 1, pageWidth - 2 * margin, notesHeight, 'S');
-    
-    doc.setTextColor(...darkGray);
+    doc.text('DESCRIPTION', MARGIN + 4, y + 5.3);
+    textRight('QTÉ', MARGIN + 118, y + 5.3);
+    textRight('PRIX UNITAIRE', MARGIN + 150, y + 5.3);
+    textRight('TOTAL', right - 4, y + 5.3);
+    return y + 8;
+  };
+
+  // ── En-tête : logo, nom, « DEVIS » ──
+  let y = 18;
+  doc.addImage(PDF_LOGO_PNG, 'PNG', MARGIN, y - 4, 13, 13);
+  doc.setTextColor(...INK);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(13);
+  doc.text(data.companyInfo.name, MARGIN + 17, y + 2);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8.5);
+  doc.setTextColor(...GREY);
+  doc.text('développeur freelance', MARGIN + 17, y + 7);
+
+  doc.setTextColor(...INK);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(26);
+  textRight('DEVIS', right, y + 4);
+  note(`n° ${data.devisNumber} · ${data.date}`, right, y + 12, true);
+
+  y += 22;
+  doc.setDrawColor(...LINE);
+  doc.setLineWidth(0.3);
+  doc.line(MARGIN, y, right, y);
+  y += 12;
+
+  // ── Émetteur / destinataire ──
+  const colRight = pageW / 2 + 6;
+  const block = (title: string, x: number, lines: Array<string | undefined>) => {
+    let yy = y;
+    doc.setTextColor(...KAKI);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.text(title, x, yy);
+    yy += 6;
+    doc.setTextColor(...INK);
+    doc.setFontSize(9.5);
+    lines
+      .filter((l): l is string => !!l && l.trim() !== '')
+      .forEach((line, i) => {
+        doc.setFont('helvetica', i === 0 ? 'bold' : 'normal');
+        if (i > 0) doc.setTextColor(...GREY);
+        line.split('\n').forEach((part) => {
+          doc.text(part.trim(), x, yy);
+          yy += 4.6;
+        });
+      });
+    return yy;
+  };
+  const yLeft = block('ÉMETTEUR', MARGIN, [
+    data.companyInfo.name,
+    data.companyInfo.address,
+    data.companyInfo.phone,
+    data.companyInfo.email,
+    `SIRET ${data.companyInfo.siret}`,
+  ]);
+  const yRight = block('DESTINATAIRE', colRight, [
+    `${data.client.firstName} ${data.client.lastName}`,
+    data.client.company,
+    data.client.address,
+    data.client.email,
+    data.client.phone,
+  ]);
+  y = Math.max(yLeft, yRight) + 8;
+
+  // ── Validité et conditions ──
+  doc.setFillColor(...PEBBLE);
+  doc.roundedRect(MARGIN, y, contentW, 14, 3, 3, 'F');
+  const cell = (label: string, value: string, x: number) => {
+    doc.setTextColor(...GREY);
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
-    
-    doc.text(notes, margin + 3, yPos + 2.5);
-  }
-  
-  // === FOOTER DISCRET ===
-  const footerY = doc.internal.pageSize.height - 8;
-  
-  doc.setTextColor(...mediumGray);
-  doc.setFontSize(6);
-  doc.setFont('helvetica', 'normal');
-  
-  const footerText = `Devis valable jusqu'au ${data.validUntil} • Règlement sous 30 jours ${
-    data.tvaApplicable ? '• TVA applicable' : '• TVA non applicable'
-  }`;
-  
-  const footerWidth = doc.getTextWidth(footerText);
-  doc.text(footerText, (pageWidth - footerWidth) / 2, footerY);
-  
-  // Ligne décorative fine
-  doc.setDrawColor(235, 235, 235);
-  doc.setLineWidth(0.1);
-  doc.line(margin + 25, footerY - 2, pageWidth - margin - 25, footerY - 2);
-  
-  const pdfOutput = doc.output('arraybuffer');
-  return Buffer.from(pdfOutput);
-}
+    doc.text(label.toUpperCase(), x, y + 5.2);
+    doc.setTextColor(...INK);
+    doc.setFontSize(9.5);
+    doc.setFont('helvetica', 'bold');
+    doc.text(value, x, y + 10.4);
+  };
+  cell("Valable jusqu'au", data.validUntil, MARGIN + 5);
+  cell('Règlement', '30 jours net', MARGIN + 5 + contentW / 3);
+  cell('TVA', data.tvaApplicable ? `${data.tvaRate} %` : 'non applicable (art. 293 B du CGI)', MARGIN + 5 + (2 * contentW) / 3);
+  y += 24;
 
-export type { DevisPDFRequest, ClientInfo, DevisItem, CompanyInfo };
+  // ── Lignes ──
+  doc.setTextColor(...INK);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(12);
+  doc.text('Détail des prestations', MARGIN, y);
+  y += 6;
+  y = tableHeader(y);
+
+  data.items.forEach((item) => {
+    doc.setFontSize(9.5);
+    doc.setFont('helvetica', 'normal');
+    const lines: string[] = doc.splitTextToSize(item.description, 96);
+    const rowH = Math.max(10, lines.length * 4.6 + 5);
+
+    if (y + rowH > pageH - 60) {
+      footer();
+      doc.addPage();
+      y = 18;
+      y = tableHeader(y);
+      doc.setFontSize(9.5);
+      doc.setFont('helvetica', 'normal');
+    }
+
+    doc.setTextColor(...INK);
+    doc.text(lines, MARGIN + 4, y + 6.5);
+    const mid = y + 6.5;
+    doc.setTextColor(...GREY);
+    textRight(String(item.quantity), MARGIN + 118, mid);
+    textRight(euros(item.unitPrice), MARGIN + 150, mid);
+    doc.setTextColor(...INK);
+    doc.setFont('helvetica', 'bold');
+    textRight(euros(item.total), right - 4, mid);
+    doc.setFont('helvetica', 'normal');
+
+    y += rowH;
+    doc.setDrawColor(...LINE);
+    doc.setLineWidth(0.25);
+    doc.line(MARGIN, y, right, y);
+  });
+
+  // ── Totaux ──
+  if (y + 48 > pageH - 30) {
+    footer();
+    doc.addPage();
+    y = 18;
+  }
+  y += 10;
+  const boxW = 78;
+  const boxX = right - boxW;
+  const totalRows: Array<[string, string]> = [['Sous-total HT', euros(data.subtotal)]];
+  if (data.tvaApplicable) totalRows.push([`TVA ${data.tvaRate} %`, euros(data.tvaAmount)]);
+  const boxH = 10 + totalRows.length * 7 + 14;
+  doc.setFillColor(...PEBBLE);
+  doc.roundedRect(boxX, y, boxW, boxH, 3, 3, 'F');
+  let ty = y + 8;
+  doc.setFontSize(9);
+  totalRows.forEach(([label, value]) => {
+    doc.setFont('helvetica', 'normal');
+    doc.setTextColor(...GREY);
+    doc.text(label, boxX + 6, ty);
+    doc.setTextColor(...INK);
+    textRight(value, right - 6, ty);
+    ty += 7;
+  });
+  doc.setDrawColor(...INK);
+  doc.setLineWidth(0.4);
+  doc.line(boxX + 6, ty - 3, right - 6, ty - 3);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  doc.setTextColor(...INK);
+  doc.text(data.tvaApplicable ? 'Total TTC' : 'Total HT', boxX + 6, ty + 5);
+  doc.setFontSize(14);
+  textRight(euros(data.total), right - 6, ty + 5);
+  y += boxH + 12;
+
+  // ── Notes ──
+  if (data.notes) {
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'normal');
+    const lines: string[] = doc.splitTextToSize(data.notes, contentW - 12);
+    const h = lines.length * 4.6 + 8;
+    if (y + h > pageH - 30) {
+      footer();
+      doc.addPage();
+      y = 18;
+    }
+    doc.setTextColor(...KAKI);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(7.5);
+    doc.text('NOTES', MARGIN, y);
+    y += 4;
+    doc.setDrawColor(...KAKI_LIGHT);
+    doc.setLineWidth(0.8);
+    doc.line(MARGIN + 0.5, y, MARGIN + 0.5, y + h - 6);
+    doc.setTextColor(...INK);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(9);
+    doc.text(lines, MARGIN + 6, y + 4);
+    y += h;
+  }
+
+  // ── Bon pour accord ──
+  if (y + 26 > pageH - 22) {
+    footer();
+    doc.addPage();
+    y = 18;
+  }
+  doc.setDrawColor(...LINE);
+  doc.setLineWidth(0.3);
+  doc.roundedRect(MARGIN, y, contentW, 24, 3, 3, 'S');
+  doc.setTextColor(...INK);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(9.5);
+  doc.text('Bon pour accord', MARGIN + 6, y + 8);
+  doc.setFont('helvetica', 'normal');
+  doc.setFontSize(8);
+  doc.setTextColor(...GREY);
+  doc.text('Date et signature, précédées de la mention « bon pour accord ».', MARGIN + 6, y + 14);
+  note("réponse sous 24 h à toute question", right - 6, y + 9, true);
+
+  footer();
+
+  return Buffer.from(doc.output('arraybuffer'));
+}

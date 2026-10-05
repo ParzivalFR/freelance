@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { emailHighlight, emailLayout, emailQuote, emailRows } from "@/lib/email-layout";
 import { escapeHtml, escapeHtmlMultiline, getMailer } from "@/lib/mailer";
 
 /**
@@ -95,17 +96,14 @@ export async function POST(request: Request) {
 
   // Toutes les valeurs saisies sont échappées : un message contenant des
   // balises ne doit pas pouvoir réécrire l'email reçu.
-  const details = `
-    <table style="width:100%;border-collapse:collapse">
-      <tr><td style="padding:4px 0"><strong>Nom</strong></td><td>${escapeHtml(fullName)}</td></tr>
-      <tr><td style="padding:4px 0"><strong>Email</strong></td><td>${escapeHtml(email)}</td></tr>
-      ${company ? `<tr><td style="padding:4px 0"><strong>Entreprise</strong></td><td>${escapeHtml(company)}</td></tr>` : ""}
-      ${projectType ? `<tr><td style="padding:4px 0"><strong>Type de projet</strong></td><td>${escapeHtml(projectType)}</td></tr>` : ""}
-      ${budget ? `<tr><td style="padding:4px 0"><strong>Budget</strong></td><td>${escapeHtml(budget)}</td></tr>` : ""}
-    </table>
-    <div style="background:#f9f9f9;padding:12px;border-left:5px solid #4a5a3a;margin-top:16px">
-      ${escapeHtmlMultiline(message)}
-    </div>`;
+  const details =
+    emailRows([
+      ["Nom", escapeHtml(fullName)],
+      ["E-mail", escapeHtml(email)],
+      company && ["Entreprise", escapeHtml(company)],
+      projectType && ["Projet", escapeHtml(projectType)],
+      budget && ["Budget", escapeHtml(budget)],
+    ]) + emailQuote(escapeHtmlMultiline(message));
 
   try {
     const mailer = getMailer();
@@ -114,29 +112,30 @@ export async function POST(request: Request) {
       from: process.env.EMAIL_USER,
       replyTo: `${fullName} <${email}>`,
       to: destination,
-      subject: `🚀 Nouveau message de ${fullName}${projectType ? ` — ${projectType}` : ""}`,
-      html: `
-        <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#333;line-height:1.6;border:1px solid #4a5a3a;border-radius:8px;padding:24px">
-          <h2>🍀 Nouveau message de <span style="color:#4a5a3a">${escapeHtml(fullName)}</span></h2>
-          ${details}
-          <p style="margin-top:24px">
-            <a href="${siteUrl}/admin/briefs" style="color:#4a5a3a">Lui envoyer un questionnaire de cadrage</a>
-          </p>
-        </div>`,
+      subject: `Nouveau message de ${fullName}${projectType ? ` (${projectType})` : ""}`,
+      html: emailLayout({
+        kicker: "nouveau message",
+        title: `${escapeHtml(fullName)} ${emailHighlight("vous écrit.")}`,
+        body: details,
+        cta: { label: "Lui envoyer le questionnaire", href: `${siteUrl}/admin/briefs` },
+        footer: `Reçu depuis le formulaire de <a href="${siteUrl}" style="color:#4A5A3A">gael-dev.fr</a>. Répondre à cet e-mail répond directement à ${escapeHtml(fullName)}.`,
+      }),
     });
 
     await mailer.sendMail({
       from: process.env.EMAIL_USER,
       to: email,
       subject: "Votre message est bien arrivé",
-      html: `
-        <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#333;line-height:1.6;border:1px solid #4a5a3a;border-radius:8px;padding:24px">
-          <h2>Merci ${escapeHtml(firstName)} !</h2>
-          <p>J'ai bien reçu votre message et je vous réponds sous 24 heures.</p>
-          <p>Voici ce que vous venez de m'envoyer :</p>
+      html: emailLayout({
+        kicker: "bien reçu",
+        preheader: "Je vous réponds sous 24 heures.",
+        title: `Merci ${escapeHtml(firstName)}, ${emailHighlight("c'est bien arrivé.")}`,
+        body: `
+          <p style="margin:0 0 14px">J'ai bien reçu votre message et je vous réponds sous 24 heures.</p>
+          <p style="margin:0 0 6px;font-size:14px;color:#696A70">Ce que vous venez de m'envoyer :</p>
           ${details}
-          <p style="margin-top:24px">${escapeHtmlMultiline(signature)}</p>
-        </div>`,
+          <p style="margin:20px 0 0">${escapeHtmlMultiline(signature)}</p>`,
+      }),
     });
   } catch (error) {
     console.error("🛑 Erreur lors de l'envoi du contact :", error);

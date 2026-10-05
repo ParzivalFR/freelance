@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
+import { emailHighlight, emailLayout, emailRows } from "@/lib/email-layout";
 import { escapeHtml, escapeHtmlMultiline, getMailer } from "@/lib/mailer";
 import { BRIEF_QUESTIONS, BRIEF_SECTIONS } from "@/lib/brief-questions";
 
@@ -85,7 +86,7 @@ export async function POST(
       })
       .filter(Boolean);
     if (lines.length === 0) return "";
-    return `<h3 style="color:#4a5a3a;margin:24px 0 8px">${escapeHtml(section.title)}</h3>${lines.join("")}`;
+    return `<h3 style="margin:24px 0 8px;font-size:17px;color:#4A5A3A">${escapeHtml(section.title)}</h3>${lines.join("")}`;
   }).join("");
 
   try {
@@ -100,32 +101,34 @@ export async function POST(
       from: process.env.EMAIL_USER,
       to: destination,
       replyTo: `${fullName} <${brief.email}>`,
-      subject: `📋 Brief complété par ${fullName}${brief.company ? ` (${brief.company})` : ""}`,
-      html: `
-        <div style="font-family:Arial,sans-serif;max-width:640px;margin:0 auto;color:#333;line-height:1.6">
-          <h2 style="color:#4a5a3a">Nouveau brief : ${escapeHtml(fullName)}</h2>
-          <p>
-            ${escapeHtml(brief.email)}${brief.phone ? ` — ${escapeHtml(brief.phone)}` : ""}
-            ${brief.company ? `<br>${escapeHtml(brief.company)}` : ""}
-          </p>
-          ${recap}
-          <p style="margin-top:24px">
-            <a href="${siteUrl}/admin/briefs" style="color:#4a5a3a">Ouvrir dans l'administration</a>
-          </p>
-        </div>`,
+      subject: `Brief complété par ${fullName}${brief.company ? ` (${brief.company})` : ""}`,
+      html: emailLayout({
+        kicker: "brief complété",
+        title: `${escapeHtml(fullName)} ${emailHighlight("a répondu.")}`,
+        body: `
+          ${emailRows([
+            ["E-mail", escapeHtml(brief.email)],
+            brief.phone && ["Téléphone", escapeHtml(brief.phone)],
+            brief.company && ["Entreprise", escapeHtml(brief.company)],
+          ])}
+          ${recap}`,
+        cta: { label: "Ouvrir dans l'administration", href: `${siteUrl}/admin/briefs` },
+        footer: `Répondre à cet e-mail répond directement à ${escapeHtml(fullName)}.`,
+      }),
     });
 
     await mailer.sendMail({
       from: process.env.EMAIL_USER,
       to: brief.email,
       subject: "Vos réponses sont bien arrivées",
-      html: `
-        <div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;color:#333;line-height:1.6">
-          <h2 style="color:#4a5a3a">Merci ${escapeHtml(brief.firstName)} !</h2>
-          <p>J'ai bien reçu vos réponses. Je les lis attentivement et je reviens vers vous sous 24 heures avec une proposition claire et chiffrée.</p>
-          <p>Si vous avez oublié quelque chose ou si un détail vous revient, répondez simplement à cet email.</p>
-          <p style="margin-top:24px">Gaël Richard<br><a href="${siteUrl}" style="color:#4a5a3a">gael-dev.fr</a></p>
-        </div>`,
+      html: emailLayout({
+        kicker: "bien reçu",
+        preheader: "Une proposition claire et chiffrée sous 24 heures.",
+        title: `Merci ${escapeHtml(brief.firstName)}, ${emailHighlight("je m'en occupe.")}`,
+        body: `
+          <p style="margin:0 0 14px">J'ai bien reçu vos réponses. Je les lis attentivement et je reviens vers vous sous 24 heures avec une proposition claire et chiffrée.</p>
+          <p style="margin:0">Si vous avez oublié quelque chose ou si un détail vous revient, répondez simplement à cet e-mail.</p>`,
+      }),
     });
   } catch (error) {
     console.error("🛑 Brief enregistré mais email non envoyé :", error);

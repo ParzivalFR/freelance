@@ -1,4 +1,6 @@
 import nodemailer from 'nodemailer';
+import { emailHighlight, emailLayout } from '@/lib/email-layout';
+import { escapeHtml } from '@/lib/mailer';
 
 // Configuration du transporteur email
 const transporter = nodemailer.createTransport({
@@ -38,113 +40,19 @@ export async function sendDevisEmail({
     currency: 'EUR'
   }).format(total);
 
-  const htmlContent = `
-    <!DOCTYPE html>
-    <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Devis ${devisNumber}</title>
-        <style>
-            body {
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                line-height: 1.6;
-                color: #333;
-                max-width: 600px;
-                margin: 0 auto;
-                padding: 20px;
-                background-color: #f9f9f9;
-            }
-            .container {
-                background: white;
-                padding: 30px;
-                border-radius: 10px;
-                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            }
-            .header {
-                text-align: center;
-                margin-bottom: 30px;
-                padding-bottom: 20px;
-                border-bottom: 2px solid #f0f0f0;
-            }
-            .company-name {
-                font-size: 24px;
-                font-weight: bold;
-                color: #2d3748;
-                margin-bottom: 5px;
-            }
-            .devis-number {
-                font-size: 18px;
-                color: #4a5568;
-            }
-            .greeting {
-                margin-bottom: 20px;
-            }
-            .amount {
-                background: #f7fafc;
-                padding: 15px;
-                border-left: 4px solid #3182ce;
-                margin: 20px 0;
-                border-radius: 4px;
-            }
-            .amount-value {
-                font-size: 20px;
-                font-weight: bold;
-                color: #2d3748;
-            }
-            .footer {
-                margin-top: 30px;
-                padding-top: 20px;
-                border-top: 1px solid #e2e8f0;
-                font-size: 14px;
-                color: #718096;
-                text-align: center;
-            }
-            .cta-button {
-                display: inline-block;
-                background: #3182ce;
-                color: white;
-                padding: 12px 24px;
-                text-decoration: none;
-                border-radius: 6px;
-                font-weight: 500;
-                margin: 20px 0;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <div class="header">
-                <div class="company-name">${companyName}</div>
-                <div class="devis-number">Devis N° ${devisNumber}</div>
-            </div>
-            
-            <div class="greeting">
-                <p>Bonjour ${clientName},</p>
-                
-                <p>J'ai le plaisir de vous adresser votre devis personnalisé. Vous trouverez tous les détails de notre proposition en pièce jointe.</p>
-            </div>
-            
-            <div class="amount">
-                <div>Montant du devis :</div>
-                <div class="amount-value">${formattedTotal} ${totalText}</div>
-            </div>
-            
-            <p>Ce devis est valable 30 jours à compter de sa date d'émission. N'hésitez pas à me contacter si vous avez des questions ou souhaitez discuter de certains points.</p>
-            
-            <p>Je reste à votre disposition pour tout complément d'information.</p>
-            
-            <p>Cordialement,<br>
-            ${companyName}</p>
-            
-            <div class="footer">
-                <p>Cet email a été envoyé automatiquement depuis notre système de gestion.</p>
-                <p>Merci de ne pas répondre directement à cet email.</p>
-            </div>
-        </div>
-    </body>
-    </html>
-  `;
+  const htmlContent = emailLayout({
+    kicker: `devis ${devisNumber}`,
+    preheader: `${formattedTotal} ${totalText}, détail en pièce jointe.`,
+    title: `Bonjour ${escapeHtml(clientName)}, ${emailHighlight("voici votre devis.")}`,
+    body: `
+      <p style="margin:0 0 14px">Vous trouverez le détail de ma proposition en pièce jointe, au format PDF.</p>
+      <div style="background:#ECEBE7;border-radius:14px;padding:16px 18px;margin:20px 0">
+        <div style="font-size:14px;color:#696A70">Montant du devis</div>
+        <div style="font-size:26px;font-weight:800;letter-spacing:-0.02em">${formattedTotal} <span style="font-size:15px;font-weight:400;color:#696A70">${totalText}</span></div>
+      </div>
+      <p style="margin:0 0 14px">Ce devis est valable 30 jours. Si un point mérite d'être discuté ou ajusté, répondez simplement à cet e-mail, on en parle.</p>
+      <p style="margin:0">À bientôt,<br>Gaël</p>`,
+  });
 
   const textContent = `
 Bonjour ${clientName},
