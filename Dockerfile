@@ -1,4 +1,4 @@
-FROM node:20-slim AS base
+FROM node:22-slim AS base
 # pnpm figé : non épinglé, chaque build tirerait la dernière version publiée
 # (c'est ce qui a cassé le déploiement de bot-engine avec pnpm 11).
 RUN npm install -g pnpm@10.33.2
@@ -43,7 +43,7 @@ ENV NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL \
 RUN DIRECT_URL="postgresql://build:build@localhost:5432/build" pnpm build
 
 # ── Exécution ────────────────────────────────────────────────────────────────
-FROM node:20-slim AS runner
+FROM node:22-slim AS runner
 WORKDIR /app
 # HOSTNAME=0.0.0.0 : sans ça, le serveur autonome n'écoute que sur l'IP interne
 # du conteneur et Traefik ne peut pas le joindre (piège déjà vu sur Mooveyes).
