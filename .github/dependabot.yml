@@ -1,0 +1,32 @@
+# Mises a jour regulieres des dependances.
+#
+# Les correctifs de SECURITE n'attendent pas ce calendrier : GitHub ouvre une
+# PR des qu'une alerte tombe (reglage « Dependabot security updates »).
+# Ici, c'est le menage de fond : une PR groupee par semaine, pour ne pas
+# crouler sous les propositions.
+version: 2
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 5
+    groups:
+      minor-et-patch:
+        update-types:
+          - "minor"
+          - "patch"
+  - package-ecosystem: "docker"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "07:00"
+      timezone: "Europe/Paris"
+    open-pull-requests-limit: 5
+    ignore:
+      - dependency-name: "node"
+        update-types: ["version-update:semver-major"]
